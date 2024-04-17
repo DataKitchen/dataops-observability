@@ -1,0 +1,28 @@
+<button mat-flat-button
+  class="toggle-button"
+  [class.hidden]="hideSelectMenu"
+  [matMenuTriggerFor]="selectedMenu">{{elements?.length || 0}}&nbsp;{{elements?.length === 1 ? label : label + 's'}}&nbsp;selected
+</button>
+
+<button mat-flat-button
+  [matMenuTriggerFor]="actionsMenu"
+  color="primary"
+  class="actions-button"
+  [class.stand-alone]="hideSelectMenu"
+  [disabled]="elements?.length === 0">
+  Action
+  <mat-icon>arrow_drop_down</mat-icon>
+</button>
+
+<mat-menu #actionsMenu="matMenu">
+  <ng-content></ng-content>
+</mat-menu>
+
+<mat-menu #selectedMenu="matMenu">
+  <button (click)="clear.emit()"
+    mat-menu-item>Clear Selection
+  </button>
+  <button (click)="selectAll.emit()"
+    mat-menu-item>Select All Visible
+  </button>
+</mat-menu>

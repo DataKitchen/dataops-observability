@@ -1,0 +1,62 @@
+<ng-template
+  [ngTemplateOutlet]="summary"
+  [ngTemplateOutletContext]="{label: 'tasks', tooltip: tasksTooltip, aggregate: tasksSummaryAggregate(), sortedSummary: sortedTasksSummary()}"></ng-template>
+<ng-template
+  [ngTemplateOutlet]="summary"
+  [ngTemplateOutletContext]="{label: 'tests', tooltip: testsTooltip, aggregate: testsSummaryAggregate(), sortedSummary: sortedTestsSummary()}"></ng-template>
+
+<ng-template #summary
+  let-label="label"
+  let-tooltip="tooltip"
+  let-aggregate="aggregate"
+  let-sortedSummary="sortedSummary">
+  <div class="summary-container"
+    *ngIf="aggregate.TOTAL > 0">
+
+    <div class="secondary-info label"
+      *ngIf="showLabels">{{label | translate | titlecase}}</div>
+
+    <div class="summary"
+      [dkTooltip]="tooltip"
+      [dkTooltipDisabled]="aggregate.TOTAL <= 0">
+
+      <ng-container *ngFor="let item of sortedSummary">
+              <span *ngIf="item.count > 0"
+                [ngClass]="item.status"
+                [style.width]="(item.count / aggregate.TOTAL * 100) + '%'">
+              </span>
+      </ng-container>
+    </div>
+
+    <div class="secondary-info total"
+      *ngIf="showLabels">{{ aggregate.TOTAL }}</div>
+  </div>
+</ng-template>
+
+<ng-template #tasksTooltip>
+  <div class="tooltip">
+    <div *ngIf="tasksSummaryAggregate.TOTAL > 0">
+      <span class="status-description">{{'total' | translate | titlecase}}:</span><span>{{ tasksSummaryAggregate.TOTAL }}</span>
+    </div>
+
+    <ng-container *ngFor="let item of tasksSummaryAggregate | keyvalue">
+      <div *ngIf="item.key !== 'TOTAL' && item.value > 0">
+        <span class="status-description">{{'runStatus.' + item.key | translate}}:</span> {{ item.value }}
+      </div>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #testsTooltip>
+  <div class="tooltip">
+    <div *ngIf="testsSummaryAggregate.TOTAL > 0">
+      <span class="status-description">{{'total' | translate | titlecase}}:</span><span>{{ testsSummaryAggregate.TOTAL }}</span>
+    </div>
+
+    <ng-container *ngFor="let item of testsSummaryAggregate | keyvalue">
+      <div *ngIf="item.key !== 'TOTAL' && item.value > 0">
+        <span class="status-description">{{'testStatus.' + item.key | translate}}:</span> {{ item.value }}
+      </div>
+    </ng-container>
+  </div>
+</ng-template>

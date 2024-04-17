@@ -1,0 +1,168 @@
+<div *ngIf="testsSummary$ | async as summary"
+  class="tests-summary">
+  <div class="tests-summary--bar">
+    <span *ngIf="summary.TOTAL === 0"
+      class="empty"></span>
+    <ng-container *ngFor="let status of testStatuses">
+      <span [ngClass]="status"
+        [style.width]="(summary[status] / summary.TOTAL * 100) + '%'"
+        dkTooltip="Filter by {{ 'testStatus.' + status | translate | titlecase }} status"
+        (click)="filterByStatus(status)"></span>
+    </ng-container>
+  </div>
+  <div class="tests-summary--legend">
+    <shell-summary>
+      <shell-summary-item (click)="filterByStatus(status)"
+        *ngFor="let status of testStatuses"
+        label="{{ 'testStatus.' + status | translate | titlecase }}"
+        color="{{status}}"
+        count="{{ summary[status] ?? 0 }}"
+        dkTooltip="Filter by {{ 'testStatus.' + status | translate | titlecase }} status"
+        attr.data-test-status="{{status}}"
+        attr.data-test-count="{{summary[status]}}"></shell-summary-item>
+    </shell-summary>
+  </div>
+</div>
+
+<div class="toolbar"
+  [formGroup]="search">
+  <text-field class="search-tests"
+    label="Search tests"
+    placeholder="Search tests"
+    formControlName="search"
+    type="search"></text-field>
+
+  <filter-field [label]="'statuses' | translate | titlecase"
+    [multiple]="true"
+    [noneSelectedLabel]="'statuses' | translate | titlecase"
+    [allSelectedLabel]="'allStatuses' | translate"
+    formControlName="status">
+
+    <ng-container *ngFor="let status of testStatuses">
+      <filter-field-option [value]="status"
+        [label]="'testStatus.' + status | translate | titlecase">
+      </filter-field-option>
+    </ng-container>
+  </filter-field>
+
+  <button *ngIf="!!(search.value.component_id || search.value.status || search.value.search)"
+    (click)="search.reset()"
+    mat-button>Clear
+  </button>
+</div>
+
+<table-wrapper fxFlex
+  class="mat-elevation-z2"
+  [items]="tests$ | async"
+  [total]="total$ | async"
+  [loading]="loading$ | async"
+  [search]="search"
+  (tableChange)="onTableChange($event)"
+  entity="tests"
+  [columns]="['status', 'component', {name: 'description', visible: false}, {name: 'table', visible: false}, {name: 'dimension', visible: false}, 'start_time', { name: 'end_time', visible: false }, 'actions']"
+  [selectable]="false">
+  <ng-container matColumnDef="status"
+    sortDisabled
+    toggleDisabled
+    dragDisabled>
+    <ng-container *matHeaderCellDef>
+      <span headerLabel="id">Status/Test</span>
+    </ng-container>
+    <ng-container *matCellDef="let test">
+      <div class="status-text-cell">
+        <div [ngClass]="test.status">
+          <mat-icon *ngIf="test.status === testStatus.Warning">warning_amber</mat-icon>
+          <mat-icon *ngIf="test.status === testStatus.Passed">check</mat-icon>
+          <mat-icon *ngIf="test.status === testStatus.Failed">close</mat-icon>
+        </div>
+        <div class="test-description">
+          <div truncate
+            dkTooltip="{{test.name}}">{{test.name}}</div>
+          <div class="text--mono"
+            *ngIf="test.metric_value">
+            <span>{{'metricValue' | translate}}: {{test.metric_value | number}}</span>
+            <span *ngIf="test.min_threshold">, {{'thresholdLow' | translate}}: {{test.min_threshold | number}}</span>
+            <span *ngIf="test.max_threshold">, {{'thresholdHigh' | translate}}: {{test.max_threshold | number}}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+  <ng-container matColumnDef="component"
+    sortDisabled
+    dragDisabled>
+    <ng-container *matHeaderCellDef>
+      <span headerLabel="component">Component</span>
+    </ng-container>
+    <ng-container *matCellDef="let test">
+      <mat-icon dkTooltip="{{ 'componentTypeTag.' + test.component.type | translate | titlecase }}"
+        svgIcon="{{ test.component.type | lowercase }}"></mat-icon>
+      <div class="component-name">
+        <span [dkTooltip]="test.component?.display_name"
+          truncate>{{test.component?.display_name || '-'}}</span>
+      </div>
+    </ng-container>
+  </ng-container>
+  <ng-container matColumnDef="description"
+    sortDisabled
+    dragDisabled>
+    <ng-container *matHeaderCellDef>
+      <span headerLabel="description">Description</span>
+    </ng-container>
+    <ng-container *matCellDef="let test">
+      <div class="description">{{test.description || '-'}}</div>
+    </ng-container>
+  </ng-container>
+  <ng-container matColumnDef="start_time"
+    sortDisabled
+    dragDisabled>
+    <ng-container *matHeaderCellDef>
+      <span headerLabel="start_time">Start Time</span>
+    </ng-container>
+    <ng-container *matCellDef="let test">
+      <div dkTooltip="{{test.start_time | date: 'medium'}}">{{test.start_time | date: 'hh:mm:ss a'}}</div>
+    </ng-container>
+  </ng-container>
+  <ng-container matColumnDef="end_time"
+    sortDisabled
+    dragDisabled>
+    <ng-container *matHeaderCellDef>
+      <span headerLabel="end_time">End Time</span>
+    </ng-container>
+    <ng-container *matCellDef="let test">
+      <div dkTooltip="{{test.end_time | date: 'medium'}}">{{test.end_time | date: 'hh:mm:ss a'}}</div>
+    </ng-container>
+  </ng-container>
+  <ng-container matColumnDef="actions"
+    sortDisabled
+    dragDisabled>
+    <ng-container *matHeaderCellDef>
+      <span headerLabel="actions"></span>
+    </ng-container>
+    <ng-container *matCellDef="let test">
+      <a *ngIf="test?.external_url"
+        dkTooltip="Open external source"
+        [dkTooltipShowArrow]="false"
+        [href]="test?.external_url"
+        class="action-link"
+        target="_blank">
+        <mat-icon>open_in_new</mat-icon>
+      </a>
+
+      <a dkTooltip="View event data"
+        [dkTooltipShowArrow]="false"
+        (click)="$event.preventDefault(); viewMetadata(test)"
+        class="action-link">
+        <mat-icon>data_object</mat-icon>
+      </a>
+
+      <a *ngIf="test.integrations | getIntegration: 'TESTGEN'"
+        dkTooltip="View test results from DataOps TestGen"
+        [dkTooltipShowArrow]="false"
+        [routerLink]="['../..', { outlets: { rightPanel: [runId, 'tests', test.id, 'testgen'] } }]"
+        class="action-link testgen-link">
+        <mat-icon svgIcon="dataops_testgen"></mat-icon>
+      </a>
+    </ng-container>
+  </ng-container>
+</table-wrapper>

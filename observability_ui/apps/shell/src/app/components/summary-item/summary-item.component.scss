@@ -1,0 +1,39 @@
+@use '@observability/ui/styles/variables' as variables;
+@use '@observability/ui/styles/mixins' as mixins;
+
+.data-container {
+  border-left: 3px solid;
+  padding-left: variables.$space-sm;
+  margin-right: variables.$space-xxl;
+}
+
+.label {
+  @include mixins.font-style(caption, secondary);
+  margin-bottom: variables.$space-xxs;
+}
+
+.count {
+  font-size: 24px;
+}
+
+$color-by-status: (
+  'PENDING': map-get($map: variables.$colors, $key: 'gray'),
+  'MISSING': map-get($map: variables.$colors, $key: 'gray'),
+  'RUNNING': map-get($map: variables.$colors, $key: 'blue'),
+  'COMPLETED': map-get($map: variables.$colors, $key: 'green'),
+  'COMPLETED_WITH_WARNINGS': map-get($map: variables.$colors, $key: 'orange'),
+  'FAILED': map-get($map: variables.$colors, $key: 'red'),
+
+  'ACTIVE': map-get($map: variables.$colors, $key: 'blue'),
+  'WARNING': map-get($map: variables.$colors, $key: 'orange'),
+  'ERROR': map-get($map: variables.$colors, $key: 'red'),
+  'UPCOMING': variables.$gray-400,
+
+  'PASSED': map-get($map: variables.$colors, $key: 'green'),
+);
+
+@each $status, $color in $color-by-status {
+  .#{$status} {
+    border-color: $color;
+  }
+}

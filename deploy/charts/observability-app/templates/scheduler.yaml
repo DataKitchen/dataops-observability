@@ -1,0 +1,61 @@
+{{- if .Values.scheduler.enable }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "observability.scheduler.name" . }}
+  labels:
+    {{- include "observability.labels" . | nindent 4 }}
+    {{- include "observability.scheduler.selectorLabels" . | nindent 4 }}
+    {{- include "observability.scaledownPreDeploy" .Values.scheduler | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.scheduler.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "observability.scheduler.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        # Used to force Helm to trigger a re-deploy despite this manifest haven't changed
+        timestamp: {{ now | quote }}
+        {{- with .Values.scheduler.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "observability.scheduler.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "observability.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.scheduler.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "observability.scheduler.name" . }}
+          securityContext:
+            {{- toYaml .Values.scheduler.securityContext | nindent 12 }}
+          image: {{ include "observability.scheduler.image" . | quote }}
+          imagePullPolicy: {{ .Values.scheduler.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.scheduler.resources | nindent 12 }}
+          env:
+            {{- include "observability.environment.base" . | nindent 12 }}
+            {{- include "observability.environment.database" . | nindent 12 }}
+            {{- include "observability.environment.kafka" . | nindent 12 }}
+          command: [ "/dk/bin/scheduler" ]
+          {{- include "observability.probes.readiness_cmd" "scheduler" | nindent 10 -}}
+      {{- with .Values.scheduler.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.scheduler.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.scheduler.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

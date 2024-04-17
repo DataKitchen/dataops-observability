@@ -1,0 +1,168 @@
+<ng-template cdkConnectedOverlay
+             [cdkConnectedOverlayOrigin]="toggleVisibleColumnsButton"
+             [cdkConnectedOverlayOpen]="isOpen"
+             [cdkConnectedOverlayPositions]="[{ originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' }]"
+             [cdkConnectedOverlayHasBackdrop]="true"
+             cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+             [cdkConnectedOverlayPanelClass]="['opaque-overlay', 'mat-elevation-z2']"
+             (backdropClick)="isOpen = false;"
+>
+  <ng-container *ngIf="tableColumns$ | async as columns">
+    <mat-list class="table-columns-settings">
+      <ng-container *ngFor="let col of columns">
+        <mat-list-item *ngIf="col.name !== 'select' && !hasToggleDisabled(col.name)">
+          <mat-slide-toggle
+            [checked]="col.visible"
+            color="primary"
+            (toggleChange)="toggleColumnVisibility(col)">
+            <ng-container *ngIf="headerLabels[col.name] as template; else plainLabel">
+              {{template.textContent}}
+            </ng-container>
+            <ng-template #plainLabel>
+              {{col.name}}
+            </ng-template>
+
+          </mat-slide-toggle>
+
+        </mat-list-item>
+      </ng-container>
+    </mat-list>
+  </ng-container>
+
+</ng-template>
+
+<div class="table-tools" fxLayout="row" fxLayoutAlign="start center">
+  <ng-container *ngIf="selectable">
+        <span class="select-all-checkbox">
+            <mat-checkbox (change)="$event ? masterToggle() : null"
+                          [checked]="selection.hasValue() && isAllSelected()"
+                          [indeterminate]="selection.hasValue() && !isAllSelected()"
+                          color="primary" [disabled]="items.length === 0">
+                <span class="text--primary"><b>{{ 'selectAll' | translate }}</b></span>
+            </mat-checkbox>
+            <ng-container *ngIf="selection.hasValue()">
+                <mat-divider vertical></mat-divider>
+                <span>
+                  ({{selection.selected.length}} item{{selection.selected.length === 1 ? '' : 's'}} selected)
+                </span>
+                <ng-content select="table-wrapper-actions"></ng-content>
+            </ng-container>
+
+        </span>
+  </ng-container>
+
+  <span fxFlex></span>
+
+  <button mat-icon-button
+          (click)="onReload()"
+          class="refresh-button button-square"
+          dkTooltip="{{ 'refresh' | translate }}">
+    <mat-icon>refresh</mat-icon>
+  </button>
+  <button mat-icon-button
+          cdkOverlayOrigin
+          #toggleVisibleColumnsButton='cdkOverlayOrigin'
+          (click)="isOpen = !isOpen"
+          class="button-square"
+          dkTooltip="{{ 'showHideColumns' | translate }}">
+    <mat-icon>visibility</mat-icon>
+  </button>
+</div>
+
+<mat-divider></mat-divider>
+
+<div class="table-container" fxLayout="column" fxFlex>
+  <mat-progress-bar [class.visible]="loading" [class.invisible]="!loading" mode="indeterminate"></mat-progress-bar>
+
+  <mat-table [dataSource]="items"
+             cdkDropList
+             cdkDropListLockAxis="x"
+             cdkDropListOrientation="horizontal"
+             matSort
+             bindQueryParamsMatSort>
+
+    <!-- Checkbox Column -->
+    <ng-container *ngIf="selectable" matColumnDef="select">
+      <mat-header-cell
+        *matHeaderCellDef>
+      </mat-header-cell>
+      <mat-cell
+        *matCellDef="let row">
+        <mat-checkbox (click)="$event.stopPropagation()"
+                      (change)="$event ? selection.toggle(row.id) : null"
+                      [checked]="selection.isSelected(row.id)"
+                      color="primary">
+        </mat-checkbox>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container *ngFor="let colName of columnNames; let i = index">
+
+      <ng-container *ngIf="colName !== 'select'">
+
+        <ng-container [matColumnDef]="colName">
+          <mat-header-cell *matHeaderCellDef
+                           (cdkDragDropped)="dropListDropped($event)"
+                           cdkDrag
+                           cdkDragLockAxis="x"
+                           mat-sort-header
+                           [cdkDragDisabled]="hasDragDisabled(colName)"
+                           [disabled]="hasSortDisabled(colName)"
+
+          >
+            <ng-container *ngIf="!isDefinedInParent(colName); else customHeaderTpl">
+              {{ colName }}
+            </ng-container>
+            <ng-template #customHeaderTpl>
+              <ng-container [ngTemplateOutlet]="$any(getColumn(colName)?.headerCell?.template)"></ng-container>
+            </ng-template>
+            <ng-container *ngIf="!hasDragDisabled(colName)">
+              <div class="column-handle" cdkDragHandle>
+                <mat-icon>drag_indicator</mat-icon>
+              </div>
+            </ng-container>
+          </mat-header-cell>
+          <mat-cell *matCellDef="let item">
+            <ng-container *ngIf="!isDefinedInParent(colName); else customCellTpl">
+                                <span [dkTooltip]="item[colName]" showTooltipOnOverflow>
+                                    {{item[colName]}}
+                                </span>
+            </ng-container>
+            <ng-template #customCellTpl>
+              <ng-container [ngTemplateOutlet]="$any(getColumn(colName)?.cell?.template)"
+                            [ngTemplateOutletContext]="{ $implicit: item }"></ng-container>
+            </ng-template>
+          </mat-cell>
+          <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        </ng-container>
+
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="visibleColumns$ | async as columns">
+
+      <mat-header-row
+        *matHeaderRowDef="columns; sticky: true"></mat-header-row>
+      <mat-row
+        [class.loading]="loading"
+        *matRowDef="let row; columns: columns;"></mat-row>
+    </ng-container>
+  </mat-table>
+
+  <div fxFlex fxLayout="column" fxLayoutAlign="center center" *ngIf="!loading && total === 0">
+    <div>
+      {{ 'noEntitiesFound' | translate:{entities: entity} }}
+    </div>
+  </div>
+</div>
+
+<div class="table-footer" *ngIf="!disablePagination">
+  <span fxFlex></span>
+  <mat-paginator
+    [length]="total"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[5, 10, 25, 50, 100]"
+    [showFirstLastButtons]="true"
+    bindQueryParamsMatPaginator [sizeStorageKey]="storageKey">
+  </mat-paginator>
+</div>

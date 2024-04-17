@@ -1,0 +1,272 @@
+<div class="backdrop"
+  routerLink=".."></div>
+
+<div *ngIf="loading$ | async; else componentTpl"
+  class="loading-container">
+  <mat-spinner></mat-spinner>
+</div>
+
+<ng-template #componentTpl>
+
+  <ng-container *ngIf="component$ | async as component">
+
+    <div class="header"
+      [class.editing]="editing$ | async">
+
+      <h2 *ngIf="editing$ | async">{{ 'componentsPanel.header.edit' | translate }}</h2>
+
+      <span fxFlex></span>
+
+      <a *ngIf="(editing$ | async) === false"
+        [routerLink]="['/projects/' + (projectId$ | async), { outlets: { primary: 'events', rightPanel: null } }]"
+        [queryParams]="{ 'component_id': component.id }"
+        class="link"
+        target="_blank">{{ 'componentsPanel.header.viewEvents' | translate }}</a>
+
+      <a *ngIf="component.type === componentType.BatchPipeline"
+        [routerLink]="['/projects/' + (projectId$ | async), { outlets: { primary: 'events/runs', rightPanel: null } }]"
+        [queryParams]="{ 'pipeline_key': component.key }"
+        class="link"
+        target="_blank">{{ 'componentsPanel.header.viewRuns' | translate }}</a>
+
+      <button mat-icon-button
+        routerLink="..">
+        <mat-icon>close</mat-icon>
+      </button>
+
+    </div>
+
+    <div class="content">
+      <div class="info">
+        <div class="fx-row items-mr-1 fx-align-flex-start">
+          <ng-container *ngIf="(editing$ | async) === false">
+            <component-icon
+              [tool]="component.tool"
+              [type]="component.type"
+              size="24">
+            </component-icon>
+            <div class="mat-title">{{ component.display_name }}</div>
+          </ng-container>
+
+          <mat-form-field *ngIf="(editing$ | async) === true">
+            <mat-label></mat-label>
+            <component-icon
+              class="mr-1"
+              matPrefix
+              [tool]="component.tool"
+              [type]="component.type">
+            </component-icon>
+            <input matInput
+              [placeholder]="component.key"
+              [formControl]="form.controls.name"
+              autofocus>
+          </mat-form-field>
+        </div>
+
+        <div class="event-key">
+          {{ 'componentsPanel.eventKey' | translate }}: {{component.key}}
+        </div>
+        <i class="creation-details">
+          <created-by [createdBy]="component.created_by"
+            [createdOn]="component.created_on"></created-by>
+        </i>
+
+        <div class="tags-container">
+          <div class="tag filled">
+            {{'componentTypeTag.' + component.type | translate}}
+          </div>
+          <div *ngIf="component.tool"
+            class="tag">
+            {{ ((component.tool | getToolClass)?._displayName || component.tool) | lowercase }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <mat-expansion-panel class="mat-elevation-z0"
+        expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ 'componentsPanel.description' | translate }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="fx-column items-mb-2">
+          <shell-tool-selector class="mt-2"
+            [editing]="(editing$ | async) === true"
+            [formControl]="form.controls.tool"
+            [tool]="component?.tool">
+          </shell-tool-selector>
+
+          <div *ngIf="(editing$ | async) === false"
+            class="description">
+            {{ component.description || 'N/A' }}
+          </div>
+
+          <mat-form-field *ngIf="editing$ | async">
+            <textarea [formControl]="form.controls.description"
+              maxlength="255"
+              rows="3"
+              matInput></textarea>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Expected Schedule -->
+      <mat-expansion-panel class="mat-elevation-z0"
+        *ngIf="component.type === componentType.BatchPipeline"
+        expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ 'componentsPanel.schedule.header' | translate }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <shell-edit-expected-schedule *ngIf="(editing$ | async) === true"
+          [form]="form"></shell-edit-expected-schedule>
+
+        <ng-container *ngIf="((editing$ | async) === false) && (component.startsAt || component.endsAt)">
+
+          <div class="text--secondary fx-column">
+
+            <div *ngIf="component.startsAt?.schedule">
+              {{ 'componentsPanel.schedule.start' | translate }} {{ component.startsAt | schedule }}
+              <span *ngIf="component.startsAt.margin">
+                {{'componentsPanel.gracePeriod' | translate}}: {{component.startsAt.margin | timespan}}
+              </span>
+            </div>
+
+            <div *ngIf="component.endsAt?.schedule">
+              {{ 'componentsPanel.schedule.end' | translate }} {{ component.endsAt | schedule }}
+            </div>
+          </div>
+
+
+        </ng-container>
+      </mat-expansion-panel>
+
+      <!-- Expected Arrival -->
+      <mat-expansion-panel class="mat-elevation-z0"
+        *ngIf="component.type === componentType.Dataset"
+        expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{'componentsPanel.expectedArrival.header' | translate}}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <shell-edit-expected-arrival-window [form]="form"
+          *ngIf="(editing$ | async) === true"></shell-edit-expected-arrival-window>
+
+        <ng-container *ngIf="(editing$ | async) === false && component.expectedArrivalWindow">
+          <div class="text--secondary fx-column">
+            <div *ngIf="component.expectedArrivalWindow?.schedule">
+              {{ 'componentsPanel.schedule.start' | translate }}: {{ component.expectedArrivalWindow | schedule }}
+            </div>
+            <div *ngIf="component.expectedArrivalWindow?.margin">
+              {{'componentsPanel.schedule.arrivalWindow' | translate}} {{ component.expectedArrivalWindow?.margin | timespan}}
+            </div>
+          </div>
+
+        </ng-container>
+
+      </mat-expansion-panel>
+
+      <!-- Related Journeys -->
+      <mat-expansion-panel class="mat-elevation-z0"
+        expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ 'componentsPanel.relatedJourneys' | translate }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <ng-container *ngIf="(componentJourneys$ | async) as componentJourneys">
+          <div class="flex-row fx-justify-center related-journeys-panel"
+            *ngIf="componentJourneys.length === 0 else displayJourneys">
+        <span *ngIf="(projectId$ | async) as projectId"
+          class="related-journeys-placeholder">
+          {{'componentsPanel.setRules' | translate}}&nbsp;
+          <a [routerLink]="['/projects/' + projectId, { outlets: { primary: 'journeys', rightPanel: null } }]"
+            [queryParams]="{ openAdd: 1 }"
+            class="link">
+            {{'journey' | translate}}
+            <mat-icon>add</mat-icon>
+          </a>
+        </span>
+          </div>
+        </ng-container>
+
+        <ng-template #displayJourneys>
+          <div class="flex-column"
+            *ngIf="(componentJourneys$ | async) as journeys">
+            <div class="flex-row fx-justify-flex-start fx-align-flex-center"
+              *ngFor="let journey of journeys">
+              <span class="journey-name">{{journey.name}}</span>
+              <a target="_blank"
+                [routerLink]="['/projects/' + projectId, { outlets: { primary: 'journeys/' + journey.id, rightPanel: null } }]"
+                *ngIf="projectId$ | async as projectId"
+                class="link ml-2">
+                <mat-icon>open_in_new</mat-icon>
+              </a>
+            </div>
+          </div>
+        </ng-template>
+      </mat-expansion-panel>
+    </div>
+
+    <div class="footer">
+      <div *ngIf="error$ | async as error else learnMore"
+        class="error">
+        <mat-icon>error</mat-icon>
+        <span fxFlex
+          truncate>{{ error }}</span>
+      </div>
+
+      <span fxFlex></span>
+
+      <ng-template #learnMore>
+        <div class="help-link text-caption--secondary">
+          {{'componentsPanel.learnMoreAbout' | translate}}&nbsp;
+          <a target="_blank"
+            href="https://docs.datakitchen.io/article/dataops-observability-help/manage-components"
+            target="_blank">
+            {{'componentsPanel.managingComponents' | translate}}&nbsp;
+            <mat-icon inline>open_in_new</mat-icon>
+          </a>
+        </div>
+      </ng-template>
+
+      <ng-container *ngIf="(editing$ | async) === false; else editModeFooter">
+        <button color="primary"
+          (click)="setEditing(true)"
+          mat-button>{{ 'componentsPanel.edit' | translate }}
+        </button>
+        <button (click)="openDeleteComponent(component)"
+          color="warn"
+          mat-button>
+          {{'componentsPanel.delete' | translate}}
+        </button>
+      </ng-container>
+    </div>
+
+  </ng-container>
+
+</ng-template>
+
+<ng-template #editModeFooter>
+  <button [disabled]="(saving$ | async) === true"
+    (click)="setEditing(false)"
+    mat-button>
+    {{ 'componentsPanel.cancel' | translate }}
+  </button>
+
+  <button
+    color="primary"
+    (click)="save()"
+    [disabled]="form.invalid"
+    mat-button>
+    {{ 'componentsPanel.save' | translate }}
+  </button>
+
+</ng-template>
+

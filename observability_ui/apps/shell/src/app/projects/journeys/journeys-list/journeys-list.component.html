@@ -1,0 +1,101 @@
+<ng-container>
+  <div class="page-title">
+    <h1>Journeys</h1>
+
+    <div class="toolbar"
+      [formGroup]="search">
+      <div>
+        <text-field label="Search journeys"
+          placeholder="Search journeys"
+          formControlName="search"
+          type="search"></text-field>
+      </div>
+      <span fxFlex></span>
+      <button (click)="openAddJourneyDialog()"
+        color="primary"
+        mat-flat-button>
+        <mat-icon>add</mat-icon>
+        Add Journey
+      </button>
+    </div>
+  </div>
+
+  <div class="scrolling-content">
+    <ng-container *ngIf="(loading$ | async) === false; else loadingTemplate">
+      <div class="items-mb-3 mat-card-list"
+        *ngIf="(total$ | async) > 0; else emptyResultsTemplate">
+        <mat-card class="card"
+          [routerLink]="journey.id"
+          *ngFor="let journey of journeys$ | async">
+          <div class="card__title">
+            <!-- NAME -->
+            <span class="card__name"
+              truncate>{{ journey.name }}</span>
+          </div>
+
+          <div class="card__date">
+            <created-by [createdBy]="journey.created_by"
+              [createdOn]="journey.created_on"></created-by>
+          </div>
+
+          <div class="card__description truncate"
+            *ngIf="journey.description">
+            {{journey.description}}
+          </div>
+
+          <div class="card__chips__container"
+            *ngIf="journey.environment || journey.department">
+            <div class="card__chip"
+              *ngIf="journey.environment">environment: {{journey.environment}}</div>
+            <div class="card__chip"
+              *ngIf="journey.department">department: {{journey.department}}</div>
+          </div>
+        </mat-card>
+      </div>
+
+      <ng-template #emptyResultsTemplate>
+        <div *ngIf="filtersApplied$ | async"
+          class="empty">
+          <span class="empty-result-set">{{'noJourneys' | translate}}</span>
+        </div>
+
+        <empty-state-setup *ngIf="(filtersApplied$ | async) === false">
+          <div class="title">Create Data Journeys</div>
+          <div class="body">Arrange components and build the relationships that deliver data analytic assets, then set rules to monitor for events.</div>
+          <mat-icon class="big-icon"
+            fontSet="mdi"
+            fontIcon="mdi-graph-outline"></mat-icon>
+
+          <button (click)="openAddJourneyDialog(projectHasComponents())"
+            class="add-button"
+            color="primary"
+            mat-flat-button>
+            <mat-icon class="mr-1">add</mat-icon>
+            Create Data Journey
+          </button>
+
+          <help-link class="learn-more"
+            href="https://docs.datakitchen.io/article/dataops-observability-help/data-journeys-and-data-estate">
+            Data Journeys
+          </help-link>
+        </empty-state-setup>
+      </ng-template>
+    </ng-container>
+
+    <!-- LOADING -->
+    <ng-template #loadingTemplate>
+      <div fxFlex
+        fxLayoutAlign="center center">
+        <mat-spinner diameter="64"
+          color="gray">
+        </mat-spinner>
+      </div>
+    </ng-template>
+  </div>
+
+  <mat-paginator [class.hidden]="(total$ | async) === 0"
+    [length]="(total$ | async)"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[5, 10, 25, 50, 100]"
+    [showFirstLastButtons]="true"></mat-paginator>
+</ng-container>

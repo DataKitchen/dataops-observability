@@ -1,0 +1,29 @@
+<mat-nav-list class="menu">
+
+  <ng-container *ngFor="let menu of menus$ | async">
+    <div *ngIf="menu.label"
+      class="menu--header"
+      mat-subheader>
+      {{ menu.label }}
+    </div>
+    <ng-container *ngFor="let menuItem of menu.items">
+      <ng-container *ngIf="menuItem.label">
+        <a [routerLink]="menuItem.link" [relativeTo]="baseRoute"
+          routerLinkActive="active"
+          class="menu--item"
+          mat-list-item>
+          <mat-icon class="menu--item--icon"
+            fontSet="mdi"
+            [fontIcon]="menuItem.icon"
+            mat-list-icon></mat-icon>
+          <div matLine
+            class="menu--item--line">{{ menuItem.label }}</div>
+        </a>
+      </ng-container>
+
+      <ng-container *ngIf="menuItem.component">
+        <ng-container [dynamicComponentOutlet]="menuItem.component"></ng-container>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</mat-nav-list>

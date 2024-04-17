@@ -1,0 +1,191 @@
+<div class="flex-row">
+  <span class="mr-4"
+    *ngIf="externalLabel">{{label}}</span>
+
+  <mat-form-field cdkOverlayOrigin
+    (click)="openEditor($event)"
+    #schedulePicker="cdkOverlayOrigin">
+
+    <mat-label *ngIf="!externalLabel">{{ label }}</mat-label>
+    <input matInput
+      type="text"
+      placeholder="{{ externalLabel ? ' ' : (placeholder || label) }}"
+      [formControl]="displayControl"
+      [autofocus]="autofocus">
+
+    <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+
+    <!-- <mat-error *ngFor="let error of errors">
+      <ng-container *ngIf="control.hasError(error.type) && error.template">
+        <ng-template [ngTemplateOutlet]="error.template"></ng-template>
+      </ng-container>
+    </mat-error> -->
+
+    <button class="picker"
+      (click)="openEditor($event)"
+      mat-icon-button
+      matSuffix>
+      <mat-icon>date_range</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+
+
+<ng-template cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="schedulePicker"
+  [cdkConnectedOverlayOffsetY]="-17"
+  [cdkConnectedOverlayOpen]="(editorOpened$ | async) === true"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  [cdkConnectedOverlayPanelClass]="['base-overlay', 'mat-elevation-z4', 'border-radius']"
+  (backdropClick)="closeEditor()">
+  <div class="schedule-field-overlay">
+    <div class="schedule-field-overlay--form">
+      <div class="schedule-field-overlay--form--types-selector">
+        <button [class.selected]="(selectedMode$ | async) === ScheduleSelectorMode.EveryHour"
+          (click)="selectMode(ScheduleSelectorMode.EveryHour)"
+          mat-button>Every x hours
+        </button>
+        <button [class.selected]="(selectedMode$ | async) === ScheduleSelectorMode.EveryDay"
+          (click)="selectMode(ScheduleSelectorMode.EveryDay)"
+          mat-button>Every x days
+        </button>
+        <button [class.selected]="(selectedMode$ | async) === ScheduleSelectorMode.CertainDays"
+          (click)="selectMode(ScheduleSelectorMode.CertainDays)"
+          mat-button>On certain days
+        </button>
+        <button [class.selected]="(selectedMode$ | async) === ScheduleSelectorMode.Custom"
+          (click)="selectMode(ScheduleSelectorMode.Custom)"
+          mat-button>Custom
+        </button>
+      </div>
+      <div class="schedule-field-overlay--form--main">
+        <ng-template [cdkPortalOutlet]="portal$ | async"></ng-template>
+
+        <div class="schedule-field-overlay--form--main--summary">
+          <span>Cron Expression: {{ cronExpression$ | async }}</span>
+          <span>Next Time: {{ nextTime$ | async | date: 'MMM d, YYYY hh:mm a' }}</span>
+        </div>
+
+        <help-link href="https://docs.datakitchen.io/article/dataops-observability-help/cron-expressions-in-observability">cron expressions</help-link>
+      </div>
+    </div>
+    <div class="schedule-field-overlay--footer">
+      <div class="schedule-field-overlay--footer--select-wrapper">
+        <mat-select [formControl]="form.controls.timezone">
+          <mat-option *ngFor="let tz of Timezones"
+            [value]="tz.tzCode">
+            {{ tz.label }}
+          </mat-option>
+        </mat-select>
+      </div>
+      <span class="spacer"></span>
+      <button mat-button
+        (click)="clear()">Clear
+      </button>
+      <button mat-button
+        color="primary"
+        [disabled]="!form.valid"
+        (click)="apply()">Apply
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #everyHour>
+  <div class="row">
+    <span>Every</span>
+    <mat-select [formControl]="form.controls.hour">
+      <mat-option *ngFor="let hour of hours"
+        [value]="hour">{{ hour }}</mat-option>
+    </mat-select>
+    <span>hour</span> <!-- Use singular and plural-->
+  </div>
+  <div class="row">
+    <span>on minute</span>
+    <mat-select [formControl]="form.controls.minute">
+      <mat-option *ngFor="let minute of minutes"
+        [value]="minute">{{ minute }}</mat-option>
+    </mat-select>
+  </div>
+</ng-template>
+<ng-template #everyDay>
+  <div class="row">
+    <span>Every</span>
+    <mat-select [formControl]="form.controls.day">
+      <mat-option *ngFor="let day of days"
+        [value]="day">{{ day }}</mat-option>
+    </mat-select>
+    <span>days</span> <!-- Use singular and plural-->
+  </div>
+  <div class="row">
+    <span>at</span>
+    <mat-select [formControl]="form.controls.hour">
+      <mat-option value="0">0</mat-option>
+      <mat-option *ngFor="let hour of hours"
+        [value]="hour">{{ hour }}</mat-option>
+    </mat-select>
+    <mat-select [formControl]="form.controls.minute">
+      <mat-option *ngFor="let minute of minutes"
+        [value]="minute">{{ minute }}</mat-option>
+    </mat-select>
+  </div>
+</ng-template>
+<ng-template #certainDays>
+  <ng-container [formGroup]="form">
+    <ng-container formGroupName="weekdays">
+      <div class="row">
+        <mat-checkbox formControlName="0"
+          color="primary">Sunday
+        </mat-checkbox>
+        <mat-checkbox formControlName="1"
+          color="primary">Monday
+        </mat-checkbox>
+        <mat-checkbox formControlName="2"
+          color="primary">Tuesday
+        </mat-checkbox>
+      </div>
+      <div class="row">
+        <mat-checkbox formControlName="3"
+          color="primary">Wednesday
+        </mat-checkbox>
+        <mat-checkbox formControlName="4"
+          color="primary">Thursday
+        </mat-checkbox>
+        <mat-checkbox formControlName="5"
+          color="primary">Friday
+        </mat-checkbox>
+      </div>
+      <div class="row">
+        <mat-checkbox formControlName="6"
+          color="primary">Saturday
+        </mat-checkbox>
+      </div>
+      <div class="row">
+        <span>at</span>
+        <mat-select [formControl]="form.controls.hour">
+          <mat-option value="0">0</mat-option>
+          <mat-option *ngFor="let hour of hours"
+            [value]="hour">{{ hour }}</mat-option>
+        </mat-select>
+        <mat-select [formControl]="form.controls.minute">
+          <mat-option *ngFor="let minute of minutes"
+            [value]="minute">{{ minute }}</mat-option>
+        </mat-select>
+      </div>
+    </ng-container>
+  </ng-container>
+</ng-template>
+<ng-template #custom>
+  <div class="row">
+    <mat-form-field>
+      <mat-label>Cron Expression</mat-label>
+      <input matInput
+        type="text"
+        [formControl]="form.controls.expression">
+
+      <mat-error *ngIf="form.controls.expression.hasError('invalidCron')">Invalid Cron expression</mat-error>
+    </mat-form-field>
+  </div>
+</ng-template>

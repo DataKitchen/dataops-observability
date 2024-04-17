@@ -1,0 +1,68 @@
+<div class="toolbar">
+  <filter-field [label]="'eventTypes' | translate | titlecase"
+    [multiple]="true"
+    [noneSelectedLabel]="'eventTypes' | translate | titlecase"
+    [allSelectedLabel]="'allEventTypes' | translate"
+    [formControl]="$any(search.controls.event_type)">
+
+    <ng-container *ngFor="let ev of events|keyvalue">
+      <filter-field-option [value]="ev.value"
+        [label]="ev.value | translate">
+      </filter-field-option>
+    </ng-container>
+  </filter-field>
+
+
+  <filter-field [label]="'components' | translate | titlecase"
+    [multiple]="true"
+    [searchable]="true"
+    [loading]="componentsLoading()"
+    (search)="onComponentSearch($event)"
+    [noneSelectedLabel]="'components' | translate | titlecase"
+    [allSelectedLabel]="'allComponents' | translate"
+    [formControl]="$any(search.controls.component_id)">
+
+    <ng-container *ngFor="let comp of components$ | async">
+      <filter-field-option [value]="comp.id"
+        [label]="comp.display_name">
+      </filter-field-option>
+    </ng-container>
+  </filter-field>
+
+  <button *ngIf="filtersApplied$ | async"
+    (click)="search.reset()"
+    mat-button>Clear
+  </button>
+</div>
+
+<shell-events-table *ngIf="(loading$ | async) === true || (total$ | async) > 0 || (filtersApplied$ | async); else setupTemplate"
+  [items]="events$ | async"
+  [total]="total$ | async"
+  [loading]="loading$ | async"
+  (tableChange)="onTableChange($event)"
+  [search]="search">
+</shell-events-table>
+
+<ng-template #setupTemplate>
+  <empty-state-setup>
+    <div class="title">No events? Begin by connecting your Data Estate</div>
+    <div class="body">Integrate your tools so events can be sent to DataOps Observability</div>
+    <mat-icon class="big-icon"
+      fontSet="mdi"
+      fontIcon="multiple_stop"></mat-icon>
+
+    <button [routerLink]="['../..', 'integrations']"
+      class="add-button"
+      color="primary"
+      mat-flat-button>
+      <mat-icon>arrow_right_alt</mat-icon>
+      Go to Integrations
+    </button>
+
+    <help-link [showLearnMore]="false"
+      class="learn-more"
+      href="https://docs.datakitchen.io/article/dataops-observability-help/log-in-and-set-up-observability/a/h2_2124997853">
+      Get started with Observability
+    </help-link>
+  </empty-state-setup>
+</ng-template>

@@ -1,0 +1,15 @@
+apiVersion: v2
+name: observability-app
+type: application
+appVersion: 0.1.0
+version: 0.1.0
+
+description: DataOps Observability
+home: https://datakitchen.io
+icon: https://cloud.datakitchen.io/assets/image/dk-logo.svg
+keywords:
+  - datakitchen
+  - dataops
+maintainers:
+  - name: DataKitchen
+    url: https://datakitchen.io

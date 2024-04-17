@@ -1,0 +1,126 @@
+<div class="backdrop"
+  [routerLink]="['.', { outlets: { primary: [id(), 'tests'], rightPanel: null } }]"
+  [relativeTo]="route.parent.parent"></div>
+
+<div class="header">
+  <h2>{{'testgen.title' | translate}}</h2>
+  <mat-icon svgIcon="dataops_testgen"
+    class="testgen-icon"></mat-icon>
+  <span class="fx-flex"></span>
+  <button mat-icon-button
+    [routerLink]="['.', { outlets: { primary: [id(), 'tests'], rightPanel: null } }]"
+    [relativeTo]="route.parent.parent">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<div class="content">
+  <ng-container *ngIf="test()">
+    <div class="information">
+      <div class="information--name">
+          <ng-template [ngTemplateOutlet]="testIcon"
+            [ngTemplateOutletContext]="test()"></ng-template>
+          <h3>{{ test().name }}</h3>
+      </div>
+      <div class="information--results">
+        <span>{{ test().result }}</span>
+      </div>
+      <div *ngIf="test().key"
+        class="information--key">
+        <span>Key: {{ test().key }}</span>
+      </div>
+      <div class="information--badges">
+        <span *ngIf="test().type"
+          class="tag filled">{{ 'testgen.testType.' + test().type | translate: {}:test().type  }}</span>
+        <span *ngFor="let dimension of test().dimensions"
+          class="tag">{{ 'testgen.testDimension.' + dimension | translate: {}:dimension }}</span>
+      </div>
+      <div class="information--help">
+        <help-link *ngIf="testLink()"
+          [href]="testLink()"
+          target="popup">
+          {{ 'testgen.testType.' + test().type | translate: {}:test().type }} test type.
+        </help-link>
+      </div>
+    </div>
+
+    <div class="history">
+      <canvas baseChart
+        type="scatter"
+        [data]="chart().data"
+        [options]="chart().options"></canvas>
+    </div>
+
+    <div class="data">
+      <h4>{{ 'testgen.testData.title' | translate }}</h4>
+
+      <div class="inner-content">
+        <div class="attributes-column">
+          <div class="attribute">
+            <span class="attribute--key">{{ (test().metric_name ?? 'testgen.testData.metricValue') | translate | humanize | titlecase }}</span>
+            <span class="attribute--value">{{ test().metric_value ?? '-' }}</span>
+          </div>
+          <div class="attribute">
+            <span class="attribute--key">{{ 'testgen.testData.testSuite' | translate }}</span>
+            <span class="attribute--value">{{ (test().integrations | getIntegration: 'TESTGEN').test_suite ?? '-' }}</span>
+          </div>
+        </div>
+        <div class="attributes-column">
+          <div class="attribute">
+            <span class="attribute--key">{{ 'testgen.testData.table' | translate }}</span>
+            <span class="attribute--value">{{ (test().integrations | getIntegration: 'TESTGEN').table ?? '-' }}</span>
+          </div>
+          <div class="attribute">
+            <span class="attribute--key">{{ 'testgen.testData.columns' | translate }}</span>
+            <span class="attribute--value">{{ (test().integrations | getIntegration: 'TESTGEN').columns ?? '-' }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="attribute metric-description">
+        <span class="attribute--key">{{ 'testgen.testData.metricDescription' | translate }}</span>
+        <span class="attribute--value">{{ test().metric_description ?? '-' }}</span>
+      </div>
+    </div>
+
+    <div class="parameters">
+      <h4>{{ 'testgen.testParams.title' | translate }}</h4>
+
+      <div class="inner-content">
+        <div class="attributes-column">
+          <div class="attribute">
+            <span class="attribute--key">{{ 'testgen.testParams.min' | translate }}</span>
+            <span class="attribute--value">{{ test().min_threshold ?? '-' }}</span>
+          </div>
+          <ng-container *ngFor="let attribute of (test().integrations | getIntegration: 'TESTGEN').test_parameters; let isEven = even">
+            <div *ngIf="isEven"
+              class="attribute">
+              <span class="attribute--key">{{ attribute.name | humanize | titlecase }}</span>
+              <span class="attribute--value">{{ attribute.value ?? '-' }}</span>
+            </div>
+          </ng-container>
+        </div>
+        <div class="attributes-column">
+          <div class="attribute">
+            <span class="attribute--key">{{ 'testgen.testParams.max' | translate }}</span>
+            <span class="attribute--value">{{ test().max_threshold ?? '-' }}</span>
+          </div>
+          <ng-container *ngFor="let attribute of (test().integrations | getIntegration: 'TESTGEN').test_parameters; let isOdd = odd">
+            <div *ngIf="isOdd"
+              class="attribute">
+              <span class="attribute--key">{{ attribute.name | humanize | titlecase }}</span>
+              <span class="attribute--value">{{ attribute.value ?? '-' }}</span>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+
+<ng-template #testIcon
+  let-status="status">
+  <mat-icon *ngIf="status === TestStatus.Passed" class="PASSED">check</mat-icon>
+  <mat-icon *ngIf="status === TestStatus.Warning" class="WARNING">warning_amber</mat-icon>
+  <mat-icon *ngIf="status === TestStatus.Failed" class="FAILED">close</mat-icon>
+</ng-template>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"
+   sodipodi:docname="Arch_AWS-Lambda_32.svg"
+   id="svg16"
+   version="1.1"
+   viewBox="0 0 30 30"
+   height="30"
+   width="30">
+  <metadata
+     id="metadata22">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Icon-Architecture/32/Arch_AWS-Lambda_32</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs20" />
+  <sodipodi:namedview
+     inkscape:current-layer="svg16"
+     inkscape:window-maximized="0"
+     inkscape:window-y="25"
+     inkscape:window-x="78"
+     inkscape:cy="27.797086"
+     inkscape:cx="16.581089"
+     inkscape:zoom="9.1606144"
+     showgrid="false"
+     id="namedview18"
+     inkscape:window-height="765"
+     inkscape:window-width="1279"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <title
+     id="title10">Icon-Architecture/32/Arch_AWS-Lambda_32</title>
+  <g
+     transform="scale(0.75)"
+     fill-rule="evenodd"
+     fill="none"
+     stroke-width="1"
+     stroke="none"
+     id="Icon-Architecture/32/Arch_AWS-Lambda_32">
+    <g
+       fill="#ed7100"
+       id="Icon-Architecture-BG/32/Compute">
+      <rect
+         height="40"
+         width="40"
+         y="0"
+         x="0"
+         id="Rectangle" />
+    </g>
+    <path
+       fill="#ffffff"
+       id="AWS-Lambda_Icon_32_Squid"
+       d="M 14.386376,33 H 8.2695732 l 6.7630548,-14.426 3.064294,6.44 z M 15.470665,17.202 C 15.389147,17.03 15.217271,16.92 15.028699,16.92 h -0.002 c -0.18759,10e-4 -0.359465,0.112 -0.440983,0.285 l -7.5379679,16.08 c -0.072679,0.154 -0.061875,0.337 0.028482,0.482 C 7.1656415,33.912 7.3227848,34 7.4907317,34 h 7.2060023 c 0.190536,0 0.363394,-0.111 0.444912,-0.286 l 3.944297,-8.489 c 0.06384,-0.137 0.06286,-0.296 -0.002,-0.432 z M 32.017854,33 h -5.88207 L 16.666918,12.289 C 16.586382,12.113 16.412543,12 16.222006,12 h -3.851975 l 0.0049,-5 h 7.548771 l 9.42467,20.71 c 0.08054,0.177 0.255357,0.29 0.445894,0.29 h 2.223577 z m 0.491073,-6 H 30.108563 L 20.682912,6.29 C 20.602376,6.113 20.427554,6 20.237018,6 h -8.353149 c -0.271072,0 -0.491073,0.224 -0.491073,0.5 l -0.0059,6 c 0,0.132 0.05205,0.259 0.144376,0.354 0.09232,0.093 0.216072,0.146 0.346697,0.146 h 4.031708 l 9.467884,20.711 C 25.458104,33.887 25.631943,34 25.823462,34 h 6.685465 C 32.780982,34 33,33.776 33,33.5 v -6 C 33,27.224 32.780982,27 32.508927,27 Z" />
+  </g>
+</svg>

@@ -1,0 +1,17 @@
+@import '@observability/ui/styles/fields';
+
+
+:host {
+  @include field;
+
+  justify-content: flex-start;
+  margin: $field-margin-top 0 $field-margin-bottom;
+
+  &.form-field--no-margin-top {
+    margin-top: 0;
+  }
+
+  &.form-field--indent {
+    padding-left: 28px;
+  }
+}

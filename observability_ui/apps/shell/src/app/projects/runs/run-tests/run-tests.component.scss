@@ -1,0 +1,201 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  @include mixins.flex-column($justify: flex-start, $align: stretch);
+
+  flex: 1;
+}
+
+.tests-summary {
+  @include mixins.flex-column($justify: flex-start, $align: flex-start);
+
+  max-width: 900px;
+  margin-bottom: variables.$space-lg;
+
+  &--bar {
+    @include mixins.flex-row($justify: flex-start, $align: flex-start);
+
+    width: 100%;
+    height: variables.$space-md;
+    overflow: hidden;
+    border-radius: variables.$border-radius;
+    margin-bottom: variables.$space-xs;
+
+    span {
+      height: 100%;
+      min-width: 10%;
+      cursor: pointer;
+    }
+
+    .empty {
+      width: 100%;
+      background-color: variables.$gray-300;
+    }
+
+    .PASSED {
+      background-color: variables.$light-green-400;
+    }
+
+    .WARNING {
+      background-color: variables.$amber-300;
+    }
+
+    .FAILED {
+      background-color: variables.$red-300;
+    }
+  }
+
+  &--legend {
+    @include mixins.flex-row($justify: flex-start, $align: flex-start);
+
+    shell-summary-item {
+      cursor: pointer;
+    }
+
+    &--item {
+      @include mixins.flex-row($justify: flex-start, $align: flex-start);
+
+      margin-right: 100px;
+
+      &:not(.total) {
+        cursor: pointer;
+      }
+
+      &--marker {
+        height: variables.$space-xl;
+        margin-right: variables.$space-xs;
+        border-right: 3px solid variables.$gray-400;
+
+        &.PASSED {
+          border-color: variables.$light-green-400;
+        }
+
+        &.WARNING {
+          border-color: variables.$amber-300;
+        }
+
+        &.FAILED {
+          border-color: variables.$red-300;
+        }
+      }
+
+      &--info {
+        @include mixins.flex-column($justify: flex-start, $align: flex-start);
+
+        &--label {
+          @include mixins.font-style($style: caption, $color: disabled);
+
+          line-height: 12px;
+          margin-bottom: variables.$space-xxs;
+        }
+
+        &--value {
+          @include mixins.font-style($style: headline);
+
+          line-height: 24px;
+        }
+      }
+    }
+  }
+}
+
+.toolbar {
+  @include mixins.flex-row($justify: flex-start);
+
+  margin-bottom: variables.$space-sm;
+
+  ::ng-deep .search-tests .mat-form-field-wrapper {
+    margin-bottom: -1.25em
+  }
+}
+
+.status-text-cell {
+  @include mixins.flex-row($justify: flex-start);
+  max-width: 100%;
+
+  .PASSED mat-icon {
+    color: variables.$green-500;
+  }
+
+  .WARNING mat-icon {
+    color: variables.$amber-500;
+  }
+
+  .FAILED mat-icon {
+    color: variables.$red-500;
+  }
+
+  .text--mono {
+    @include mixins.font-style(caption, secondary);
+  }
+
+  .test-description {
+    margin-left: variables.$space-sm;
+    max-width: 90%;
+  }
+}
+
+.action-link {
+  @include mixins.link-with-icon;
+  @include mixins.flex-row($justify: center, $align: center);
+
+  cursor: pointer;
+
+  mat-icon {
+    @include mixins.icon-size(14px);
+    @include mixins.font-color(link);
+  }
+
+  & + .action-link {
+    margin-left: variables.$space-xs;
+  }
+
+  &.testgen-link {
+    mat-icon {
+      @include mixins.icon-size(12px);
+    }
+  }
+}
+
+table-wrapper::ng-deep {
+  .cdk-column-start_time {
+    max-width: 120px;
+  }
+
+  .cdk-column-end_time {
+    max-width: 120px;
+  }
+
+  .cdk-column-component {
+    flex: 0 0 225px;
+
+    &.mat-cell {
+      @include mixins.flex-row($justify: flex-start);
+
+      mat-icon {
+        @include mixins.icon-size(18px);
+
+        margin-right: variables.$space-xs;
+      }
+
+      .component-name {
+        display: flex;
+
+        width: calc(225px - 32px /*padding*/ - 18px /*icon size*/ - #{variables.$space-xs} /*icon r-margin*/);
+      }
+    }
+  }
+
+  .cdk-column-actions {
+    flex: 0 0 106px;
+    justify-content: flex-end;
+  }
+}
+
+.description {
+  @include mixins.font-style($style: caption, $color: secondary);
+
+  overflow-y: auto;
+  max-height: 64px;
+}

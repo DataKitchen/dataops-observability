@@ -1,0 +1,147 @@
+@use '@angular/material' as mat;
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  padding: variables.$space-md;
+  padding-top: variables.$space-xs;
+
+  mat-expansion-panel {
+    @include mat.elevation(0);
+  }
+}
+
+.title {
+  @include mixins.flex-row($justify: flex-start);
+
+  mat-icon {
+    @include mixins.icon-size(32px);
+
+    margin-right: variables.$space-xs;
+  }
+}
+
+mat-expansion-panel {
+  margin: {
+    left: -#{variables.$space-md};
+    right: -#{variables.$space-md};
+  };
+  border-radius: unset;
+
+  mat-panel-title {
+    h2 {
+      margin-bottom: unset;
+    }
+  }
+
+  ul,
+  ol {
+    margin-block-start: unset;
+    padding-inline-start: 15px;
+  }
+}
+
+shell-service-key-form {
+  display: block;
+  margin-bottom: variables.$space-sm;
+}
+
+.env-list {
+  padding: variables.$space-xs;
+  background: rgb(242, 242, 242);
+
+  > div {
+    @include mixins.flex-row($justify: space-between);
+
+    margin-bottom: 2px;
+
+    span {
+      @include mixins.flex-row($justify: flex-start);
+
+      flex: 1 1 0;
+      color: rgb(59, 81, 186);
+      font-family: variables.$font-mono;
+
+      &.required {
+        font-weight: 600;
+
+        &::before {
+          content: "*";
+          order: 1;
+          margin-left: 4px;
+          color: rgb(100, 100, 100);
+        }
+      }
+
+
+      &::after {
+        content: "=";
+        order: 2;
+        color: rgb(100, 100, 100);
+        margin: {
+          left: auto;
+          right: variables.$space-sm;
+        };
+      }
+    }
+
+    input {
+      border: unset;
+      outline: unset;
+      background-color: unset;
+
+      width: 400px;
+      height: 25px;
+      color: rgb(58, 125, 31);
+      font-weight: 600;
+      font-family: variables.$font-mono;
+      border-bottom: 1px solid transparent;
+
+      &:focus-visible {
+        border-bottom: 1px solid rgb(100, 100, 100);
+      }
+
+      &:disabled {
+        color: rgba(58, 125, 31, 0.7);
+      }
+
+      &::placeholder {
+        @include mixins.font-color(disabled);
+      }
+    }
+  }
+
+  &.w-300 {
+    > div {
+      input {
+        width: 300px;
+      }
+    }
+  }
+}
+
+.deploy-params {
+  @include mixins.flex-row($justify: flex-start);
+
+  text-field {
+    margin-right: variables.$space-xs;
+  }
+}
+
+code-snippet {
+  display: block;
+  margin-bottom: variables.$space-xs;
+}
+
+alert + p {
+  margin-top: variables.$space-xs;
+}
+
+mat-action-row {
+  span {
+    @include mixins.font-style(caption, $color: variables.$red-500);
+
+    align-self: center;
+    margin-right: auto;
+  }
+}

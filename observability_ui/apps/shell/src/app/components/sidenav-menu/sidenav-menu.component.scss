@@ -1,0 +1,45 @@
+@use '@observability/ui/styles/variables' as variables;
+@use '@observability/ui/styles/mixins' as mixins;
+
+.projects-dropdown {
+  @include mixins.flex-column($align: flex-start);
+
+  margin: variables.$space-xs 0 variables.$space-lg variables.$space-xs;
+
+  &--label {
+    @include mixins.font-color(secondary);
+
+    font-size: 10px;
+    line-height: 12px;
+    text-transform: uppercase;
+  }
+
+  button {
+      @include mixins.flex-row;
+      @include mixins.button-reset;
+  }
+}
+
+.menu {
+  &--item {
+    @include mixins.font-style($style: menu, $color: secondary);
+
+    height: variables.$space-xl !important;
+    border-left: 4px solid transparent;
+
+    &.active {
+      @include mixins.mat-color;
+      @include mixins.mat-color($hue: 'lighter', $property: 'border-left-color');
+
+      background-color: whitesmoke;
+    }
+
+    &--icon {
+      @include mixins.icon-size(20px !important);
+    }
+
+    &--line {
+      font-weight: 500 !important;
+    }
+  }
+}

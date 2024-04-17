@@ -1,0 +1,18 @@
+<ng-container *ngFor="let item of items; let itemIndex = index">
+    <!-- LINK -->
+    <a *ngIf="item.link"
+        [routerLink]="item.link"
+        class="breadcrumb__link">
+        {{item.label}}
+    </a>
+    <!-- NON-LINK -->
+    <span *ngIf="!item.link"
+        class="breadcrumb__item">
+        {{item.label}}
+    </span>
+    <!-- ARROW ICON -->
+    <mat-icon *ngIf="itemIndex !== items.length - 1"
+        class="breadcrumb__icon">
+        navigate_next
+    </mat-icon>
+</ng-container>

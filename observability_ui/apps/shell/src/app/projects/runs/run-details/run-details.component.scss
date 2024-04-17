@@ -1,0 +1,77 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  @include mixins.flex-column($justify: normal, $align: normal);
+
+  height: 100%;
+
+  details-header {
+    shell-run-states {
+      width: fit-content;
+      margin: {
+        left: auto;
+        bottom: variables.$space-sm;
+        top: variables.$space-xs;
+      }
+    }
+
+    shell-task-test-summary {
+      max-width: 300px;
+      align-self: flex-end;
+    }
+  }
+}
+
+
+:host ::ng-deep shell-run-states {
+  & > div {
+    justify-content: flex-end;
+  }
+}
+
+:host ::ng-deep .run-time--label-container {
+  flex-direction: column-reverse;
+  align-items: flex-start;
+
+  & .run-time--icon-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    & mat-icon {
+      @include mixins.icon-size(14px);
+      margin: 0 2px 0 0;
+    }
+
+    font-size: 10px;
+    font-style: italic;
+    line-height: 10px;
+
+    color: variables.$red-500;
+    margin-left: -1px;
+    margin-right: -2px;
+  }
+}
+
+@keyframes blink {
+  0% {
+    color: variables.$blue-50;
+  }
+  25% {
+    color: variables.$blue-100;
+  }
+  50% {
+    color: variables.$blue-200;
+  }
+  75% {
+    color: variables.$blue-500;
+  }
+  100% {
+    color: variables.$blue-700;
+  }
+}
+
+strong {
+  font-weight: 500;
+}

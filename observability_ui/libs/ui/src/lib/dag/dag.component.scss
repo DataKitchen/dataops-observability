@@ -1,0 +1,91 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+$edge-color: mixins.rgba-to-rgb(variables.$gray-500);
+$selected-edge-color: mixins.rgba-to-rgb(variables.$gray-700);
+
+:host {
+  position: relative;
+
+  &.no-edges {
+    .edge {
+      display: none;
+    }
+  }
+}
+
+svg {
+  width: 100%;
+  height: 100%;
+
+  defs {
+    marker.arrow {
+      path {
+        fill: $edge-color;
+      }
+    }
+    marker.arrow-selected {
+      path {
+        fill: $selected-edge-color;
+      }
+    }
+  }
+
+  .node {
+    width: fit-content;
+    height: fit-content;
+    overflow: visible;
+  }
+
+  .draggable .node {
+    cursor: grab;
+  }
+
+  .dragging .node {
+    cursor: grabbing;
+  }
+
+  .node-dot {
+    opacity: 0;
+    fill: variables.$blue-500;
+    transition: 50ms;
+  }
+
+  .node-group:hover .node-dot {
+    opacity: 0.6;
+  }
+
+  .edge-line {
+    stroke: $edge-color;
+    stroke-width: 2;
+    fill: none;
+    marker-mid: url('#arrow');
+
+    &.selected {
+      stroke: $selected-edge-color;
+      stroke-width: 3;
+      marker-mid: url('#arrow-selected');
+    }
+
+    &.dragging {
+      marker-mid: unset;
+      pointer-events: none;
+    }
+  }
+
+  foreignObject.spinner {
+    transform: translate(-50%, -50%);
+  }
+}
+
+dag-actions {
+  @include mixins.flex-row($justify: flex-end, $align: flex-end);
+  pointer-events: none;
+
+  width: 100%;
+  user-select: none;
+  position: absolute;
+
+  right: 0;
+  bottom: 0;
+}

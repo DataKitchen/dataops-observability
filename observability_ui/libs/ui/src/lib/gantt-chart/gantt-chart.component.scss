@@ -1,0 +1,159 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+$lane-height: 54px;
+$nested-lane-height: 34px;
+$tick-width: 62px;
+$tick-height: 36px; /* Width with day info */
+$tick-halve: calc($tick-width / 2);
+$task-name-width: 250px;
+
+:host {
+  @include mixins.flex-column($justify: flex-start, $align: flex-start);
+
+  position: relative;
+}
+
+.ticks {
+  @include mixins.flex-row($justify: space-between, $align: flex-start);
+  @include mixins.font-style($style: caption, $color: disabled);
+
+  width: calc(100% - #{$task-name-width});
+  margin-left: $task-name-width;
+  margin-bottom: variables.$space-sm;
+
+  &--tick {
+    display: flex;
+    height: #{$tick-height};
+    align-items: flex-end;
+    justify-content: center;
+
+    width: $tick-width;
+    text-align: center;
+    position: relative;
+
+    &:nth-child(1) {
+      margin-left: -#{$tick-halve};
+    }
+
+    &::after {
+      content: " ";
+      border-top: variables.$border;
+      margin-top: 4px;
+      width: 16px;
+      position: absolute;
+      transform: rotate(90deg);
+      bottom: -8px;
+      left: 23.5px;
+    }
+  }
+}
+
+.now-layer {
+  @include mixins.flex-column($justify: flex-start, $align: flex-start);
+
+  flex: 1;
+  top: 32px;
+  height: 100%;
+  position: absolute;
+  pointer-events: none;
+  margin-left: $task-name-width;
+
+  &--bar {
+    @include mixins.flex-column($justify: flex-start, $align: normal);
+    @include mixins.font-style($style: caption);
+
+    height: 100%;
+    margin-top: -20px;
+    margin-left: -26px;
+    z-index: 10;
+
+    &::after {
+      content: " ";
+      height: 100%;
+      border-left: 1px solid variables.$dark-primary-text;
+      margin-left: 25px;
+    }
+  }
+}
+
+.chart {
+  @include mixins.flex-row($justify: flex-start, $align: flex-start);
+
+  width: 100%;
+  height: calc(100% - 34px);
+  overflow-y: auto;
+
+  .tasks {
+    @include mixins.flex-column($justify: flex-start, $align: flex-start);
+
+    width: $task-name-width;
+
+    &--task {
+      @include mixins.flex-row($justify: flex-start, $align: center);
+
+      width: 100%;
+      height: $lane-height;
+      border: variables.$border;
+      padding: variables.$space-sm variables.$space-xs;
+      border-right-color: transparent;
+
+      &:nth-child(1) {
+        border-top-left-radius: variables.$border-radius;
+      }
+
+      &:last-child {
+        border-bottom-left-radius: variables.$border-radius;
+      }
+
+      &.nested {
+        height: $nested-lane-height;
+        padding: variables.$space-xs variables.$space-xxs;
+
+        &:not(:last-child) {
+          border-bottom-color: transparent;
+        }
+      }
+    }
+  }
+
+  .durations {
+    @include mixins.flex-column($justify: flex-start, $align: flex-start);
+
+    flex: 1;
+
+    &--lane {
+      @include mixins.flex-row($justify: flex-start, $align: center);
+
+      width: 100%;
+      height: $lane-height;
+      border: variables.$border;
+      position: relative;
+      overflow-x: hidden;
+
+      &:nth-child(1) {
+        border-top-right-radius: variables.$border-radius;
+      }
+
+      &:last-child {
+        border-bottom-right-radius: variables.$border-radius;
+      }
+
+      &.nested {
+        height: $nested-lane-height;
+
+        &:not(:last-child) {
+          border-bottom-color: transparent;
+        }
+      }
+    }
+  }
+}
+
+.tasks--task + .tasks--task {
+  border-top-color: transparent;
+}
+
+.durations--lane + .durations--lane {
+  border-top-color: transparent;
+}

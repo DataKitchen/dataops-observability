@@ -1,0 +1,4 @@
+<div [ngClass]="run.status ?? state" class="fx-flex flex-row">
+  <span>{{'runStatus.' + state | translate}}</span>
+  <mat-icon *ngIf="hasWarnings">warning_amber</mat-icon>
+</div>

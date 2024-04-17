@@ -1,0 +1,85 @@
+<details-header [title]="(run$ | async)?.pipeline?.display_name"
+  backLink="../.."
+  [backLinkTitle]="'backToRuns' | translate "
+>
+
+  <div subtitle>
+    <span class="mr-1"><strong>Key:</strong> {{ (run$ | async)?.key }}</span>
+    <ng-container *ngIf="(run$ | async)?.name">
+      <span><strong>Name:</strong> {{ (run$ | async)?.name }}</span>
+    </ng-container>
+  </div>
+
+  <nav mat-tab-nav-bar
+       [tabPanel]="tabPanel"
+       #tabs>
+    <a mat-tab-link
+       routerLink="graph"
+       routerLinkActive
+       #graphLink="routerLinkActive"
+       [active]="graphLink.isActive">{{ 'observedGraph' | translate | titlecase }}</a>
+    <a mat-tab-link
+       routerLink="timeline"
+       routerLinkActive
+       #timelineLink="routerLinkActive"
+       [active]="timelineLink.isActive">{{ 'timeline' | translate | titlecase }}</a>
+
+<!--    <a mat-tab-link disabled>{{ 'tests' | translate | titlecase }}</a>-->
+
+    <a mat-tab-link
+      routerLink="tests"
+      routerLinkActive
+      #testsLink="routerLinkActive"
+      [active]="testsLink.isActive">
+      {{ 'tests' | translate | titlecase }}
+    </a>
+
+    <a mat-tab-link
+      routerLink="events"
+      routerLinkActive
+      #eventsLink="routerLinkActive"
+      [active]="eventsLink.isActive">
+      {{ 'events' | translate | titlecase }}
+    </a>
+  </nav>
+
+  <div *ngIf="run$ | async as run" class="flex-column">
+    <div class="flex-row fx-justify-content-flex-end fx-align-flex-end">
+
+      <shell-run-time
+        iconLabel="Late Start"
+        dateFormat="MMM d, h:mm a"
+        [actual]="run.start_time"
+        [expected]="run.expected_start_time"
+        [alertType]="RunAlertType.LateStart"
+        [alerts]="run.alerts"
+      ></shell-run-time>
+
+      <span class="mx-2">to</span>
+
+      <shell-run-time
+        iconLabel="Late End"
+        dateFormat="MMM d, h:mm a"
+        [actual]="run.end_time"
+        [expected]="run.expected_end_time"
+        [alertType]="RunAlertType.LateStart"
+        [alerts]="run.alerts"
+      ></shell-run-time>
+
+      <duration class="ml-2 text-caption--secondary"
+                [start]="run.start_time"
+                [end]="run.end_time">
+      </duration>
+    </div>
+
+    <shell-run-states [run]="run"></shell-run-states>
+
+    <shell-task-test-summary [tasksSummaries]="run.tasks_summary"
+      [testsSummaries]="run.tests_summary"></shell-task-test-summary>
+  </div>
+
+</details-header>
+
+<mat-tab-nav-panel class="scrolling-content" #tabPanel>
+  <router-outlet></router-outlet>
+</mat-tab-nav-panel>

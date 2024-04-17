@@ -1,0 +1,320 @@
+[build-system]
+requires = [
+    "setuptools ~= 65.3",
+    "wheel",
+    "build"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Observability"
+version = "2.0.0"
+description = "DataOops Observability"
+urls = { "homepage" = "https://datakitchen.io" }
+authors = [
+]
+license = { "text" = "CLOSED"  }
+readme = "README.md"
+classifiers = [
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+]
+requires-python = ">=3.10"
+
+dependencies = [
+    "arrow~=1.2.2",
+    "apispec-webframeworks~=0.5.2",
+    "apispec~=6.2.0",
+    "APScheduler~=3.10.0",
+    "blinker~=1.5",
+    "boltons~=23.0.0",
+    "confluent-kafka~=2.1",
+    "flask~=2.2.2",
+    "gunicorn~=21.2.0",
+    "log-color==2.0.0",
+    "Marshmallow-Peewee~=3.4.3",
+    "marshmallow~=3.19.0",
+    "marshmallow-union==0.1.15.post1",
+    "msgpack==1.0.4",
+    "peewee~=3.16.0",
+    "PyJWT~=2.4",
+    "PyMySQL==1.0.2",
+    "pybars3~=0.9.7",
+    "requests_extensions~=1.1.3",
+    "tomli==2.0.1",
+    "Werkzeug==2.2.3",
+    "WTForms==3.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black~=23.1.0",
+    "invoke~=2.1.2",
+    "isort~=5.12.0",
+    "lxml~=4.9.1",
+    "mypy~=1.5.0",
+    "pre-commit~=2.20.0",
+    "pytest-cov~=4.0.0",
+    "pytest-xdist~=3.1.0",
+    "pytest~=7.2.0",
+    "pyyaml~=6.0",
+    "ruff==0.0.275",
+    "types-PyYAML~=6.0.8",
+    "types-requests==2.28.11.15",
+    "types-setuptools==65.3.0",
+]
+build = [
+    "build",
+    "setuptools~=65.3",
+    "wheel",
+    "trove-classifiers",
+]
+
+[project.entry-points.console_scripts]
+cli = "cli.__main__:main"
+rules-engine = "rules_engine.__main__:main"
+run-manager = "run_manager.__main__:main"
+scheduler = "scheduler.__main__:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-data]
+"*" = ["*.toml", "*.html"]
+"cli.graph_templates" = ["*.html"]
+"common.peewee_extensions.templates" = ["*.toml"]
+
+[tool.setuptools.packages.find]
+# see the important note for why we glob. TL;DR: Otherwise you don't get submodules
+# https://setuptools.pypa.io/en/latest/userguide/package_discovery.html#finding-simple-packages
+include = [
+      "agent_api*",
+      "observability_api*",
+      "common*",
+      "conf*",
+      "event_api*",
+      "cli*",
+      "rules_engine*",
+      "run_manager*",
+      "scheduler*",
+      "subcommand*",
+]
+exclude = [ "*.tests", "tests*", "deploy*", "scripts*", "testlib*"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+# --strict-markers means the markers have to be defined in this file before use, which prevents mispellings.
+# --strict-config means that any warnings encountered while parsing the `pytest`configuration file will raise errors.
+# -ra: show extra test data.
+addopts = "-ra --strict-markers --strict-config --durations=10 "
+python_files = "test_*.py"
+python_classes = "Test_"
+python_functions = "test_*"
+
+# Look up "Testing Pyramid" for more insight into these markers.
+markers = [
+    "unit: The test is a unit test and is thus expected to be fast with little setup",
+    "integration: The test is an integration test and is thus expected to be somewhat slower with a little more setup",
+    "functional: The test is a functional test and is thus expected to be slower with greater setup",
+    "slow: Mark tests which are known to be slow. Useful for filtering",
+]
+filterwarnings = [
+    # remove when resolved: https://github.com/marshmallow-code/apispec/issues/739
+    'ignore:distutils Version classes are deprecated:DeprecationWarning:apispec'
+]
+
+# see: https://mypy.readthedocs.io/en/stable/config_file.html#using-a-pyproject-toml-file
+# for settings that do not have a comment,
+# see: https://mypy.readthedocs.io/en/stable/config_file.html
+# for an explanation of their functionality.
+# WARNING: When changing mypy configurations, be sure to test them after removing your .mypy_cache
+[tool.mypy]
+python_version = "3.10"
+check_untyped_defs = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+# This warns if any returns get cast to 'Any' due to type uncertainty by mypy. Since 'Any' is a valid return type
+# for any function, returning any from a str function would be valid. This causes it to raise a warning instead.
+warn_return_any = true
+# This shows an error-code on failure, which is useful on debugging and possibly ignoring those particular
+# lines if need-be.
+show_error_codes = true
+# This warns us if we're using '# type ignore' on a function which mypy knows it has definitions for.
+# Hopefully this allows us to phase in type-checks on more libraries.
+warn_unused_ignores = true
+# Enables PEP 420 style namespace packages. This is a complex topic,
+# but my reading suggests this is a generally 'good' idea.
+# so see: https://mypy.readthedocs.io/en/stable/config_file.html#confval-namespace_packages
+namespace_packages = true
+warn_redundant_casts = true
+# Remember that time you forgot to put a return in the function? This warns us of that.
+# i.e.,
+#
+# def foo() -> str:
+#     x = 'a' + 'x'
+# will return an error for not having the return it promised.
+warn_no_return = true
+# This attempts to warn us when we encounter code that is currently unreachable.
+warn_unreachable = true
+# Now for some configurations to improve our error messages Attempts to make the output prettier for us mere mortals.
+pretty = true
+# This tries to show some additional context around where the error is occuring
+show_error_context = true
+# Mypy appears smart enough to ignore hidden directories. But it needs to scan __pycache__ for .pyc and pyi files,
+# so it cannot honor gitignore.
+exclude = [
+    '''^(?:.*\/)+[tT]ests?''',
+    'conftest.py',
+    'venv/',
+    'build/',
+    'testlib/fixtures/',
+    'benchmark/',
+]
+
+[[tool.mypy.overrides]]
+module = "peewee"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "playhouse.pool"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "playhouse.mysql_ext"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "playhouse.shortcuts"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "playhouse.hybrid"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "blinker"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "boltons.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "apispec"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "apispec.ext.marshmallow"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "apispec_webframeworks"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "apispec_webframeworks.flask"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "confluent_kafka"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "subcommand.subcmd"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "cli.lib"
+check_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = "PIL.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "wtforms.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "invoke"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "apscheduler.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "msgpack.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "marshmallow_union.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "pybars"
+ignore_missing_imports = true
+
+[tool.isort]
+profile = "black"
+line_length = 120
+
+[tool.black]
+line-length = 120
+target-version = ['py310']
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | env
+    | venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+  | foo.py           # also separately exclude a file named foo.py in
+                     # the root of the project
+)
+'''
+
+# See: https://coverage.readthedocs.io/en/latest/config.html
+[tool.coverage.run]
+branch=true
+# Every time there is a new top-level module, this will need to be expanded.
+source = [
+    "agent_api",
+    "common",
+    "conf",
+    "observability_api",
+    "event_api",
+    "rules_engine",
+    "run_manager",
+    "scheduler",
+]
+
+[tool.coverage.report]
+# We don't need to report the coverage lines on tests
+omit = ["*/*tests/*"]
+# This skips __init__.py and other empty files.
+skip_empty=true
+
+[tool.ruff]
+target-version = "py310"
+select = ["F401"]
+ignore-init-module-imports = true
+respect-gitignore = true
+line-length = 120
+
+[tool.ruff.extend-per-file-ignores]
+"*/tests/*" = [
+  "F811", # Shadow unused imports; pytest fixtures
+]

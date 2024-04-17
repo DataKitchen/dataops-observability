@@ -1,0 +1,62 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+$color-by-status: (
+  'PENDING': map-get($map: variables.$colors, $key: 'gray'),
+  'MISSING': map-get($map: variables.$colors, $key: 'gray'),
+  'RUNNING': map-get($map: variables.$colors, $key: 'blue'),
+  'COMPLETED': map-get($map: variables.$colors, $key: 'green'),
+  'COMPLETED_WITH_WARNINGS': map-get($map: variables.$colors, $key: 'orange'),
+  'FAILED': map-get($map: variables.$colors, $key: 'red'),
+  'ACTIVE': map-get($map: variables.$colors, $key: 'blue'),
+  'WARNING': map-get($map: variables.$colors, $key: 'orange'),
+  'ERROR': map-get($map: variables.$colors, $key: 'red'),
+  'hasStartTime': linear-gradient(to right, variables.$gray-400, transparent),
+  'hasEndTime': linear-gradient(to left, variables.$gray-400, transparent),
+  'hasStartAndEndTime': variables.$gray-400,
+);
+
+
+gantt-chart {
+  gantt-task {
+    cursor: pointer;
+    background-color: variables.$gray-200;
+
+    @each $status, $color in $color-by-status {
+      &.#{$status} {
+        background: $color;
+      }
+    }
+
+    @each $status, $color in $color-by-status {
+      &.ACTIVE-#{$status} {
+        background: linear-gradient(90deg, $color 70%, white 100%)
+      }
+    }
+
+    &.disabled {
+      cursor: default;
+    }
+  }
+}
+
+.gantt-bar-tooltip {
+  font-size: 10px;
+  line-height: 12px;
+
+  &--line {
+    display: block;
+  }
+
+  &--name {
+    font-weight: 700;
+  }
+
+  &--key,
+  &--start,
+  &--end,
+  &--duration,
+  &--runs {
+    font-style: italic;
+  }
+}

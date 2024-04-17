@@ -1,0 +1,40 @@
+<header>
+  <img src="/assets/dk-logo.svg" alt="DataKitchen Logo" class="logo" />
+  <a target="_blank" href="https://docs.datakitchen.io/home/en-us/">Documentation Library</a>
+</header>
+
+<div class="content">
+  <h1 class="title">Login</h1>
+
+  <form [formGroup]="form"
+    (ngSubmit)="login()">
+    <mat-card class="mat-elevation-z0">
+      <mat-card-content>
+        <text-field label="Username"
+          placeholder="Enter username"
+          formControlName="username"
+          type="text">
+        </text-field>
+
+        <text-field label="Password"
+          placeholder="Enter password"
+          formControlName="password"
+          type="password">
+        </text-field>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button color="primary"
+          mat-flat-button
+          type="submit">
+          Login
+        </button>
+      </mat-card-actions>
+
+      <mat-card-footer>
+        <alert *ngIf="loginError"
+          type="error">{{ loginError }}</alert>
+      </mat-card-footer>
+    </mat-card>
+  </form>
+</div>

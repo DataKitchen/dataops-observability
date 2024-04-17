@@ -1,0 +1,28 @@
+<div class="toolbar">
+  <span fxFlex></span>
+  <button (click)="openRuleDialog();" class="add-rule-button" mat-raised-button color="primary">
+    <mat-icon inline>add</mat-icon>
+    Add Rule
+  </button>
+</div>
+
+<div fxLayout="column" fxLayoutGap="12px">
+
+  <ng-container *ngIf="(loading$ | async) === false && (rules$ | async)?.length === 0 ">
+
+    <empty-state-setup>
+      <span class="title">Configure your Actions</span>
+      <span class="body">Capture crucial events with rules.</span>
+      <mat-icon class="big-icon">rule</mat-icon>
+    </empty-state-setup>
+
+  </ng-container>
+
+  <ng-container *ngFor="let rule of rules$ | async as rules">
+    <rule-display [rule]="rule" [components]="components$ | async"></rule-display>
+  </ng-container>
+</div>
+
+<mat-progress-spinner *ngIf="loading$ | async"
+  mode="indeterminate"
+  color="gray"></mat-progress-spinner>

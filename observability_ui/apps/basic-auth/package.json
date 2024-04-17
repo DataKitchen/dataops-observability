@@ -1,0 +1,5 @@
+{
+  "name": "basic-auth",
+  "version": "1.97.2",
+  "description": "adds support for username/password authentication to the host app"
+}

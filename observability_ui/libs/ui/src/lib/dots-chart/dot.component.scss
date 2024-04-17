@@ -1,0 +1,29 @@
+@use '@observability/ui/styles/variables' as variables;
+@use '@observability/ui/styles/mixins' as mixins;
+
+$color-by-status: (
+  'ACTIVE': map-get($map: variables.$colors, $key: 'blue'),
+  'COMPLETED': map-get($map: variables.$colors, $key: 'green'),
+  'WARNING': map-get($map: variables.$colors, $key: 'orange'),
+  'ERROR': map-get($map: variables.$colors, $key: 'red'),
+  'UPCOMING': variables.$gray-400,
+);
+
+:host {
+  display: inline;
+  height: 12px;
+  width: 12px;
+  min-width: 12px;
+  border: 2px solid;
+  border-radius: 50%;
+
+  @each $status, $color in $color-by-status {
+    &.#{$status} {
+      border-color: $color;
+
+      &.has-runs {
+        background-color: $color;
+      }
+    }
+  }
+}

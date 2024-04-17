@@ -1,0 +1,65 @@
+<mat-card fxFlex>
+  <mat-card-content fxFlex
+    class="overflow-auto">
+
+    <ng-container *ngIf="(runs$ | async)?.length === 0 && (loading$ | async) === false">
+      <div class="empty-state">
+        <span class="empty-state--message">No runs for this instance</span>
+      </div>
+    </ng-container>
+
+    <gantt-chart
+      [start]="ganttStartDate$ | async"
+      [end]="ganttEndDate$ | async"
+      [nowBar]="instanceIsActive$ | async"
+      [timeformat]="timeformat$ | async"
+      [showDays]="spansMultipleDays$ | async">
+
+      <ng-template ganttLabel
+        let-taskGroup="group">
+        <div class="run-label">
+          <mat-icon class="run-label--icon"
+            svgIcon="batch_pipeline"
+            dkTooltip="{{ 'componentTypeTag.BATCH_PIPELINE' | translate | titlecase }}">
+          </mat-icon>
+
+          <div class="run-label--text">
+            <span [dkTooltip]="taskGroup.label"
+              truncate>{{ taskGroup.label }}</span>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-container *ngFor="let run of runs$ | async">
+        <ng-template [ganttBar]="run.id"
+          [ganttBarLabel]="run.pipeline.display_name"
+          [ganttBarStart]="run.start_time"
+          [ganttBarEnd]="run.end_time"
+          [ganttBarGroupBy]="run.pipeline.id"
+          [ganttBarContext]="run">
+          <gantt-task [ngClass]="run.status"
+            [dkTooltip]="barTooltip"
+            [routerLink]="run.status === 'MISSING' ? ['.'] : ['..', 'runs', 'details', run.id]"
+            data-test="Run"
+            attr.data-test-name="{{ run.pipeline.display_name }}"
+            attr.data-test-status="{{ run.status }}">
+          </gantt-task>
+        </ng-template>
+
+        <ng-template #barTooltip>
+          <div class="gantt-bar-tooltip">
+            <span class="gantt-bar-tooltip--line gantt-bar-tooltip--name">{{ run.pipeline.display_name }}</span>
+            <span class="gantt-bar-tooltip--line gantt-bar-tooltip--status">{{ 'runStatus.' + run.status | translate }}</span>
+            <span class="gantt-bar-tooltip--line gantt-bar-tooltip--key">Key: {{ run.key ?? '-' }}</span>
+            <span *ngIf="run.hasTime"
+              class="gantt-bar-tooltip--line gantt-bar-tooltip--start">Start Time: {{ run.start_time | date: (timeformat$ | async) }}</span>
+            <span *ngIf="run.hasTime && run.status !== 'RUNNING'"
+              class="gantt-bar-tooltip--line gantt-bar-tooltip--end">End Time: {{ run.end_time | date: (timeformat$ | async) }}</span>
+            <span *ngIf="run.hasTime"
+              class="gantt-bar-tooltip--line gantt-bar-tooltip--duration">Duration: {{ run.start_time | duration: run.end_time }}</span>
+          </div>
+        </ng-template>
+      </ng-container>
+    </gantt-chart>
+  </mat-card-content>
+</mat-card>

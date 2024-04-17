@@ -1,0 +1,140 @@
+<div class="toolbar">
+  <div class="dag-controls">
+    <button matRipple
+      cdkOverlayOrigin
+      [dkTooltip]="'journeyRelationshipsTools.addComponent' | translate"
+      #componentSelector="cdkOverlayOrigin"
+      (click)="componentSelectorOpened = true;">
+      <mat-icon>add</mat-icon>
+      <span>Component</span>
+    </button>
+
+    <button matRipple
+      [dkTooltip]="'journeyRelationshipsTools.delete' | translate"
+      [dkTooltipDisabled]="(canDelete$ | async) === false"
+      [disabled]="(canDelete$ | async) === false"
+      (click)="deleteSelected()">
+      <mat-icon>delete</mat-icon>
+      <span>Remove</span>
+    </button>
+  </div>
+
+  <div *ngIf="error$ | async as error"
+    class="error">
+    <span class="error--message">{{ error }}</span>
+    <button mat-icon-button
+      class="error--action"
+      (click)="resetError()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+
+<dag [selectable]="true"
+  [namespace]="[projectId, journeyId].join(':')"
+  [persistOnLocalStorage]="true"
+  [restoreFromLocalStorage]="true"
+  [nodeSize]="[150, 400]"
+  (addEdge)="addEdge($event.from, $event.to)"
+  (nodeSelected)="onNodeSelected($event)"
+  (edgeSelected)="onEdgeSelected($event)"
+  (renderError)="handleError($event)"
+  tabindex="-1">
+  <ng-container *ngFor="let node of nodes$ | async; trackBy: nodeTrackByFn">
+    <div *dagNode="node.info.component.id"
+      class="component"
+      data-test="JourneyComponent"
+      attr.data-test-id="{{ node.info.component.id }}"
+      attr.data-test-name="{{ node.info.component.display_name }}"
+      [class.selected]="node.selected"
+      [ngClass]="node.info.component.type">
+
+      <component-icon [tool]="node.info.component.tool"
+        [type]="node.info.component.type"
+        size="24"
+        class="mr-2"></component-icon>
+
+      <span class="component--name"
+        [dkTooltip]="node.info.component.display_name"
+        truncate>{{ node.info.component.display_name }}</span>
+
+      <a [routerLink]="['../../..', { outlets: { rightPanel: [node.info.component.id] } }]"
+        dkTooltip="View component details"
+        class="component--view">
+        <mat-icon>visibility</mat-icon>
+      </a>
+    </div>
+  </ng-container>
+  <dag-edge *ngFor="let edge of edges$ | async; trackBy: edgeTrackByFn"
+    [id]="edge.id"
+    [fromNode]="edge.from"
+    [toNode]="edge.to"></dag-edge>
+
+  <shell-journey-dag-legend dagLegend></shell-journey-dag-legend>
+</dag>
+
+
+<ng-template cdkConnectedOverlay
+  [cdkConnectedOverlayOpen]="componentSelectorOpened"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  [cdkConnectedOverlayOrigin]="componentSelector"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  [cdkConnectedOverlayPanelClass]="['opaque-overlay', 'mat-elevation-z2', 'border-radius']"
+  (backdropClick)="componentSelectorOpened = false;">
+  <div class="component-selector">
+    <mat-form-field appearance="fill"
+      class="component-selector--filter">
+      <input matInput
+        placeholder="{{ 'searchOptions' | translate }}"
+        [formControl]="componentsFilterControl"
+        autofocus>
+
+      <mat-icon matPrefix>search</mat-icon>
+      <mat-icon matSuffix
+        (click)="componentsFilterControl.reset()"
+        [class.hidden]="!componentsFilterControl.value">
+        clear
+      </mat-icon>
+    </mat-form-field>
+
+    <div class="component-selector--options-container">
+      <div *ngFor="let component of filteredComponents$ | async"
+        class="component-selector--options-container--option"
+        [class.disabled]="component.disabled"
+        (click)="onCheckboxChange(component, componentCheckbox)"
+        matRipple>
+        <mat-checkbox #componentCheckbox
+          (click)="$event.preventDefault()"
+          [checked]="selectedComponents[component.id] !== undefined"
+          [disabled]="component.disabled"
+          attr.data-test="{{component.display_name}}"
+          class="mr-3"
+          color="primary"></mat-checkbox>
+        <div>
+          <div class="component-selector--options-container--option-name"
+            [dkTooltip]="component.display_name"
+            truncate>{{ component.display_name }}</div>
+          <small class="component-selector--options-container--option-tag">{{ ('componentTypeTag.' + component.type) | translate }}</small>
+        </div>
+      </div>
+
+      <!-- Loading observable is not emitting properly -->
+      <ng-template #loadingSpinner>
+        <mat-progress-spinner diameter="48"
+          mode="indeterminate"></mat-progress-spinner>
+      </ng-template>
+    </div>
+
+    <div class="bottom-buttons">
+      <button mat-button
+        (click)="clearSelection()"
+        [disabled]="(selectedComponents | keyvalue).length === 0">
+        Clear
+      </button>
+      <button [disabled]="(selectedComponents | keyvalue).length === 0"
+        (click)="addComponents()"
+        color="primary"
+        mat-flat-button>Add {{(selectedComponents | keyvalue).length}} component{{(selectedComponents | keyvalue).length !== 1 ? 's' : ''}}</button>
+    </div>
+  </div>
+</ng-template>

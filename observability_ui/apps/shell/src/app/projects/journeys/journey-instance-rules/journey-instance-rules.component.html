@@ -1,0 +1,156 @@
+<ng-container [ngTemplateOutlet]="editing ? editMode : viewMode"></ng-container>
+
+<ng-template #viewMode>
+  <ng-container *ngIf="!isPayload">
+    <span class="condition-label">Start a new instance</span>
+
+    <ng-container *ngIf="startRules.value.length; else emptyStartMessage">
+      <div *ngFor="let rule of startRules.controls"
+        class="condition-value">
+        <div *ngIf="rule.value.batch_pipeline"><strong>Batch:</strong>&nbsp;When run starts for {{ (componentsMap[rule.value.batch_pipeline]?.display_name) || '...'  }}</div>
+        <div *ngIf="rule.value.schedule"><strong>Schedule:</strong> {{rule.value.schedule | schedule}}</div>
+      </div>
+      <div class="condition-value">
+        <span><strong>Default:</strong> On receiving an event when there is no active instance</span>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <span class="condition-label">End {{isPayload ? 'a payload instance' : 'an active instance'}}
+    <mat-icon dkTooltipPlacement="top"
+      dkTooltip="{{!isPayload ? 'An active instance ends when a new instance is created by a start condition or when an end condition is met.' : 'At least one end condition is required. Active data payload instances end when one of the end conditions is true.'}}">info_outline
+  </mat-icon>
+  </span>
+
+  <ng-container *ngIf="endRules.value.length; else emptyEndMessage">
+    <div *ngFor="let rule of endRules.controls"
+      class="condition-value">
+      <span *ngIf="!rule.value.schedule">When run ends for {{ (componentsMap[rule.value.batch_pipeline]?.display_name) || '...'  }}</span>
+      <div *ngIf="rule.value.schedule">Scheduled {{rule.value.schedule | schedule}}</div>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #editMode>
+  <ng-container [formGroup]="form">
+    <div class="mb-4"
+      *ngIf="!isPayload && startRules.controls[0]">
+      <ng-container [formGroup]="startRules.controls[0]">
+        <div class="condition-label">Start a new instance
+        </div>
+
+        <mat-radio-group formControlName="type">
+          <div>
+            <mat-radio-button value="RUNS">{{'conditions.batch.title' | translate}}</mat-radio-button>
+            <div class="text-caption--secondary radio-description">{{'conditions.batch.description' | translate}}</div>
+
+            <div class="radio-description schedule-field"
+              *ngIf="startRules.controls[0].value.type === 'RUNS'">
+              <mat-form-field
+                class="condition-field--value">
+                <mat-select formControlName="batch_pipeline">
+                  <mat-option [value]="null">N/A</mat-option>
+                  <mat-option *ngFor="let component of allPipelines$ | async"
+                    [value]="component.id">{{ component.display_name }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          <div>
+            <mat-radio-button value="SCHEDULE">{{'conditions.schedule.title' | translate}}</mat-radio-button>
+            <div class="text-caption--secondary radio-description">{{'conditions.schedule.description' | translate}}</div>
+
+            <div class="radio-description schedule-field"
+              *ngIf="startRules.controls[0].value.type === 'SCHEDULE'">
+              <schedule-field class="radio-description"
+                formControlName="schedule"></schedule-field>
+            </div>
+          </div>
+          <div>
+            <mat-radio-button value="DEFAULT">{{'conditions.default.title' | translate}}</mat-radio-button>
+            <div class="text-caption--secondary radio-description">{{'conditions.default.description' | translate}}</div>
+          </div>
+        </mat-radio-group>
+      </ng-container>
+    </div>
+
+    <div *ngIf="isPayload"
+      class="mb-3">
+      <mat-checkbox color="primary"
+        [formControl]="form.controls.trackSeparately"
+        [disabled]="endRules.controls.length > 0"
+        [checked]="endRules.controls.length > 0">
+        Track payloads as separate instances
+      </mat-checkbox>
+    </div>
+
+    <div class="condition-label">End {{isPayload ? 'a payload instance' : 'an active instance'}}
+    </div>
+    <div class="text-caption--secondary">
+      {{!isPayload ? 'An active instance ends when a new instance is created by a start condition or when an end condition is met.' : 'A payload instance ends when an end condition is met for the payload'}}
+    </div>
+
+    <div class="flex-row"
+      *ngIf="!isPayload || (isPayload && form.controls.trackSeparately.value === true)">
+      <span class="fx-flex"></span>
+
+      <button mat-button
+        color="primary"
+        (click)="addRule({action: 'END'})"
+        class="add-button">
+        <mat-icon>add</mat-icon>
+        Add Condition
+      </button>
+    </div>
+
+    <ng-container *ngIf="endRules.controls.length; else emptyEndMessage">
+      <ng-container formArrayName="endRules">
+        <ng-container *ngFor="let form of endRules.controls; let idx = index">
+          <div [formGroup]="form"
+            class="condition-field">
+            <mat-form-field class="condition-field--type">
+              <mat-select formControlName="type">
+                <mat-option value="RUNS">When run ends for</mat-option>
+                <mat-option value="SCHEDULE">On schedule</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="condition-field--value"
+              *ngIf="form.value.type === 'RUNS'">
+              <mat-select formControlName="batch_pipeline">
+                <mat-option [value]="null">N/A</mat-option>
+                <mat-option *ngFor="let component of allPipelines$ | async"
+                  [value]="component.id">{{ component.display_name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <schedule-field formControlName="schedule"
+              *ngIf="form.value.type === 'SCHEDULE'"></schedule-field>
+
+            <button mat-icon-button
+              class="delete-button"
+              (click)="deleteRule(endRules, idx)">
+              <mat-icon class="delete-icon">delete_outline</mat-icon>
+            </button>
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #emptyStartMessage>
+  <div class="empty-message">
+    Create conditions to define the start of instances.
+  </div>
+</ng-template>
+
+<ng-template #emptyEndMessage>
+  <div class="empty-message">
+    <span *ngIf="!isPayload || editing">No end conditions configured.</span>
+    <div *ngIf="!editing && isPayload" class="track-separately-display">
+      <mat-icon class="icon-size-12 mr-2">cancel</mat-icon>
+      <span>Payloads are not tracked as separate instances</span>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,47 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+$panel-width: 700px;
+
+:host {
+  @include mixins.flex-column($justify: normal, $align: normal);
+
+  top: 0;
+  right: 0;
+  bottom: 0;
+  position: fixed;
+
+  height: 100%;
+  width: $panel-width;
+  background-color: white;
+
+  overflow-y: auto;
+
+  .backdrop {
+    @include mixins.left-backdrop($panel-width);
+  }
+
+  .top {
+    @include mixins.flex-row($justify: space-between);
+
+    padding: 0 variables.$space-sm;
+    padding-top: variables.$space-xxs;
+
+    .back-link {
+      @include mixins.flex-row($justify: flex-start);
+      @include mixins.font-color(secondary);
+
+      mat-icon {
+        @include mixins.icon-size(18px);
+
+        margin-right: variables.$space-xxs;
+      }
+    }
+
+    .close-button {
+      mat-icon {
+        @include mixins.font-color(secondary);
+      }
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{{- if .Values.rules_engine.enable }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "observability.rules_engine.name" . }}
+  labels:
+    {{- include "observability.labels" . | nindent 4 }}
+    {{- include "observability.rules_engine.selectorLabels" . | nindent 4 }}
+    {{- include "observability.scaledownPreDeploy" .Values.rules_engine | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.rules_engine.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "observability.rules_engine.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        # Used to force Helm to trigger a re-deploy despite this manifest haven't changed
+        timestamp: {{ now | quote }}
+        {{- with .Values.rules_engine.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "observability.rules_engine.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "observability.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.rules_engine.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "observability.rules_engine.name" . }}
+          securityContext:
+            {{- toYaml .Values.rules_engine.securityContext | nindent 12 }}
+          image: {{ include "observability.rules_engine.image" . | quote }}
+          imagePullPolicy: {{ .Values.rules_engine.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.rules_engine.resources | nindent 12 }}
+          env:
+            {{- include "observability.environment.base" . | nindent 12 }}
+            {{- include "observability.environment.database" . | nindent 12 }}
+            {{- include "observability.environment.kafka" . | nindent 12 }}
+          command: [ "/dk/bin/rules-engine" ]
+          {{- include "observability.probes.readiness_cmd" "rules-engine" | nindent 10 -}}
+      {{- with .Values.rules_engine.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.rules_engine.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.rules_engine.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

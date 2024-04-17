@@ -1,0 +1,39 @@
+@use '@observability/ui/styles/variables' as variables;
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@angular/material' as mat;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+
+  table-wrapper::ng-deep {
+    .cdk-column-id {
+      max-width: 100px;
+    }
+
+    .cdk-column-status {
+      font-weight: 500;
+    }
+  }
+}
+
+.active-instance {
+  color: variables.$blue-500;
+}
+
+.payload {
+  @include mixins.font-style($style: caption, $color: secondary);
+  font-size: 10px;
+}
+
+table-wrapper::ng-deep {
+  .mat-column-start_type_payload {
+    @include mixins.flex-column($justify: center, $align: flex-start);
+
+    .mat-sort-header-content {
+      @include mixins.flex-column($justify: center, $align: flex-start);
+    }
+  }
+}

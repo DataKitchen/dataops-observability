@@ -1,0 +1,12 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+.project-container {
+  margin-left: variables.$space-md;
+  margin-bottom: variables.$space-sm;
+  margin-top: variables.$space-xs;
+
+  .project-label {
+    @include mixins.font-style($style: caption, $color: secondary);
+  }
+}

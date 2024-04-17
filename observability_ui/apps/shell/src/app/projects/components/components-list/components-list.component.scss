@@ -1,0 +1,123 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+@use '@angular/material' as mat;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.content {
+  max-width: 800px;
+}
+
+.toolbar {
+  filter-field {
+    min-width: fit-content;
+  }
+
+  button.button--table-add {
+    min-width: fit-content;
+  }
+}
+
+.actions-menu-subtitle {
+  @include mixins.font-color();
+  font-weight: 500;
+}
+
+
+.cards-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  & mat-card.card {
+    flex: 1;
+    min-width: 400px;
+    max-width: 550px;
+  }
+}
+
+.scrolling-content {
+  position: relative;
+
+  .loading {
+    @include mixins.flex-row();
+
+    position: absolute;
+    width: calc(100% - 48px);
+    height: calc(100% - 48px);
+  }
+}
+
+
+
+  .card__selection {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: variables.$space-sm;
+  }
+
+.card__title {
+  @include mixins.flex-row($justify: flex-start);
+
+  .card__name {
+    @include mixins.font-style($style: subheader);
+
+    font-weight: 500;
+    max-width: calc(100% - 52px) !important;
+  }
+}
+
+.card__key {
+  @include mixins.font-style($style: caption, $color: secondary);
+}
+
+.card__date {
+  @include mixins.font-style($style: caption, $color: disabled);
+
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.card__chips__container {
+  @include mixins.flex-row($justify: flex-start);
+  margin-top: 12px;
+
+  .card__chip {
+    font-size: 12px;
+    color: variables.$gray-700;
+    border: 2px solid variables.$gray-100;
+    margin-right: 8px;
+    padding: 0 8px;
+    border-radius: 2px;
+
+    &.filled {
+      background: variables.$gray-100;
+    }
+  }
+}
+
+.card__link {
+  @include mixins.flex-row;
+
+  color: #1976d2;
+  line-height: 32px;
+  padding: 0 8px;
+
+  mat-icon {
+    @include mixins.icon-size(18px);
+  }
+}
+
+:host ::ng-deep .search-components .mat-form-field-wrapper {
+  margin-bottom: -1.25em
+}
+
+.empty {
+  margin: auto;
+}

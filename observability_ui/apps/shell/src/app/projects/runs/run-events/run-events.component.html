@@ -1,0 +1,41 @@
+<div class="toolbar"
+  [formGroup]="search">
+  <filter-field [label]="'eventType' | translate | titlecase"
+    [multiple]="true"
+    [noneSelectedLabel]="'eventTypes' | translate"
+    [allSelectedLabel]="'allEventTypes' | translate"
+    [formControl]="$any(search.controls.event_type)">
+
+    <ng-container *ngFor="let ev of events|keyvalue">
+      <filter-field-option [value]="ev.value"
+        [label]="ev.value | translate">
+      </filter-field-option>
+    </ng-container>  </filter-field>
+
+  <filter-field [label]="'task' | translate | titlecase"
+    [multiple]="true"
+    [searchable]="true"
+    [noneSelectedLabel]="'noSelectedTask' | translate"
+    [allSelectedLabel]="'allTasks' | translate"
+    [formControl]="$any(search.controls.task_id)">
+
+    <ng-container *ngFor="let task of allTasks$ | async">
+      <filter-field-option [value]="task.task.id"
+        [label]="task.task.display_name">
+      </filter-field-option>
+    </ng-container>
+  </filter-field>
+
+  <button *ngIf="!!(search.value.task_id || search.value.event_type)"
+    (click)="search.reset()"
+    mat-button>Clear
+  </button>
+</div>
+
+<shell-events-table [items]="events$ | async"
+  [columns]="[ 'timestamp', 'event_type', 'task_key', 'details' ]"
+  [total]="total$ | async"
+  [loading]="loading$ | async"
+  (tableChange)="onTableChange($event)"
+  [search]="search">
+</shell-events-table>

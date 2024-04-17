@@ -1,0 +1,65 @@
+<div [@openClose]="showLegend() ? 'opened' : 'closed'" class="legend-container">
+    <ng-content></ng-content>
+</div>
+
+<div class="actions-container">
+    <div class="actions actions--zoom">
+      <button (click)="zoomIn.emit()"
+          [disabled]="zoom && zoom >= maxZoom"
+          dkTooltip="{{ 'dag.zoom.in' | translate }}"
+          dkTooltipPlacement="left"
+          type="button">
+          <mat-icon>zoom_in</mat-icon>
+      </button>
+    
+      <span>
+          {{ (zoom || 1) * 100 | number:'1.0-0' }}%
+      </span>
+    
+      <button (click)="zoomOut.emit()"
+          [disabled]="zoom && zoom <= minZoom"
+          dkTooltip="{{ 'dag.zoom.out' | translate }}"
+          dkTooltipPlacement="left"
+          type="button">
+          <mat-icon>zoom_out</mat-icon>
+      </button>
+    
+      <button (click)="zoomToFit.emit()"
+          dkTooltip="{{ 'dag.zoom.toFit' | translate }}"
+          dkTooltipPlacement="left"
+          type="button">
+          <mat-icon>zoom_out_map</mat-icon>
+      </button>
+    </div>
+
+    <!--
+    <div class="actions actions--align">
+      <button *ngIf="layout === DagOrientation.Vertical"
+          (click)="arrange.emit(DagOrientation.Horizontal)"
+          dkTooltip="{{ 'dag.arrange.leftToRight' | translate }}"
+          dkTooltipPlacement="left"
+          type="button">
+          <mat-icon>align_horizontal_left</mat-icon>
+      </button>
+    
+      <button *ngIf="layout === DagOrientation.Horizontal || layout === null"
+          (click)="arrange.emit(DagOrientation.Vertical)"
+          dkTooltip="{{ 'dag.arrange.topToBottom' | translate }}"
+          dkTooltipPlacement="left"
+          type="button">
+          <mat-icon>align_vertical_top</mat-icon>
+      </button>
+    </div>
+    -->
+
+    <div *ngIf="hasLegend"
+        class="actions actions--legend">
+        <button (click)="toggleLegend()"
+            dkTooltip="{{ (showLegend() ? 'dag.legend.hide' : 'dag.legend.show' ) | translate }}"
+            dkTooltipPlacement="left"
+            type="button">
+            <mat-icon>category</mat-icon>
+        </button>
+    </div>
+</div>
+

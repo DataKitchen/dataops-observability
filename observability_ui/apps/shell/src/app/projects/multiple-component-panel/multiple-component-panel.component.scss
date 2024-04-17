@@ -1,0 +1,93 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+$panel-width: 700px;
+
+:host {
+  @include mixins.flex-column($justify: normal, $align: normal);
+
+  top: 0;
+  right: 0;
+  bottom: 0;
+  position: fixed;
+
+  height: 100%;
+  width: $panel-width;
+  background-color: white;
+
+  overflow-y: auto;
+
+  ::ng-deep {
+    .mat-expansion-indicator::after {
+      @include mixins.font-color(primary);
+    }
+  }
+}
+
+.backdrop {
+  @include mixins.left-backdrop($panel-width);
+}
+
+.header {
+  @include mixins.flex-row($justify: flex-end, $align: baseline);
+
+  margin-bottom: variables.$space-sm;
+  border-bottom: 1px solid transparent;
+  padding: variables.$space-xs variables.$space-md;
+
+  h2 {
+    margin: unset;
+  }
+}
+
+
+.content {
+  @include mixins.flex-column($justify: flex-start, $align: flex-start);
+
+  flex: 1 1 0;
+  padding: 0 variables.$space-md;
+}
+
+mat-expansion-panel {
+  width: 100%;
+  border: variables.$border;
+
+  mat-panel-title {
+    font-weight: 500;
+  }
+
+  .description {
+    @include mixins.font-color(secondary);
+  }
+}
+
+mat-expansion-panel + mat-expansion-panel {
+  margin-top: variables.$space-sm;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.component-name {
+  font-weight: 500;
+}
+
+.footer {
+  @include mixins.flex-row($justify: flex-end);
+
+  width: 100%;
+  padding: variables.$space-sm;
+  border-top: variables.$border;
+  margin-top: variables.$space-md;
+}
+
+.loading-container {
+  @include mixins.flex-row();
+  position: fixed;
+  width: $panel-width;
+  background-color: rgba(0, 0, 0, 0.25);
+  min-height: 100%;
+  overflow: hidden;
+  z-index: 9;
+}

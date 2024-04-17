@@ -1,0 +1,198 @@
+<table-wrapper
+  fxFlex
+  class="mat-elevation-z2"
+  [items]="items$ | async"
+  [total]="total"
+  [columns]="columns"
+  [loading]="loading"
+  entity="event"
+  (tableChange)="tableChange.emit($event)"
+  [search]="$any(search)"
+  [selectable]="false"
+  #events
+>
+  <!-- TIMESTAMP -->
+  <ng-container matColumnDef="timestamp"
+    dragDisabled
+    sortDisabled>
+    <ng-container *matHeaderCellDef>
+      {{ 'timestamp' | translate }}
+    </ng-container>
+    <ng-container *matCellDef="let event">
+      <div>
+        <div [dkTooltip]="event.raw_data?.event_timestamp | date:'medium'">
+          {{ event.raw_data?.event_timestamp | date: 'mediumTime' }}
+        </div>
+        <div class="day-text"
+          *ngIf="!(event.raw_data?.event_timestamp | isToday)">
+          {{ event.raw_data?.event_timestamp | date: 'MMM d' }}
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <ng-container matColumnDef="component"
+    dragDisabled
+    sortDisabled>
+    <ng-container *matHeaderCellDef>
+      <span>{{ 'component' | translate }}</span>
+      <span class="task_name">{{'task' | translate}}</span>
+    </ng-container>
+    <ng-container *matCellDef="let event">
+      <component-icon size="18"
+        class="mr-2"
+        [tool]="event.components?.[0]?.tool"
+        [type]="event.components?.[0]?.type"></component-icon>
+
+      <div class="component-info">
+        <span [dkTooltip]="event.components?.[0]?.display_name"
+          truncate>{{ event.components?.[0]?.display_name }}</span>
+        <span *ngIf="event.task?.display_name"
+          [dkTooltip]="event.task?.display_name"
+          class="task_name"
+          truncate>{{ event.task?.display_name }}</span>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <ng-container matColumnDef="component_key"
+    dragDisabled
+    sortDisabled>
+    <ng-container *matHeaderCellDef>
+      <span>{{ 'componentKey' | translate }}</span>
+    </ng-container>
+    <ng-container *matCellDef="let event">
+      <div truncate
+        [dkTooltip]="event.component_key">
+        <span>{{event.component_key}}</span>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <ng-container matColumnDef="task_key"
+    dragDisabled
+    sortDisabled>
+    <ng-container *matHeaderCellDef>
+      {{'taskKey' | translate}}
+    </ng-container>
+    <ng-container *matCellDef="let event">
+      <span [dkTooltip]="event.task_key">{{ event.task_key || '-' }}</span>
+    </ng-container>
+  </ng-container>
+
+  <ng-container matColumnDef="event_type"
+    dragDisabled
+    sortDisabled>
+    <ng-container *matHeaderCellDef>
+      {{ 'eventType' | translate }}
+    </ng-container>
+    <ng-container *matCellDef="let event">
+      <span class="event_type">{{ event.event_type | translate }}</span>
+    </ng-container>
+  </ng-container>
+
+  <ng-container matColumnDef="details"
+    dragDisabled
+    sortDisabled>
+    <ng-container *matHeaderCellDef>
+      {{ 'details' | translate }}
+    </ng-container>
+    <ng-container *matCellDef="let event">
+
+      <div class="flex-row p-1">
+        <div class="fx-flex"
+          [ngSwitch]="event.event_type">
+
+          <ng-container *ngSwitchCase="EventTypes.RunStatusEvent">
+            <div class="flex-row">
+              <div class="pr-1">
+                {{event.task_key ? 'Task' : 'Run'}} status:
+              </div>
+              <div [ngClass]="event.raw_data?.status"
+                class="fx-row fx-align-flex-center">
+                <span>{{'runStatus.' + event.raw_data?.status | translate}}</span>
+                <mat-icon class="icon-size-16"
+                  *ngIf="event.raw_data?.status === RunProcessedStatus.CompletedWithWarnings">warning_amber
+                </mat-icon>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="EventTypes.MessageLogEvent">
+            <div class="message-log"
+              [ngClass]="[ event.raw_data?.log_entries?.[0]?.level ]">
+              <span class="log-level mr-2">{{ 'events.logLevels.' + event.raw_data?.log_entries?.[0]?.level | translate }}</span>
+              <span class="message">{{ event.raw_data?.log_entries?.[0]?.message }}</span>
+            </div>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="EventTypes.TestOutcomesEvent">
+
+            <div class="flex-row">
+              <div class="message">Test outcomes:</div>
+              <div class="mx-2 fx-row summary"
+                *ngIf="event.summary"
+                [dkTooltip]="testResultsTooltip">
+                <span *ngIf="event.summary.PASSED > 0"
+                  [style.width]="(event.summary.PASSED / event.summary.TOTAL * 100) + '%'"
+                  class="PASSED"></span>
+                <span *ngIf="event.summary.WARNING > 0"
+                  [style.width]="(event.summary.WARNING / event.summary.TOTAL * 100) + '%'"
+                  class="WARNING"></span>
+                <span *ngIf="event.summary.FAILED > 0"
+                  [style.width]="(event.summary.FAILED / event.summary.TOTAL * 100) + '%'"
+                  class="FAILED"></span>
+              </div>
+            </div>
+            <ng-template #testResultsTooltip>
+              <div *ngIf="event.summary?.PASSED > 0">
+                {{event.summary?.PASSED}} tests passed
+              </div>
+              <div *ngIf="event.summary?.WARNING > 0">
+                {{event.summary?.WARNING}} tests with warning
+              </div>
+              <div *ngIf="event.summary?.FAILED > 0">
+                {{event.summary?.FAILED}} tests failed
+              </div>
+            </ng-template>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="EventTypes.MetricLogEvent">
+            <div class="flex-row">
+              <div>
+                <span>Metric value:</span><span class="text--mono">{{ event.raw_data?.metric_entries?.[0]?.key }} = {{ event.raw_data?.metric_entries?.[0]?.value }}</span>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="EventTypes.DatasetOperationEvent">
+            <div class="flex-row">
+              <span class="text--mono mr-2">{{ event.raw_data?.operation }}</span> {{ event.raw_data?.path }}
+            </div>
+          </ng-container>
+
+          <ng-container *ngSwitchDefault>
+            Unrecognized event type
+          </ng-container>
+        </div>
+
+        <div class="fx-row fx-justify-content-flex-end">
+          <a dkTooltip="Open external source"
+            *ngIf="event.raw_data?.external_url"
+            [href]="event.raw_data?.external_url"
+            class="text--link-with-icon"
+            target="_blank">
+            <mat-icon class="icon-size-16 mr-1">open_in_new</mat-icon>
+          </a>
+
+          <a dkTooltip="View event data"
+            (click)="$event.preventDefault(); viewMetadata(event)"
+            class="text--link-with-icon fx-row">
+            <mat-icon class="icon-size-16 mr-1">data_object</mat-icon>
+          </a>
+        </div>
+      </div>
+
+    </ng-container>
+  </ng-container>
+</table-wrapper>

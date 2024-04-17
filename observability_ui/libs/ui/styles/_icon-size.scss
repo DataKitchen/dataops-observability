@@ -1,0 +1,23 @@
+@use '@observability/ui/styles/mixins' as mixins;
+
+$size-shortcuts: ("icon-size": "icon-size");
+
+$range-start: 10;
+$range-end: 100;
+
+$range-values: ();
+
+@for $i from $range-start through $range-end {
+  $range-values: append($range-values, $i);
+}
+
+@each $property, $shortcut in $size-shortcuts {
+  @each $value in $range-values {
+    // Do something with each value
+    // For example, print the value
+    mat-icon.#{$shortcut}-#{$value} {
+      @include mixins.icon-size(#{$value}px !important);
+    }
+  }
+
+}

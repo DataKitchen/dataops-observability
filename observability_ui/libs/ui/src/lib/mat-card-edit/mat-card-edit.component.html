@@ -1,0 +1,37 @@
+<section class="mb-3">
+  <div class="title mb-2">{{title || '...'}}</div>
+
+  <mat-card [class.editing]="editing">
+    <mat-card-content>
+      <mat-icon
+        *ngIf="!editing"
+        class="edit-icon"
+        [dkTooltip]="iconTooltip"
+        (click)="toggleEdit();">edit
+      </mat-icon>
+
+      <ng-content></ng-content>
+
+      <mat-card-actions *ngIf="editing">
+        <div class="flex-row">
+          <ng-content select=".left-actions"></ng-content>
+          <span class="fx-flex"></span>
+          <button [disabled]="saving === true"
+                  class="text--secondary"
+                  (click)="onCancel(); toggleEdit();"
+                  mat-button>
+            Cancel
+          </button>
+          <button [disabled]="(control && !control.valid) || (formGroup && !formGroup.valid) || saving === true"
+                  color="primary"
+                  (click)="onSave()"
+                  mat-button>
+            Save
+          </button>
+        </div>
+      </mat-card-actions>
+
+    </mat-card-content>
+  </mat-card>
+
+</section>

@@ -1,0 +1,6 @@
+# This file instructs Redocly's linter to ignore the rules contained for specific parts of your API.
+# See https://redoc.ly/docs/cli/ for more information.
+observability_swagger_spec.yaml:
+  operation-4xx-response:
+    - '#/paths/~1observability~1v1~1instances/get/responses'
+    - '#/paths/~1observability~1v1~1upcoming-instances/get/responses'

@@ -1,0 +1,17 @@
+@use '@observability/ui/styles/mixins' as mixins;
+
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+mat-icon {
+  @include mixins.font-color(secondary);
+
+  height: 1em;
+  font-size: 100% !important;
+}
+
+.search-icon {
+  margin-right: 4px;
+}

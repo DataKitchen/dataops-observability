@@ -1,0 +1,198 @@
+<div class="page-title">
+  <h1>Components</h1>
+
+  <div *ngIf="antiFlickerLoading$ | async"
+    [formGroup]="search"
+    class="toolbar">
+    <text-field class="search-components"
+      label="Search components"
+      placeholder="Search components"
+      [formControl]="$any(search.controls.search)"
+      type="search"></text-field>
+
+    <shell-tool-selector
+      [formControl]="search.controls.tool"
+      [editing]="true"
+      class="search-components">
+    </shell-tool-selector>
+
+    <filter-field [label]="'componentTypes' | translate"
+      [allSelectedLabel]="'allComponentTypes' | translate"
+      [multiple]="true"
+      [formControl]="$any(search.controls.component_type)">
+      <ng-container *ngFor="let type of componentTypes">
+        <filter-field-option [value]="type"
+          [label]="'componentTypeTag.' + type | translate | titlecase">
+        </filter-field-option>
+      </ng-container>
+    </filter-field>
+
+    <button
+      *ngIf="filtersApplied$ | async"
+      (click)="search.reset()"
+      mat-button>Clear
+    </button>
+
+    <span fxFlex></span>
+
+    <ng-container *ngIf="(isSmallScreen$ | async) === false; else actionsMenu">
+      <selected-actions (clear)="onClearSelection()"
+        (selectAll)="onSelectAll()"
+        [elements]="selectedComponents">
+        <button [routerLink]="['..', { outlets: { rightPanel: ['multiple', selectedComponents.join(',')] } }]"
+          mat-menu-item>Edit components
+        </button>
+        <button (click)="showMultipleDeleteDialog()"
+          mat-menu-item>Delete components
+        </button>
+        <button (click)="showCreateJourneyDialog()"
+          mat-menu-item>Add to new Journey
+        </button>
+        <button [routerLink]="['..', 'events']"
+          [queryParams]="{'component_id' : selectedComponents.join(',')}"
+          mat-menu-item>View Events
+        </button>
+      </selected-actions>
+    </ng-container>
+
+    <button (click)="openAddComponentDialog()"
+      color="primary"
+      class="button--table-add"
+      mat-flat-button>
+      <mat-icon>add</mat-icon>
+      {{'addComponent' | translate}}
+    </button>
+  </div>
+</div>
+
+<div class="scrolling-content">
+  <ng-container *ngIf="(loading$ | async) === false; else loadingTemplate">
+    <div *ngIf="(total$ | async) > 0; else emptyResultsTemplate"
+      class="cards-container items-mb-3 items-mr-3">
+      <mat-card *ngFor="let component of components$ | async; even as isEven"
+        class="card"
+        [class.active]="selectedComponents.includes(component.id)"
+        [class.has-margin]="isEven">
+
+        <div class="card__selection"
+          (click)="onCheckboxToggle(component.id, componentCheckbox)">
+          <mat-checkbox color="primary"
+            [checked]="selectedComponents.includes(component.id)"
+            (click)="$event.preventDefault()"
+            [value]="component.id"
+            #componentCheckbox></mat-checkbox>
+        </div>
+
+        <div [routerLink]="['..', { outlets: { rightPanel: [component.id] } }]">
+          <div class="card__title">
+            <component-icon class="mr-1"
+              [tool]="component.tool"
+              [type]="component.type"></component-icon>
+            <span [dkTooltip]="component.display_name"
+              class="card__name"
+              truncate>{{ component.display_name }}</span>
+          </div>
+
+          <div class="card__key"
+            truncate>
+            {{'key' | translate}}: {{ component.key }}
+          </div>
+
+          <div class="card__date">
+            <created-by [createdBy]="component.created_by"
+              [createdOn]="component.created_on"></created-by>
+          </div>
+
+          <div class="card__chips__container">
+            <div class="card__chip filled">{{ 'componentTypeTag.' + component.type | translate}}</div>
+
+            <div *ngIf="component.tool"
+              class="card__chip">{{ ((component.tool | getToolClass)?._displayName || component.tool) | lowercase}}</div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </ng-container>
+</div>
+
+<mat-paginator
+  [class.hidden]="(total$ | async) === 0"
+  [length]="(total$ | async)"
+  [pageSize]="pageSize"
+  [pageSizeOptions]="[5, 10, 25, 50, 100]"
+  [showFirstLastButtons]="true"></mat-paginator>
+
+<ng-template #loadingTemplate>
+  <div class="loading">
+    <mat-spinner diameter="64"
+      color="gray"></mat-spinner>
+  </div>
+</ng-template>
+
+<ng-template #emptyResultsTemplate>
+  <div *ngIf="filtersApplied$ | async"
+    class="empty">
+    <span class="empty-result-set">{{'noComponents' | translate}}</span>
+  </div>
+
+  <empty-state-setup *ngIf="(filtersApplied$ | async) === false">
+    <div class="title">{{'emptyComponentsList.title' | translate}}</div>
+    <div class="body">{{'emptyComponentsList.description' | translate}}</div>
+    <mat-icon class="big-icon"
+      fontSet="mdi"
+      fontIcon="mdi-grain"></mat-icon>
+
+    <button [routerLink]="['..', 'integrations']"
+      class="add-button"
+      color="primary"
+      mat-flat-button>
+      <mat-icon>arrow_right_alt</mat-icon>
+      {{'emptyComponentsList.button' | translate}}
+    </button>
+
+    <help-link [showLearnMore]="false" class="learn-more" href="https://docs.datakitchen.io/article/dataops-observability-help/log-in-and-set-up-observability/a/h2_2124997853">
+      {{'emptyComponentsList.learnMore' | translate}}
+    </help-link>
+  </empty-state-setup>
+</ng-template>
+
+<ng-template #actionsMenu>
+  <button mat-flat-button
+    [matMenuTriggerFor]="actionsMenu"
+    color="primary"
+    class="actions">
+    Actions
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+
+  <mat-menu #actionsMenu="matMenu">
+    <button (click)="openAddComponentDialog()"
+      mat-menu-item>
+      <mat-icon>add</mat-icon>
+      {{'addComponent' | translate}}
+    </button>
+    <mat-divider></mat-divider>
+    <span class="actions-menu-subtitle"
+      mat-menu-item
+      disabled>
+      For {{ selectedComponents.length }} items selected
+    </span>
+    <button [routerLink]="['..', { outlets: { rightPanel: ['multiple', selectedComponents.join(',')] } }]"
+      [disabled]="selectedComponents.length <= 0"
+      mat-menu-item>Edit components
+    </button>
+    <button (click)="showMultipleDeleteDialog()"
+      [disabled]="selectedComponents.length  <= 0"
+      mat-menu-item>Delete components
+    </button>
+    <button (click)="showCreateJourneyDialog()"
+      mat-menu-item>Add to new Journey
+    </button>
+    <button [routerLink]="['..', 'events']"
+      [queryParams]="{'component_id' : selectedComponents.join(',')}"
+      [disabled]="selectedComponents.length <= 0"
+      mat-menu-item>
+      View Events
+    </button>
+  </mat-menu>
+</ng-template>

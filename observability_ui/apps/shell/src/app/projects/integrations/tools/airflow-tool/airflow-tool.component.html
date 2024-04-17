@@ -1,0 +1,116 @@
+<h1 class="title">
+  <mat-icon [svgIcon]="icon"></mat-icon>
+  Configure Airflow Agent
+</h1>
+
+<p>DataKitchen provides an agent that lets you monitor Apache Airflow and Azure Data Factory Managed Airflow.</p>
+
+<mat-expansion-panel [expanded]="step() === ServiceAccountKeyStep"
+  (opened)="showStep(ServiceAccountKeyStep)">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <h2>Step 1: Prerequisites</h2>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <ul>
+    <li>
+      Request access to the agent's private Docker repository from your DataKitchen representative.
+    </li>
+    <li>
+      An API key unique to this agent is recommended. Use the form below to create a key.
+    </li>
+    <li>
+      Deployment requirements:
+      <ul>
+        <li>Select a deployment location to use in <b>Step 3</b>. Learn more about <a href="https://docs.datakitchen.io/articles/dataops-observability-help/deploy-an-observability-agent" target="_blank" class="link">deploying agents</a>.</li>
+        <li>Verify that Docker is available where you want to deploy. If it's not, see <a href="https://docs.docker.com/get-docker/" target="_blank" class="link">Get Docker</a>.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <shell-service-key-form [formControl]="serviceKeyControl"></shell-service-key-form>
+
+  <alert type="warning">Your new API key will be added to the deployment script below. Copy and save the key for future use.</alert>
+
+  <mat-action-row>
+    <button [disabled]="!serviceKeyControl.dirty  || serviceKeyControl.invalid || creatingServiceKey() || serviceKeyCreated()"
+      (click)="createServiceAccountKey()"
+      color="primary"
+      mat-button>Create Key and Continue</button>
+  </mat-action-row>
+</mat-expansion-panel>
+
+<mat-expansion-panel [expanded]="step() === EnvVariablesStep"
+  (opened)="showStep(EnvVariablesStep)">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <h2>Step 2: Configuration</h2>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <p>The following deployment script is pre-populated with some configuration details, including the API key created above. Fill in any remaining variables as needed to finalize your deployment script:</p>
+  <div [formGroup]="envListForm"
+    class="env-list">
+    <ng-container *ngFor="let env of envList">
+      <div *ngIf="!env.hidden">
+        <span [class.required]="env.required">{{ env.name }}</span>
+        <input type="text" [placeholder]="env.placeholder" [formControlName]="env.name" [dkTooltip]="env.placeholder" #envInput />
+      </div>
+    </ng-container>
+  </div>
+
+  <mat-action-row>
+    <button mat-button
+      (click)="showStep(DeploymentInstructionsStep)"
+      color="primary">
+      Continue
+    </button>
+  </mat-action-row>
+</mat-expansion-panel>
+
+<mat-expansion-panel [expanded]="step() === DeploymentInstructionsStep"
+  (opened)="showStep(DeploymentInstructionsStep)">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <h2>Step 3: Deploy</h2>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <p>Enter a tag for the agent's Docker image and select your preferred deployment location:</p>
+
+  <div class="deploy-params">
+    <text-field [formControl]="envListForm.controls.DOCKER_TAG"
+      label="Image Tag"></text-field>
+    <mat-form-field>
+      <mat-label>Deployment Location</mat-label>
+      <mat-select [formControl]="envListForm.controls.DEFAULT_DEPLOYMENT_MODE" >
+        <mat-option value="docker">Docker</mat-option>
+        <mat-option value="kubernetes">Kubernetes</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <alert type="info">
+    <div class="fx-flex">You can find the image tag options for this agent in Docker Hub: <a href="https://hub.docker.com/r/datakitchen/observability-agent-trial/tags" target="_blank" class="link">https://hub.docker.com/r/datakitchen/observability-agent-trial/tags</a></div>
+  </alert>
+
+  <p>Download the deployment script. Then, use the commands below to deploy your configured agent.</p>
+<!-- NOTE: Leave as is to avoid the copied code having indentation -->
+<code-snippet>
+# Run these commands to make your script executable and to deploy the configured agent<br />
+chmod +x deploy-agent-{{ name }}.sh<br />
+deploy-agent-{{ name }}.sh<br />
+</code-snippet>
+
+<mat-action-row>
+  <span *ngIf="envListForm.invalid">Agent configuration is incomplete, make sure to fill in all required variables.</span>
+
+  <button mat-button
+    (click)="downloadScript()"
+    [disabled]="envListForm.invalid"
+    color="primary">
+    Download Script
+  </button>
+</mat-action-row>
+</mat-expansion-panel>

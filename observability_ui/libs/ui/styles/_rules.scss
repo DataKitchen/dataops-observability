@@ -1,0 +1,49 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+.line {
+  @include mixins.flex-row($justify: flex-start, $align: center);
+
+  width: 100%;
+  padding: 2px;
+
+  mat-select {
+    width: auto;
+    border-bottom: 1px solid variables.$gray-500;
+
+    .mat-select-value {
+      @include mixins.font-color(secondary);
+    }
+
+    .mat-select-placeholder {
+      @include mixins.font-color(secondary);
+    }
+
+    .mat-select-arrow {
+      @include mixins.font-color(disabled);
+    }
+  }
+
+  [matInput] {
+    @include mixins.font-color(secondary);
+
+    width: auto;
+    border-bottom: 1px solid variables.$gray-500;
+  }
+
+  span {
+    line-height: 21px;
+  }
+
+  * + * {
+    margin-left: variables.$space-xs !important;
+  }
+
+  &.wrap {
+    flex-wrap: wrap;
+  }
+}
+
+.line + .line {
+  margin-top: variables.$space-xs;
+}

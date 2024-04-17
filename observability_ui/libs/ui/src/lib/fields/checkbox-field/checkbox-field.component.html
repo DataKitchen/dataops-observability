@@ -1,0 +1,20 @@
+<!-- CHECKBOX -->
+<mat-checkbox [formControl]="control"
+              [indeterminate]="indeterminate"
+              [color]="color"
+              disableRipple>
+
+  <ng-container *ngIf="label">{{label}}</ng-container>
+  <ng-container *ngIf="!label">
+    <ng-content></ng-content>
+  </ng-container>
+</mat-checkbox>
+
+<!-- INFO -->
+<span *ngIf="info"
+      class="form-field__label">
+    <mat-icon [dkTooltip]="info"
+              dkTooltipPlacement="top"
+              dkTooltipClass="dk-tooltip--medium">help_outline</mat-icon>
+</span>
+

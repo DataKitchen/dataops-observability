@@ -1,0 +1,148 @@
+@use '@observability/ui/styles/variables' as variables;
+@use '@observability/ui/styles/mixins' as mixins;
+
+:host {
+  display: flex;
+  position: relative;
+  border: variables.$border;
+  border-radius: variables.$border-radius;
+
+  .content {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    padding: 0 variables.$space-sm;
+    overflow-y: auto;
+
+    .labels {
+      flex: .4;
+      border-right: variables.$border;
+      padding-right: variables.$space-xs;
+      min-width: 250px;
+      height: fit-content;
+      min-height: 100%;
+
+      .row {
+        &--expansion-icon {
+          @include mixins.font-color(secondary);
+
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 16px;
+
+          &.clickable {
+            cursor: pointer;
+          }
+        }
+
+        &--label {
+          display: flex;
+          align-items: center;
+          flex: 1;
+          max-width: calc(100% - 48px - 60px);
+
+          &.clickable {
+            cursor: pointer;
+          }
+        }
+
+        &--icons {
+          display: flex;
+          align-items: center;
+
+          .badge {
+            font-size: 12px;
+            line-height: 16px;
+            padding: 0 variables.$space-xs;
+            background-color: variables.$gray-200;
+            border-radius: variables.$space-sm;
+          }
+
+          .open-in-new-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            border-bottom: none !important;
+          }
+        }
+
+        &.level-1 {
+          .row--expansion-icon {
+            @include mixins.font-color(secondary);
+
+            margin-left: variables.$space-md;
+          }
+
+          .row--label {
+            @include mixins.font-color(secondary);
+          }
+
+          .row--icons {
+            .badge {
+              @include mixins.font-color(secondary);
+
+              background-color: variables.$gray-100;
+            }
+          }
+        }
+      }
+    }
+
+    .dots {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 100%;
+      overflow-x: auto;
+      padding-left: variables.$space-xs;
+      height: fit-content;
+      min-height: 100%;
+    }
+
+    .row {
+      @include mixins.flex-row($align: center, $justify: flex-start);
+
+      height: 32px;
+      min-height: 32px;
+
+      &.level-1 {
+        height: 24px;
+        min-height: 24px;
+      }
+    }
+  }
+
+  .external-drill-in {
+    @include mixins.flex-column($align: flex-start, $justify: flex-start);
+
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: white;
+    padding: 0 variables.$space-sm;
+
+    .header {
+      display: flex;
+      align-items: center;
+      margin-top: variables.$space-md;
+
+      .back-link {
+        @include mixins.link-with-icon();
+        @include mixins.link();
+        @include mixins.flex-row();
+
+        margin-right: variables.$space-sm;
+        border-bottom: none !important;
+      }
+
+      .group-name {
+        font-weight: 500;
+      }
+    }
+  }
+}

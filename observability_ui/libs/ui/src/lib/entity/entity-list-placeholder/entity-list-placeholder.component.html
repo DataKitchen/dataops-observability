@@ -1,0 +1,11 @@
+<div *ngIf="loading || total === 0">
+  <ng-container *ngIf="loading">
+    <mat-spinner mode="indeterminate"
+                 diameter="64"
+                 class="spinner--gray"></mat-spinner>
+  </ng-container>
+
+  <ng-container *ngIf="!loading && total === 0">
+    {{ (hasFilters ? 'noEntitiesForFilters' : 'noEntitiesFound') | translate:{entity: entity} }}
+  </ng-container>
+</div>

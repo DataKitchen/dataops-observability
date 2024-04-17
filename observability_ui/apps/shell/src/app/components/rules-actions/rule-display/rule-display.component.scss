@@ -1,0 +1,108 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+mat-card-title {
+  @include mixins.flex-row($justify: space-between, $align: center);
+
+  position: relative;
+  margin-bottom: variables.$space-sm;
+  padding-bottom: variables.$space-sm;
+
+  &::after {
+    content: "";
+    width: calc(100% + 48px);
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    position: absolute;
+    bottom: 0;
+    left: -16px;
+  }
+}
+
+mat-card-content {
+  margin-bottom: 0;
+}
+
+:host ::ng-deep .mat-expansion-panel-header-title, .mat-expansion-panel-header-description {
+  display: flex;
+  flex-grow: unset;
+  flex-basis: unset;
+  margin-right: 16px;
+  align-items: center;
+}
+
+:host ::ng-deep .mat-expansion-panel-header[aria-disabled=true] {
+  color: inherit;
+}
+
+.rule-display {
+  @include mixins.font-style($style: subheader);
+
+  font-weight: 500;
+  margin-bottom: 16px;
+
+  .flex-row {
+    * + * {
+      margin-left: variables.$space-xxs !important;
+    }
+  }
+}
+
+.action {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 6px;
+}
+
+.error-message {
+  padding-left: 12px;
+}
+
+mat-select.rule-selector {
+  width: auto;
+  min-width: 120px;
+}
+
+mat-select.component-selector {
+  width: 270px;
+}
+
+:host ::ng-deep code {
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 5px;
+  padding: 6px;
+  margin: 0 4px;
+}
+
+.advanced-container {
+  border: variables.$border;
+  margin-top: variables.$space-md !important;
+  margin-bottom: variables.$space-md !important;
+}
+
+.advanced-options {
+  mat-icon {
+    @include mixins.icon-size(12px);
+    @include mixins.font-color(disabled);
+  }
+
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.advanced-options-link-container {
+  position: absolute;
+  bottom: 8px;
+  font-size: 12px;
+  display: flex;
+
+  .advanced-options-link {
+    @include mixins.link();
+    @include mixins.link-with-icon();
+    @include mixins.flex-row();
+  }
+
+  mat-icon {
+    @include mixins.icon-size(14px);
+    margin-left: 2px;
+  }
+}

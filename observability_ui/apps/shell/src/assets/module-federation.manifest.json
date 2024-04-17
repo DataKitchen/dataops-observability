@@ -1,0 +1,9 @@
+{
+  "basic-auth": {
+    "routePath": "authentication",
+    "remoteEntry": "http://localhost:4201/remoteEntry.js",
+    "remoteName": "basic-auth",
+    "exposedModule": "./Authentication",
+    "exposedModuleName": "AuthenticationModule"
+  }
+}

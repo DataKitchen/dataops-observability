@@ -1,0 +1,16 @@
+<button mat-button
+        [matMenuTriggerFor]="menu"
+        class="button--flex-row"
+        [class.has-arrow]="showDropDownArrow"
+        [id]="id"
+        [disabled]="disabled">
+  <ng-content select="mat-icon"></ng-content>
+  {{label}}
+  <mat-icon *ngIf="showDropDownArrow"
+            class="dropdown-icon">arrow_drop_down
+  </mat-icon>
+</button>
+<mat-menu #menu="matMenu"
+          class="labeled-menu">
+  <ng-content></ng-content>
+</mat-menu>

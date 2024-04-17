@@ -1,0 +1,24 @@
+<schedule-field [externalLabel]="true"
+  [formControl]="form.controls.expectedArrivalWindow"
+  label="{{'componentsPanel.expectedArrival.frequency' | translate}}"
+  placeholder=" ">
+</schedule-field>
+
+<timespan-field
+  [formControl]="form.controls.expectedArrivalWindow"
+  label="{{'componentsPanel.expectedArrival.duration' | translate}}">
+</timespan-field>
+
+<div class="mat-error">
+  <div *ngIf="form.controls.expectedArrivalWindow.getError('schedule')">
+    Frequency must be defined
+  </div>
+
+  <div *ngIf="form.controls.expectedArrivalWindow.getError('margin')">
+    Margin must be defined
+  </div>
+
+  <div *ngIf="form.controls.expectedArrivalWindow.getError('min_margin')">
+    Margin must be at least 5 min
+  </div>
+</div>

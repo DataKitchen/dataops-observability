@@ -1,0 +1,141 @@
+#
+# Values for minikube trial deployment
+#
+
+observability:
+  config_type: minikube
+  mysql_secrets_name: mysql
+  mysql_user: observability
+  flask_debug: "false"
+  image:
+    repository: "docker.io/datakitchen"
+    tag: "latest"
+
+observability_ui:
+  enable: true
+  image:
+    name: observability-ui
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port: 8082
+    nodePort: 8082
+  podSecurityContext:
+    sysctls:
+      - name: net.core.somaxconn
+        value: "1024"
+  replicaCount: 1
+  nodeSelector: { }
+  tolerations: [ ]
+  affinity: { }
+  environmentJson: {"apiBaseUrl": "/api"}
+
+observability_api:
+  enable: true
+  image:
+    name: observability-be
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 5000
+  podSecurityContext:
+    sysctls:
+      - name: net.core.somaxconn
+        value: "1024"
+  replicaCount: 1
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+event_api:
+  enable: true
+  image:
+    name: observability-be
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 5001
+  podSecurityContext:
+    sysctls:
+      - name: net.core.somaxconn
+        value: "1024"
+  replicaCount: 1
+  nodeSelector: { }
+  tolerations: [ ]
+  affinity: { }
+
+agent_api:
+  enable: true
+  image:
+    name: observability-be
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 5003
+  podSecurityContext:
+    sysctls:
+      - name: net.core.somaxconn
+        value: "1024"
+  replicaCount: 1
+  nodeSelector: { }
+  tolerations: [ ]
+  affinity: { }
+
+run_manager:
+  enable: true
+  image:
+    name: observability-be
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  scaledownPreDeploy: "yes"
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+rules_engine:
+  enable: true
+  image:
+    name: observability-be
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  scaledownPreDeploy: "yes"
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+scheduler:
+  enable: true
+  image:
+    name: observability-be
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+cli_hook:
+  enable:
+    - phases: ["pre-install"]
+      command: ["/dk/bin/cli", "init", "--tables"]
+  image:
+    name: observability-be
+    pullPolicy: IfNotPresent
+
+# Remove when the images go public
+imagePullSecrets:
+- name: dk-dockerhub-secrets
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""

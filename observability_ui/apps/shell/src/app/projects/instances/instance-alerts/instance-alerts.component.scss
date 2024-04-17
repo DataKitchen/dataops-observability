@@ -1,0 +1,46 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+.alert-container {
+  @include mixins.flex-row();
+
+  cursor: pointer;
+
+  mat-icon {
+    @include mixins.icon-size(16px);
+
+    margin-right: variables.$space-xxs;
+
+    &.WARNING {
+      color: variables.$amber-500;
+    }
+
+    &.ERROR {
+      color: variables.$red-500;
+    }
+
+    &.SUCCESS {
+      color: variables.$green-500;
+    }
+  }
+
+  .single-alert {
+    @include mixins.flex-row();
+  }
+}
+
+.single-alert + .single-alert {
+  margin-left: variables.$space-sm;
+}
+
+.alerts-tooltip-content {
+  span {
+    font-weight: 500;
+  }
+
+  ul {
+    margin: unset;
+    padding: unset;
+    margin-left: variables.$space-sm;
+  }
+}

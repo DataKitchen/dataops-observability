@@ -1,0 +1,118 @@
+@use "@observability/ui/styles/mixins" as mixins;
+@import '@observability/ui/styles/variables';
+@import '@observability/ui/styles/overlay';
+
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+.table-tools {
+  max-height: 46px;
+  min-height: 46px;
+  padding: 0 8px 0 24px;
+  background: white;
+}
+
+.select-all-checkbox {
+  display: flex;
+  flex-direction: row;
+
+  & > * {
+    margin-right: 8px;
+  }
+
+  b {
+    font-weight: 500;
+  }
+}
+
+.table-container {
+  background: white;
+  overflow: auto;
+}
+
+.table-footer {
+  background: white;
+}
+
+:host ::ng-deep mat-table {
+  overflow: auto;
+}
+
+:host ::ng-deep mat-row.loading {
+  opacity: 0.7;
+
+  & mat-cell {
+    color: #AEAEAE;
+  }
+}
+
+.visible {
+  visibility: visible;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+mat-header-row {
+  min-height: 40px;
+}
+
+mat-header-cell {
+  text-transform: capitalize;
+  background: $white;
+}
+
+.mat-header-cell {
+  &:hover {
+    .column-handle {
+      display: block;
+    }
+  }
+}
+
+.mat-column-select {
+  flex: 0 0 62px;
+}
+
+.no-items {
+  @include mixins.font-style(subheader, secondary);
+
+  text-align: center;
+  padding: 10vw;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+  0 8px 10px 1px rgba(0, 0, 0, 0.14),
+  0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  padding-left: 8px;
+
+  .column-handle {
+    display: block;
+    cursor: grabbing;
+    pointer-events: all;
+  }
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.column-handle {
+  position: absolute;
+  right: -24px;
+  color: #ccc;
+  cursor: grab;
+  width: 24px;
+  height: 24px;
+  display: none;
+}
+
+mat-cell, mat-header-cell {
+  padding: 0 16px 0 16px;
+}

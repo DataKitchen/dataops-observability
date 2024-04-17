@@ -1,0 +1,26 @@
+{% if use_subgraph %}
+subgraph {{ cluster_app_name }} {label=<
+        <table border="0" cellborder="0" cellspacing="0">
+        <tr><td colspan="2" cellpadding="4" align="CENTER">
+        <font face="Helvetica Bold" color="Black" POINT-SIZE="12">{{ app_name }}</font></td></tr>
+        </table>
+        >
+  color=olivedrab4
+  style="rounded"
+{% endif %}
+{% for model in models %}{{ model.app_name }}_{{ model.name }} [label=<
+    <table BGcolor="palegoldenrod" border="0" cellborder="0" cellspacing="0">
+     <tr><td colspan="2" cellpadding="4" align="CENTER" BGcolor="olivedrab4">
+     <font face="Helvetica Bold" color="white">{{ model.label }}</font>
+     </td></tr>
+    {% if not disable_fields %}
+        {% for field in model.fields %}
+        <tr><td align="left" border="0"><font {% if field.blank %}color="#7B7B7B" {% endif %}face="Helvetica Bold">{{ field.label }}</font></td>
+        <td align="left"><font {% if field.blank %}color="#7B7B7B" {% endif %}face="Helvetica Bold">{{ field.type }}</font></td></tr>
+        {% endfor %}
+    {% endif %}
+    </table>
+    >]
+{% endfor %}
+{% if use_subgraph %}}
+{% endif %}

@@ -1,0 +1,18 @@
+<div class="flex-row fx-justify-flex-start">
+  <ng-container *ngFor="let summary of sortedSummaries()">
+    <div class="summary-container mr-2"
+      *ngIf="summary.count > 0">
+
+      <div class="icon-container" [dkTooltip]="'runStatus.' + summary.status | translate" [ngClass]="summary.status">
+        <mat-icon *ngIf="summary.status === RunProcessedStatus.Pending">hourglass_empty</mat-icon>
+        <mat-icon *ngIf="summary.status === RunProcessedStatus.Running">play_arrow</mat-icon>
+        <mat-icon *ngIf="summary.status === RunProcessedStatus.Completed">check</mat-icon>
+        <mat-icon *ngIf="summary.status === RunProcessedStatus.CompletedWithWarnings">warning</mat-icon>
+        <mat-icon *ngIf="summary.status === RunProcessedStatus.Failed">priority_high</mat-icon>
+        <mat-icon *ngIf="summary.status === RunProcessedStatus.Missing">question_mark</mat-icon>
+      </div>
+
+      <span class="summary-count">{{summary.count}}</span>
+    </div>
+  </ng-container>
+</div>

@@ -1,0 +1,111 @@
+{{- if .Values.event_api.enable }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "observability.event_api.name" . }}
+  labels:
+    {{- include "observability.labels" . | nindent 4 }}
+    {{- include "observability.event_api.selectorLabels" . | nindent 4 }}
+    {{- include "observability.scaledownPreDeploy" .Values.event_api | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.event_api.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "observability.event_api.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        # Used to force Helm to trigger a re-deploy despite this manifest haven't changed
+        timestamp: {{ now | quote }}
+        {{- with .Values.event_api.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "observability.event_api.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "observability.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.event_api.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "observability.event_api.name" . }}
+          securityContext:
+            {{- toYaml .Values.event_api.securityContext | nindent 12 }}
+          image: {{ include "observability.event_api.image" . | quote }}
+          imagePullPolicy: {{ .Values.event_api.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 5001
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.event_api.resources | nindent 12 }}
+          env:
+            {{- include "observability.environment.base" . | nindent 12 }}
+            {{- include "observability.environment.flask" . | nindent 12 }}
+            {{- include "observability.environment.database" . | nindent 12 }}
+            {{- include "observability.environment.kafka" . | nindent 12 }}
+            - name: GUNICORN_CMD_ARGS
+              value: "--bind 0.0.0.0:{{ .Values.event_api.service.nodePort }}"
+            {{- if .Values.event_api.hostname }}
+            - name: EVENTS_API_HOSTNAME
+              value: {{ tpl .Values.event_api.hostname . | quote }}
+            {{- end }}
+            {{- if ne .Values.observability.config_type "minikube" }}
+            - name: EVENTS_KEY_FLASK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.observability.keys_secrets_name | quote }}
+                  key: EVENTS_KEY_FLASK_SECRET
+            {{- end }}
+          command: [ "/dk/bin/gunicorn" ]
+          args: [ "-c", "/dk/gunicorn.conf.py", "event_api.app:app" ]
+          readinessProbe:
+            periodSeconds: 20
+            timeoutSeconds: 5
+            httpGet:
+              path: /events/readyz
+              port: 5001
+              httpHeaders:
+                {{- if .Values.event_api.hostname }}
+                - name: Host
+                  value: {{ tpl .Values.event_api.hostname . | quote }}
+                {{- end }}
+
+      {{- with .Values.event_api.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.event_api.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.event_api.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "observability.event_api.name" . }}
+  labels:
+    {{- include "observability.labels" . | nindent 4 }}
+    {{- include "observability.event_api.selectorLabels" . | nindent 4 }}
+spec:
+  type: {{ .Values.event_api.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.event_api.service.port }}
+      targetPort: http
+      protocol: TCP
+      {{- with .Values.event_api.service.nodePort }}
+      nodePort: {{ . }}
+      {{- end }}
+  selector:
+    {{- include "observability.event_api.selectorLabels" . | nindent 4 }}
+{{- end }}

@@ -1,0 +1,13 @@
+extends:
+- recommended
+
+apis:
+  observability@v1:
+    root: ./observability_swagger_spec.yaml
+    rules:
+      operation-summary: off
+      no-unused-components: off
+  event@v1:
+    root: ./events_swagger_spec_v1.yaml
+  event@v2:
+    root: ./events_swagger_spec_v2.yaml

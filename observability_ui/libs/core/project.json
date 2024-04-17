@@ -1,0 +1,31 @@
+{
+  "name": "core",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/core/src",
+  "prefix": "observability-ui",
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/core"],
+      "options": {
+        "jestConfig": "libs/core/jest.config.ts",
+        "passWithNoTests": true,
+        "tsConfig": "libs/core/tsconfig.lib.json"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/core/src/**/*.ts", "libs/core/src/**/*.html"]
+      }
+    },
+    "list": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo $PWD"
+      }
+    }
+  },
+  "tags": []
+}

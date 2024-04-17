@@ -1,0 +1,53 @@
+<div class="toolbar"
+  [formGroup]="search">
+
+  <shell-tool-selector
+    [formControl]="search.controls.tool"
+    [editing]="true">
+  </shell-tool-selector>
+
+  <text-field label="Search runs"
+      placeholder="Search runs"
+      formControlName="search"
+      type="search"></text-field>
+
+  <filter-field [label]="'components' | translate | titlecase"
+    [multiple]="true"
+    [searchable]="true"
+    [noneSelectedLabel]="'components' | translate | titlecase"
+    [allSelectedLabel]="'allComponents' | translate"
+    formControlName="component_id">
+
+    <ng-container *ngFor="let component of allComponents$ | async">
+      <filter-field-option [value]="component.id"
+        [label]="component.display_name">
+      </filter-field-option>
+    </ng-container>
+  </filter-field>
+
+  <filter-field [label]="'statuses' | translate | titlecase"
+    [multiple]="true"
+    [noneSelectedLabel]="'statuses' | translate | titlecase"
+    [allSelectedLabel]="'allStatuses' | translate"
+    formControlName="status">
+
+    <ng-container *ngFor="let status of statusOptions">
+      <filter-field-option [value]="status"
+        [label]="'runStatus.' + status | translate">
+      </filter-field-option>
+    </ng-container>
+  </filter-field>
+
+  <button *ngIf="!!(search.value.component_id || search.value.status || search.value.tool)"
+    (click)="search.reset()"
+    mat-button>Clear
+  </button>
+  <span fxFlex></span>
+</div>
+
+<shell-runs-table [items]="runs$ | async"
+  [total]="total$ | async"
+  [loading]="loading$ | async"
+  (tableChange)="onTableChange($event)"
+  [search]="search">
+</shell-runs-table>

@@ -1,0 +1,76 @@
+<details-header *ngIf="instance$ | async as instance"
+  [title]="instance.journey.name"
+  backLink=".."
+  backLinkTitle="Back to Instances">
+
+  <span subtitle>#{{ instance.id }}</span>
+
+  <nav mat-tab-nav-bar
+    [tabPanel]="tabPanel">
+    <a mat-tab-link
+      routerLink="status"
+      routerLinkActive
+      #statusLink="routerLinkActive"
+      [active]="statusLink.isActive">
+      {{ 'status' | translate }}
+    </a>
+    <a mat-tab-link
+      routerLink="timeline"
+      routerLinkActive
+      #timelineLink="routerLinkActive"
+      [active]="timelineLink.isActive">
+      {{ 'timeline' | translate }}
+    </a>
+    <a mat-tab-link
+      routerLink="runs"
+      routerLinkActive
+      #runsLink="routerLinkActive"
+      [active]="runsLink.isActive">
+      {{ 'batchRuns' | translate }}
+    </a>
+    <a mat-tab-link
+      routerLink="tests"
+      routerLinkActive
+      #testsLink="routerLinkActive"
+      [active]="testsLink.isActive">
+      {{ 'tests' | translate | titlecase }}
+    </a>
+    <a mat-tab-link
+      routerLink="events"
+      routerLinkActive
+      #eventsLink="routerLinkActive"
+      [active]="eventsLink.isActive">
+      {{ 'events' | translate }}
+    </a>
+  </nav>
+  <div fxFlex
+    fxLayout="column"
+    fxLayoutAlign="start end">
+    <a routerLink="../../journeys/{{instance.journey.id}}"
+      class="link">{{'viewJourney' | translate}}</a>
+    <div class="dates-container">
+      <div>From {{ instance.start_time | date: 'MMM dd, h:mm a' }} {{instance.end_time ? 'to' : ''}} {{ instance.end_time | date: 'MMM dd, h:mm a' }}</div>
+      <div *ngIf="instance.end_time"
+        class="duration">{{ instance.start_time | duration:instance.end_time }}</div>
+    </div>
+    <div class="start-conditions">
+      <span *ngIf="instance.start_type">
+        Start Type: <span class="start-conditions--value">{{ 'startType.' + instance.start_type | translate }}</span>
+      </span>
+      <span *ngIf="instance.payload_key">
+        Payload: <span class="start-conditions--value">{{ instance.payload_key }}</span>
+      </span>
+    </div>
+    <div class="alerts-and-active">
+      <span [class.active-instance]="instance.active">{{instance.active ? 'Active' : 'Ended'}}</span>
+      <shell-instance-alerts *ngIf="instance?.alerts_summary?.length > 0"
+        [instance]="instance"
+        (alertClicked)="openAlertsDialog(instance)"></shell-instance-alerts>
+    </div>
+  </div>
+</details-header>
+
+<mat-tab-nav-panel #tabPanel
+  class="scrolling-content">
+  <router-outlet></router-outlet>
+</mat-tab-nav-panel>

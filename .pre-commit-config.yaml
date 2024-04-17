@@ -1,0 +1,47 @@
+fail_fast: false
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.0.275
+    hooks:
+      - id: ruff
+        args: [ --fix, --exit-non-zero-on-fix, --show-fixes ]
+
+  - repo: https://github.com/psf/black
+    rev: 23.1.0
+    hooks:
+      - id: black
+        language_version: python3
+        args: [--config=./pyproject.toml]
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        name: isort (python)
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+    - id: end-of-file-fixer
+      exclude_types: ["json"]
+    - id: trailing-whitespace
+      exclude_types: ["json"]
+
+  # semgrep used a stupid hack in their repo (a dummy setup.py) to make their repo work as a pre-commit hook. That hack
+  # broke with setuptools 61. Unlike the base hook, this one does not require fetching their repo and doing pip install ..
+  - repo: local
+    hooks:
+    - id: check-tests-are-marked
+      alias: check-tests-are-marked
+      name: check-tests-are-marked
+      entry: scripts/check-tests-are-marked.py
+      language: python
+      types: ["python"]
+      files: "tests"
+      exclude: "/conftest.py$"
+    - id: check-docker-file-extension
+      alias: docker-filename
+      name: check-docker-file-extension
+      entry: scripts/check-docker-extensions.py
+      language: python

@@ -1,0 +1,70 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+.mat-dialog-container {
+  // TODO(style): Use padding
+  // responsive left/right: 24px desktop, 16px tablet, 8px mobile
+
+  padding-top: variables.$space-sm !important;
+
+  [mat-dialog-title] {
+    @include mixins.flex-row($justify: flex-start, $align: center);
+    @include mixins.font-style($style: title);
+
+    height: 48px;
+    margin: unset;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    position: relative;
+
+    [mat-dialog-close] {
+      margin-left: auto;
+      margin-right: -#{variables.$space-xs};
+    }
+
+    &::after {
+      content: "";
+      width: calc(100% + 48px);
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
+      margin-left: -24px;
+      position: absolute;
+      bottom: 0;
+    }
+  }
+
+  mat-dialog-content,
+  [mat-dialog-content] {
+    & > :first-child {
+      margin-top: unset;
+    }
+  }
+
+  mat-dialog-actions,
+  [mat-dialog-actions] {
+    @include mixins.flex-row($justify: flex-end);
+
+    min-height: unset;
+    padding: {
+      bottom: 24px;
+      top: 16px;
+    };
+
+    .mat-button-base {
+      &.mat-button--cancel {
+        @include mixins.font-color(secondary);
+      }
+
+      .icon--right {
+        margin-right: -#{variables.$space-xxs};
+      }
+
+      .mat-button-wrapper {
+        @include mixins.flex-row;
+      }
+    }
+
+    change-message {
+      margin-right: auto;
+    }
+  }
+}

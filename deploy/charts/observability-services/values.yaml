@@ -1,0 +1,31 @@
+kafka:
+  image:
+    tag: 3.3.2-debian-12-r20
+  enable: true
+  fullnameOverride: kafka
+  # External access to kafka
+  provisioning:
+    enabled: true
+    topics:
+    - name: IdentifiedEvents
+    - name: UnidentifiedEvents
+    - name: ScheduledEvents
+    - name: DeadLetterOffice
+  deleteTopicEnable: true
+  numPartitions: 16
+  replicaCount: 1
+  zookeeper:
+    image:
+      tag: 3.8.4-debian-12-r0
+
+
+mysql:
+  enable: true
+  image:
+    # https://hub.docker.com/r/bitnami/mysql/tags
+    tag: 8.0.36-debian-12-r9
+  fullnameOverride: mysql
+  auth:
+    username: observability
+    database: datakitchen
+

@@ -1,0 +1,64 @@
+<!-- TITLE -->
+<h1 class="dialog-title"
+  mat-dialog-title>
+  Add Journey
+  <button mat-icon-button
+    mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</h1>
+
+<div mat-dialog-content
+  [formGroup]="formGroup">
+  <text-field formControlName="name"
+    label="Name">
+    <text-field-error type="required">Field is required</text-field-error>
+  </text-field>
+
+  <mat-form-field class="top-margin">
+    <textarea formControlName="description"
+      matInput
+      placeholder="Description"
+      rows="2"></textarea>
+  </mat-form-field>
+
+
+  <mat-expansion-panel class="mat-elevation-z0">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Instance Conditions
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <shell-journey-instance-rules
+      [editing]="true"
+      [components]="components$ | async"
+      formControlName="instance_rules"></shell-journey-instance-rules>
+
+  </mat-expansion-panel>
+
+  <div>{{error | json}}</div>
+</div>
+
+<div mat-dialog-actions
+  class="dialog-actions">
+  <!-- CANCEL -->
+  <button mat-dialog-close
+    mat-button
+    class="mat-button--cancel">
+    Cancel
+  </button>
+
+  <!-- ADD -->
+  <button mat-flat-button
+    color="primary"
+    (click)="addJourney(formGroup.value)"
+    [disabled]="(formGroup.touched && formGroup.invalid) || !formGroup.dirty || (adding$ | async) === true">
+    <ng-container *ngIf="adding$ | async; else buttonLabel">
+      Adding
+    </ng-container>
+    <ng-template #buttonLabel>
+      Add
+    </ng-template>
+  </button>
+</div>

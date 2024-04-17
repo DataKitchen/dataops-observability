@@ -1,0 +1,324 @@
+<h1 class="page-title">{{ 'overview' | translate }}</h1>
+
+<div class="ml-4 loading-container"
+  *ngIf="shouldDisplayLoading() === true">
+  <mat-progress-spinner mode="indeterminate"
+    color="gray"
+    diameter="64"></mat-progress-spinner>
+</div>
+
+<ng-container *ngIf="shouldDisplayLoading() === false">
+  <empty-state-setup class="ml-4"
+    *ngIf="(totalEvents$ | async) === 0">
+    <div class="title">{{ 'emptyOverview.noEvents.title' | translate }}</div>
+    <div class="body">{{ 'emptyOverview.noEvents.description' | translate }}</div>
+    <mat-icon class="big-icon"
+      fontSet="mdi"
+      fontIcon="mdi-map"></mat-icon>
+
+    <button
+      [routerLink]="['..', 'integrations']"
+      class="add-button"
+      color="primary"
+      mat-flat-button>
+      <mat-icon class="mr-1">arrow_right_alt</mat-icon>
+      {{ 'emptyOverview.noEvents.button' | translate }}
+    </button>
+
+    <help-link class="learn-more"
+      [showLearnMore]="false"
+      href="https://docs.datakitchen.io/article/dataops-observability-help/data-journeys-and-data-estate">
+      {{ 'emptyOverview.noEvents.learnMore' | translate }}
+    </help-link>
+  </empty-state-setup>
+
+  <empty-state-setup class="ml-4"
+    *ngIf="(totalEvents$ | async) > 0 && (journeys$ | async)?.length === 0">
+    <div class="title">{{ 'emptyOverview.noJourneys.title' | translate }}</div>
+    <div class="body">{{ 'emptyOverview.noJourneys.description' | translate }}</div>
+    <mat-icon class="big-icon"
+      fontSet="mdi"
+      fontIcon="mdi-map"></mat-icon>
+
+    <button
+      [routerLink]="['..', 'journeys']"
+      class="add-button"
+      color="primary"
+      mat-flat-button>
+      <mat-icon class="mr-1">arrow_right_alt</mat-icon>
+      {{ 'emptyOverview.noJourneys.button' | translate }}
+    </button>
+
+    <help-link class="learn-more"
+      href="https://docs.datakitchen.io/article/dataops-observability-help/data-journeys-and-data-estate">
+      {{ 'emptyOverview.noJourneys.learnMore' | translate }}
+    </help-link>
+  </empty-state-setup>
+
+  <div class="content"
+    *ngIf="(journeys$ | async)?.length > 0 && (totalEvents$ | async) > 0">
+    <div class="mat-card"
+      fxFlex
+      fxLayout="column">
+      <div class="runs-header"
+        [formGroup]="form">
+        <h2 *ngIf="isToday$ | async"
+          class="title">Today's Journeys</h2>
+        <h2 *ngIf="(isToday$ | async) === false"
+          class="title">
+          Journeys
+          <span>{{ form.value.day | date:'MMM dd, YYYY' }} </span>
+        </h2>
+
+        <span fxFlex></span>
+
+        <mat-progress-spinner mode="indeterminate"
+          *ngIf="loading()"
+          diameter="24"></mat-progress-spinner>
+
+        <filter-field label="Journeys"
+          allSelectedLabel="All Journeys"
+          noneSelectedLabel="Journeys"
+          formControlName="journey"
+          [multiple]="true"
+          [searchable]="true">
+          <filter-field-option *ngFor="let journey of journeys$ | async"
+            [value]="journey.id"
+            [label]="journey.name">
+          </filter-field-option>
+        </filter-field>
+
+        <div class="date-controls">
+          <button mat-icon-button
+            dkTooltip="Previous date"
+            (click)="previousDate()">
+            <mat-icon>navigate_before</mat-icon>
+          </button>
+          <button mat-button
+            [disabled]="isToday$ | async"
+            (click)="today()">Today
+          </button>
+          <button mat-icon-button
+            dkTooltip="Next date"
+            [dkTooltipDisabled]="isToday$ | async"
+            (click)="nextDate()">
+            <mat-icon>navigate_next</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="chart-container"
+        fxFlex>
+        <ng-container *ngIf="(instances$ | async)?.length === 0 && loading() === false">
+          <div class="empty-state">
+            <span class="empty-state--title">Understand your Journeys</span>
+            <span class="empty-state--message">Stay up-to-date with today’s instances.</span>
+          </div>
+        </ng-container>
+
+        <dots-chart [levels]="chartLevels">
+          <ng-container *ngFor="let instance of instances$ | async; trackBy: instanceDotsTrackBy">
+            <ng-container *ngIf="instance.status === 'UPCOMING'">
+              <dot *dotTpl="instance"
+                [status]="instance.status"
+                [hasRuns]="instance.runsCount > 0"
+                [dkTooltip]="instanceDotTooltip"
+              ></dot>
+            </ng-container>
+            <ng-container *ngIf="instance.status !== 'UPCOMING'">
+
+              <dot *dotTpl="instance"
+                [status]="instance.status"
+                [hasRuns]="instance.runsCount > 0"
+                [dkTooltip]="instanceDotTooltip"
+                [routerLink]="['..', 'instances', instance.id]"
+              ></dot>
+            </ng-container>
+
+            <!-- DUPLICATED -->
+            <ng-template #instanceDotTooltip>
+              <div class="gantt-bar-tooltip">
+                <span class="gantt-bar-tooltip--line gantt-bar-tooltip--name mb-2">{{ instance.journey.name }}</span>
+
+                <ng-container *ngIf="instance.status !== 'UPCOMING'">
+                  <span class="gantt-bar-tooltip--line gantt-bar-tooltip--runs">{{ instance.active ? 'Active' : 'Ended' }}</span>
+                  <span class="gantt-bar-tooltip--line">{{ instance.errorAlertsCount }}
+                    errors, {{ instance.warningAlertsCount }} warnings</span>
+                  <span class="gantt-bar-tooltip--line gantt-bar-tooltip--runs">Total Runs: {{ instance.runsCount }}</span>
+                  <span class="gantt-bar-tooltip--line gantt-bar-tooltip--start">Start Time: {{ instance.start_time | date:'MMM d, hh:mm a' }}</span>
+                  <span *ngIf="!instance.active"
+                    class="gantt-bar-tooltip--line gantt-bar-tooltip--end">End Time: {{ instance.end_time | date:'MMM d, hh:mm a' }}</span>
+                  <span class="gantt-bar-tooltip--line gantt-bar-tooltip--duration">Duration: {{ instance.start_time | duration:instance.end_time }}</span>
+                </ng-container>
+
+                <ng-container *ngIf="instance.status === 'UPCOMING'">
+
+                <span *ngIf="instance.expected_start_time"
+                  class="gantt-bar-tooltip--line gantt-bar-tooltip--start">
+                  Expected Start Time: {{ instance.start_time | date:'MMM d, hh:mm a' }}
+                </span>
+
+                  <span *ngIf="instance.expected_end_time"
+                    class="gantt-bar-tooltip--line gantt-bar-tooltip--end">
+                  Expected End Time: {{ instance.end_time | date:'MMM d, hh:mm a' }}
+                </span>
+
+                </ng-container>
+              </div>
+            </ng-template>
+          </ng-container>
+
+          <ng-template drillInTemplate
+            let-dotsGroup="group">
+            <gantt-chart
+              [start]="ganttStartDate$ | async"
+              [end]="ganttEndDate$ | async"
+              [nowBar]="isToday$ | async">
+
+              <ng-template ganttLabel
+                let-taskGroup="group"
+                let-nested="nested">
+
+                <div *ngIf="!nested"
+                  class="instance--label">
+                  <mat-icon *ngIf="expandedDate?.id !== taskGroup.id"
+                    class="instance--label--icon clickable"
+                    (click)="expandDate(taskGroup.id, taskGroup.tasks)"
+                    matRipple>arrow_right
+                  </mat-icon>
+                  <mat-icon *ngIf="expandedDate?.id === taskGroup.id"
+                    class="instance--label--icon clickable"
+                    (click)="collapseDate()"
+                    matRipple>arrow_drop_down
+                  </mat-icon>
+
+                  <div class="instance--label--text">
+                  <span [dkTooltip]="taskTooltip">
+                    <div>{{ taskGroup.label }}</div>
+                    <div class="secondary-text">Start type: {{ 'startType.' + taskGroup.start_type | translate }}</div>
+                  </span>
+                  </div>
+
+                  <ng-template #taskTooltip>
+                    <div>{{ taskGroup.label }}</div>
+                    <div>Start type: {{ 'startType.' + taskGroup.start_type | translate }}</div>
+                    <div *ngIf="taskGroup.payload_key">Payload key: {{ taskGroup.payload_key }}</div>
+                  </ng-template>
+                </div>
+
+                <div *ngIf="nested"
+                  class="run--label">
+                <span [dkTooltip]="taskGroup.label"
+                  truncate>
+                  {{ taskGroup.label }}
+                </span>
+                </div>
+              </ng-template>
+
+              <ng-container *ngFor="let group of dotsGroup.children">
+                <ng-container *ngFor="let directive of group.templates; trackBy: instanceGanttTrackBy">
+                  <ng-template [ganttBar]="directive.value.id"
+                    [ganttBarLabel]="group.label"
+                    [ganttBarStart]="directive.value.start_time"
+                    [ganttBarEnd]="directive.value.end_time"
+                    [ganttBarGroupBy]="group.id"
+                    [ganttBarContext]="directive.value">
+
+                    <gantt-task *ngIf="directive.value.status !== 'UPCOMING'"
+                      [ngClass]="directive.value.active ? 'ACTIVE-' + directive.value.status : directive.value.status"
+                      [dkTooltip]="instanceBarTooltip"
+                      [routerLink]="['..', 'instances', directive.value.id]">
+                    </gantt-task>
+
+                    <gantt-task *ngIf="directive.value.status === 'UPCOMING'"
+                      [class.hasStartTime]="directive.value.expected_start_time"
+                      [class.hasEndTime]="directive.value.expected_end_time"
+                      [class.hasStartAndEndTime]="directive.value.expected_start_time && directive.value.expected_end_time"
+                      [dkTooltip]="instanceBarTooltip">
+                    </gantt-task>
+                  </ng-template>
+
+                  <!-- DUPLICATED -->
+                  <ng-template #instanceBarTooltip>
+                    <div class="gantt-bar-tooltip">
+                      <span class="gantt-bar-tooltip--line gantt-bar-tooltip--name mb-2">{{ directive.value.journey.name }}</span>
+                      <ng-container *ngIf="directive.value.status !== 'UPCOMING'">
+                        <span class="gantt-bar-tooltip--line gantt-bar-tooltip--runs">{{ directive.value.active ? 'Active' : 'Ended' }}</span>
+                        <span class="gantt-bar-tooltip--line gantt-bar-tooltip--status">{{ directive.value.errorAlertsCount }}
+                          errors, {{ directive.value.warningAlertsCount }} warnings</span>
+                        <span class="gantt-bar-tooltip--line gantt-bar-tooltip--start">Start Time: {{ directive.value.start_time | date:'MMM d, hh:mm a' }}</span>
+                        <span *ngIf="!directive.value.active"
+                          class="gantt-bar-tooltip--line gantt-bar-tooltip--end">End Time: {{ directive.value.end_time | date:'MMM d, hh:mm a' }}</span>
+                        <span class="gantt-bar-tooltip--line gantt-bar-tooltip--duration">Duration: {{ directive.value.start_time | duration:directive.value.end_time }}</span>
+                        <span class="gantt-bar-tooltip--line gantt-bar-tooltip--runs">Total Runs: {{ directive.value.runsCount }}</span>
+                      </ng-container>
+
+                      <ng-container *ngIf="directive.value.status === 'UPCOMING'">
+                      <span *ngIf="directive.value.expected_start_time"
+                        class="gantt-bar-tooltip--line gantt-bar-tooltip--start mt-2">
+                        Expected Start Time: {{ directive.value.start_time | date:'MMM d, hh:mm a' }}
+                      </span>
+
+                        <span *ngIf="directive.value.expected_end_time"
+                          class="gantt-bar-tooltip--line gantt-bar-tooltip--end">
+                        Expected End Time: {{ directive.value.end_time | date:'MMM d, hh:mm a' }}
+                      </span>
+
+                      </ng-container>
+                    </div>
+                  </ng-template>
+
+                  <ng-container *ngIf="expandedDate !== null && expandedDate.id === group.id">
+                    <ng-container *ngFor="let run of instanceRuns$ | async; trackBy: runTrackBy">
+                      <ng-template [ganttBar]="run.id"
+                        [ganttBarLabel]="run.pipeline.display_name"
+                        [ganttBarStart]="run.start_time"
+                        [ganttBarEnd]="run.end_time"
+                        [ganttBarGroupBy]="run.pipeline.id"
+                        [ganttBarContext]="run"
+                        [ganttBarParent]="group.id">
+                        <gantt-task [ngClass]="run.status"
+                          [dkTooltip]="runBarTooltip"
+                          [routerLink]="run.status === 'MISSING' ? ['.'] : ['..', 'events', 'runs', 'details', run.id]"
+                          [class.disabled]="run.status === 'MISSING'">
+                        </gantt-task>
+                      </ng-template>
+
+                      <ng-template #runBarTooltip>
+                        <div class="gantt-bar-tooltip">
+                          <span class="gantt-bar-tooltip--line gantt-bar-tooltip--name">{{ run.pipeline.display_name }}</span>
+                          <span class="gantt-bar-tooltip--line gantt-bar-tooltip--status">{{ 'runStatus.' + run.status | translate }}</span>
+                          <span class="gantt-bar-tooltip--line gantt-bar-tooltip--key">Key: {{ run.key ?? '-' }}</span>
+                          <span *ngIf="run.hasTime"
+                            class="gantt-bar-tooltip--line gantt-bar-tooltip--start">Start Time: {{ run.start_time | date: 'MMM d, hh:mm a' }}</span>
+                          <span *ngIf="run.hasTime && run.status !== 'RUNNING'"
+                            class="gantt-bar-tooltip--line gantt-bar-tooltip--end">End Time: {{ run.end_time | date: 'MMM d, hh:mm a' }}</span>
+                          <span *ngIf="run.hasTime"
+                            class="gantt-bar-tooltip--line gantt-bar-tooltip--duration">Duration: {{ run.start_time | duration: (run.end_time ?? (now$ | async)) }}</span>
+                        </div>
+                      </ng-template>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+
+                <ng-container *ngIf="expandedDate !== null && expandedDate.id === group.id && (instanceRuns$ | async)?.length === 0">
+                  <ng-template [ganttBar]="'empty:' + expandedDate.id"
+                    [ganttBarLabel]=""
+                    [ganttBarStart]="ganttStartDate$ | async"
+                    [ganttBarEnd]="ganttEndDate$ | async"
+                    [ganttBarGroupBy]="'empty:' + expandedDate.id"
+                    [ganttBarParent]="group.id">
+                    <gantt-task class="empty-message">
+                      <span>No run data to display.</span>
+                    </gantt-task>
+                  </ng-template>
+                </ng-container>
+
+              </ng-container>
+            </gantt-chart>
+          </ng-template>
+        </dots-chart>
+      </div>
+    </div>
+  </div>
+</ng-container>

@@ -1,0 +1,37 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  display: flex;
+  flex-direction: row;
+}
+
+$state-colors: (
+  RUNNING: variables.$blue-500,
+  COMPLETED_WITH_WARNINGS: variables.$orange-500,
+  FAILED: variables.$red-500,
+  COMPLETED: variables.$green-500,
+  PENDING: variables.$gray-700,
+  MISSING: variables.$deep-purple-500
+);
+
+
+div {
+  font-weight: 500;
+
+  span {
+    margin-right: 2px;
+    line-height: 16px;
+  }
+
+  mat-icon {
+    @include mixins.icon-size(16px);
+  }
+}
+
+@each $status, $color in $state-colors {
+  .#{$status} {
+    color: $color;
+    border-color: $color;
+  }
+}

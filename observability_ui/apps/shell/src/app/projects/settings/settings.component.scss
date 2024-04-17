@@ -1,0 +1,26 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.scrolling-content {
+  max-width: 500px;
+}
+
+.bottom-chip {
+  font-size: 12px;
+  color: variables.$gray-700;
+  border: 2px solid variables.$gray-200;
+  padding: variables.$space-xxs variables.$space-xs;
+  border-radius: 2px;
+  background: variables.$gray-100;
+}

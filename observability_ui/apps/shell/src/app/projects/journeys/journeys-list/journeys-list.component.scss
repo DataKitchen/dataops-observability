@@ -1,0 +1,54 @@
+@use '@observability/ui/styles/variables' as variables;
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@angular/material' as mat;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.card__date {
+  margin-top: 4px;
+  font-size: 12px;
+  font-style: italic;
+  color: variables.$dark-disabled-text;
+}
+
+.card__description {
+  margin-top: 4px;
+  font-size: 14px;
+  color: variables.$dark-accent-text;
+}
+
+.card__chips__container {
+  @include mixins.flex-row($justify: flex-start);
+  margin-top: 12px;
+
+  .card__chip {
+    font-size: 12px;
+    color: variables.$gray-700;
+    border: 2px solid variables.$gray-100;
+    margin-right: 8px;
+    padding: 0 8px;
+    border-radius: 2px;
+
+    &.filled {
+      background: variables.$gray-100;
+    }
+  }
+}
+
+.labels-filter {
+  margin-top: variables.$space-xxs;
+  margin-left: variables.$space-sm;
+}
+
+.big-icon {
+  rotate: 270deg;
+}
+
+.empty {
+  margin: auto;
+}

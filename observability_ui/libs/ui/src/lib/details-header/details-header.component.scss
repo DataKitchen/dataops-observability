@@ -1,0 +1,42 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+$right-side-width: 400px;
+
+:host > div {
+  @include mixins.flex-row($justify: unset, $align: unset);
+
+  flex-grow: 1;
+  width: 100%;
+}
+
+.left-side {
+  width: calc(100% - $right-side-width);
+
+  .left-link {
+    margin-left: -16px;
+
+    a {
+      @include mixins.flex-row($justify: flex-start);
+      @include mixins.font-color(secondary);
+
+      mat-icon {
+        @include mixins.icon-size(18px);
+
+        margin-right: variables.$space-xxs;
+      }
+    }
+  }
+
+  .header {
+    @include mixins.font-style(headline);
+  }
+
+  .sub-header {
+    @include mixins.font-style(caption, secondary);
+  }
+}
+
+.right-side {
+  width: $right-side-width;
+}

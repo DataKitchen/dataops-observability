@@ -1,0 +1,113 @@
+<div class="backdrop"
+  [routerLink]="['../..']"></div>
+
+<div class="loading-container"
+  *ngIf="loading() === true">
+  <mat-progress-spinner mode="indeterminate"
+    color="primary"></mat-progress-spinner>
+</div>
+
+<div class="header">
+  <h2>Edit components</h2>
+
+  <span fxFlex></span>
+
+  <button mat-icon-button
+    routerLink="../..">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<div class="content">
+  <mat-expansion-panel class="mat-elevation-z0">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{ 'componentsPanel.components' | translate }}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="flex-row mb-3"
+      *ngFor="let component of components()">
+      <component-icon class="mr-3"
+        [tool]="component.tool"
+        [type]="component.type"></component-icon>
+      <span class="component-name"
+        truncate>{{ component.display_name }}</span>
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel class="mat-elevation-z0"
+    expanded>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{ 'componentsPanel.description' | translate }}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <shell-tool-selector [editing]="true"
+      class="mt-2"
+      [formControl]="form.controls.tool">
+    </shell-tool-selector>
+
+    <div>
+      <mat-checkbox [formControl]="form.controls.editTool"
+        color="primary">
+        Edit for all components
+      </mat-checkbox>
+    </div>
+  </mat-expansion-panel>
+
+  <!-- Expected Schedule -->
+  <mat-expansion-panel class="mat-elevation-z0"
+    *ngIf="canEditSchedule"
+    expanded>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{ 'componentsPanel.schedule.header' | translate }}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <shell-edit-expected-schedule
+      [form]="form"></shell-edit-expected-schedule>
+
+    <div>
+      <mat-checkbox [formControl]="form.controls.editSchedule"
+        color="primary">
+        Edit for all components
+      </mat-checkbox>
+    </div>
+  </mat-expansion-panel>
+
+  <!-- Expected Arrival -->
+  <mat-expansion-panel class="mat-elevation-z0"
+    *ngIf="canEditArrivalWindow"
+    expanded>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{ 'componentsPanel.expectedArrival.header' | translate }}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <shell-edit-expected-arrival-window
+      [form]="form"></shell-edit-expected-arrival-window>
+
+    <div>
+      <mat-checkbox [formControl]="form.controls.editArrival"
+        color="primary">
+        Edit for all components
+      </mat-checkbox>
+    </div>
+  </mat-expansion-panel>
+</div>
+
+<div class="footer">
+  <span fxFlex></span>
+
+  <button
+    color="primary"
+    (click)="save()"
+    [disabled]="form.invalid || loading() || (form.valid && form.controls.editTool.value === false && form.controls.editArrival.value === false && form.controls.editSchedule.value === false)"
+    mat-button>
+    {{ 'componentsPanel.save' | translate }}
+  </button>
+</div>

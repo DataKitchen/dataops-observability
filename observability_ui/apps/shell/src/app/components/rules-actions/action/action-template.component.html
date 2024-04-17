@@ -1,0 +1,27 @@
+<mat-expansion-panel
+  #panel
+  [disabled]="!action.editMode"
+  [expanded]="action.expanded"
+  class="mat-elevation-z0">
+  <mat-expansion-panel-header>
+    <mat-panel-title class="fx-flex">
+      <ng-content select=".title"></ng-content>
+    </mat-panel-title>
+    <mat-panel-description>
+      <ng-container *ngIf="!panel.expanded">
+        <ng-content select=".description"></ng-content>
+      </ng-container>
+
+      <ng-container *ngIf="panel.expanded">
+        <span class="fx-flex"></span>
+        <button mat-button color="warn" (click)="action.onDelete();">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </ng-container>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+
+  <ng-content></ng-content>
+
+
+</mat-expansion-panel>

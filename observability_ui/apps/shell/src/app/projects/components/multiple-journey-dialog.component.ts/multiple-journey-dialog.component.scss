@@ -1,0 +1,39 @@
+@use '@observability/ui/styles/variables' as variables;
+@use '@observability/ui/styles/mixins' as mixins;
+
+:host {
+  max-width: 700px;
+}
+
+.mat-mdc-dialog-title {
+  @include mixins.flex-row($justify: space-between);
+
+  border: variables.$border;
+  font-weight: 500;
+  padding: variables.$space-xs variables.$space-sm;
+  font-size: 18px;
+
+  &:before {
+    height: 0;
+  }
+}
+
+.mat-mdc-dialog-content {
+  font-size: 14px;
+  min-width: 500px;
+  padding: variables.$space-md;
+}
+
+.mat-mdc-dialog-actions {
+  justify-content: flex-end;
+  padding: 0 variables.$space-md variables.$space-md;
+}
+
+.expansion-container {
+  max-height: 200px;
+  overflow-y: auto;
+
+  .detail-container:not(:first-of-type) {
+    border-top: variables.$border;
+  }
+}

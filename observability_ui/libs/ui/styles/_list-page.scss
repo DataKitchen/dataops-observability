@@ -1,0 +1,97 @@
+@use './_mixins' as mixins;
+@use './_variables' as var;
+@import './spacing';
+
+$padding: var.$space-md;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.page-title {
+  padding: $padding $padding 0 $padding;
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+
+  h1 {
+    margin: 0;
+  }
+}
+
+.toolbar {
+  @extend .mb-3;
+
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  & > *:not(:last-child) {
+    margin-right: var.$space-xs;
+  }
+}
+
+.table-container {
+  @include mixins.border-radius;
+
+  background-color: var.$white;
+  overflow: hidden;
+}
+
+mat-table {
+  .cdk-column-name a,
+  .cdk-column-id a {
+    @include mixins.link;
+  }
+
+  .cdk-column-created_on,
+  .cdk-column-updated_on {
+    @include mixins.flex-column($justify: center, $align: flex-start);
+  }
+
+  .cdk-column-actions {
+    flex: 0 0 76px;
+    justify-content: center;
+
+    mat-icon {
+      @include mixins.icon-size(20px);
+      @include mixins.font-color(secondary);
+    }
+  }
+
+  .column--sm {
+    flex: 0 0 80px;
+  }
+
+  .column--md {
+    flex: 0 0 100px;
+  }
+
+  .column--icon-flex {
+    @include mixins.flex-row($justify: flex-start);
+
+    mat-icon {
+      @include mixins.icon-size(18px);
+      @include mixins.icon-left;
+      @include mixins.font-color(disabled);
+
+      cursor: default;
+    }
+  }
+}
+
+.scrolling-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+  padding: 0 $padding $padding;
+}
+
+mat-tab-nav-panel.scrolling-content {
+  padding: var.$space-sm $padding $padding;
+}

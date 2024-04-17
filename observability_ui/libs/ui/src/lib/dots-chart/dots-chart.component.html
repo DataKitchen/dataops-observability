@@ -1,0 +1,74 @@
+<div class="content">
+  <div class="labels">
+    <ng-container *ngFor="let group of groups().values()"
+      [ngTemplateOutlet]="groupLabelTemplate"
+      [ngTemplateOutletContext]="{ group }"></ng-container>
+  </div>
+
+  <div class="dots">
+    <ng-container *ngFor="let group of groups().values()"
+      [ngTemplateOutlet]="groupDotsTemplate"
+      [ngTemplateOutletContext]="{ group }"></ng-container>
+  </div>
+</div>
+
+<div *ngIf="expandedExternalGroup() !== undefined"
+  class="external-drill-in">
+  <div class="header">
+    <span class="back-link"
+      (click)="closeExternalExpandedGroup()">
+      <mat-icon>arrow_left_alt</mat-icon>
+      Back
+    </span>
+
+    <span class="group-name">{{ expandedExternalGroup()?.label }}</span>
+  </div>
+  <ng-container [ngTemplateOutlet]="drillInTemplate.template"
+    [ngTemplateOutletContext]="{ group: expandedExternalGroup() }"></ng-container>
+</div>
+
+<ng-template #groupLabelTemplate
+  let-group="group">
+  <div class="row"
+    [ngClass]="'level-' + group.levelIdx">
+    <mat-icon class="row--expansion-icon"
+      [class.clickable]="group.levelIdx + 1 < levels.length"
+      (click)="toggleExpand(group)">{{ group.expanded ? 'arrow_drop_down' : 'arrow_right' }}</mat-icon>
+    <div class="row--label"
+      [class.clickable]="group.levelIdx + 1 < levels.length"
+      (click)="toggleExpand(group)">
+      <span [dkTooltip]="group.label"
+        truncate>{{ group.label }}</span>
+    </div>
+    <span class="fx-flex"></span>
+    <div class="row--icons">
+      <div class="badge mr-1">{{ group.templates.length }}</div>
+      <a [href]="group.link" target="_blank">
+        <mat-icon class="open-in-new-icon link">open_in_new</mat-icon>
+      </a>
+    </div>
+  </div>
+
+  <ng-container *ngIf="group.expanded && group.children.length > 0">
+    <ng-container *ngFor="let nestedGroup of group.children"
+      [ngTemplateOutlet]="groupLabelTemplate"
+      [ngTemplateOutletContext]="{ group: nestedGroup }"></ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #groupDotsTemplate
+  let-group="group">
+  <div class="row"
+    [ngClass]="'level-' + group.levelIdx">
+    <ng-container *ngIf="!group.expanded">
+      <ng-container *ngFor="let directive of group.templates"
+        [ngTemplateOutlet]="directive.template"></ng-container>
+    </ng-container>
+  </div>
+
+  <ng-container *ngIf="group.expanded && group.children.length > 0">
+    <ng-container *ngFor="let nestedGroup of group.children"
+      [ngTemplateOutlet]="groupDotsTemplate"
+      [ngTemplateOutletContext]="{ group: nestedGroup }"></ng-container>
+  </ng-container>
+</ng-template>

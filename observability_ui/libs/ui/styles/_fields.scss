@@ -1,0 +1,23 @@
+@use 'variables' as variables;
+@import 'mixins';
+
+$field-max-width: 700px;
+$field-max-width: 700px;
+$field-group-width: 500px;
+$field-group-width-medium: 450px;
+$field-group-width-narrow: 400px;
+$field-group-width-narrower: 350px;
+$field-margin-top: 0.85em;
+$field-margin-bottom: 20px;
+$field-color: variables.$gray-500;
+$field-shadow: rgba(variables.$black, 0.3);
+$field-label-width: 200px;
+$field-label-min-width: 120px;
+
+
+
+@mixin field($max-width: $field-max-width) {
+  @include flex-row($justify: space-between);
+  max-width: $max-width;
+  color: variables.$dark-primary-text;
+}

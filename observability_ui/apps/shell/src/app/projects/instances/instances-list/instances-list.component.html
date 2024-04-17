@@ -1,0 +1,210 @@
+<div class="page-title">
+  <h1>Instances</h1>
+
+  <div [formGroup]="$any(search)"
+    class="toolbar">
+    <mat-form-field appearance="legacy"
+      class="date-range-field">
+      <mat-label>Date range</mat-label>
+      <mat-date-range-input [rangePicker]="picker">
+        <input matStartDate
+          formControlName="start_range_begin"
+          placeholder="Start date">
+        <input matEndDate
+          formControlName="start_range_end"
+          placeholder="End date">
+      </mat-date-range-input>
+
+      <mat-datepicker-toggle matSuffix
+        [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
+
+    <text-field label="Search data payloads"
+      placeholder="Search data payloads"
+      formControlName="search"
+      type="search"></text-field>
+
+    <filter-field class="journeys-filter"
+      label="Journeys"
+      allSelectedLabel="All Journeys"
+      noneSelectedLabel="Journeys"
+      formControlName="journey_id"
+      multiple="true"
+      [searchable]="true">
+      <ng-container *ngFor="let journey of allJourneys$ | async">
+        <filter-field-option [value]="journey.id"
+          [label]="journey.name">
+        </filter-field-option>
+      </ng-container>
+    </filter-field>
+
+    <filter-field label="Status"
+      allSelectedLabel="All"
+      noneSelectedLabel="Status"
+      formControlName="active"
+      multiple="true">
+      <filter-field-option value="true"
+        label="Active">
+      </filter-field-option>
+      <filter-field-option value="false"
+        label="Ended">
+      </filter-field-option>
+    </filter-field>
+
+    <button *ngIf="filtersApplied$ | async"
+      (click)="search.reset()"
+      mat-button>Clear
+    </button>
+
+    <span fxFlex></span>
+  </div>
+
+</div>
+
+<div class="scrolling-content"
+>
+  <table-wrapper
+    *ngIf="(loading$ | async) === true || (total$ | async) > 0 || (filtersApplied$ | async); else setupTemplate"
+    fxFlex
+    class="mat-elevation-z2 mt-4"
+    [items]="instances$ | async"
+    storageKeyNamespace="instanceList"
+    [total]="total$ | async"
+    [columns]="[ 'id', 'journey', 'start_type_payload', 'started_on', 'finished_on', 'duration', 'status', 'alerts' ]"
+    [loading]="loading$ | async"
+    entity="{{'instances' | translate}}"
+    (tableChange)="onTableChange($event)"
+    [selectable]="false"
+    [search]="search"
+  >
+    <ng-container matColumnDef="id"
+      sortDisabled
+      dragDisabled
+      toggleDisabled>
+      <ng-container *matHeaderCellDef>
+        <span headerLabel="id">ID</span>
+      </ng-container>
+      <ng-container *matCellDef="let instance">
+        <a routerLink="{{instance.id}}"
+          class="link"
+          truncate
+          [dkTooltip]="instance.id">{{ instance.id }}</a>
+      </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="journey"
+      sortDisabled
+      dragDisabled
+      toggleDisabled>
+      <ng-container *matHeaderCellDef>
+        <span headerLabel="journey">Journey</span>
+      </ng-container>
+      <ng-container *matCellDef="let instance">
+        <span [dkTooltip]="instance.journey?.name"
+          truncate>
+          {{ instance.journey?.name }}
+        </span>
+      </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="started_on"
+      sortDisabled
+      dragDisabled>
+      <ng-container *matHeaderCellDef>
+        <span headerLabel="started_on">Start Time</span>
+      </ng-container>
+      <ng-container *matCellDef="let instance">
+        {{ (instance.start_time | date:"MMM d, h:mm:ss a") || "-" }}
+      </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="finished_on"
+      sortDisabled
+      dragDisabled>
+      <ng-container *matHeaderCellDef>
+        End Time
+      </ng-container>
+      <ng-container *matCellDef="let instance">
+        {{ (instance.end_time | date:"MMM d, h:mm:ss a") || "-" }}
+      </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="duration"
+      sortDisabled
+      dragDisabled>
+      <ng-container *matHeaderCellDef>
+        Duration
+      </ng-container>
+      <ng-container *matCellDef="let instance">
+        <duration [start]="instance.start_time"
+          [end]="instance.end_time"></duration>
+      </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="status"
+      sortDisabled
+      dragDisabled
+      toggleDisabled>
+      <ng-container *matHeaderCellDef>
+        Status
+      </ng-container>
+      <ng-container *matCellDef="let instance">
+        <span [class.active-instance]="instance.active">{{ instance.active ? 'Active' : 'Ended' }}</span>
+      </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="alerts"
+      sortDisabled
+      dragDisabled
+      toggleDisabled>
+      <ng-container *matHeaderCellDef>
+      </ng-container>
+      <ng-container *matCellDef="let instance">
+        <shell-instance-alerts (alertClicked)="openAlertsDialog(instance)"
+          [instance]="instance"></shell-instance-alerts>
+      </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="start_type_payload"
+      sortDisabled
+      dragDisabled>
+      <ng-container *matHeaderCellDef>
+        <div>Start Type</div>
+        <div class="payload">Payload</div>
+      </ng-container>
+      <ng-container *matCellDef="let instance">
+        <div>{{ instance.start_type ? ('startType.' + instance.start_type | translate) : 'N/A' }}</div>
+        <div class="payload"
+          truncate
+          dkTooltip="{{instance.payload_key}}"
+          *ngIf="instance.payload_key">{{ instance.payload_key }}
+        </div>
+      </ng-container>
+    </ng-container>
+  </table-wrapper>
+
+  <ng-template #setupTemplate>
+    <empty-state-setup class="mt-4">
+      <div class="title">{{ 'emptyList.title' | translate }}</div>
+      <div class="body">{{ 'emptyList.description' | translate }}</div>
+      <mat-icon class="big-icon"
+        fontSet="mdi"
+        fontIcon="mdi-map"></mat-icon>
+
+      <button
+        [routerLink]="['..', 'journeys']"
+        class="add-button"
+        color="primary"
+        mat-flat-button>
+        <mat-icon class="mr-1">arrow_right_alt</mat-icon>
+        {{ 'emptyList.button' | translate }}
+      </button>
+
+      <help-link class="learn-more"
+        href="https://docs.datakitchen.io/article/dataops-observability-help/data-journeys-and-data-estate">
+        {{ 'emptyList.learnMore' | translate }}
+      </help-link>
+    </empty-state-setup>
+  </ng-template>
+</div>

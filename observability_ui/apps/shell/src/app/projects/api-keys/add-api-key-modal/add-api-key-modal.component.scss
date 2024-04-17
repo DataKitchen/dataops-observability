@@ -1,0 +1,60 @@
+@use '@observability/ui/styles/variables' as variables;
+@use '@observability/ui/styles/mixins' as mixins;
+
+.mat-mdc-dialog-title {
+  border: variables.$border;
+  font-weight: 500;
+  padding: variables.$space-md;
+  font-size: 18px;
+
+  &:before {
+    height: 0;
+  }
+}
+
+.mat-mdc-dialog-content {
+  min-width: 500px;
+  padding: variables.$space-md;
+  font-size: inherit;
+
+  .permissions {
+    @include mixins.flex-column($justify: flex-start, $align: flex-start);
+
+    margin-top: variables.$space-sm;
+
+    &--heading {
+      @include mixins.font-style($style: menu);
+
+      margin-bottom: variables.$space-xs;
+    }
+
+    checkbox-field {
+      margin: unset;
+
+      & + checkbox-field {
+        margin-top: variables.$space-xs;
+      }
+    }
+  }
+}
+
+.mat-mdc-dialog-actions {
+  justify-content: flex-end;
+  padding: 0 variables.$space-md variables.$space-md;
+}
+
+.loading-container {
+  @include mixins.flex-row();
+  width: 100%;
+  height: 100%;
+}
+
+.info-text {
+  @include mixins.flex-row($justify: flex-start);
+  @include mixins.font-color(secondary);
+  margin-bottom: variables.$space-md;
+
+  mat-icon {
+    @include mixins.icon-size(16px)
+  }
+}

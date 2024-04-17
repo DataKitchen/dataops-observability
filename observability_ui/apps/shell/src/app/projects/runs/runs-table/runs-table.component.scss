@@ -1,0 +1,62 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.run-key {
+  @include mixins.link;
+}
+
+.time-wrapper {
+  &.MISSING,
+  &.PENDING {
+    span,
+    small {
+      @include mixins.font-color(disabled);
+
+      font-style: italic;
+    }
+  }
+
+  &--line {
+    @include mixins.flex-row($justify: flex-start);
+
+    span {
+      margin-right: variables.$space-xs;
+    }
+
+    mat-icon.late-schedule-icon {
+      @include mixins.icon-size(16px);
+
+      color: variables.$red-500;
+    }
+
+    small {
+      font-size: 10px;
+    }
+  }
+}
+
+table-wrapper::ng-deep {
+  .cdk-column-key {
+    max-width: 100px;
+  }
+
+  .cdk-column-name {
+    max-width: 150px;
+  }
+
+  .cdk-column-started_on, .cdk-column-finished_on {
+    flex-shrink: 0;
+  }
+
+  .mat-column-duration {
+    flex-shrink: 0;
+    flex-grow: 0;
+    flex-basis: 100px;
+  }
+}

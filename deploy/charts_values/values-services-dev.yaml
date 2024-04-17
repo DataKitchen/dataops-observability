@@ -1,0 +1,14 @@
+kafka:
+  externalAccess:
+    enabled: true
+    service:
+      type: NodePort
+      useHostIPs: true
+      nodePorts: [9092]
+
+mysql:
+  primary:
+    service:
+      type: NodePort
+      nodePorts:
+        mysql: 3306

@@ -1,0 +1,20 @@
+<div class="page-title">
+  <h1>{{'events' | translate | titlecase}}</h1>
+</div>
+
+<nav mat-tab-nav-bar [tabPanel]="tabPanel" #tabs>
+  <a mat-tab-link routerLink="all" routerLinkActive
+     #tab1="routerLinkActive"
+     [active]="tab1.isActive">
+    {{ 'allEvents' | translate | titlecase }}
+  </a>
+  <a mat-tab-link routerLink="runs" routerLinkActive
+     #tab2="routerLinkActive"
+     [active]="tab2.isActive">
+    {{ 'batchRuns' | translate | titlecase }}
+  </a>
+</nav>
+
+<mat-tab-nav-panel class="scrolling-content" #tabPanel>
+  <router-outlet></router-outlet>
+</mat-tab-nav-panel>

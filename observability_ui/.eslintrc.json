@@ -1,0 +1,46 @@
+{
+  "root": true,
+  "ignorePatterns": ["**/*"],
+  "plugins": ["@nx"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "@nx/enforce-module-boundaries": [
+          "error",
+          {
+            "enforceBuildableLibDependency": true,
+            "allow": [],
+            "depConstraints": [
+              {
+                "sourceTag": "*",
+                "onlyDependOnLibsWithTags": ["*"]
+              }
+            ]
+          }
+        ],
+        "@typescript-eslint/no-inferrable-types": "off",
+        "semi": "error",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-unused-vars": "error"
+      }
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "extends": ["plugin:@nx/javascript"],
+      "rules": {}
+    },
+    {
+      "files": ["*.spec.ts"],
+      "rules": {
+        "@angular-eslint/component-selector": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@angular-eslint/directive-selector": "off",
+        "@angular-eslint/directive-class-suffix": "off",
+        "@typescript-eslint/no-explict-any": "off",
+        "@typescript-eslint/no-unused-vars": "warn"
+      }
+    }
+  ],
+  "parser": "@typescript-eslint/parser"
+}

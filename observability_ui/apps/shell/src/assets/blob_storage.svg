@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"
+   sodipodi:docname="10780-icon-service-Blob-Block.svg"
+   id="svg34"
+   version="1.1"
+   viewBox="0 0 30 30"
+   height="30"
+   width="30">
+  <metadata
+     id="metadata38">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>MsPortalFx.base.images-7</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     inkscape:current-layer="svg34"
+     inkscape:window-maximized="0"
+     inkscape:window-y="25"
+     inkscape:window-x="0"
+     inkscape:cy="4.5690947"
+     inkscape:cx="10.877081"
+     inkscape:zoom="11.554678"
+     showgrid="false"
+     id="namedview36"
+     inkscape:window-height="827"
+     inkscape:window-width="1383"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <defs
+     id="defs15">
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       y2="5.7880001"
+       x2="9"
+       y1="15.834"
+       x1="9"
+       id="a9c62307-1cd0-400c-911b-17ec6a9110ce">
+      <stop
+         id="stop10"
+         stop-color="#32bedd"
+         offset="0" />
+      <stop
+         id="stop12"
+         stop-color="#32d4f5"
+         offset="0.775" />
+    </linearGradient>
+  </defs>
+  <title
+     id="title17">MsPortalFx.base.images-7</title>
+  <g
+     transform="matrix(1.7647059,0,0,1.7647059,-0.8823531,-0.88234611)"
+     id="f31d214e-f09e-49e3-b3d2-7c5d55682d09">
+    <g
+       id="g31">
+      <path
+         style="fill:url(#a9c62307-1cd0-400c-911b-17ec6a9110ce)"
+         id="path19"
+         fill="url(#a9c62307-1cd0-400c-911b-17ec6a9110ce)"
+         d="m 0.5,5.788 h 17 v 9.478 a 0.568,0.568 0 0 1 -0.568,0.568 H 1.068 A 0.568,0.568 0 0 1 0.5,15.266 Z" />
+      <path
+         id="path21"
+         fill="#0078d4"
+         d="m 1.071,2.166 h 15.858 a 0.568,0.568 0 0 1 0.568,0.568 V 5.788 H 0.5 V 2.734 A 0.568,0.568 0 0 1 1.071,2.166 Z" />
+      <rect
+         id="rect23"
+         fill="#0078d4"
+         rx="0.28299999"
+         height="3.408"
+         width="6.2810001"
+         y="7.0489998"
+         x="2.3280001" />
+      <rect
+         id="rect25"
+         fill="#ffffff"
+         rx="0.28299999"
+         height="3.408"
+         width="6.2810001"
+         y="7.0489998"
+         x="9.3360004" />
+      <rect
+         id="rect27"
+         fill="#0078d4"
+         rx="0.28299999"
+         height="3.408"
+         width="6.2810001"
+         y="11.128"
+         x="2.296" />
+      <rect
+         id="rect29"
+         fill="#0078d4"
+         rx="0.28299999"
+         height="3.408"
+         width="6.2810001"
+         y="11.128"
+         x="9.3039999" />
+    </g>
+  </g>
+</svg>

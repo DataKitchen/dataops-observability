@@ -1,0 +1,84 @@
+.fx {
+  display: flex;
+}
+
+.fx-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.fx-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row {
+
+  @extend .fx-row;
+  flex-grow: 1;
+  width: 100%;
+  align-items: center;
+}
+
+.flex-column {
+  @extend .fx-column;
+  flex-grow: 1;
+}
+
+.fx-flex {
+  flex: 1 1 0%;
+}
+
+.fx-flex-wrap {
+  flex-wrap: wrap;
+}
+
+.fx-align-flex-center {
+  align-items: center;
+}
+
+.fx-align-flex-start {
+  align-items: flex-start;
+}
+
+.fx-align-flex-end {
+  align-items: flex-end;
+}
+
+.fx-align-baseline {
+  align-items: baseline;
+}
+
+.fx-justify-flex-end {
+  justify-items: flex-end;
+}
+
+.fx-justify-content-flex-end {
+  justify-content: flex-end;
+}
+
+.fx-justify-flex-start {
+  justify-content: flex-start;
+}
+
+.fx-justify-center {
+  justify-content: center;
+}
+
+.fx-justify-space-between {
+  justify-content: space-between;
+}
+
+.fx-flex-align-content {
+  align-content: flex-start;
+}
+
+
+// add here more values when needed
+$sizes: 10, 20, 26, 30, 40, 50, 60, 70, 80, 90;
+
+@each $size in $sizes {
+  .fx-grow-#{$size} {
+    flex-grow: $size/100;
+  }
+}

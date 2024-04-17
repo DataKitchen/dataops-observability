@@ -1,0 +1,26 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  display: flex;
+}
+
+.toggle-button {
+  background-color: variables.$gray-200;
+
+  --border-radius: 0;
+
+  border-radius: 4px 0 0 4px;
+}
+
+.actions-button {
+  @include mixins.flex-row();
+
+  --border-radius: 0;
+
+  border-radius: 0 4px 4px 0;
+
+  &.stand-alone {
+    border-radius: 4px;
+  }
+}

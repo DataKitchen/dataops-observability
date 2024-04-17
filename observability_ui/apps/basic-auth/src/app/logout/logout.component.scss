@@ -1,0 +1,56 @@
+@use '@angular/material' as mat;
+@use '@observability/ui/styles/theme' as theme;
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  @include mixins.flex-column($justify: flex-start);
+
+  width: 100%;
+  height: 100%;
+
+  header {
+    @include mixins.flex-row($justify: flex-start);
+
+    width: 100%;
+    padding: 20px 32px 0 16px;
+
+    .logo {
+      height: 30px;
+      margin-right: auto;
+    }
+
+    a {
+      @include mixins.link;
+    }
+  }
+
+  .content {
+    @include mixins.flex-column;
+
+    width: 100%;
+    height: 100%;
+
+    h2 {
+      font-family: variables.$font-serif;
+    }
+
+    .login-button {
+      width: 300px;
+      height: 200px;
+      padding: variables.$space-sm;
+
+      a {
+        @include mixins.flex-row;
+
+        width: 100%;
+        height: 48px;
+        color: white;
+        padding: unset;
+        background: mat.get-color-from-palette(theme.$mat-primary, main);
+        text-transform: uppercase;
+        border-radius: variables.$border-radius;
+      }
+    }
+  }
+}

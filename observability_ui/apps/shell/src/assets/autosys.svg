@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"
+   sodipodi:docname="autosys.svg"
+   id="svg16"
+   height="30"
+   width="30"
+   viewBox="0 0 30 30"
+   version="1.2">
+  <metadata
+     id="metadata22">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Broadcom_Ltd_Logo-svg</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs20" />
+  <sodipodi:namedview
+     inkscape:current-layer="svg16"
+     inkscape:window-maximized="0"
+     inkscape:window-y="25"
+     inkscape:window-x="0"
+     inkscape:cy="75.885286"
+     inkscape:cx="75.144906"
+     inkscape:zoom="2.2023146"
+     showgrid="false"
+     id="namedview18"
+     inkscape:window-height="847"
+     inkscape:window-width="1440"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <title
+     id="title10">Broadcom_Ltd_Logo-svg</title>
+  <style
+     id="style12">
+		.s0 { fill: #cc092f } 
+		.s1 { fill: #ffffff } 
+	</style>
+  <g
+     transform="matrix(0.02,0,0,0.02,0,-0.01800049)"
+     id="g26">
+    <ellipse
+       id="ellipse24"
+       class="s0"
+       cx="750"
+       cy="750.90002"
+       rx="749.09998"
+       ry="750" />
+    <path
+       id="path26"
+       class="s1"
+       d="m 1464.1,977.5 c -11.9,37.2 -26.6,73.9 -43.8,108.3 -19,-9.3 -38.9,-18.6 -59.2,-24.6 -29.2,-8.6 -59.2,-9.1 -88.3,0.6 -28.2,9.5 -53.3,26.3 -78.4,42 -47.2,29.7 -100.7,63.4 -168.7,63.4 -100.9,0 -171.7,-60.3 -194.3,-165.4 -17.5,-81.5 -81.5,-388.9 -81.5,-388.9 -24.9,125.5 -63.8,307.4 -81.3,388.9 -22.6,105.1 -93.4,165.4 -194.2,165.4 -68.1,0 -121.6,-33.7 -168.8,-63.4 -25,-15.7 -50.2,-32.5 -78.4,-42 -29.1,-9.7 -59.1,-9.2 -88.3,-0.6 -20.3,6 -40.2,15.3 -59.2,24.6 -17.2,-34.4 -31.9,-71.1 -43.8,-108.3 17.4,-8.4 35.6,-16.6 54.1,-24 85.6,-34.2 164.1,-22.8 242.7,25 0,0 28.7,17.5 37.2,22.9 36.7,23 71.2,44.8 104.5,44.8 31.7,0 62.8,-8.5 76,-69.9 20.6,-95.8 70.8,-331.1 92.7,-447.6 12.9,-68.5 20,-105.4 27.3,-130.5 12.8,-43.9 36.3,-67.8 69.5,-71.8 0,0 5.8,-0.8 10.1,-0.8 4.3,0 9.5,0.7 9.5,0.7 33.6,3.8 57.2,27.8 70.1,71.9 7.4,25.1 14.4,62 27.3,130.5 21.9,116.5 72.1,351.8 92.7,447.6 13.2,61.4 44.4,69.9 76.1,69.9 33.2,0 67.7,-21.8 104.4,-44.8 8.6,-5.4 37.2,-22.9 37.2,-22.9 78.6,-47.8 157.1,-59.2 242.8,-25 18.5,7.4 36.7,15.6 54,24 z" />
+  </g>
+</svg>

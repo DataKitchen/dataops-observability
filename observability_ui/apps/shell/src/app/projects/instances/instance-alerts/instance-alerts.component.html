@@ -1,0 +1,39 @@
+<div class="alert-container"
+  (click)="alertClicked.emit()"
+  [dkTooltip]="alertsTooltip"
+  [dkTooltipDisabled]="(errorAlerts.count + warningAlerts.count) === 0">
+  <div *ngIf="instance.active === false && errorAlerts.count === 0"
+    class="single-alert">
+    <mat-icon class="SUCCESS">check</mat-icon>
+  </div>
+
+  <div *ngIf="errorAlerts.count > 0"
+    class="single-alert">
+    <mat-icon class="ERROR">error_outline</mat-icon>
+    {{ errorAlerts.count }}
+  </div>
+
+  <div *ngIf="warningAlerts.count > 0"
+    class="single-alert">
+    <mat-icon class="WARNING">warning_amber</mat-icon>
+    {{ warningAlerts.count }}
+  </div>
+</div>
+
+<ng-template #alertsTooltip>
+  <div class="alerts-tooltip-content">
+    <ng-container *ngIf="errorAlerts.count > 0">
+      <span>{{ 'alertTooltipTitle.ERROR' | translate }} ({{ errorAlerts.count }})</span>
+      <ul>
+        <li *ngFor="let description of errorAlerts.descriptions">{{ description }}</li>
+      </ul>
+    </ng-container>
+
+    <ng-container *ngIf="warningAlerts.count > 0">
+      <span>{{ 'alertTooltipTitle.WARNING' | translate }} ({{ warningAlerts.count }})</span>
+      <ul>
+        <li *ngFor="let description of warningAlerts.descriptions">{{ description }}</li>
+      </ul>
+    </ng-container>
+  </div>
+</ng-template>

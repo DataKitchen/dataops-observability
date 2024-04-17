@@ -1,0 +1,46 @@
+@use '../../../styles/variables' as variables;
+@use '../../../styles/mixins' as mixins;
+
+:host {
+  @include mixins.flex-column($align: center);
+  padding-top: 45px;
+  border: variables.$border;
+  border-radius: variables.$border-radius;
+  background-color: white;
+  max-width: 900px;
+  height: 300px;
+
+  & ::ng-deep {
+    .title {
+      @include mixins.font-style(body);
+      font-weight: bold;
+    }
+
+    .text {
+      @include mixins.font-style(body);
+    }
+
+    mat-icon.big-icon {
+      @include mixins.icon-size(70px);
+      color: variables.$gray-300;
+      margin: variables.$space-md 0;
+    }
+
+    .add-button,  {
+      @include mixins.mat-color($property: 'border-color');
+      @include mixins.flex-row();
+    }
+
+  }
+}
+
+.footer {
+  display: flex;
+  flex-direction: row;
+  padding-right: variables.$space-xs;
+  padding-bottom: variables.$space-xs;
+  flex-grow: 1;
+  align-items: flex-end;
+  justify-content: flex-end;
+  width: 100%;
+}

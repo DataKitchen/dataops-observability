@@ -1,0 +1,94 @@
+<div class="toolbar">
+  <mat-form-field>
+    <mat-label>Date range</mat-label>
+    <mat-date-range-input [rangePicker]="picker">
+      <input matStartDate
+             [formControl]="$any(search.controls.start_range_begin)"
+             placeholder="Start date">
+      <input matEndDate
+             [formControl]="$any(search.controls.start_range_end)"
+             placeholder="End date">
+    </mat-date-range-input>
+
+    <mat-datepicker-toggle matSuffix
+                           [for]="picker"></mat-datepicker-toggle>
+    <mat-date-range-picker #picker></mat-date-range-picker>
+  </mat-form-field>
+
+  <shell-tool-selector
+    [formControl]="$any(search.controls.tool)"
+    editing="true">
+  </shell-tool-selector>
+
+  <text-field label="Search runs"
+      placeholder="Search runs"
+      [formControl]="$any(search.controls.search)"
+      type="search"></text-field>
+
+  <filter-field class="pipelines-filter"
+                label="Components"
+                allSelectedLabel="All Components"
+                noneSelectedLabel="Components"
+                [formControl]="$any(search.controls.pipeline_key)"
+                multiple="true"
+                [searchable]="true">
+
+    <ng-container *ngFor="let pipeline of allPipelines$ | async">
+      <filter-field-option [value]="pipeline.key"
+                           [label]="pipeline.display_name">
+      </filter-field-option>
+    </ng-container>
+  </filter-field>
+
+  <filter-field [label]="'statuses' | translate | titlecase"
+    [multiple]="true"
+    [noneSelectedLabel]="'statuses' | translate | titlecase"
+    [allSelectedLabel]="'allStatuses' | translate"
+    [formControl]="$any(search.controls.status)">
+
+    <ng-container *ngFor="let status of statusOptions">
+      <filter-field-option [value]="status"
+        [label]="'runStatus.' + status | translate">
+      </filter-field-option>
+    </ng-container>
+  </filter-field>
+
+  <button
+    *ngIf="filtersApplied$ | async"
+    (click)="search.reset()"
+    mat-button>Clear
+  </button>
+</div>
+
+<shell-runs-table *ngIf="(loading$ | async) === true || (total$ | async) > 0 || (filtersApplied$ | async); else setupTemplate"
+  [items]="runs$ | async"
+  [total]="total$ | async"
+  [loading]="loading$ | async"
+  (tableChange)="onTableChange($event)"
+  [search]="search">
+
+</shell-runs-table>
+
+<ng-template #setupTemplate>
+  <empty-state-setup>
+    <div class="title">No runs? Begin by connecting your Data Estate</div>
+    <div class="body">Integrate your tools so runs can be monitored on DataOps Observability</div>
+    <mat-icon class="big-icon"
+      fontSet="mdi"
+      fontIcon="multiple_stop"></mat-icon>
+
+    <button [routerLink]="['../..', 'integrations']"
+      class="add-button"
+      color="primary"
+      mat-flat-button>
+      <mat-icon>arrow_right_alt</mat-icon>
+      Go to Integrations
+    </button>
+
+    <help-link [showLearnMore]="false"
+      class="learn-more"
+      href="https://docs.datakitchen.io/article/dataops-observability-help/log-in-and-set-up-observability/a/h2_2124997853">
+      Get started with Observability
+    </help-link>
+  </empty-state-setup>
+</ng-template>

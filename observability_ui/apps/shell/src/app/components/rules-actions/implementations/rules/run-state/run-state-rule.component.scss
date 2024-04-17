@@ -1,0 +1,29 @@
+@use '@observability/ui/styles/mixins' as mixins;
+
+:host {
+  display: flex;
+  flex-direction: row;
+}
+
+.count-input {
+  width: 32px;
+}
+
+.advanced-options-link-container {
+  display: flex;
+  width: 100%;
+  margin-top: 16px;
+  font-size: 12px;
+
+  .advanced-options-link {
+    @include mixins.link();
+    @include mixins.link-with-icon();
+    @include mixins.flex-row();
+
+    mat-icon {
+      @include mixins.icon-size(14px);
+      margin-left: 2px;
+    }
+  }
+
+}

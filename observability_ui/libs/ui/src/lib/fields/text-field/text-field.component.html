@@ -1,0 +1,29 @@
+<mat-form-field>
+  <mat-label>{{ label }}</mat-label>
+  <input matInput
+    placeholder="{{ placeholder || label }}"
+    [formControl]="control"
+    [type]="type"
+    [autofocus]="autofocus">
+
+  <mat-hint *ngIf="hint">{{hint}}</mat-hint>
+
+  <mat-error *ngFor="let error of errors">
+    <ng-container *ngIf="control.hasError(error.type) && error.template">
+      <ng-template [ngTemplateOutlet]="error.template"></ng-template>
+    </ng-container>
+  </mat-error>
+
+  <!-- ICON -->
+  <mat-icon class="search-icon"
+    *ngIf="type === 'search'"
+    matPrefix>search
+  </mat-icon>
+  <mat-icon *ngIf="type === 'search' && control.value"
+    matSuffix
+    (click)="control.reset()">
+    clear
+  </mat-icon>
+
+</mat-form-field>
+

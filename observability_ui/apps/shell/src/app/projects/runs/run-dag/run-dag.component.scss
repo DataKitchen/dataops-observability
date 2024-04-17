@@ -1,0 +1,160 @@
+@use '@angular/material' as mat;
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  @include mixins.flex-column($justify: flex-start, $align: stretch);
+
+  height: 100%;
+  position: relative;
+
+  dag {
+    flex: 1;
+  }
+
+  mat-progress-spinner {
+    position: absolute;
+    top: variables.$space-xs;
+    right: variables.$space-xs;
+
+    // mat-icon {
+    //   @include mixins.font-color(secondary);
+    // }
+  }
+}
+
+.toolbar {
+  @include mixins.flex-row($justify: flex-start, $align: center);
+
+  .dag-controls {
+    @include mat.elevation(1);
+    @include mixins.border-radius;
+    @include mixins.flex-row($justify: flex-start, $align: center);
+
+    width: fit-content;
+    padding: variables.$space-xxs;
+
+    button {
+      @include mixins.flex-column;
+      @include mixins.button-reset;
+      @include mixins.border-radius;
+      @include mixins.font-color(secondary);
+
+      padding: variables.$space-xxs;
+
+      mat-icon {
+        @include mixins.icon-size(20px);
+
+        color: inherit;
+      }
+
+      span {
+        @include mixins.font-style($style: caption);
+
+        color: inherit;
+      }
+    }
+  }
+}
+
+.task {
+  @include mixins.flex-column($justify: flex-start);
+  @include mixins.size($max-width: 150px, $height: calc(48px + 4px + 16px), $max-height: calc(48px + 4px + 16px));
+
+  position: relative;
+
+  .node {
+    @include mixins.flex-row($justify: center, $align: center);
+
+    width: 48px;
+    height: 48px;
+
+    border-radius: 50%;
+    border: 1px solid variables.$dark-accent-text;
+    background: variables.$gray-400;
+
+    mat-icon {
+      @include mixins.icon-size(24px);
+
+      color: white;
+    }
+  }
+
+  label {
+    @include mixins.flex-row($justify: flex-start);
+    @include mixins.font-style(caption);
+    @include mixins.size($max-width: 150px);
+
+    position: absolute;
+    top: calc(48px + 4px);
+
+    display: flex;
+    white-space: nowrap;
+    line-height: 16px;
+  }
+
+  &.RUNNING {
+    .node {
+      background: variables.$blue-300;
+    }
+  }
+
+  &.COMPLETED {
+    .node {
+      background: variables.$light-green-400;
+    }
+  }
+
+  &.COMPLETED_WITH_WARNINGS {
+    .node {
+      background: variables.$amber-300;
+
+      mat-icon {
+        @include mixins.icon-size(40px);
+      }
+    }
+  }
+
+  &.FAILED {
+    .node {
+      background: variables.$red-300;
+    }
+  }
+
+  &.PENDING {
+    .node {
+      background: white;
+
+      mat-icon {
+        color: variables.$dark-accent-text;
+      }
+    }
+  }
+}
+
+
+.error {
+  @include mixins.size($height: 100%, $width: 100%);
+  @include mixins.flex-column($justify: center, $align: center);
+
+  position: absolute;
+
+  &--title {
+    @include mixins.font-style($style: headline);
+
+    color: variables.$dark-accent-text;
+  }
+
+  &--message {
+    @include mixins.font-style($style: body);
+
+    color: variables.$dark-disabled-text;
+  }
+
+  &--action {
+    @include mixins.font-style($style: menu);
+
+    cursor: pointer;
+    color: variables.$link;
+  }
+}

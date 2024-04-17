@@ -1,0 +1,16 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  @include mixins.flex-row();
+
+  * {
+    font-size: 14px;
+    color: variables.$dark-accent-text;
+    font-weight: normal;
+  }
+
+  mat-icon {
+    @include mixins.icon-size(16px)
+  }
+}

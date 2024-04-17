@@ -1,0 +1,160 @@
+{
+  "name": "shell",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/shell/src",
+  "prefix": "shell",
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:webpack-browser",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/shell",
+        "index": "apps/shell/src/index.html",
+        "main": "apps/shell/src/main.ts",
+        "polyfills": "apps/shell/src/polyfills.ts",
+        "tsConfig": "apps/shell/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "allowedCommonJsDependencies": [
+          "utility-types",
+          "cron-parser",
+          "timezones-list",
+          "cronstrue"
+        ],
+        "assets": [
+          "apps/shell/src/favicon.ico",
+          "apps/shell/src/assets",
+          "apps/shell/src/manifest.webmanifest",
+          {
+            "glob": "**/*.json",
+            "input": "apps/shell/src/environments",
+            "output": "/environments/"
+          },
+          {
+            "glob": "**/*",
+            "input": "./node_modules/monaco-editor",
+            "output": "assets/monaco-editor"
+          }
+        ],
+        "styles": [
+          "apps/shell/src/styles.scss",
+          "node_modules/@observability/ui/styles/material/colors.scss",
+          "node_modules/@observability/ui/styles/_list-page.scss",
+          "node_modules/@observability/ui/styles/_details-page.scss",
+          "node_modules/@observability/ui/styles/_dialog.scss",
+          "node_modules/@observability/ui/styles/_rules.scss",
+          "node_modules/@observability/ui/styles/_gantt-chart.scss"
+        ],
+        "scripts": [
+        ],
+        "customWebpackConfig": {
+          "path": "apps/shell/webpack.config.js"
+        },
+        "serviceWorker": true,
+        "ngswConfigPath": "apps/shell/ngsw-config.json",
+        "buildLibsFromSource": false
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "5kb",
+              "maximumError": "10kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/shell/src/environments/environment.ts",
+              "with": "apps/shell/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all",
+          "customWebpackConfig": {
+            "path": "apps/shell/webpack.prod.config.js"
+          }
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@nx/angular:webpack-dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "shell:build:production"
+        },
+        "development": {
+          "browserTarget": "shell:build:development"
+        }
+      },
+      "defaultConfiguration": "development",
+      "options": {
+        "publicHost": "http://localhost:4200"
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "shell:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "apps/shell/src/**/*.ts",
+          "apps/shell/src/**/*.html"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/shell"
+      ],
+      "options": {
+        "jestConfig": "apps/shell/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "serve-mfe": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx serve basic-auth",
+          "nx serve shell"
+        ]
+      }
+    },
+    "list": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo $PWD"
+      }
+    },
+    "version": {
+      "executor": "./tools/executors/version:version"
+    }
+  },
+  "tags": [],
+  "implicitDependencies": [
+    "core",
+    "ui",
+    "translate"
+  ]
+}
