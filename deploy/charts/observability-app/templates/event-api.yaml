@@ -50,7 +50,7 @@ spec:
             {{- include "observability.environment.database" . | nindent 12 }}
             {{- include "observability.environment.kafka" . | nindent 12 }}
             - name: GUNICORN_CMD_ARGS
-              value: "--bind 0.0.0.0:{{ .Values.event_api.service.nodePort }}"
+              value: "--bind 0.0.0.0:{{ .Values.event_api.service.port }}"
             {{- if .Values.event_api.hostname }}
             - name: EVENTS_API_HOSTNAME
               value: {{ tpl .Values.event_api.hostname . | quote }}
@@ -69,7 +69,7 @@ spec:
             timeoutSeconds: 5
             httpGet:
               path: /events/readyz
-              port: 5001
+              port: {{ .Values.event_api.service.port }}
               httpHeaders:
                 {{- if .Values.event_api.hostname }}
                 - name: Host

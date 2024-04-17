@@ -9,12 +9,12 @@ observability:
   flask_debug: "false"
   image:
     repository: "docker.io/datakitchen"
-    tag: "latest"
+    tag: "v2"
 
 observability_ui:
   enable: true
   image:
-    name: observability-ui
+    name: dataops-observability-ui
     pullPolicy: IfNotPresent
   service:
     type: NodePort
@@ -33,7 +33,7 @@ observability_ui:
 observability_api:
   enable: true
   image:
-    name: observability-be
+    name: dataops-observability-be
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -50,7 +50,7 @@ observability_api:
 event_api:
   enable: true
   image:
-    name: observability-be
+    name: dataops-observability-be
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -67,7 +67,7 @@ event_api:
 agent_api:
   enable: true
   image:
-    name: observability-be
+    name: dataops-observability-be
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
@@ -84,7 +84,7 @@ agent_api:
 run_manager:
   enable: true
   image:
-    name: observability-be
+    name: dataops-observability-be
     pullPolicy: IfNotPresent
   replicaCount: 1
   scaledownPreDeploy: "yes"
@@ -95,7 +95,7 @@ run_manager:
 rules_engine:
   enable: true
   image:
-    name: observability-be
+    name: dataops-observability-be
     pullPolicy: IfNotPresent
   replicaCount: 1
   scaledownPreDeploy: "yes"
@@ -106,7 +106,7 @@ rules_engine:
 scheduler:
   enable: true
   image:
-    name: observability-be
+    name: dataops-observability-be
     pullPolicy: IfNotPresent
   replicaCount: 1
   nodeSelector: {}
@@ -118,7 +118,7 @@ cli_hook:
     - phases: ["pre-install"]
       command: ["/dk/bin/cli", "init", "--tables"]
   image:
-    name: observability-be
+    name: dataops-observability-be
     pullPolicy: IfNotPresent
 
 # Remove when the images go public

@@ -40,7 +40,7 @@ spec:
           imagePullPolicy: {{ .Values.observability_api.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 5000
+              containerPort: {{ .Values.observability_api.service.port }}
               protocol: TCP
           resources:
             {{- toYaml .Values.observability_api.resources | nindent 12 }}
@@ -49,7 +49,7 @@ spec:
             {{- include "observability.environment.database" . | nindent 12 }}
             {{- include "observability.environment.flask" . | nindent 12 }}
             - name: GUNICORN_CMD_ARGS
-              value: "--bind 0.0.0.0:{{ .Values.observability_api.service.nodePort }}"
+              value: "--bind 0.0.0.0:{{ .Values.observability_api.service.port }}"
             {{- if .Values.observability_api.hostname }}
             - name: OBSERVABILITY_API_HOSTNAME
               value: {{ tpl .Values.observability_api.hostname . | quote }}
