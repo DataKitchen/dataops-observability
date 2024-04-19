@@ -72,7 +72,7 @@ import { MatIconModule } from '@angular/material/icon';
           <div class="advanced-options-link-container">
             {{'learnMoreAbout' | translate}}&nbsp;
             <a target="_blank"
-              href="https://docs.datakitchen.io/article/dataops-observability-help/observability-rule-triggers/a/h3_940168387"
+              href="https://docs.datakitchen.io/article/dataops-observability-help/observability-rule-triggers/a/advanced-run-options"
               class="advanced-options-link">{{'advancedOptions' | translate | lowercase}}
               <mat-icon>open_in_new</mat-icon>
             </a>
