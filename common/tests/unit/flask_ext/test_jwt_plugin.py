@@ -19,7 +19,7 @@ TOKEN_DATA = {
     "updated_at": "2021-12-02T21:16:20.356Z",
     "email": "testuser@domain.com",
     "email_verified": True,
-    "iss": "https://dkio.auth0.com/",
+    "iss": "https://example.auth0.com/",
     "sub": "auth0|5e541654edafc00d7c80fc62",
     "aud": "2tL5WT2vrvaeGjaHOeCuDH8qCXJcttwU",
     "iat": 1638479780,
