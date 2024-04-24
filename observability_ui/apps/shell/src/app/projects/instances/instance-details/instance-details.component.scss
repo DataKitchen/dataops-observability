@@ -1,0 +1,50 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  @include mixins.flex-column($justify: normal, $align: normal);
+
+  height: 100%;
+}
+
+.dates-container {
+  @include mixins.flex-row();
+
+  margin-top: variables.$space-sm;
+}
+
+.duration {
+  @include mixins.font-style(caption, secondary);
+
+  margin-left: variables.$space-sm;
+}
+
+.start-conditions {
+  margin-top: variables.$space-xs;
+
+  span + span {
+    margin-left: variables.$space-sm;
+  }
+
+  &--value {
+    @include mixins.font-color(secondary);
+  }
+}
+
+.alerts-and-active {
+  @include mixins.flex-row($justify: space-between);
+
+  margin-top: variables.$space-xs;
+
+  span {
+    font-weight: 500;
+
+    &.active-instance {
+      color: variables.$blue-500;
+    }
+  }
+
+  span + shell-instance-alerts {
+    margin-left: variables.$space-md;
+  }
+}

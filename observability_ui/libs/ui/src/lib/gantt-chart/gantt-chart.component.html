@@ -1,0 +1,43 @@
+<div class="ticks">
+  <span *ngFor="let tick of ticks()"
+    class="ticks--tick">{{ tick.time | date:tick.format }}</span>
+</div>
+
+<div *ngIf="now()"
+  class="now-layer"
+  [style.left]="now()?.offset + 'px'">
+  <span class="now-layer--bar">
+    {{ now()?.time | date:'hh:mm a' }}
+  </span>
+</div>
+
+<div class="chart">
+  <div class="tasks">
+    <ng-container *ngFor="let group of taskGroups()">
+      <div class="tasks--task">
+        <ng-container [ngTemplateOutlet]="labelTemplate.template"
+          [ngTemplateOutletContext]="{ group: group, nested: false }"></ng-container>
+      </div>
+      <div *ngFor="let nestedGroup of group.children"
+        class="tasks--task nested">
+        <ng-container [ngTemplateOutlet]="labelTemplate.template"
+          [ngTemplateOutletContext]="{ parent: group, group: nestedGroup, nested: true }"></ng-container>
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="durations"
+    #durations>
+    <ng-container *ngFor="let group of taskGroups()">
+      <div class="durations--lane">
+        <ng-container *ngFor="let directive of group.tasks"
+          [ngTemplateOutlet]="directive.template"></ng-container>
+      </div>
+      <div *ngFor="let nestedGroup of group.children"
+        class="durations--lane nested">
+        <ng-container *ngFor="let directive of nestedGroup.tasks"
+          [ngTemplateOutlet]="directive.template"></ng-container>
+      </div>
+    </ng-container>
+  </div>
+</div>

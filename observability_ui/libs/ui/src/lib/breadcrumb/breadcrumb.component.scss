@@ -1,0 +1,23 @@
+@import '../../../styles/mixins';
+
+:host {
+  @include flex-row($justify: flex-start);
+  @include font-style(caption, secondary);
+
+  line-height: 14px;
+}
+
+.breadcrumb__link {
+  @include link(secondary);
+}
+
+.breadcrumb__icon {
+  @include icon-size(16px);
+}
+
+.breadcrumb__item,
+.breadcrumb__link {
+  &:last-child {
+    @include font-color(primary);
+  }
+}

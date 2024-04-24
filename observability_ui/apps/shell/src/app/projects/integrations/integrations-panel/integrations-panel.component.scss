@@ -1,0 +1,94 @@
+@use '@angular/material' as mat;
+@use '@observability/ui/styles/theme' as theme;
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+$panel-width: 700px;
+
+:host {
+  @include mixins.flex-column($justify: normal, $align: normal);
+
+  top: 0;
+  right: 0;
+  bottom: 0;
+  position: fixed;
+
+  height: 100%;
+  width: $panel-width;
+  background-color: white;
+
+  overflow-y: auto;
+}
+
+.backdrop {
+  @include mixins.left-backdrop($panel-width);
+}
+
+.header {
+  padding: variables.$space-md;
+
+  .search-input {
+    width: 200px;
+  }
+}
+
+.content {
+  @include mixins.flex-row($justify: flex-start, $align: flex-start, $wrap: wrap);
+
+  padding: 0 variables.$space-md;
+  flex: 1;
+  align-content: flex-start;
+
+  .integration {
+    @include mixins.link-reset;
+    @include mixins.flex-row($justify: flex-start);
+
+    width: calc(50% - 10px);
+    border: variables.$border;
+    border-radius: variables.$border-radius;
+    margin: variables.$space-xs variables.$space-xs variables.$space-xs 0;
+    padding: variables.$space-sm;
+
+    &:hover {
+      border-color: mat.get-color-from-palette(theme.$mat-primary, main);
+
+      span {
+        color: mat.get-color-from-palette(theme.$mat-primary, main);
+      }
+    }
+
+    mat-icon {
+      @include mixins.icon-size(24px);
+
+      margin-right: variables.$space-sm;
+    }
+
+    span {
+      font-weight: 500;
+    }
+  }
+}
+
+.footer {
+  @include mixins.flex-row($justify: flex-start);
+
+  width: 100%;
+  padding: variables.$space-sm;
+  border-top: variables.$border;
+  margin-top: variables.$space-sm;
+
+  .help-link {
+    display: flex;
+    flex-direction: row;
+  }
+
+  a.help-link {
+    @include mixins.link;
+    @include mixins.flex-row($justify: center, $align: center);
+
+    mat-icon {
+      @include mixins.icon-size(12px);
+      margin-left: variables.$space-xxs;
+    }
+  }
+}

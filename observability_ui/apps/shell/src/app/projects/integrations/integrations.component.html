@@ -1,0 +1,134 @@
+<div class="page-title">
+  <h1>{{'integrations' | translate | titlecase}}</h1>
+
+  <div [formGroup]="search"
+    class="toolbar">
+    <text-field
+      label="Search integrations"
+      placeholder="Search integrations"
+      [formControl]="search.controls.search"
+      type="search"></text-field>
+
+
+    <button
+      *ngIf="filtersApplied$ | async"
+      (click)="search.reset()"
+      mat-button>Clear
+    </button>
+
+    <span class="fx-flex"></span>
+
+    <button color="primary"
+      mat-flat-button
+      [routerLink]="['.', { outlets: { rightPanel: ['guides'] } }]">
+      <mat-icon class="button-icon">visibility</mat-icon>
+      {{'availableIntegrations' | translate}}
+    </button>
+  </div>
+
+</div>
+
+<div class="scrolling-content">
+  <div class="fx-flex fx-column flex-grow fx-align-flex-center fx-justify-center"
+    *ngIf="(loading$ | async) === true; else tpl">
+    <mat-progress-spinner mode="indeterminate"
+      color="gray"></mat-progress-spinner>
+  </div>
+
+  <ng-template #tpl>
+
+    <ng-container *ngIf="(total$ | async) > 0; else emptyResultsTemplate">
+
+      <!--  Agents List    -->
+      <div class="mat-card-list items-mb-4">
+
+        <ng-container *ngFor="let agent of agents$ | async">
+          <mat-card class="agent-card">
+            <div class="card__title fx-row mb-3">
+              <ng-container *ngIf="agent.tool | getToolClass  as component;">
+                <component-icon class="mr-2"
+                  [tool]="component._name.toUpperCase()"></component-icon>
+              </ng-container>
+
+              <div>{{agent.key}}</div>
+            </div>
+
+            <div class="fx-row">
+              <div class="fx-flex fx-column items-mb-1">
+                <div class="fx-row fx-align-flex-center items-mr-1">
+                  <span class="label">Latest heartbeat:</span>
+                  <span class="value">{{(agent.latest_heartbeat | date:'MMM d, h:mm a') }}</span>
+                  <div class="status-icon"
+                    [class.green]="agent.lateness < agentsLatenessThresholds.warning"
+                    [class.yellow]="agent.lateness >= agentsLatenessThresholds.warning && agent.lateness < agentsLatenessThresholds.error"
+                    [class.red]="agent.lateness >= agentsLatenessThresholds.error"
+                  >
+                  </div>
+                </div>
+                <div class="fx-row fx-align-flex-center">
+                  <span class="label mr-1">Agent version:</span>
+                  <span class="value">{{agent.version}}</span>
+                </div>
+              </div>
+              <div class="fx-flex fx-column items-mb-1">
+                <div class="fx-row fx-align-flex-center items-mr-1">
+                  <span class="label">Latest event:</span>
+                  <span class="value">
+                  {{ (agent.latest_event_timestamp | date:'MMM d, h:mm a') || '-' }}
+                </span>
+                  <!--                <a [routerLink]="['..', 'events']" target="_blank" class="fx">-->
+                  <!--                  <mat-icon inline>open_in_new</mat-icon>-->
+                  <!--                </a>-->
+                </div>
+                <!--              <div class="fx-row fx-align-flex-center">-->
+                <!--                <span class="label mr-1">Api Key:</span>-->
+                <!--                <span class="value">{{agent.key}}</span>-->
+                <!--              </div>-->
+              </div>
+            </div>
+          </mat-card>
+
+        </ng-container>
+
+
+      </div>
+
+    </ng-container>
+
+    <ng-template #emptyResultsTemplate>
+      <div *ngIf="filtersApplied$ | async"
+        class="empty">
+        <span class="empty-result-set">{{'noIntegrations' | translate}}</span>
+      </div>
+
+      <empty-state-setup *ngIf="(filtersApplied$ | async) === false">
+        <div class="title">{{'setup.title' | translate}}</div>
+        <div class="body">{{'setup.subtitle' | translate}}</div>
+        <mat-icon class="big-icon">multiple_stop</mat-icon>
+
+        <button color="primary"
+          mat-flat-button
+          class="add-button"
+          [routerLink]="['.', { outlets: { rightPanel: ['guides'] } }]">
+          <mat-icon class="button-icon">visibility</mat-icon>
+          {{'availableIntegrations' | translate}}
+        </button>
+
+        <help-link [showLearnMore]="false"
+          class="learn-more"
+          href="https://docs.datakitchen.io/article/dataops-observability-help/integrate-your-tools">
+          Get started with Observability
+        </help-link>
+      </empty-state-setup>
+
+    </ng-template>
+
+  </ng-template>
+</div>
+
+<mat-paginator
+  [class.hidden]="(total$ | async) === 0"
+  [length]="(total$ | async)"
+  [pageSize]="pageSize"
+  [pageSizeOptions]="[5, 10, 25, 50, 100]"
+  [showFirstLastButtons]="true"></mat-paginator>

@@ -1,0 +1,201 @@
+@use '@angular/material' as mat;
+@use '@observability/ui/styles/theme' as theme;
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+$panel-width: 700px;
+
+:host {
+  @include mixins.flex-column($justify: normal, $align: normal);
+
+  top: 0;
+  right: 0;
+  bottom: 0;
+  position: fixed;
+
+  height: 100%;
+  width: $panel-width;
+  background-color: white;
+
+  overflow-y: auto;
+  padding-bottom: variables.$space-md;
+}
+
+.backdrop {
+  @include mixins.left-backdrop($panel-width);
+}
+
+.header {
+  @include mixins.flex-row($justify: flex-start);
+
+  position: relative;
+  padding: variables.$space-sm variables.$space-md;
+  margin-bottom: variables.$space-sm;
+
+  h2 {
+    margin: unset;
+    margin-right: variables.$space-xs;
+  }
+
+  mat-icon.testgen-icon {
+    @include mixins.icon-size(16px);
+  }
+
+  button {
+    @include mixins.font-color(secondary);
+  }
+
+  &::after {
+    content: " ";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: variables.$border-color;
+  }
+}
+
+.content {
+  @include mixins.flex-column($justify: flex-start, $align: flex-start);
+
+  flex: 1;
+  padding: 0 variables.$space-md;
+  align-content: flex-start;
+
+  .information {
+    @include mixins.flex-column($align: flex-start);
+
+    width: 100%;
+    margin-bottom: variables.$space-sm;
+
+    &--name {
+      @include mixins.flex-row($justify: flex-start);
+
+      h3 {
+        margin: unset;
+        font-size: 18px;
+      }
+
+      mat-icon {
+        @include mixins.icon-size(24px);
+
+        margin-right: variables.$space-xs;
+
+        &.PASSED {
+          color: map-get($map: variables.$colors, $key: 'green');
+        }
+
+        &.WARNING {
+          color: map-get($map: variables.$colors, $key: 'orange');
+        }
+
+        &.FAILED {
+          color: map-get($map: variables.$colors, $key: 'red');
+        }
+      }
+    }
+
+    &--results {
+      @include mixins.font-color(secondary);
+    }
+
+    &--key {
+      @include mixins.font-style(caption, secondary);
+
+      font-style: italic;
+    }
+
+    &--badges {
+      @include mixins.flex-row($justify: flex-start, $align: center);
+
+      width: 100%;
+      overflow-x: auto;
+      margin-top: variables.$space-xs;
+
+      .tag {
+        border-radius: 4px;
+      }
+    }
+
+    &--help {
+      @include mixins.flex-row($justify: flex-end);
+
+      width: 100%;
+      margin-top: variables.$space-xxs;
+    }
+  }
+
+  .history {
+    @include mixins.flex-column;
+
+    width: 100%;
+    height: 300px;
+    margin-bottom: variables.$space-xxl;
+
+    canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .metric-description {
+      display: block;
+    }
+  }
+
+  .data,
+  .parameters {
+    @include mixins.flex-column($align: flex-start);
+
+    width: 100%;
+    border: variables.$border;
+    padding: variables.$space-sm;
+    border-radius: variables.$border-radius;
+
+    h4 {
+      @include mixins.font-style(subheader);
+
+      margin: unset;
+      margin-bottom: variables.$space-sm;
+      font-weight: 500;
+    }
+
+    .inner-content {
+      @include mixins.flex-row($justify: flex-start, $align: flex-start);
+
+      width: 100%;
+      height: calc(100% - 24px - #{variables.$space-sm});
+
+      .attributes-column {
+        @include mixins.flex-column($justify: flex-start, $align: flex-start);
+
+        height: 100%;
+
+        &:nth-child(1):not(.metric-description) {
+          width: 50%;
+        }
+      }
+
+      .attributes-column + .attributes-column {
+        margin-left: variables.$space-xs;
+      }
+    }
+
+    .attribute {
+      @include mixins.flex-column($justify: flex-start, $align: flex-start);
+
+      margin-bottom: variables.$space-xs;
+
+      &--key {
+        @include mixins.font-style(caption, secondary);
+      }
+    }
+  }
+
+  .data {
+    margin-bottom: variables.$space-sm;
+  }
+
+  // .parameters {
+  // }
+}

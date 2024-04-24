@@ -1,0 +1,39 @@
+<details-header [title]="(journey$ | async)?.name"
+                backLink=".."
+                backLinkTitle="Back to Journeys">
+  <nav mat-tab-nav-bar [tabPanel]="tabPanel">
+    <a mat-tab-link
+      routerLink="relationships"
+      routerLinkActive
+      #relationshipsLink="routerLinkActive"
+      [active]="relationshipsLink.isActive">
+      {{ 'relationships' | translate }}
+    </a>
+    <a mat-tab-link
+       routerLink="rules"
+       routerLinkActive
+       #rules="routerLinkActive"
+       [active]="rules.isActive">
+      {{ 'rules' | translate | titlecase }}
+    </a>
+    <a mat-tab-link
+      routerLink="settings"
+      routerLinkActive
+      #settingsLink="routerLinkActive"
+      [active]="settingsLink.isActive">
+      {{ 'settings' | translate }}
+    </a>
+
+    <a mat-tab-link
+      [routerLink]="['../..', 'instances']"
+      [queryParams]="{journey_id: journeyId$ | async}"
+      class="link">
+      <span>View Instances</span>
+      <mat-icon>chevron_right</mat-icon>
+    </a>
+  </nav>
+</details-header>
+
+<mat-tab-nav-panel #tabPanel class="scrolling-content">
+  <router-outlet></router-outlet>
+</mat-tab-nav-panel>

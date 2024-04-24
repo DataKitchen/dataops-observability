@@ -1,0 +1,6 @@
+{
+  "name": "@observability/core",
+  "version": "1.96.0",
+  "description": "this is the core lib of observability mfe setup",
+  "license": "MIT"
+}

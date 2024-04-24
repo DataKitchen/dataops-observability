@@ -1,0 +1,61 @@
+{{- if .Values.run_manager.enable }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "observability.run_manager.name" . }}
+  labels:
+    {{- include "observability.labels" . | nindent 4 }}
+    {{- include "observability.run_manager.selectorLabels" . | nindent 4 }}
+    {{- include "observability.scaledownPreDeploy" .Values.run_manager | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.run_manager.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "observability.run_manager.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        # Used to force Helm to trigger a re-deploy despite this manifest haven't changed
+        timestamp: {{ now | quote }}
+        {{- with .Values.run_manager.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "observability.run_manager.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "observability.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.run_manager.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "observability.run_manager.name" . }}
+          securityContext:
+            {{- toYaml .Values.run_manager.securityContext | nindent 12 }}
+          image: {{ include "observability.run_manager.image" . | quote }}
+          imagePullPolicy: {{ .Values.run_manager.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.run_manager.resources | nindent 12 }}
+          env:
+            {{- include "observability.environment.base" . | nindent 12 }}
+            {{- include "observability.environment.database" . | nindent 12 }}
+            {{- include "observability.environment.kafka" . | nindent 12 }}
+          command: ["/dk/bin/run-manager"]
+          {{- include "observability.probes.readiness_cmd" "run-manager" | nindent 10 -}}
+      {{- with .Values.run_manager.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.run_manager.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.run_manager.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

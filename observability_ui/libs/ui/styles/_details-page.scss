@@ -1,0 +1,14 @@
+@use './_mixins' as mixins;
+@use './_variables' as variables;
+
+details-header {
+  @include mixins.flex-column($justify: unset, $align: baseline);
+
+  background: white;
+  border-bottom: variables.$border;
+  padding: variables.$space-sm variables.$space-lg 0 variables.$space-lg;
+
+  nav {
+    border-bottom: unset !important;
+  }
+}

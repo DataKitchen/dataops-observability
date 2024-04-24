@@ -1,0 +1,51 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+mat-card {
+  height: 100%;
+}
+
+mat-card-content {
+  position: relative;
+
+  .empty-state {
+    @include mixins.flex-column();
+
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 100;
+    position: absolute;
+    background: white;
+
+    &--message {
+      @include mixins.font-color(secondary);
+    }
+  }
+}
+
+.run-label {
+  @include mixins.flex-row($justify: flex-start);
+
+  flex: 1 1 0;
+  width: 150px;
+
+  &--icon {
+    @include mixins.icon-size(12px);
+    @include mixins.font-color(secondary);
+
+    margin-right: variables.$space-xs;
+  }
+
+  &--text {
+    width: calc(100% - 12px - #{variables.$space-xs});
+    display: inherit;
+  }
+}

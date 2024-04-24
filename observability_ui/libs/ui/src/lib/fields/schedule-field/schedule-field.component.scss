@@ -1,0 +1,132 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+$overlay-width: 450px;
+$type-selector-width: 130px;
+
+mat-form-field {
+  width: 100%;
+}
+
+[matInput] {
+  pointer-events: none;
+}
+
+.picker {
+  @include mixins.font-color(secondary);
+  @include mixins.size($width: 21px, $height: 21px);
+
+  mat-icon {
+    @include mixins.icon-size($size: 14px);
+  }
+}
+
+.schedule-field-overlay {
+  @include mixins.flex-column;
+  @include mixins.border-radius;
+  @include mixins.size($width: $overlay-width, $height: auto);
+
+  background: variables.$white;
+
+  &--form {
+    @include mixins.flex-row($justify: flex-start, $align: flex-start);
+
+    width: 100%;
+    border-bottom: variables.$border;
+
+    &--types-selector {
+      @include mixins.flex-column($justify: flex-start, $align: flex-start);
+
+      width: $type-selector-width;
+      border-right: variables.$border;
+
+      button {
+        @include mixins.button-reset;
+
+        width: 100%;
+        border: unset;
+        text-align: left;
+        border-radius: unset;
+        padding: variables.$space-sm;
+
+        &:nth-of-type(1) {
+          border-top-left-radius: variables.$border-radius;
+        }
+
+        &.selected {
+          ::ng-deep .mat-button-focus-overlay {
+            opacity: .04;
+          }
+        }
+      }
+    }
+
+    &--main {
+      @include mixins.flex-column($justify: flex-start, $align: flex-start);
+
+      height: 100%;
+      flex: 1 1 auto;
+      padding: variables.$space-sm;
+
+      .row {
+        width: 100%;
+        padding: 2px;
+        font-size: 16px;
+
+        mat-select {
+          width: 48px;
+          border-bottom: 1px solid variables.$gray-500;
+
+          ::ng-deep .mat-select-value {
+            @include mixins.font-color(secondary);
+          }
+        }
+
+        mat-checkbox {
+          @include mixins.font-style;
+        }
+
+        * + * {
+          margin-left: variables.$space-xs;
+        }
+      }
+
+      .row + .row {
+        margin-top: variables.$space-xs;
+      }
+
+      &--summary {
+        @include mixins.font-color(secondary);
+        @include mixins.flex-column($justify: flex-start, $align: flex-start);
+
+        width: 100%;
+        margin-top: auto;
+      }
+    }
+  }
+
+  &--footer {
+    @include mixins.flex-row($justify: flex-start);
+
+    width: 100%;
+    padding: 12px;
+
+    &--select-wrapper {
+      width: 50%;
+      border-bottom: 1px solid variables.$gray-500;
+      padding-bottom: variables.$space-xxs;
+    }
+
+    .spacer {
+      flex: 1 1 0;
+    }
+
+    button {
+      border: variables.$border;
+    }
+
+    button + button {
+      margin-left: variables.$space-xxs;
+    }
+  }
+}

@@ -1,0 +1,127 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+$condition-field-type-width: 220px;
+
+.add-button {
+  mat-icon {
+    @include mixins.icon-size(20px);
+
+    margin-right: variables.$space-xxs;
+  }
+}
+
+.condition-label {
+  @include mixins.flex-row($justify: flex-start);
+  margin-bottom: variables.$space-xxs;
+
+  mat-icon {
+    @include mixins.icon-size(14px);
+    margin-left: variables.$space-xxs;
+    color: variables.$dark-accent-text
+  }
+}
+
+.condition-value {
+  @include mixins.font-color(secondary);
+}
+
+.condition-value + .condition-value {
+  margin-top: variables.$space-xs;
+}
+
+.condition-value + .condition-label {
+  margin-top: variables.$space-sm;
+}
+
+.condition-field + .condition-label {
+  margin-top: variables.$space-sm;
+}
+
+.empty-message + .condition-label {
+  margin-top: variables.$space-sm;
+}
+
+.condition-field {
+  @include mixins.flex-row($justify: space-between);
+
+  mat-form-field + mat-form-field {
+    margin-left: variables.$space-sm;
+  }
+
+  mat-form-field + schedule-field {
+    margin-left: variables.$space-sm;
+  }
+
+  &--type {
+    width: $condition-field-type-width;
+
+    ::ng-deep {
+      .mat-select-value-text {
+        @include mixins.font-color(secondary);
+      }
+
+      .mat-select-arrow {
+        @include mixins.font-color(disabled);
+      }
+
+      .mat-form-field-underline {
+        background-color: variables.$gray-500;
+      }
+    }
+  }
+
+  &--value {
+    flex: 1 1 0;
+
+    ::ng-deep {
+      .mat-select-value-text {
+        @include mixins.font-color(secondary);
+      }
+
+      .mat-select-arrow {
+        @include mixins.font-color(disabled);
+      }
+
+      .mat-form-field-underline {
+        background-color: variables.$gray-500;
+      }
+    }
+  }
+
+  schedule-field {
+    flex: 1 1 0;
+
+    ::ng-deep {
+      .mat-input-element {
+        @include mixins.font-color(secondary);
+      }
+    }
+  }
+}
+
+.empty-message {
+  @include mixins.font-color(secondary);
+}
+
+.delete-button {
+  margin-left: variables.$space-xxs;
+
+  mat-icon {
+    @include mixins.icon-size(18px);
+    @include mixins.font-color(secondary);
+  }
+}
+
+.radio-description {
+  margin-left: 45px;
+  margin-top: -10px;
+}
+
+.schedule-field {
+  width: 70%;
+}
+
+.track-separately-display {
+  @include mixins.flex-row($justify: flex-start);
+}

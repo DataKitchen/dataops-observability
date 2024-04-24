@@ -1,0 +1,25 @@
+<div class="flex-row">
+
+  <span class="mr-6 nowrap">{{label}}</span>
+
+  <text-field class="mr-4"
+    type="text"
+    [formControl]="form.controls.value">
+    <text-field-error type="pattern">Must be a valid number</text-field-error>
+  </text-field>
+
+  <mat-form-field appearance="legacy">
+    <mat-select [formControl]="form.controls.unit">
+      <mat-option value="{{'minutes' | translate}}">{{'minutes' | translate}}</mat-option>
+      <mat-option value="{{'hours' | translate}}">{{'hours' | translate}}</mat-option>
+      <mat-option value="{{'days' | translate}}">{{'days' | translate}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="flex-row">
+    <span class="fx-flex"></span>
+    <button mat-button
+      (click)="reset()">Clear
+    </button>
+  </div>
+</div>

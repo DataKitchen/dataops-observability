@@ -1,0 +1,97 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@import '@observability/ui/styles/variables';
+
+$arrow-size: .5em;
+$tooltip-opacity: .9;
+
+.dk-tooltip {
+  padding: $arrow-size;
+
+  .arrow {
+    display: block;
+    position: absolute;
+    opacity: $tooltip-opacity;
+
+    &:before {
+      content: "";
+      position: absolute;
+    }
+  }
+
+  &.dk-tooltip-top {
+    .arrow {
+      bottom: $arrow-size;
+      left: calc(50% - #{$arrow-size});
+
+      &:before {
+        border-left: $arrow-size solid transparent;
+        border-right: $arrow-size solid transparent;
+        border-top: $arrow-size solid $gray-700;
+      }
+    }
+  }
+
+  &.dk-tooltip-bottom {
+    .arrow {
+      top: 0;
+      left: calc(50% - #{$arrow-size});
+
+      &:before {
+        border-left: $arrow-size solid transparent;
+        border-right: $arrow-size solid transparent;
+        border-bottom: $arrow-size solid $gray-700;
+      }
+    }
+  }
+
+  &.dk-tooltip-left {
+    .arrow {
+      top: calc(50% - #{$arrow-size});
+      right: $arrow-size;
+
+      &:before {
+        border-top: $arrow-size solid transparent;
+        border-bottom: $arrow-size solid transparent;
+        border-left: $arrow-size solid $gray-700;
+      }
+    }
+  }
+
+  &.dk-tooltip-right {
+    .arrow {
+      top: calc(50% - #{$arrow-size});
+      left: 0;
+
+      &:before {
+        border-top: $arrow-size solid transparent;
+        border-bottom: $arrow-size solid transparent;
+        border-right: $arrow-size solid $gray-700;
+      }
+    }
+  }
+
+  .dk-tooltip-content {
+    @include mixins.font-style(caption, primary, $theme: $dark-theme);
+
+    padding: $space-xs*0.5 $space-xs;
+    font-size: 10px;
+    border-radius: 2px;
+    background: $gray-700;
+    opacity: $tooltip-opacity;
+    word-break: break-word;
+
+    ::ng-deep a {
+      @include mixins.font-style(caption, primary, $theme: $dark-theme);
+      text-decoration: underline;
+    }
+  }
+}
+
+.dk-dropdown {
+  border-radius: 4px;
+  background: white;
+
+  .dk-dropdown-content {
+    padding: 0 $space-md $space-sm $space-md;
+  }
+}

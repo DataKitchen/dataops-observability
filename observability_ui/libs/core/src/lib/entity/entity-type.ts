@@ -1,0 +1,17 @@
+export enum EntityType {
+    User = 'User',
+    Company = 'Company',
+    Organization = 'Organization',
+    Project = 'Project',
+    Event = 'Event',
+    Run = 'Run',
+    Pipeline = 'Pipeline',
+    Task = 'Task',
+    Rule = 'Rule',
+    Journey = 'Journey',
+    Instance = 'Instance',
+    Component = 'Component',
+    ServiceKey = 'ServiceAccountKey',
+    Dashboards = 'Dashboards',
+    Agent = 'Agent',
+}

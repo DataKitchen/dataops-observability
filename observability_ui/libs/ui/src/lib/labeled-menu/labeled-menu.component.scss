@@ -1,0 +1,39 @@
+@import '@observability/ui/styles/mixins';
+
+:host {
+  @include button-reset;
+  @include flex-row;
+  @include hover-opacity;
+  @include border-radius;
+}
+
+[mat-button] {
+  height: 32px;
+  background-color: $gray-500;
+  @include font-style(menu);
+
+  padding: 0 12px 0 8px;
+
+  &.has-arrow {
+    padding: 0 8px 0 12px;
+  }
+}
+
+:host ::ng-deep mat-icon {
+  @include icon-size(16px);
+  @include icon-left(4px);
+}
+
+::ng-deep .labeled-menu [mat-menu-item] {
+  // Match mat-selected style
+  &:disabled {
+    @include font-color($dark-primary-text);
+
+    background: rgba(0, 0, 0, 0.05);
+    font-weight: 500;
+  }
+}
+
+.dropdown-icon {
+  font-size: 22px;
+}

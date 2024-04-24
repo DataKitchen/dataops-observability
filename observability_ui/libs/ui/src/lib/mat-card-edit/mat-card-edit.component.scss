@@ -1,0 +1,20 @@
+@use '@observability/ui/styles/variables' as variables;
+@use '@observability/ui/styles/mixins' as mixins;
+
+.title {
+  @include mixins.font-style($style: menu);
+}
+
+.edit-icon {
+  @include mixins.icon-size(16px);
+  @include mixins.font-color(secondary);
+
+  position: absolute;
+  top: variables.$space-sm;
+  right: variables.$space-sm;
+  cursor: pointer;
+}
+
+mat-card.editing {
+  padding-bottom: 8px ;
+}

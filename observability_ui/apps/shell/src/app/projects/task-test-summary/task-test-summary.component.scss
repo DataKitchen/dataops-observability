@@ -1,0 +1,81 @@
+@use '@observability/ui/styles/variables' as variables;
+@use '@observability/ui/styles/mixins' as mixins;
+
+:host {
+  width: 100%;
+}
+
+.tooltip {
+  text-align: left;
+
+  *:nth-child(1) {
+    margin-bottom: variables.$space-xxs;
+  }
+
+  > div {
+    span + span {
+      margin-left: 2px;
+    }
+  }
+}
+
+.secondary-info {
+  @include mixins.font-style(caption, secondary);
+
+  font-size: 10px;
+  width: 35px;
+}
+
+.label {
+  margin-right: variables.$space-xs;
+}
+
+.total {
+  margin-left: variables.$space-xs;
+}
+
+.status-description {
+  font-style: italic;
+}
+
+.summary-container {
+  @include mixins.flex-row($justify: flex-start);
+}
+
+.summary {
+  @include mixins.flex-row($justify: flex-start);
+
+  height: 8px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+
+  span {
+    height: 100%;
+    min-width: 20px;
+  }
+
+  .COMPLETED, .PASSED {
+    background-color: variables.$light-green-400;
+  }
+
+  .COMPLETED_WITH_WARNINGS, .WARNING {
+    background-color: variables.$amber-300;
+  }
+
+  .FAILED, .ERROR {
+    background-color: variables.$red-300;
+  }
+
+  .MISSING {
+    background-color: variables.$deep-purple-500;
+  }
+
+  .RUNNING, .STARTED {
+    background-color: variables.$blue-500;
+  }
+
+  .PENDING {
+    background-color: variables.$gray-500;
+  }
+}

@@ -1,0 +1,25 @@
+apiVersion: v2
+name: dataops-observability-services
+type: application
+appVersion: "2.x.x"
+version: "2.0.0"
+
+dependencies:
+  - name: kafka
+    version: 20.0.4
+    repository: https://charts.bitnami.com/bitnami
+    condition: kafka.enable
+  - name: mysql
+    version: 9.4.5
+    repository: https://charts.bitnami.com/bitnami
+    condition: mysql.enable
+
+description: DataOps Observability Supporting Services
+home: https://datakitchen.io
+icon: https://cloud.datakitchen.io/assets/image/dk-logo.svg
+keywords:
+  - datakitchen
+  - dataops
+maintainers:
+  - name: DataKitchen
+    url: https://datakitchen.io

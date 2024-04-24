@@ -1,0 +1,135 @@
+<table-wrapper
+  fxFlex
+  class="mat-elevation-z2"
+  [items]="items"
+  [total]="total"
+  [columns]="[ 'key', {name: 'name', visible: false}, 'pipeline', 'started_on', 'finished_on', 'duration', 'states', 'tasks_tests_status' ]"
+  [loading]="loading"
+  entity="runs"
+  (tableChange)="tableChange.emit($event)"
+  [selectable]="false"
+  [search]="search"
+>
+  <ng-container matColumnDef="key"
+    sortDisabled
+    dragDisabled
+    toggleDisabled>
+    <ng-container *matHeaderCellDef>
+      Run Key
+    </ng-container>
+    <ng-container *matCellDef="let run">
+      <a *ngIf="run.status !== runStatus.Pending && run.status !== runStatus.Missing"
+        class="run-key"
+        [routerLink]="[ 'details', run.id ]"
+        [dkTooltip]="run.key"
+        truncate>
+        {{ run.key }}
+      </a>
+      <span *ngIf="run.status === runStatus.Pending || run.status === runStatus.Missing">
+        -
+      </span>
+    </ng-container>
+  </ng-container>
+
+  <ng-container matColumnDef="name"
+    sortDisabled
+    dragDisabled>
+    <ng-container *matHeaderCellDef>
+      Run Name
+    </ng-container>
+    <ng-container *matCellDef="let run">
+        <span class="max-fit-content"
+          [dkTooltip]="run.name"
+          truncate>
+          {{ run.name }}
+        </span>
+    </ng-container>
+  </ng-container>
+
+  <ng-container matColumnDef="pipeline"
+    sortDisabled
+    dragDisabled
+    toggleDisabled>
+    <ng-container *matHeaderCellDef>
+      Batch Pipeline
+    </ng-container>
+    <ng-container *matCellDef="let run">
+        <span class="max-fit-content"
+          [dkTooltip]="run.pipeline.display_name"
+          truncate>
+          {{ run.pipeline.display_name }}
+        </span>
+    </ng-container>
+  </ng-container>
+
+  <ng-container matColumnDef="started_on"
+    sortDisabled
+    dragDisabled>
+    <ng-container *matHeaderCellDef>
+      <span headerLabel="started_on">Start Time</span>
+    </ng-container>
+    <ng-container *matCellDef="let run">
+      <shell-run-time
+        [actual]="run.start_time"
+        [expected]="run.expected_start_time"
+        [alertType]="RunAlertType.LateStart"
+        [alerts]="run.alerts"
+      ></shell-run-time>
+    </ng-container>
+  </ng-container>
+
+  <ng-container matColumnDef="finished_on"
+    sortDisabled
+    dragDisabled>
+    <ng-container *matHeaderCellDef>
+      End Time
+    </ng-container>
+    <ng-container *matCellDef="let run">
+      <shell-run-time
+        [actual]="run.end_time"
+        [expected]="run.expected_end_time"
+        [alertType]="RunAlertType.LateEnd"
+        [alerts]="run.alerts"
+      ></shell-run-time>
+    </ng-container>
+  </ng-container>
+
+  <ng-container matColumnDef="duration"
+    sortDisabled
+    dragDisabled>
+    <ng-container *matHeaderCellDef>
+      Duration
+    </ng-container>
+    <ng-container *matCellDef="let run">
+      <duration *ngIf="run.status !== runStatus.Pending && run.status !== runStatus.Missing"
+        [start]="run.start_time" [end]="run.end_time"></duration>
+      <span *ngIf="run.status === runStatus.Pending || run.status === runStatus.Missing">
+        -
+      </span>
+    </ng-container>
+  </ng-container>
+
+  <ng-container matColumnDef="states"
+    sortDisabled
+    dragDisabled
+    toggleDisabled>
+    <ng-container *matHeaderCellDef>
+      Run Status
+    </ng-container>
+    <ng-container *matCellDef="let run">
+      <shell-run-states [run]="run"></shell-run-states>
+    </ng-container>
+  </ng-container>
+
+  <ng-container matColumnDef="tasks_tests_status"
+    sortDisabled
+    dragDisabled>
+    <ng-container *matHeaderCellDef>
+      Tasks Status
+    </ng-container>
+    <ng-container *matCellDef="let run">
+      <shell-task-test-summary [tasksSummaries]="run.tasks_summary"
+        [testsSummaries]="run.tests_summary"></shell-task-test-summary>
+    </ng-container>
+  </ng-container>
+</table-wrapper>

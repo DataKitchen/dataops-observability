@@ -1,0 +1,65 @@
+@use '@angular/material' as mat;
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  .actions-container {
+    @include mixins.font-color(secondary);
+    @include mixins.flex-column($justify: flex-end, $align: flex-end);
+
+    font-size: 10px;
+    line-height: 12px;
+    pointer-events: none;
+
+    .actions {
+      @include mat.elevation(1);
+      @include mixins.flex-column;
+      @include mixins.border-radius;
+
+      width: variables.$space-xl;
+      padding: variables.$space-xs 0;
+      background-color: white;
+
+      button {
+        @include mixins.button-reset;
+        @include mixins.size(20px, 20px);
+
+        pointer-events: all;
+
+        mat-icon {
+          @include mixins.icon-size(20px);
+        }
+
+        &[disabled] {
+          @include mixins.font-color(disabled);
+
+          cursor: not-allowed;
+        }
+      }
+
+      &--zoom {
+        button:last-of-type {
+          margin-top: variables.$space-xxs;
+        }
+
+        span {
+          margin: variables.$space-xs 0;
+        }
+      }
+    }
+
+    .actions + .actions {
+      margin-top: variables.$space-xs;
+    }
+  }
+
+  .legend-container {
+    @include mat.elevation(1);
+    @include mixins.border-radius;
+
+    display: none;
+    padding: variables.$space-xs;
+    margin-right: variables.$space-xs;
+    background-color: white;
+  }
+}

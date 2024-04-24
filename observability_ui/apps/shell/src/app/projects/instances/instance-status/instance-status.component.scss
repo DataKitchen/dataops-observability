@@ -1,0 +1,193 @@
+@use '@angular/material' as mat;
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+$status-colors: (
+  RUNNING: variables.$blue-300,
+  COMPLETED_WITH_WARNINGS: variables.$amber-300,
+  FAILED: variables.$red-300,
+  COMPLETED: variables.$light-green-400,
+  PENDING: variables.$gray-400,
+  MISSING: variables.$deep-purple-500
+);
+
+
+:host {
+  @include mixins.flex-column($justify: flex-start, $align: stretch);
+
+  height: 100%;
+  position: relative;
+
+  dag {
+    flex: 1;
+  }
+}
+
+.toolbar {
+  @include mixins.flex-row($justify: flex-start, $align: center);
+
+  position: absolute;
+  z-index: 1;
+
+  alert[type="error"] {
+    @include mat.elevation(6);
+
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: variables.$border-radius;
+
+    .link {
+      margin-left: variables.$space-xxs;
+      margin-right: variables.$space-xxs;
+    }
+  }
+}
+
+
+dag {
+  .component {
+    @include mixins.border-radius;
+    @include mixins.flex-column($justify: flex-start, $align: flex-start);
+    @include mixins.size($width: 350px, $max-width: 350px, $height: 110px, $max-height: 110px);
+
+    background: white;
+    padding: variables.$space-xs;
+    border: 3px solid black;
+
+    &--status {
+      @include mixins.size($width: 20px, $height: 20px);
+      @include mixins.flex-column($justify: center, $align: center);
+
+      top: -#{variables.$space-xs};
+      right: -#{variables.$space-xs};
+      position: absolute;
+      border-radius: 50%;
+
+      mat-icon {
+        @include mixins.icon-size(12px);
+
+        color: white;
+      }
+    }
+
+    &--title {
+      @include mixins.flex-row($justify: flex-start, $align: center);
+
+      width: 100%;
+
+      &--name {
+        font-weight: 500;
+        max-width: calc(100% - 32px) !important;
+      }
+    }
+
+    &--divider {
+      width: 100%;
+      height: 1px;
+      border: .5px solid #E0E0E0;
+      margin: variables.$space-xs 0;
+    }
+
+    &--stats-container {
+      width: 100px;
+      text-wrap: nowrap;
+    }
+
+    &--stats {
+      @include mixins.link;
+      @include mixins.font-style($style: caption);
+      @include mixins.font-color(secondary);
+
+      flex: none;
+
+      &:hover {
+        border-color: variables.$dark-accent-text
+      }
+    }
+
+    &--tags {
+      @include mixins.flex-row($justify: flex-start);
+
+      width: 100%;
+      flex: 1 1 0;
+
+      span {
+        font-size: 8px;
+        line-height: 8px;
+        color: variables.$gray-700;
+        padding: variables.$space-xxs variables.$space-xxs;
+        border-radius: 2px;
+        background: variables.$gray-100;
+      }
+    }
+
+    &:not(.stateless) {
+      @each $status, $color in $status-colors {
+        &.#{$status} {
+          border-color: $color;
+
+          .component--status {
+            background-color: $color;
+          }
+        }
+      }
+    }
+
+    &.DATASET {
+      border-width: 6px;
+      border-style: double;
+    }
+
+    &.SERVER {
+      border-style: dashed;
+    }
+  }
+
+  ::ng-deep g.node-group > foreignObject {
+    overflow: visible;
+  }
+}
+
+.out-of-sequence-tooltip {
+  span {
+    font-weight: 500;
+  }
+
+  ul {
+    margin: unset;
+    padding: unset;
+    margin-left: variables.$space-sm;
+  }
+}
+
+.text-skeleton {
+  background: #eee;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  border-radius: 5px;
+  background-size: 200% 100%;
+  animation: 1.5s shine linear infinite;
+  width: 100px;
+  height: 10px;
+}
+
+.background-skeleton {
+  background: #eee;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  border-radius: 5px;
+  background-size: 200% 100%;
+  animation: 1.5s shine linear infinite;
+}
+
+.border-skeleton {
+  border: 3px solid #eee !important;
+}
+
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
+}
+
+.flex-container {
+  @include mixins.flex-row();
+}

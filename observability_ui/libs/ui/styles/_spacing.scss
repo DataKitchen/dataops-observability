@@ -1,0 +1,57 @@
+@use "variables" as var;
+
+$spacing-shortcuts: (
+  "margin": "m",
+  "padding": "p"
+) !default;
+$spacing-directions: ("top": "t", "right": "r", "bottom": "b", "left": "l") !default;
+$spacing-horizontal: "x" !default;
+$spacing-vertical: "y" !default;
+$spacing-values: (
+  "0": 2,
+  "1": var.$space-xxs,
+  "2": var.$space-xs,
+  "3": var.$space-sm,
+  "4": var.$space-md,
+  "5": var.$space-lg,
+  "6": var.$space-xl,
+  "7": var.$space-xxl) !default;
+
+@each $property, $shortcut in $spacing-shortcuts {
+  @each $name, $value in $spacing-values {
+
+    .#{$shortcut}-#{$name} {
+      #{$property}: $value
+    }
+
+    @each $direction, $suffix in $spacing-directions {
+      .#{$shortcut}#{$suffix}-#{$name} {
+        #{$property}-#{$direction}: $value;
+      }
+
+      .items-#{$shortcut}#{$suffix}-#{$name} > * {
+        #{$property}-#{$direction}: $value;
+      }
+
+
+    }
+
+    @if $spacing-horizontal != null {
+      .#{$shortcut}#{$spacing-horizontal}-#{$name} {
+        #{$property}-left: $value;
+        #{$property}-right: $value;
+      }
+    }
+
+    @if $spacing-vertical != null {
+      .#{$shortcut}#{$spacing-vertical}-#{$name} {
+        #{$property}-top: $value;
+        #{$property}-bottom: $value;
+      }
+    }
+
+    .items-#{$shortcut}-#{$name} > * {
+      #{$property}: $value;
+    }
+  }
+}

@@ -1,0 +1,122 @@
+@use '@angular/material' as mat;
+
+$black: #000000;
+$white: #FFFFFF;
+
+$space-xxs: 4px;
+$space-xs: 8px;
+$space-sm: 16px;
+$space-md: 24px;
+$space-lg: 32px;
+$space-xl: 40px;
+$space-xxl: 48px;
+
+$border: 1px solid rgba(0,0,0,.12);
+$border-radius: 4px;
+
+// Light Theme Text
+$dark-text: black;
+$dark-primary-text: rgba($dark-text, 0.87);
+$dark-accent-text: rgba($dark-primary-text, 0.54);
+$dark-disabled-text: rgba($dark-primary-text, 0.38);
+$dark-dividers: rgba($dark-primary-text, 0.12);
+$dark-focused: rgba($dark-primary-text, 0.12);
+
+// Dark Theme text
+$light-text: white;
+$light-primary-text: $light-text;
+$light-accent-text: rgba($light-primary-text, 0.7);
+$light-disabled-text: rgba($light-primary-text, 0.5);
+$light-dividers: rgba($light-primary-text, 0.12);
+$light-focused: rgba($light-primary-text, 0.12);
+
+$font-primary: 'Roboto', 'Helvetica Neue', sans-serif;
+$font-mono: 'Roboto Mono', 'Courier New', monospace;
+$font-serif: 'Merriweather', 'Times New Roman', serif;
+
+$gray-50: mat.get-color-from-palette(mat.$grey-palette, 50);
+$gray-100: mat.get-color-from-palette(mat.$grey-palette, 100);
+$gray-200: mat.get-color-from-palette(mat.$grey-palette, 200);
+$gray-300: mat.get-color-from-palette(mat.$grey-palette, 300);
+$gray-400: mat.get-color-from-palette(mat.$grey-palette, 400);
+$gray-500: mat.get-color-from-palette(mat.$grey-palette, 500);
+$gray-600: mat.get-color-from-palette(mat.$grey-palette, 600);
+$gray-700: mat.get-color-from-palette(mat.$grey-palette, 700);
+$gray-900: mat.get-color-from-palette(mat.$grey-palette, 900);
+
+$blue-50: mat.get-color-from-palette(mat.$blue-palette, 50);
+$blue-100: mat.get-color-from-palette(mat.$blue-palette, 100);
+$blue-200: mat.get-color-from-palette(mat.$blue-palette, 200);
+$blue-300: mat.get-color-from-palette(mat.$blue-palette, 300);
+$blue-500: mat.get-color-from-palette(mat.$blue-palette, 500);
+$blue-700: mat.get-color-from-palette(mat.$blue-palette, 700);
+
+$orange-50: mat.get-color-from-palette(mat.$orange-palette, 50);
+$orange-300: mat.get-color-from-palette(mat.$orange-palette, 300);
+$orange-500: mat.get-color-from-palette(mat.$orange-palette, 500);
+
+$light-green-400: mat.get-color-from-palette(mat.$light-green-palette, 400);
+
+$amber-300: mat.get-color-from-palette(mat.$amber-palette, 300);
+$amber-500: mat.get-color-from-palette(mat.$amber-palette, 500);
+
+$green-50: mat.get-color-from-palette(mat.$green-palette, 50);
+$green-300: mat.get-color-from-palette(mat.$green-palette, 300);
+$green-500: mat.get-color-from-palette(mat.$green-palette, 500);
+
+$light-green-400: mat.get-color-from-palette(mat.$light-green-palette, 400);
+
+$indigo-300: mat.get-color-from-palette(mat.$indigo-palette, 300);
+
+$red-50: mat.get-color-from-palette(mat.$red-palette, 50);
+$red-300: mat.get-color-from-palette(mat.$red-palette, 300);
+$red-500: mat.get-color-from-palette(mat.$red-palette, 500);
+
+$deep-purple-500: mat.get-color-from-palette(mat.$deep-purple-palette, 500);
+$deep-purple-50: mat.get-color-from-palette(mat.$deep-purple-palette, 50);
+
+$link: $blue-700;
+$warning: $orange-500;
+$error: $red-500;
+$success: $green-500;
+$info: $indigo-300;
+
+$background-color: #F8F9FA;
+
+$dark-theme: dark;
+$light-theme: ligth;
+
+$font-colors: (
+    primary: (
+        base: $dark-primary-text,
+        light: $light-primary-text,
+    ),
+    secondary: (
+        base: $dark-accent-text,
+        light: $light-accent-text,
+    ),
+    disabled: (
+        base: $dark-disabled-text,
+        light: $light-disabled-text,
+    ),
+    link: (
+        base: $link,
+    ),
+);
+
+$default-transition-duration: 0.3s;
+$default-hover-opacity: 0.7;
+$default-icon-margin: 4px;
+
+$border-color: rgba(0, 0, 0, 0.12);
+$border: 1px solid #{$border-color};
+
+$colors: (
+  'blue': $blue-300,
+  'red': $red-300,
+  'green': $green-300,
+  'orange': $orange-300,
+  'gray': $gray-200,
+);
+
+$settings-card-width: 500px;

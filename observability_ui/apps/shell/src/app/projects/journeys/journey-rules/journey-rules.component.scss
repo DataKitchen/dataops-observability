@@ -1,0 +1,30 @@
+@use '@observability/ui/styles/variables' as vars;
+@use '@observability/ui/styles/mixins' as mixins;
+
+mat-progress-spinner {
+  margin: auto;
+}
+
+.rule {
+  padding: vars.$space-xs vars.$space-xs;
+  border: vars.$border;
+  background: vars.$white;
+  border: vars.$border;
+  margin-top: vars.$space-xs;
+
+  &:last-child {
+    margin-bottom: vars.$space-md;
+  }
+}
+
+.action {
+  padding: vars.$space-xs;
+}
+
+:host ::ng-deep .add-rule-button span {
+  @include mixins.flex-row();
+
+  mat-icon {
+    margin-right: 4px;
+  }
+}

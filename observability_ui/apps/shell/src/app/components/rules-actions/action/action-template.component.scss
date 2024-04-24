@@ -1,0 +1,9 @@
+@use '@observability/ui/styles/variables' as vars;
+
+mat-panel-title {
+  min-width: 80px;
+}
+
+mat-expansion-panel {
+  border: vars.$border;
+}

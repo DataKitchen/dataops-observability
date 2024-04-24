@@ -1,0 +1,23 @@
+<div>
+  <div class="left-side flex-column">
+    <span *ngIf="backLink" class="left-link">
+      <a [routerLink]="backLink" class="mat-body-1">
+        <mat-icon>arrow_back</mat-icon>
+        {{ backLinkTitle }}
+      </a>
+    </span>
+
+    <div class="flex-column">
+      <div [dkTooltip]="title" truncate class="header">{{ title || '...' }}</div>
+      <div class="sub-header">
+        <ng-content select="[subtitle]"></ng-content>
+      </div>
+    </div>
+
+    <ng-content select="nav"></ng-content>
+  </div>
+
+  <div class="right-side">
+    <ng-content></ng-content>
+  </div>
+</div>

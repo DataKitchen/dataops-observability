@@ -1,0 +1,138 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+$timestamp-column-width: 150px;
+$component-column-width: 200px;
+$taskkey-column-width: 200px;
+$event-type-column-width: 132px;
+$event-details-column-min-width: 440px;
+
+:host {
+  flex: 1;
+}
+
+table-wrapper::ng-deep {
+  .mat-column-timestamp {
+    flex: 0 0 $timestamp-column-width;
+  }
+
+  .mat-column-event_type {
+    flex: 0 0 $event-type-column-width;
+  }
+
+  .mat-column-component {
+    flex: 0 0 $component-column-width;
+
+    &.mat-cell {
+      @include mixins.flex-row($justify: flex-start);
+
+      mat-icon {
+        @include mixins.icon-size(18px);
+
+        margin-right: variables.$space-xs;
+      }
+
+      .component-info {
+        @include mixins.flex-column($align: flex-start);
+
+        width: calc(#{$component-column-width} - 32px /*padding*/ - 18px /*icon size*/ - #{variables.$space-xs} /*icon r-margin*/);
+      }
+    }
+  }
+
+  .mat-column-task_key {
+    flex: 0 0 $taskkey-column-width;
+  }
+
+  .mat-column-details {
+    min-width: $event-details-column-min-width;
+  }
+
+  .mat-column-component_key {
+    max-width: 200px;
+  }
+
+  mat-header-cell.mat-column-component {
+    .mat-sort-header-content {
+      @include mixins.flex-column($justify: center, $align: flex-start);
+    }
+  }
+}
+
+$state-colors: (
+  RUNNING: variables.$blue-500,
+  COMPLETED_WITH_WARNINGS: variables.$orange-500,
+  FAILED: variables.$red-500,
+  COMPLETED: variables.$green-500,
+);
+
+@each $status, $color in $state-colors {
+  .#{$status} {
+    color: $color;
+    border-color: $color;
+  }
+}
+
+$level-colors: (
+  WARNING: (
+    text: variables.$orange-500,
+    bg: variables.$orange-50,
+  ),
+  ERROR: (
+    text: variables.$red-500,
+    bg: variables.$red-50,
+  ),
+  INFO: (
+    text: variables.$gray-600,
+    bg: variables.$gray-100,
+  )
+);
+
+.message-log {
+  .log-level {
+    @include mixins.chip;
+  }
+
+  @each $level, $color in $level-colors {
+    &.#{$level} .log-level {
+      color: map-get($color, text);
+      background-color: map-get($color, bg);
+    }
+  }
+}
+
+.summary {
+
+  height: 8px;
+  overflow: hidden;
+  width: 200px;
+  border-radius: 8px;
+
+  .PASSED {
+    background-color: variables.$green-300;
+  }
+
+  .WARNING {
+    background-color: variables.$orange-300;
+  }
+
+  .FAILED {
+    background-color: variables.$red-300;
+  }
+}
+
+.text--mono {
+  font-family: variables.$font-mono;
+  font-weight: 600;
+  background-color: variables.$gray-200;
+  padding: variables.$space-xxs variables.$space-xs;
+  border-radius: variables.$border-radius;
+  margin-left: variables.$space-xs;
+  color: variables.$gray-700
+}
+
+
+.task_name, .day-text {
+  @include mixins.font-style($style: caption, $color: secondary);
+  font-size: 10px;
+}

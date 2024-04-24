@@ -1,0 +1,104 @@
+{{- if .Values.observability_ui.enable }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "observability.observability_ui.name" . }}
+  labels:
+    {{- include "observability.labels" . | nindent 4 }}
+    {{- include "observability.observability_ui.selectorLabels" . | nindent 4 }}
+    {{- include "observability.scaledownPreDeploy" .Values.observability_ui | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "observability.observability_ui.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        # Used to force Helm to trigger a re-deploy despite this manifest haven't changed
+        timestamp: {{ now | quote }}
+        {{- with .Values.observability_ui.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "observability.observability_ui.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "observability.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.observability_ui.podSecurityContext | nindent 8 }}
+      {{- if .Values.observability_ui.environmentJson }}
+      volumes:
+        - name: {{ include "observability.observability_ui.name" . }}-configmap-volume
+          configMap:
+            name: {{ include "observability.observability_ui.name" . }}-configmap
+            items:
+              - key: "environment.json"
+                path: "environment.json"
+      {{- end }}
+      containers:
+        - name: {{ include "observability.observability_ui.name" . }}
+          securityContext:
+            {{- toYaml .Values.observability_ui.securityContext | nindent 12 }}
+          image: {{ include "observability.observability_ui.image" . | quote }}
+          imagePullPolicy: {{ .Values.observability_ui.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8082
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.observability_ui.resources | nindent 12 }}
+          {{- if .Values.observability_ui.environmentJson }}
+          volumeMounts:
+            - mountPath: /deploy/environments
+              name: {{ include "observability.observability_ui.name" . }}-configmap-volume
+              readOnly: true
+          {{- end }}
+      {{- with .Values.observability_ui.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.observability_ui.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.observability_ui.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "observability.observability_ui.name" . }}
+  labels:
+    {{- include "observability.labels" . | nindent 4 }}
+    {{- include "observability.observability_ui.selectorLabels" . | nindent 4 }}
+spec:
+  type: {{ .Values.observability_ui.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.observability_ui.service.port }}
+      targetPort: http
+      protocol: TCP
+      {{- with .Values.observability_ui.service.nodePort }}
+      nodePort: {{ . }}
+      {{- end }}
+  selector:
+    {{- include "observability.observability_ui.selectorLabels" . | nindent 4 }}
+{{- if .Values.observability_ui.environmentJson }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "observability.observability_ui.name" . }}-configmap
+  labels:
+    {{- include "observability.labels" . | nindent 4 }}
+    {{- include "observability.observability_ui.selectorLabels" . | nindent 4 }}
+data:
+  environment.json: {{ .Values.observability_ui.environmentJson | toPrettyJson | quote }}
+{{- end }}
+{{- end }}

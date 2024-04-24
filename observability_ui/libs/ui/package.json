@@ -1,0 +1,9 @@
+{
+  "name": "@observability/ui",
+  "version": "1.100.5",
+  "description": "this is the core lib of observability mfe setup",
+  "license": "MIT",
+  "scripts": {
+    "make:linkable": "yarn link"
+  }
+}

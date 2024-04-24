@@ -1,0 +1,28 @@
+{
+  "name": "translate",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/translate/src",
+  "prefix": "observability-ui",
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/translate"],
+      "options": {
+        "jestConfig": "libs/translate/jest.config.ts",
+        "passWithNoTests": true,
+        "tsConfig": "libs/translate/tsconfig.lib.json"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/translate/src/**/*.ts",
+          "libs/translate/src/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

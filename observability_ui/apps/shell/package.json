@@ -1,0 +1,6 @@
+{
+  "name": "shell",
+  "version": "1.97.2",
+  "description": "this is the shell app of observability mfe setup",
+  "license": "MIT"
+}

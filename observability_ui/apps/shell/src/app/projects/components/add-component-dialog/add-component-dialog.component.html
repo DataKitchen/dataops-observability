@@ -1,0 +1,67 @@
+<!-- TITLE -->
+<h1 class="dialog-title"
+  mat-dialog-title>
+  <span>{{'addComponentDialog.title' | translate}}</span>
+  <span class="fx-flex"></span>
+  <button mat-icon-button
+    mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</h1>
+
+<div mat-dialog-content
+  [formGroup]="formGroup">
+  <mat-form-field class="top-margin"
+    appearance="legacy">
+    <mat-label>{{'addComponentDialog.componentType' | translate}}</mat-label>
+    <mat-select formControlName="type">
+      <mat-option *ngFor="let type of componentTypes"
+        [value]="type">
+        {{'componentTypeTag.' + type | translate | titlecase}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <text-field formControlName="key" label="Key"
+    hint="A unique identifier for associating events to this component.">
+    <text-field-error type="required">{{'addComponentDialog.required' | translate}}</text-field-error>
+    <text-field-error type="nameExists">{{'addComponentDialog.existing' | translate}}</text-field-error>
+  </text-field>
+
+  <text-field formControlName="name" label="Name"></text-field>
+
+  <mat-form-field class="top-margin">
+    <textarea formControlName="description"
+      matInput
+      placeholder="Description"
+      rows="2"></textarea>
+  </mat-form-field>
+
+  <shell-tool-selector [editing]="true" [formControl]="formGroup.controls.tool">
+  </shell-tool-selector>
+
+  <div>{{error | json}}</div>
+</div>
+
+<div mat-dialog-actions
+  class="dialog-actions">
+  <!-- CANCEL -->
+  <button mat-dialog-close
+    mat-button
+    class="mat-button--cancel">
+    {{'addComponentDialog.cancel' | translate}}
+  </button>
+
+  <!-- ADD -->
+  <button mat-flat-button
+    color="primary"
+    (click)="addComponent(formGroup.value)"
+    [disabled]="formGroup.invalid || (adding$ | async) === true">
+    <ng-container *ngIf="adding$ | async; else buttonLabel">
+      {{'addComponentDialog.adding' | translate}}
+    </ng-container>
+    <ng-template #buttonLabel>
+      {{'addComponentDialog.add' | translate}}
+    </ng-template>
+  </button>
+</div>

@@ -1,0 +1,28 @@
+<div class="flex-row fx-align-flex-center run-time--label-container">
+  <span [class.text--secondary]="!actual && expected">
+    {{ (time() === undefined ? ' - ' : time() |  parseDate | date:dateFormat) }}
+  </span>
+
+  <span class="run-time--icon-container"
+    *ngIf="lateness()"
+    [dkTooltip]="tooltipTpl"
+    [dkTooltipDisabled]="!lateness()">
+
+    <mat-icon class="mx-1">
+      schedule
+    </mat-icon>
+
+    <span class="run-time--icon-label">
+      {{iconLabel}}
+    </span>
+  </span>
+</div>
+
+<small *ngIf="!actual && expected">
+  <i>(scheduled)</i>
+</small>
+
+<ng-template #tooltipTpl>
+  <div>Late by: {{actual | duration:expected}}</div>
+  <div>Expected: {{expected | parseDate | date:"MMM d, h:mm:ss a"}}</div>
+</ng-template>

@@ -1,0 +1,108 @@
+<ng-container *ngIf="journey$ | async as journey">
+
+  <mat-card-edit
+    #infoEditor
+    title="Journey Info"
+    [formGroup]="form"
+    (save)="saveInfo(journey)"
+    (cancel)="cancelInfoChanges(journey)"
+    [saving]="saving$ | async"
+    iconTooltip="Edit journey settings"
+  >
+    <ng-container *ngIf="!infoEditor.editing">
+      <div class="text--secondary mb-1">Journey Name</div>
+      <div>{{ journey.name }}</div>
+
+      <div class="text--secondary mb-1 mt-3">Description</div>
+      <div data-test="description">{{ journey.description }}</div>
+
+      <div class="bottom-chip mt-3">
+        <created-by [createdBy]="journey.created_by"
+          [createdOn]="journey.created_on"></created-by>
+      </div>
+
+    </ng-container>
+
+    <ng-container *ngIf="infoEditor.editing">
+      <form [formGroup]="$any(form)">
+        <text-field formControlName="name"
+          label="Journey Name"
+          placeholder="{{ journey.name }}"></text-field>
+        <mat-form-field>
+          <mat-label>Description</mat-label>
+          <textarea formControlName="description"
+            placeholder="N/A"
+            rows="2"
+            matInput></textarea>
+        </mat-form-field>
+      </form>
+
+    </ng-container>
+
+  </mat-card-edit>
+
+  <mat-card-edit
+    #conditionsEditor
+    title="Instance Conditions"
+    [formGroup]="form"
+    (save)="saveConditions()"
+    (cancel)="cancelConditionsChanges(journey)"
+    [saving]="saving$ | async"
+    iconTooltip="Edit journey instance conditions"
+  >
+    <shell-journey-instance-rules
+      [editing]="conditionsEditor.editing"
+      [components]="components$ | async"
+      [formControl]="$any(form.controls.instance_rules)"
+    ></shell-journey-instance-rules>
+
+    <help-link *ngIf="conditionsEditor.editing"
+      class="left-actions ml-2"
+      href="https://docs.datakitchen.io/article/dataops-observability-help/define-instances">instance behaviors.
+    </help-link>
+
+    <help-link *ngIf="!conditionsEditor.editing"
+      class="mt-4"
+      href="https://docs.datakitchen.io/article/dataops-observability-help/define-instances">instance behaviors.
+    </help-link>
+  </mat-card-edit>
+
+
+    <mat-card-edit
+      #payloadConditionsEditor
+      title="Payload Instance Conditions"
+      [formGroup]="form"
+      (save)="saveConditions()"
+      (cancel)="cancelConditionsChanges(journey)"
+      [saving]="saving$ | async"
+      iconTooltip="Edit payload instance conditions"
+    >
+      <shell-journey-instance-rules
+        [isPayload]="true"
+        [editing]="payloadConditionsEditor.editing"
+        [components]="components$ | async"
+        [formControl]="$any(form.controls.payload_instance_conditions)"
+      ></shell-journey-instance-rules>
+
+      <help-link *ngIf="payloadConditionsEditor.editing"
+        class="left-actions ml-2"
+        href="https://docs.datakitchen.io/article/dataops-observability-help/data-payload-instances">payload instances.
+      </help-link>
+
+      <help-link *ngIf="!payloadConditionsEditor.editing"
+        class="mt-4"
+        href="https://docs.datakitchen.io/article/dataops-observability-help/data-payload-instances">payload instances.
+      </help-link>
+    </mat-card-edit>
+
+  <section>
+    <div class="title mb-2">Advanced</div>
+    <button (click)="openConfirmDialog(journey)"
+      mat-stroked-button
+      color="warn">
+      Delete Journey
+    </button>
+  </section>
+
+
+</ng-container>

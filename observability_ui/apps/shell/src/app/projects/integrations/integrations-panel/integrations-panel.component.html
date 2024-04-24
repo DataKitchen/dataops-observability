@@ -1,0 +1,42 @@
+<div class="backdrop"
+  routerLink=".."></div>
+
+<div class="header">
+  <h2>{{'availableIntegrations' | translate}} ({{integrations().length}})</h2>
+
+  <text-field [formControl]="searchControl"
+    class="search-input"
+    type="search"
+    label="{{'searchIntegrations' | translate}}"
+    placeholder="{{'searchIntegrations' | translate}}"></text-field>
+</div>
+
+<div class="content">
+  <a *ngFor="let integration of integrations()"
+    [routerLink]="[ integration._name ]"
+    class="integration">
+    <mat-icon [svgIcon]="integration._icon"></mat-icon>
+    <span>{{integration._displayName}}</span>
+  </a>
+</div>
+<div class="fx-flex"></div>
+<div class="fx-column fx-align-flex-end">
+  <div class="learn-more">
+    <div>{{'setup.learnMoreAbout' | translate}}</div>
+    <a target="_blank"
+      href="https://docs.datakitchen.io/articles/dataops-observability-help/integrate-your-tools"
+      class="link-with-icon">{{'integrations' | translate | lowercase}}
+      <mat-icon inline>open_in_new</mat-icon>
+    </a>
+  </div>
+</div>
+
+<div class="footer">
+  <alert type="tips">
+    {{'alert' | translate}}&nbsp;<a target="_blank"
+    href="https://github.com/DataKitchen/dataops-observability-agents/blob/main/docs/overview.md"
+    class="help-link">{{'alertLink' | translate}}
+    <mat-icon>open_in_new</mat-icon>
+  </a>
+  </alert>
+</div>

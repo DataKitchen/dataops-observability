@@ -1,0 +1,34 @@
+<div class="container">
+
+  <ng-container *ngIf="(isAuth$ | async) === true; else unAuth">
+    <shell-header (toggleMenu)="sidenav.toggle()" [showMenuToggle]="!!(currentProject$ | async)"></shell-header>
+
+    <mat-sidenav-container class="sidenav-container"
+                           [hasBackdrop]="false">
+      <mat-sidenav mode="side"
+                   fixedTopGap="35"
+                   class="sidenav-container--menu"
+                   [opened]="!!(currentProject$ | async)"
+                   #sidenav>
+        <router-outlet name="sidenav"></router-outlet>
+      </mat-sidenav>
+      <mat-sidenav mode="over"
+        position="end"
+        class="sidenav-container--right-panel"
+        opened>
+        <router-outlet name="rightPanel"></router-outlet>
+      </mat-sidenav>
+
+      <mat-sidenav-content>
+        <div class="main-content">
+          <router-outlet></router-outlet>
+        </div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+
+  </ng-container>
+</div>
+
+<ng-template #unAuth>
+  <router-outlet></router-outlet>
+</ng-template>

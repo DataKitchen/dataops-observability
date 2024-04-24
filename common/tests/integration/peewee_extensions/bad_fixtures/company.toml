@@ -1,0 +1,10 @@
+table_name = "company"
+# NOTE: This is a cyclic dependency.
+fixture_id = "9da3a73e-ac41-4ef3-9527-0bee2cb1232d"
+requires_id = "7030ed67-1fdd-4d7e-8ca0-f758599600b6"
+
+[[row]]
+id = "3f49acf2-327d-4b20-bf24-6801ea9013ed"
+active = true
+created_on = "2022-06-22T17:46:36.479602+00:00"
+name = "LiteralKitchen"

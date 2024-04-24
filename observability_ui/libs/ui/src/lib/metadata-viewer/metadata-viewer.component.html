@@ -1,0 +1,31 @@
+<h1 mat-dialog-title>
+  {{ data.title }}
+  <button mat-icon-button
+    mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</h1>
+
+<div mat-dialog-content>
+  <div class="header">
+    <div class="header--type">
+      <span *ngIf="event?.event_type"
+        class="header--type--event">{{ event?.event_type | translate }}</span>
+      <span *ngIf="event?.raw_data?.task_name"
+        class="header--type--task">{{ event?.raw_data?.task_name }}</span>
+    </div>
+    <div class="right-side-header-container">
+      <div class="header--timestamp">{{ data.timestamp | date: 'mediumTime' }}</div>
+      <mat-slide-toggle [formControl]="$any(form.controls.metadataOnly)">Display metadata only</mat-slide-toggle>
+    </div>
+  </div>
+
+  <ngx-json-viewer [json]="!!form.controls.metadataOnly.value ? data.metadata : data.all" [expanded]="false"></ngx-json-viewer>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-dialog-close
+    mat-button>
+    Close
+  </button>
+</div>

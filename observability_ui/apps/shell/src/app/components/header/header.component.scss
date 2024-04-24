@@ -1,0 +1,63 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  display: flex;
+  flex-direction: column; // so that it'll take the full width
+}
+
+.header {
+  height: 35px;
+  background-color: #424242;
+  color: #fff;
+
+  & button {
+    padding: 0;
+    min-width: 24px;
+    height: 35px;
+
+  }
+
+  & button:not(:last-child) {
+    width: 35px;
+    margin-right: 8px;
+  }
+}
+
+:host ::ng-deep .mat-button-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+
+a.mat-body-1 {
+  color: var(--accent-color);
+}
+
+.header-menu__item {
+  transition: 0.3s;
+  padding: 0 16px;
+  min-width: 212px;
+
+  &:hover {
+    color: #06A04A;
+  }
+}
+
+.header-menu__icon {
+  height: 18px;
+  width: 18px;
+  line-height: 18px;
+  font-size: 18px;
+}
+
+.header-menu__link {
+  @include mixins.icon-size(15px);
+  @include mixins.icon-right;
+}
+
+mat-slide-toggle {
+  opacity: 1 !important;
+}

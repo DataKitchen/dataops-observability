@@ -1,0 +1,33 @@
+{{- range .Values.cli_hook.enable }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "cli-job"
+  annotations:
+    "helm.sh/hook": {{ join ", " .phases }}
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": hook-succeeded, before-hook-creation
+spec:
+  template:
+    metadata:
+      name: "cli-job"
+    spec:
+      restartPolicy: Never
+      {{- with $.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: cli-hook
+          image: {{ include "observability.cli_hook.image" $ | quote }}
+          imagePullPolicy: {{ $.Values.cli_hook.image.pullPolicy }}
+          env:
+            {{- include "observability.environment.base" $ | nindent 12 }}
+            {{- include "observability.environment.database" $ | nindent 12 }}
+            {{- include "observability.environment.pythonpath" $ | nindent 12 }}
+          command:
+            {{- range .command }}
+            - {{ . | quote -}}
+            {{- end }}
+---
+{{- end }}

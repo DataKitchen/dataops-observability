@@ -1,0 +1,51 @@
+<div class="toolbar">
+  <div class="dag-controls">
+    <button matRipple
+      (click)="toggleEdgesVisibility()">
+      <mat-icon>visibility</mat-icon>
+      <span>{{ showEdges() ? 'Hide' : 'Show' }} Edges</span>
+    </button>
+  </div>
+</div>
+
+<dag [nodeSize]="[100, 150]"
+  [class.no-edges]="!showEdges()"
+  (renderError)="handleError($event)">
+  <ng-container *ngFor="let runTask of tasks$ | async">
+    <div *dagNode="runTask.id; centerX:24 centerY:24; wrapperClass: 'overflow-visible'"
+      class="task"
+      data-test="RunDagTask"
+      attr.data-test-id="{{ runTask.id }}"
+      attr.data-test-name="{{ runTask.task.key }}"
+      [ngClass]="runTask.status">
+
+        <div class="node">
+          <ng-container [ngSwitch]="runTask.status">
+            <ng-container *ngSwitchCase="'RUNNING'"><mat-icon>play_arrow</mat-icon></ng-container>
+            <ng-container *ngSwitchCase="'COMPLETED'"><mat-icon>check</mat-icon></ng-container>
+            <ng-container *ngSwitchCase="'COMPLETED_WITH_WARNINGS'"><mat-icon svgIcon="completed_with_warnings"></mat-icon></ng-container>
+            <ng-container *ngSwitchCase="'FAILED'"><mat-icon>priority_high</mat-icon></ng-container>
+            <ng-container *ngSwitchCase="'PENDING'"><mat-icon>hourglass_empty</mat-icon></ng-container>
+            <ng-container *ngSwitchDefault><mat-icon>question_mark</mat-icon></ng-container>
+          </ng-container>
+        </div>
+        <label>
+          <span truncate [dkTooltip]="runTask.task.display_name">{{ runTask.task.display_name }}</span>
+        </label>
+    </div>
+  </ng-container>
+
+  <dag-edge *ngFor="let edge of edges$ | async"
+    [fromNode]="edge.from"
+    [toNode]="edge.to"></dag-edge>
+</dag>
+
+<ng-container *ngIf="(loading$ | async) === false">
+  <div *ngIf="error$ | async as error"
+    class="error">
+    <span class="error--message">{{ error }}</span>
+    <span class="error--action" (click)="refresh()">{{ 'graph.errors.action' | translate }}</span>
+  </div>
+</ng-container>
+
+<mat-progress-spinner color="gray" mode="indeterminate" *ngIf="loading$ | async" diameter="24"></mat-progress-spinner>

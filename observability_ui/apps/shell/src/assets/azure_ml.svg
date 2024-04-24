@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"
+   sodipodi:docname="10166-icon-service-Machine-Learning.svg"
+   version="1.1"
+   viewBox="0 0 30 30"
+   height="30"
+   width="30"
+   id="bc46fe20-f36c-49f2-b34e-b5185b9a5e7d">
+  <metadata
+     id="metadata32">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Icon-166Artboard 1</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     inkscape:current-layer="bc46fe20-f36c-49f2-b34e-b5185b9a5e7d"
+     inkscape:window-maximized="0"
+     inkscape:window-y="25"
+     inkscape:window-x="122"
+     inkscape:cy="16.026467"
+     inkscape:cx="8.0986152"
+     inkscape:zoom="12.43975"
+     showgrid="false"
+     id="namedview30"
+     inkscape:window-height="786"
+     inkscape:window-width="1180"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <defs
+     id="defs21">
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0,-160)"
+       y2="169"
+       x2="11.12"
+       y1="169"
+       x1="1.1"
+       id="e1bcfd0f-68b5-4f66-9501-e6a7245a18e7">
+      <stop
+         id="stop10"
+         stop-color="#50c7e8"
+         offset="0" />
+      <stop
+         id="stop12"
+         stop-color="#4cc3e4"
+         offset="0.25" />
+      <stop
+         id="stop14"
+         stop-color="#41b6da"
+         offset="0.51" />
+      <stop
+         id="stop16"
+         stop-color="#2fa2c8"
+         offset="0.77" />
+      <stop
+         id="stop18"
+         stop-color="#1989b2"
+         offset="1" />
+    </linearGradient>
+  </defs>
+  <title
+     id="title23">Icon-166Artboard 1</title>
+  <g
+     transform="matrix(1.7647059,0,0,1.7647059,-0.8823531,-0.8823531)"
+     id="g37">
+    <path
+       id="bc892891-989d-4c43-80d3-d2b4546a974f"
+       d="M 15.8,17.5 H 2.2 L 1.1,13.4 h 15.8 z"
+       fill="#198ab3" />
+    <polygon
+       style="fill:url(#e1bcfd0f-68b5-4f66-9501-e6a7245a18e7)"
+       points="11.1,0.5 6.9,0.5 6.9,6.9 1.1,13.4 2.2,17.5 11.1,6.9 "
+       fill="url(#e1bcfd0f-68b5-4f66-9501-e6a7245a18e7)"
+       id="polygon26" />
+    <path
+       id="e6be01d6-345d-4df4-bbdb-151aa8edaa1f"
+       d="m 15.8,17.5 -6.2,-6.4 2.6,-3 4.7,5.3 z"
+       fill="#32bedd" />
+  </g>
+</svg>

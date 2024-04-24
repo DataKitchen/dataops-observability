@@ -1,0 +1,64 @@
+<div mat-dialog-title>Create API Key</div>
+
+<div mat-dialog-content>
+  <ng-container *ngIf="!loading() && !token()">
+    <text-field [formControl]="formGroup.controls.name"
+      label="Name"></text-field>
+    <text-field [formControl]="formGroup.controls.expires_after_days"
+      type="number"
+      label="Expires after (days)"></text-field>
+
+    <div class="permissions">
+      <strong class="permissions--heading">Allow API key to</strong>
+
+      <checkbox-field [formControl]="formGroup.controls.allow_send_events">
+        Send events
+      </checkbox-field>
+      <checkbox-field [formControl]="formGroup.controls.allow_manage_components">
+        Manage entities <span class="tag filled" dkTooltip="Access to—and use of—the Observability API is in beta. It introduces some ability to manage system entities, such as components and journeys.">Beta</span>
+      </checkbox-field>
+      <checkbox-field [formControl]="formGroup.controls.allow_agent_api">
+        Transmit heartbeat
+        <span class="tag filled" dkTooltip="Select this option to transmit an agent’s heartbeat.">Agents</span>
+      </checkbox-field>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!loading() && token()">
+    <div class="info-text">Copy and save this key for reference
+      <mat-icon class="ml-1"
+        dkTooltip="Observability does not display API key values. Copy, save, and store your keys in a password manager or vault for future use.">info
+      </mat-icon>
+    </div>
+
+    <code-snippet>
+      {{token()}}
+    </code-snippet>
+  </ng-container>
+
+  <div *ngIf="loading() === true"
+    class="loading-container">
+    <mat-spinner></mat-spinner>
+  </div>
+</div>
+
+<div mat-dialog-actions
+  *ngIf="!token()">
+  <button mat-dialog-close
+    mat-button>
+    Cancel
+  </button>
+
+  <!-- ADD -->
+  <button mat-flat-button
+    color="primary"
+    [disabled]="formGroup.invalid || loading() === true"
+    (click)="createKey()">
+    <ng-container *ngIf="loading() === true else buttonLabel">
+      Adding API Key
+    </ng-container>
+    <ng-template #buttonLabel>
+      Add API Key
+    </ng-template>
+  </button>
+</div>

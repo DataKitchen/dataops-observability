@@ -1,0 +1,133 @@
+<h1 mat-dialog-title>
+  Instance Alerts
+</h1>
+
+<mat-dialog-content>
+  <div [formGroup]="$any(search)"
+    class="toolbar">
+    <div class="display-flex">
+      <filter-field label="Alert"
+        class="mr-2"
+        allSelectedLabel="All Alerts"
+        [multiple]="true"
+        [formControl]="$any(search.controls.type)">
+        <ng-container *ngFor="let type of alertTypes">
+          <filter-field-option [value]="type"
+            [label]="'mixedAlert.' + type | translate">
+          </filter-field-option>
+        </ng-container>
+      </filter-field>
+
+      <filter-field label="Components"
+        allSelectedLabel="All Components"
+        noneSelectedLabel="Components"
+        formControlName="component_id"
+        multiple="true"
+        [searchable]="true">
+        <ng-container *ngFor="let component of components()">
+          <filter-field-option [value]="component.id"
+            [label]="component.display_name">
+          </filter-field-option>
+        </ng-container>
+      </filter-field>
+    </div>
+
+    <div>
+      <div>{{data.instance.journey.name}}</div>
+      <a class="link"
+        [routerLink]="['projects', data.projectId, 'instances', data.instance.id]"
+        target="_blank">{{data.instance.id}}</a>
+    </div>
+
+    <div class="end-container">
+      <div class="dates-container">
+        <div>From {{ data.instance.start_time | date: 'MMM dd, h:mm a' }} {{data.instance.end_time ? 'to' : ''}} {{ data.instance.end_time | date: 'MMM dd, h:mm a' }}</div>
+        <div class="duration">{{ data.instance.start_time | duration:data.instance.end_time }}</div>
+      </div>
+      <div class="alerts-and-active">
+        <span [class.active-instance]="data.instance.active">{{data.instance.active ? 'Active' : 'Ended'}}</span>
+        <shell-instance-alerts [instance]="data.instance"></shell-instance-alerts>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrapper-container">
+    <table-wrapper
+      class="mat-elevation-z0 fx-flex"
+      [items]="alerts()"
+      [total]="total()"
+      [columns]="[ 'description', 'components', 'details' ]"
+      [loading]="loading()"
+      storageKeyNamespace="alertsDialog"
+      entity="{{'alerts' | translate}}"
+      (tableChange)="onTableChange($event)"
+      [selectable]="false"
+      [search]="search"
+    >
+      <ng-container matColumnDef="description"
+        sortDisabled
+        dragDisabled
+        toggleDisabled>
+        <ng-container *matHeaderCellDef>
+          Description
+        </ng-container>
+        <ng-container *matCellDef="let alert">
+          <div class="description-container">
+            <mat-icon *ngIf="alert.level === 'ERROR'"
+              class="ERROR">error_outline
+            </mat-icon>
+            <mat-icon *ngIf="alert.level === 'WARNING'"
+              class="WARNING">warning_amber
+            </mat-icon>
+            <div>{{alert.description}}</div>
+          </div>
+        </ng-container>
+      </ng-container>
+
+      <ng-container matColumnDef="components"
+        sortDisabled
+        dragDisabled
+        toggleDisabled>
+        <ng-container *matHeaderCellDef>
+          Component
+        </ng-container>
+        <ng-container *matCellDef="let alert">
+          <div class="component-container"
+            *ngIf="alert.components">
+            <div *ngFor="let component of alert.components; let last = last">{{component.display_name}}<span *ngIf="!last">,&nbsp;</span></div>
+          </div>
+          <ng-container *ngIf="!alert.components || alert.components?.length === 0">-</ng-container>
+        </ng-container>
+      </ng-container>
+
+      <ng-container matColumnDef="details"
+        sortDisabled
+        dragDisabled
+        toggleDisabled>
+        <ng-container *matHeaderCellDef>
+          Details
+        </ng-container>
+        <ng-container *matCellDef="let alert">
+          <ng-container [ngSwitch]="alert.type">
+              <span *ngSwitchCase="RunAlertType.MissingRun">
+                Expected start time: {{alert.details.expected_start_time | date: 'MMM dd, h:mm a'}}
+              </span>
+            <span *ngSwitchCase="RunAlertType.LateStart">
+                Expected start time: {{alert.details.expected_start_time | date: 'MMM dd, h:mm a'}}
+              </span>
+            <span *ngSwitchCase="RunAlertType.LateEnd">
+                Expected end time: {{alert.details.expected_end_time | date: 'MMM dd, h:mm a'}}
+              </span>
+            <span *ngSwitchDefault>-</span>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </table-wrapper>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-flat-button
+    mat-dialog-close>Close
+  </button>
+</mat-dialog-actions>

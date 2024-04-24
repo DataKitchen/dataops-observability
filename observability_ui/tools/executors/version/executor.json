@@ -1,0 +1,9 @@
+{
+  "executors": {
+    "version": {
+      "implementation": "./impl",
+      "schema": "./schema.json",
+      "description": "Updates apps version in ngsw-config.json file."
+    }
+  }
+}

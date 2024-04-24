@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"
+   sodipodi:docname="03332-icon-service-Power-BI-Embedded.svg"
+   version="1.1"
+   viewBox="0 0 30 30"
+   height="30"
+   width="30"
+   id="e051aaf0-c11c-4c9b-b122-0e345a948faa">
+  <metadata
+     id="metadata43">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     inkscape:current-layer="e051aaf0-c11c-4c9b-b122-0e345a948faa"
+     inkscape:window-maximized="0"
+     inkscape:window-y="79"
+     inkscape:window-x="126"
+     inkscape:cy="13.943266"
+     inkscape:cx="8.9154842"
+     inkscape:zoom="16.464361"
+     showgrid="false"
+     id="namedview41"
+     inkscape:window-height="746"
+     inkscape:window-width="1271"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <defs
+     id="defs28">
+    <clipPath
+       id="a704ce45-5ca0-410c-9835-3f7dd166dfb6">
+      <path
+         id="path10"
+         fill="none"
+         d="m 9.71,1.185 a 0.711,0.711 0 0 1 0.711,-0.711 h 4.263 a 0.71,0.71 0 0 1 0.71,0.711 v 15.63 a 0.71,0.71 0 0 1 -0.71,0.711 H 3.316 A 0.71,0.71 0 0 1 2.606,16.815 V 9.71 A 0.71,0.71 0 0 1 3.316,9 H 6.158 V 5.448 A 0.711,0.711 0 0 1 6.869,4.737 H 9.71 Z" />
+    </clipPath>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-206,-490.699)"
+       y2="507.151"
+       x2="222.06799"
+       y1="491.263"
+       x1="214.573"
+       id="a7d0ea34-430c-4819-b9b1-0a8a2dfdd52b">
+      <stop
+         id="stop13"
+         stop-color="#e6ad10"
+         offset="0" />
+      <stop
+         id="stop15"
+         stop-color="#c87e0e"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-206,-490.699)"
+       y2="507.90302"
+       x2="217.993"
+       y1="495.67801"
+       x1="211.689"
+       id="fa41d3b0-0611-4d16-b103-b71ec870a9cb">
+      <stop
+         id="stop18"
+         stop-color="#f6d751"
+         offset="0" />
+      <stop
+         id="stop20"
+         stop-color="#e6ad10"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-206,-490.699)"
+       y2="507.62399"
+       x2="212.873"
+       y1="499.36801"
+       x1="209.39"
+       id="ea08d23a-67c8-409f-90e3-67e0ce891091">
+      <stop
+         id="stop23"
+         stop-color="#f9e589"
+         offset="0" />
+      <stop
+         id="stop25"
+         stop-color="#f6d751"
+         offset="1" />
+    </linearGradient>
+  </defs>
+  <g
+     transform="matrix(1.7593244,0,0,1.7593244,-0.8339196,-0.8339196)"
+     id="g38"
+     clip-path="url(#a704ce45-5ca0-410c-9835-3f7dd166dfb6)">
+    <g
+       id="g36">
+      <path
+         style="fill:url(#a7d0ea34-430c-4819-b9b1-0a8a2dfdd52b)"
+         id="path30"
+         fill="url(#a7d0ea34-430c-4819-b9b1-0a8a2dfdd52b)"
+         d="M 15.394,0.474 V 17.526 H 9.71 V 0.474 Z" />
+      <path
+         style="fill:url(#fa41d3b0-0611-4d16-b103-b71ec870a9cb)"
+         id="path32"
+         fill="url(#fa41d3b0-0611-4d16-b103-b71ec870a9cb)"
+         d="M 11.842,5.448 V 17.526 H 6.158 V 4.737 h 4.973 a 0.711,0.711 0 0 1 0.711,0.711 z" />
+      <path
+         style="fill:url(#ea08d23a-67c8-409f-90e3-67e0ce891091)"
+         id="path34"
+         fill="url(#ea08d23a-67c8-409f-90e3-67e0ce891091)"
+         d="m 2.606,9 v 8.526 H 8.29 V 9.71 A 0.711,0.711 0 0 0 7.579,9 Z" />
+    </g>
+  </g>
+</svg>

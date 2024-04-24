@@ -1,0 +1,39 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+.dialog-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dialog-actions {
+  justify-content: flex-end;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+textarea {
+  resize: none;
+  width: 100%;
+}
+
+.top-margin {
+  margin-top: 8px
+}
+
+mat-expansion-panel {
+  border: variables.$border;
+
+  mat-panel-title {
+    font-weight: 500;
+  }
+
+  ::ng-deep {
+    .mat-expansion-indicator::after {
+      @include mixins.font-color(primary);
+    }
+  }
+}

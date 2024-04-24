@@ -1,0 +1,43 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
+$type-colors: (
+  info: $blue-700,
+  error: $red-500,
+  success: $green-500,
+  tips: $deep-purple-500,
+  warning: $orange-500
+);
+
+$background-colors: (
+  info: $blue-50,
+  error: $red-50,
+  success: $green-50,
+  tips: $deep-purple-50,
+  warning: $orange-50
+);
+
+:host {
+  display: block;
+}
+
+.alert {
+  @include flex-row($justify: flex-start);
+  padding: $space-xs $space-sm;
+  border-radius: $space-xxs;
+}
+
+@each $type, $color in $type-colors {
+  .#{$type} {
+    border: 1px solid $color;
+    background-color: map-get($background-colors, $type);
+    color: $color;
+    font-weight: 500;
+
+    mat-icon {
+      @include icon-size(18px);
+      color: $color;
+      margin-right: $space-xs;
+    }
+  }
+}

@@ -1,0 +1,8 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  @include mixins.flex-column($justify: flex-start, $align: stretch);
+
+  flex: 1;
+}

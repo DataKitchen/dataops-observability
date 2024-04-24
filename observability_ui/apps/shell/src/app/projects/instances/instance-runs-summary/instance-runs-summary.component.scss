@@ -1,0 +1,48 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  width: 100%;
+}
+
+
+.icon-container {
+  @include mixins.flex-row();
+  margin-right: variables.$space-xs;
+
+  border-radius: 50%;
+  padding: 2px;
+  color: white;
+
+  &.COMPLETED {
+    background-color: variables.$light-green-400;
+  }
+
+  &.COMPLETED_WITH_WARNINGS {
+    background-color: variables.$amber-300;
+  }
+
+  &.FAILED {
+    background-color: variables.$red-300;
+  }
+
+  &.MISSING {
+    background-color: variables.$deep-purple-500;
+  }
+
+  &.RUNNING {
+    background-color: variables.$blue-500;
+  }
+
+  &.PENDING {
+    background-color: variables.$gray-500;
+  }
+
+  mat-icon {
+    @include mixins.icon-size(12px);
+  }
+}
+
+.summary-container {
+  @include mixins.flex-row();
+}

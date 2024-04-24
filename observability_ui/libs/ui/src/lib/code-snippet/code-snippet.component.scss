@@ -1,0 +1,45 @@
+@import '../../../styles/mixins';
+@import '../../../styles/variables';
+
+$code-border: 1px solid #ddd;
+
+.code-container {
+  @include flex-column($align: flex-start);
+
+  border: $code-border;
+}
+
+.code-header {
+  @include flex-row($justify: space-between);
+
+  background-color: #efefef;
+  border-bottom: $code-border;
+  width: 100%;
+
+  &>* {
+    padding: $space-xs;
+  }
+}
+
+.copy-code {
+  @include flex-row();
+  border-left: $code-border;
+  cursor: pointer;
+
+  .copy-icon {
+    @include icon-size(14px);
+
+    margin-right: $space-xs;
+  }
+}
+
+.code-text {
+  font-family: $font-mono;
+  padding: $space-xs;
+  background-color: $gray-50;
+  width: 100%;
+}
+
+strong {
+  font-weight: 500 !important;
+}

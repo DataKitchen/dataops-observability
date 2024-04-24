@@ -1,0 +1,60 @@
+<mat-card-edit *ngIf="form && emailAction() as emailAction"
+  class="mt-4"
+  #emailEditor
+  title="Email Configuration"
+  [formGroup]="form"
+  (save)="saveEmailAction()"
+  (cancel)="cancelEmailActionChanges(emailAction)"
+  [saving]="saving()"
+  iconTooltip="Edit email configuration">
+
+  <ng-container *ngIf="!emailEditor.editing">
+    <ng-container *ngIf="emailAction.action_args?.smtp_config?.endpoint; else notConfigured">
+      <div class="text--secondary mb-1">SMTP Server</div>
+      <div>{{ emailAction.action_args?.smtp_config?.endpoint }}</div>
+
+      <div class="text--secondary mb-1">Port</div>
+      <div>{{ emailAction.action_args?.smtp_config?.port }}</div>
+
+      <div class="text--secondary mb-1">Username</div>
+      <div>{{ emailAction.action_args?.smtp_config?.username }}</div>
+
+      <div class="text--secondary mb-1">Password</div>
+      <div>**********</div>
+
+      <div class="text--secondary mb-1">Sender Email</div>
+      <div>{{ emailAction.action_args?.from_address }}</div>
+    </ng-container>
+    <ng-template #notConfigured>
+      <div class="not-configured">
+        Email server not configured.
+      </div>
+    </ng-template>
+  </ng-container>
+
+  <ng-container *ngIf="emailEditor.editing">
+    <form [formGroup]="$any(form)">
+      <text-field formControlName="endpoint"
+        label="SMTP Server"
+        placeholder="{{ emailAction.action_args?.smtp_config?.endpoint }}"></text-field>
+      <text-field formControlName="port"
+        label="Port"
+        placeholder="{{ emailAction.action_args?.smtp_config?.port }}"></text-field>
+      <text-field formControlName="username"
+        label="Username"
+        placeholder="{{ emailAction.action_args?.smtp_config?.user }}"></text-field>
+      <text-field formControlName="password"
+        label="Password"
+        type="password"
+        placeholder="**********"></text-field>
+      <text-field formControlName="from_address"
+        label="Sender Address"
+        placeholder="{{ emailAction.action_args?.from_address}}"></text-field>
+    </form>
+  </ng-container>
+
+  <!-- <help-link class="left-actions ml-2"
+        href="https://docs.datakitchen.io/article/dataops-observability-help/...">sending emails.
+      </help-link> -->
+</mat-card-edit>
+ 

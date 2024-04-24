@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"
+   sodipodi:docname="INFA.svg"
+   id="svg25"
+   height="30"
+   width="30"
+   viewBox="0 0 30 30"
+   version="1.2">
+  <metadata
+     id="metadata31">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>logo-informatica-svg</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs29" />
+  <sodipodi:namedview
+     inkscape:current-layer="svg25"
+     inkscape:window-maximized="0"
+     inkscape:window-y="25"
+     inkscape:window-x="0"
+     inkscape:cy="63.943111"
+     inkscape:cx="54.641162"
+     inkscape:zoom="2.9238558"
+     showgrid="false"
+     id="namedview27"
+     inkscape:window-height="802"
+     inkscape:window-width="1409"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <title
+     id="title10">logo-informatica-svg</title>
+  <style
+     id="style12">
+		tspan { white-space:pre }
+		.shp0 { fill: #ff4d00 } 
+		.shp1 { fill: #ff7d00 } 
+		.shp2 { fill: #001aff } 
+		.shp3 { fill: #e23400 } 
+	</style>
+  <g
+     transform="matrix(0.01982868,0,0,0.01982868,0.19937753,-0.01229363)"
+     id="logo-informatica">
+    <g
+       id="Logo/Informatica">
+      <g
+         id="Group-32">
+        <g
+           id="Layer">
+          <path
+             d="m 827.74,776.46 183.98,30.78 124.67,134.58 -16.74,193.48 -449.03,-254.48 z"
+             class="shp0"
+             id="Fill-1" />
+          <path
+             d="M 1492.85,757.06 1119.65,1135.31 746.41,0.62 Z"
+             class="shp1"
+             id="Fill-2" />
+          <path
+             d="M 1244.18,757.09 670.64,880.83 686.37,601.61 Z"
+             class="shp2"
+             id="Fill-3" />
+          <path
+             d="m 0.01,757.11 276.53,61.83 182.88,120.28 13.36,121.04 -74.24,100.74 z"
+             class="shp3"
+             id="Fill-4" />
+          <path
+             d="M 706.06,41.58 459.41,939.2 0,757.1 Z"
+             class="shp0"
+             id="Fill-5" />
+          <path
+             d="m 459.42,939.22 613.89,243.1 -326.9,331.26 L 398.54,1161 Z"
+             class="shp1"
+             id="Fill-6" />
+          <g
+             id="Group-31" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

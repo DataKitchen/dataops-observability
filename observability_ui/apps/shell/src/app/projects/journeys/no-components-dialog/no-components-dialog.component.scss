@@ -1,0 +1,22 @@
+@use '@observability/ui/styles/variables' as variables;
+
+.no-components-setup {
+  border: none;
+  padding: 0;
+  height: auto;
+
+  .title {
+    font-size: 18px;
+    margin-top: variables.$space-sm;
+  }
+}
+
+.body {
+  text-align: center;
+  margin-top: variables.$space-sm;
+}
+
+.add-button {
+  margin-top: variables.$space-lg;
+  margin-bottom: variables.$space-lg;
+}

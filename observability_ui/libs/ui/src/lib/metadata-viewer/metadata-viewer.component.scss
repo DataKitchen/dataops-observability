@@ -1,0 +1,34 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+.mat-dialog-title {
+  margin-bottom: 0;
+}
+
+.header {
+  @include mixins.flex-row($justify: space-between, $align: center);
+
+  background: variables.$gray-200;
+  margin: {
+    left: -#{variables.$space-md};
+    right: -#{variables.$space-md};
+    bottom: variables.$space-xs;
+  };
+  padding: variables.$space-xs variables.$space-md;
+
+  &--type {
+    @include mixins.flex-column($justify: normal, $align: normal);
+
+    &--event {
+      @include mixins.font-style($style: menu);
+    }
+
+    &--task {
+      @include mixins.font-style($style: caption);
+    }
+  }
+
+  .right-side-header-container {
+    @include mixins.flex-column($align: flex-end);
+  }
+}

@@ -1,0 +1,48 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+@use '@angular/material' as mat;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.scrolling-content {
+  margin-top: variables.$space-md;
+}
+
+.button-icon {
+  margin-right: variables.$space-xs;
+}
+
+.card__title {
+  font-size: 16px;
+}
+
+.status-icon {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+
+.green {
+  background-color: var(--primary-color);
+}
+
+.yellow {
+  background-color: #FFC107;
+}
+
+.red {
+  background-color: var(--warn-color);
+}
+
+.agent-card {
+  cursor: default;
+}
+
+.empty {
+  margin: auto;
+}

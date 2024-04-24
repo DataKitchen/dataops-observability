@@ -1,0 +1,286 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+@use '@observability/ui/styles/theme' as theme;
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+@import '@observability/ui/styles/fx-flex';
+@import '@observability/ui/styles/_spacing.scss';
+@import '@observability/ui/styles/_icon-size.scss';
+@import '@observability/ui/styles/overlay';
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  @include mixins.size(100%, 100%);
+
+  margin: 0;
+}
+
+
+body {
+  --primary-color: #06a04a;
+  --primary-lighter-color: #b4e3c9;
+  --primary-darker-color: #038432;
+  --text-primary-color: #{variables.$light-primary-text};
+  --text-primary-lighter-color: #{variables.$dark-primary-text};
+  --text-primary-darker-color: #{variables.$light-primary-text};
+
+  --accent-color: #ffffff;
+  --accent-lighter-color: #ffffff;
+  --accent-darker-color: #ffffff;
+  --text-accent-color: #{variables.$dark-primary-text};
+  --text-accent-lighter-color: #{variables.$dark-primary-text};
+  --text-accent-darker-color: #{variables.$dark-primary-text};
+
+  --warn-color: #f44336;
+  --warn-lighter-color: #fcc7c3;
+  --warn-darker-color: #ef2c22;
+  --text-warn-color: #{variables.$light-primary-text};
+  --text-warn-lighter-color: #{variables.$dark-primary-text};
+  --text-warn-darker-color: #{variables.$light-primary-text};
+
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+
+  --border: #{variables.$border};
+  --border-radius: #{variables.$border-radius};
+
+  --text-secondary-color: #{variables.$dark-accent-text};
+}
+
+// TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
+//  The following line adds:
+//    1. Default typography styles for all components
+//    2. Styles for typography hierarchy classes (e.g. .mat-headline-1)
+//  If you specify typography styles for the components you use elsewhere, you should delete this line.
+//  If you don't need the default component typographies but still want the hierarchy styles,
+//  you can delete this line and instead use:
+//    `@include mat.legacy-typography-hierarchy(variables.$font-config);`
+@include mat.legacy-core();
+@include mat.legacy-core-theme(theme.$theme);
+@include mat.all-legacy-component-themes(theme.$theme);
+@include mat.legacy-typography-hierarchy(theme.$theme);
+
+.mat-raised-button, .mat-stroked-button, .mat-flat-button {
+  padding: 0 1.15em;
+  margin: 0 .65em;
+  min-width: 3em;
+  line-height: 36.4px
+}
+
+.mat-standard-chip {
+  padding: .5em .85em;
+  min-height: 2.5em;
+}
+
+.material-icons {
+  font-size: 24px;
+  font-family: 'Material Icons', 'Material Icons';
+
+  .mat-badge-content {
+    font-family: 'Roboto';
+  }
+}
+
+.text--primary {
+  color: variables.$green-500;
+}
+
+.text--secondary {
+  @include mixins.font-color(secondary);
+}
+
+.text-caption--secondary {
+  @include mixins.font-style(caption, secondary);
+}
+
+.text--error {
+  @include mixins.font-style(caption);
+  color: variables.$red-500;
+}
+
+.text--bold-1 {
+  @include mixins.font-style(body);
+  font-weight: 500;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.text--link-with-icon {
+  @include mixins.link-with-icon;
+  cursor: pointer;
+}
+
+
+a {
+  text-decoration: none;
+}
+
+table {
+  border-spacing: 0;
+}
+
+mat-sidenav-content {
+  background-color: variables.$background-color;
+}
+
+.truncated {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.filters-container {
+  @include mixins.flex-row($justify: flex-start);
+
+  & > * {
+    margin-right: variables.$space-md;
+  }
+}
+
+.empty-result-set {
+  @include mixins.font-style($style: body, $color: secondary);
+
+  line-height: 26px;
+}
+
+.mat-form-field {
+  letter-spacing: normal;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.link {
+  @include mixins.link();
+}
+
+.overflow-visible {
+  overflow: visible;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.visible {
+  visibility: visible;
+}
+
+.prevent-select {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none;
+}
+
+.cdk-overlay-pane.border-radius {
+  @include mixins.border-radius;
+}
+
+.mat-pseudo-checkbox-checked, .mat-pseudo-checkbox-indeterminate {
+  background: mat.get-color-from-palette(theme.$theme-primary);
+}
+
+
+.mat-button-base:not(.mat-icon-button) {
+  .mat-button-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.icon-16 {
+  @include mixins.icon-size(16px);
+}
+
+.icon-edit {
+  @include mixins.font-color(secondary);
+}
+
+.code {
+  padding: 1px 5px;
+  font-weight: 600;
+  font-family: variables.$font-mono;
+  border-radius: variables.$border-radius;
+  background-color: variables.$gray-200;
+}
+
+.tag {
+  font-size: 12px;
+  color: variables.$gray-700;
+  border: 2px solid variables.$gray-100;
+  margin-right: 8px;
+  padding: 0 8px;
+  border-radius: 2px;
+  white-space: nowrap;
+
+  &.filled {
+    background: variables.$gray-100;
+  }
+}
+
+.mat-card-list {
+  & mat-card {
+    max-width: 900px;
+    cursor: pointer;
+    padding: variables.$space-sm variables.$space-xs variables.$space-sm variables.$space-sm;
+
+    .card__title {
+      font-weight: 500;
+    }
+
+    & .label {
+      @include mixins.font-style($style: body, $color: secondary);
+    }
+
+    &:hover, &.active {
+      @include mat.elevation(4);
+
+      .card__name {
+        @include mixins.mat-color();
+      }
+    }
+  }
+}
+
+.mdc-radio__background {
+  @include mixins.font-color(secondary);
+}
+
+.mat-mdc-radio-checked .mdc-radio__background {
+  color: variables.$green-500;;
+}
+
+.mat-mdc-menu-content {
+  background: white;
+}
+
+
+.link {
+  @include mixins.link();
+}
+
+.learn-more {
+  font-size: 12px;
+  @extend .fx-row;
+  @extend .items-mr-1;
+
+  .link-with-icon {
+    @include mixins.link-with-icon();
+    @include mixins.flex-row();
+    @extend .items-mr-1;
+  }
+}

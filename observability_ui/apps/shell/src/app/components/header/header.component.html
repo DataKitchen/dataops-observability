@@ -1,0 +1,76 @@
+<header class="header flex-row flex-grow px-2">
+  <button mat-icon-button
+          (click)="toggleMenu.emit()">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <span>DataKitchen DataOps Observability</span>
+
+  <span class="fx-flex"></span>
+  <!-- HELP -->
+  <button mat-button [matMenuTriggerFor]="helpMenu"
+          (click)="$event.stopPropagation()"
+          [class.open]="matMenuTrigger.menuOpen"
+          class="mat-body-1"
+          #matMenuTrigger="matMenuTrigger">
+    <mat-icon>help</mat-icon>
+  </button>
+
+  <!-- USERNAME -->
+  <button mat-button *ngIf="(user$ | async) as user"
+          [matMenuTriggerFor]="accountMenu"
+          (click)="$event.stopPropagation()"
+          [class.open]="accountMenuTrigger.menuOpen"
+          class="mat-body-1"
+          #accountMenuTrigger="matMenuTrigger">
+    {{ user.name }}
+    <mat-icon>arrow_drop_down</mat-icon>
+  </button>
+</header>
+
+
+<mat-menu #helpMenu="matMenu"
+          xPosition="before"
+          hasBackdrop="false">
+  <!-- PAGE HELP -->
+  <a *ngIf="(helpLink$ | async) as helpLink"
+     (click)="openSmallHelpWindow(helpLink)"
+     mat-menu-item
+     class="header-menu__item">
+    <mat-icon class="header-menu__icon">description</mat-icon>
+    Help for This Page
+  </a>
+
+  <a target="_blank"
+     href="https://docs.datakitchen.io/articles/dataops-observability-help/dataops-observability-help"
+     mat-menu-item
+     class="header-menu__item">
+    <mat-icon class="header-menu__icon">help</mat-icon>
+    Observability Help
+    <mat-icon class="header-menu__link">open_in_new</mat-icon>
+  </a>
+
+  <a target="_blank"
+     href="https://docs.datakitchen.io"
+     mat-menu-item
+     class="header-menu__item">
+    <mat-icon class="header-menu__icon">import_contacts</mat-icon>
+    Documentation Library
+    <mat-icon class="header-menu__link">open_in_new</mat-icon>
+  </a>
+</mat-menu>
+
+<!-- ACCOUNT MENU -->
+<mat-menu #accountMenu="matMenu"
+  xPosition="before"
+  [hasBackdrop]="false">
+
+  <!-- LOGOUT -->
+  <button mat-menu-item
+          (click)="logout()"
+          class="header-menu__item">
+    <mat-icon class="header-menu__icon">exit_to_app</mat-icon>
+    Logout
+  </button>
+</mat-menu>
+

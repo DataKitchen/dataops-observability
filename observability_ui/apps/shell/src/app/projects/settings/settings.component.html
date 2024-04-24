@@ -1,0 +1,46 @@
+<ng-container *ngIf="form && project() as project">
+  <details-header class="pb-2"
+    [title]="project.name"></details-header>
+
+  <div class="scrolling-content">
+    <mat-card-edit class="mt-4"
+      #infoEditor
+      title="Project Info"
+      [formGroup]="form"
+      (save)="saveInfo()"
+      (cancel)="cancelInfoChanges(project)"
+      [saving]="saving()"
+      iconTooltip="Edit project settings">
+
+      <ng-container *ngIf="!infoEditor.editing">
+        <div class="text--secondary mb-1">Project Name</div>
+        <div>{{ project.name }}</div>
+
+        <div class="text--secondary mb-1 mt-3">Description</div>
+        <div data-test="description">{{ project.description }}</div>
+
+        <div class="bottom-chip mt-3">
+          <created-by [createdBy]="project.created_by"
+            [createdOn]="project.created_on"></created-by>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="infoEditor.editing">
+        <form [formGroup]="$any(form)">
+          <text-field formControlName="name"
+            label="Project Name"
+            placeholder="{{ project.name }}"></text-field>
+          <mat-form-field>
+            <mat-label>Description</mat-label>
+            <textarea formControlName="description"
+              placeholder="N/A"
+              rows="2"
+              matInput></textarea>
+          </mat-form-field>
+        </form>
+      </ng-container>
+    </mat-card-edit>
+
+    <shell-email-action></shell-email-action>
+  </div>
+</ng-container>

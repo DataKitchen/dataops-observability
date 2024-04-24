@@ -1,0 +1,41 @@
+<div class="toolbar"
+  [formGroup]="search">
+  <filter-field [label]="'eventTypes' | translate | titlecase"
+    [multiple]="true"
+    [noneSelectedLabel]="'eventTypes' | translate | titlecase"
+    [allSelectedLabel]="'allEventTypes' | translate"
+    [formControl]="$any(search.controls.event_type)">
+
+    <ng-container *ngFor="let ev of events|keyvalue">
+      <filter-field-option [value]="ev.value"
+        [label]="ev.value | translate">
+      </filter-field-option>
+    </ng-container>
+  </filter-field>
+
+  <filter-field [label]="'components' | translate | titlecase"
+    [multiple]="true"
+    [searchable]="true"
+    [noneSelectedLabel]="'components' | translate | titlecase"
+    [allSelectedLabel]="'allComponents' | translate"
+    [formControl]="$any(search.controls.component_id)">
+
+    <ng-container *ngFor="let component of allComponents$ | async">
+      <filter-field-option [value]="component.id"
+        [label]="component.display_name">
+      </filter-field-option>
+    </ng-container>
+  </filter-field>
+
+  <button *ngIf="!!(search.value.component_id || search.value.event_type)"
+    (click)="search.reset()"
+    mat-button>Clear
+  </button>
+</div>
+
+<shell-events-table [items]="events$ | async"
+  [total]="total$ | async"
+  [loading]="loading$ | async"
+  (tableChange)="onTableChange($event)"
+  [search]="search">
+</shell-events-table>

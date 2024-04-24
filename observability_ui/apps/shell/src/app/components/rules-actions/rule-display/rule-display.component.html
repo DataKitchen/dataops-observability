@@ -1,0 +1,212 @@
+<ng-container *ngIf="data">
+
+
+  <h1 mat-dialog-title>
+    {{'addRule' | translate}}
+
+    <button mat-icon-button
+      mat-dialog-close
+      (click)="cancel();">
+      <mat-icon>close</mat-icon>
+    </button>
+  </h1>
+
+  <mat-dialog-content>
+    <ng-container [ngTemplateOutlet]="content"></ng-container>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <ng-container [ngTemplateOutlet]="actions"></ng-container>
+  </mat-dialog-actions>
+
+
+</ng-container>
+
+<ng-container *ngIf="!data">
+
+  <mat-card>
+
+    <mat-card-content>
+      <ng-container [ngTemplateOutlet]="content"></ng-container>
+    </mat-card-content>
+
+    <mat-card-actions class="fx-align-flex-center">
+      <ng-container [ngTemplateOutlet]="actions"></ng-container>
+    </mat-card-actions>
+
+  </mat-card>
+
+</ng-container>
+
+
+<ng-template #content>
+  <ng-container *ngIf="editing">
+    <div class="line mb-2">
+      <span>{{'when' | translate}}</span>
+      <mat-select [formControl]="selectedRule"
+        class="rule-selector">
+        <mat-option *ngFor="let rule of ruleComponents | keyvalue"
+          [value]="rule.value">
+          <templating-label [component]="rule.value"></templating-label>
+        </mat-option>
+      </mat-select>
+
+      <templating-alert [editing]="true"
+        [alert]="selectedRule?.getRawValue()?.alert"
+        [alertIcon]="selectedRule?.getRawValue()?.alertIcon"></templating-alert>
+    </div>
+
+    <ng-container *ngFor="let condition of ruleUI.conditions">
+      <ng-container
+        #ruleDisplayer
+        [dynamicComponentOutlet]="getComponent(condition.key)"
+        [dynamicComponentOutletOptions]="{editMode: true, data: condition.value}">
+      </ng-container>
+    </ng-container>
+
+    <div class="line mt-2"
+      *ngIf="selectedRule?.value?.showComponentSelection">
+      <div>{{'for' | translate}}</div>
+      <mat-select placeholder="{{'anyComponent' | translate}}"
+        [formControl]="componentsForm"
+        class="component-selector">
+        <mat-option [value]="null">{{'anyComponent' | translate}}</mat-option>
+        <mat-option *ngFor="let component of selecteableComponents"
+          [value]="component.id">
+          {{component.display_name}}
+        </mat-option>
+      </mat-select>
+    </div>
+
+    <mat-expansion-panel class="advanced-container mat-elevation-z0"
+      *ngIf="ruleDisplayerDirective?.ref?.instance?.hasAdvancedOptions()">
+      <mat-expansion-panel-header class="text--secondary">
+        {{'advancedOptions' | translate}}
+      </mat-expansion-panel-header>
+
+      <ng-container *ngTemplateOutlet="ruleDisplayerDirective.ref.instance.advancedOptions">
+      </ng-container>
+    </mat-expansion-panel>
+  </ng-container>
+
+  <ng-container *ngIf="!editing">
+    <div class="rule-display">
+      <ng-container *ngFor="let condition of ruleUI.conditions">
+        <div class="flex-row fx-flex-wrap">
+          <ng-container
+            #ruleDisplayer
+            [dynamicComponentOutlet]="getComponent(condition.key)"
+            [dynamicComponentOutletOptions]="{editMode: false, data: condition.value}">
+          </ng-container>
+
+          <ng-container *ngIf="selectedRule?.value?.showComponentSelection">
+            <span class="ml-1">for</span>
+            <span>{{selectedComponent?.display_name || 'anyComponent' | translate}}</span>
+          </ng-container>
+        </div>
+
+        <div *ngIf="ruleDisplayerDirective?.ref?.instance?.hasAdvancedOptions() && ruleDisplayerDirective.ref.instance.getValue() as value">
+          <div *ngIf="value.count > 1"
+           class="flex-row mt-2 text--secondary advanced-options">
+            <mat-icon class="mr-2">fiber_manual_record</mat-icon>
+            {{'after' | translate }} {{value.count}} {{'occurrencesInARow' | translate | lowercase}}
+          </div>
+          <div *ngIf="value.group_run_name"
+            class="flex-row mt-2 text--secondary advanced-options">
+            <mat-icon class="mr-2">fiber_manual_record</mat-icon>
+            {{(value.group_run_name ? 'groupedByRun' : 'notGroupedByRun') | translate}}
+          </div>
+          <div *ngIf="!value.trigger_successive"
+            class="flex-row mt-2 text--secondary advanced-options">
+            <mat-icon class="mr-2">fiber_manual_record</mat-icon>
+            {{(value.trigger_successive ? 'triggerSubsequent' : 'notTriggerSubsequent') | translate}}
+          </div>
+        </div>
+
+        <templating-alert *ngIf="getComponent(condition.key).alert"
+          [editing]="false"
+          [alert]="getComponent(condition.key).alert"
+          [alertIcon]="getComponent(condition.key).alertIcon"></templating-alert>
+      </ng-container>
+    </div>
+  </ng-container>
+
+  <div class="flex-row"
+    *ngIf="editing">
+    <span class="fx-flex"></span>
+    <button mat-button
+      color="primary"
+      [matMenuTriggerFor]="menu"
+      [disabled]="ruleUI.actions.length >= 1">
+      <mat-icon>add</mat-icon>
+      Add Action
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item
+        *ngFor="let action of actionComponents"
+        (click)="addAction(action)">
+        <templating-label [component]="action"></templating-label>
+      </button>
+    </mat-menu>
+  </div>
+
+  <div class="flex-column fx-flex">
+    <mat-accordion>
+
+      <ng-container *ngFor="let action of ruleUI.actions; let i = index;">
+
+        <ng-container #actions
+          [dynamicComponentOutlet]="action.component"
+          [dynamicComponentOutletOptions]="{editMode: editing, data: action.data, expanded: action.editing}"
+          [dynamicComponentOutletOutputs]="['delete']"
+          (outputs)="removeAction(i)">
+        </ng-container>
+
+      </ng-container>
+    </mat-accordion>
+  </div>
+</ng-template>
+
+<ng-template #actions>
+  <div *ngIf="error"
+    class="text--error error-message">
+    {{ error.error?.error || ('unableToSaveRule' | translate) }}
+  </div>
+  <span fxFlex></span>
+  <!--  Actions for rule in display mode -->
+  <ng-container *ngIf="!editing">
+    <button mat-button
+      color="warn"
+      (clickConfirm)="delete(ruleUI.id);"
+      label="Delete this rule? Click Delete again.">Delete
+    </button>
+    <button mat-button
+      (click)="edit();">Edit
+    </button>
+  </ng-container>
+
+  <!--  Actions for when creating/editing a new rule  -->
+  <ng-container *ngIf="editing">
+
+    <button mat-button
+      (click)="cancel();">Cancel
+    </button>
+
+    <button *ngIf="editing"
+      mat-button
+      color="primary"
+      (click)="save()"
+      [disabled]="actionsAreInvalid">
+
+      <mat-progress-spinner *ngIf="loading$ | async"
+        diameter="32"
+        mode="indeterminate"></mat-progress-spinner>
+
+      <span
+        *ngIf="(loading$ | async) === null || (loading$ | async) === false">
+          {{ ruleUI.id ? 'Update' : 'Save' }}
+        </span>
+    </button>
+
+  </ng-container>
+</ng-template>

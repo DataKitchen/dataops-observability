@@ -1,0 +1,58 @@
+@use '@angular/material' as mat;
+@use '@observability/ui/styles/theme' as theme;
+@use '@observability/ui/styles/variables' as variables;
+@use '@observability/ui/styles/mixins' as mixins;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+
+  table-wrapper::ng-deep {
+    mat-table .cdk-column-send_events {
+      flex: 0 0 100px;
+      justify-content: center;
+    }
+
+    mat-table .cdk-column-manage_entities {
+      flex: 0 0 120px;
+      justify-content: center;
+    }
+
+    mat-table .cdk-column-agent_api {
+      flex: 0 0 120px;
+      justify-content: center;
+    }
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+mat-icon.allowed {
+  color: mat.get-color-from-palette(theme.$mat-primary, main);
+}
+
+mat-icon.not-allowed {
+  color: mat.get-color-from-palette(theme.$mat-warn, main);
+}
+
+.topbar {
+  margin: variables.$space-md;
+  align-items: center;
+}
+
+$expire-colors: (
+  expiring: variables.$orange-500,
+  expired: variables.$red-500,
+);
+
+@each $type, $color in $expire-colors {
+  .#{$type} {
+    @include mixins.font-style($style: caption, $color: $color);
+
+    font-weight: 500;
+  }
+}

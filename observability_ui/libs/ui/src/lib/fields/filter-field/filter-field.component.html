@@ -1,0 +1,127 @@
+<button (click)="open()"
+  type="button"
+  cdkOverlayOrigin
+  #trigger="cdkOverlayOrigin"
+  [disabled]="disabled"
+  [class.active]="selected.length > 0"
+  [class.icon-only]="iconOnly"
+  class="filter__button"
+  [dkTooltip]="tooltipContent"
+  [dkTooltipDisabled]="selected.length === 0 || !multiple"
+  matRipple>
+  <ng-container *ngIf="selected.length === 0 || selected.length === options.length; else floating">
+    <mat-icon>filter_list</mat-icon>
+    {{ iconOnly ? '' : selected.length === options.length ? allSelectedLabel || label : noneSelectedLabel || label }}
+  </ng-container>
+
+  <ng-template #floating>
+    <div class="filter__selected-container">
+      <span class="selected-label">{{ label }}</span>
+      <span class="selected-value">
+        <span class="selected-value-text truncated">{{ selected[0].label }}</span>
+        <ng-container *ngIf="selected.length > 1">
+            <span class="selected-value-plus">and +{{(selected.length - 1)}}</span>
+          </ng-container>
+        </span>
+    </div>
+  </ng-template>
+</button>
+
+<ng-template
+  (backdropClick)="isOpen = false;"
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="isOpen"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  [cdkConnectedOverlayPanelClass]="['opaque-overlay', 'mat-elevation-z2']"
+  cdkConnectedOverlayMinWidth="200px"
+>
+
+  <div style="width: 100%;"
+    fxLayout="column"
+    fxFlex>
+
+    <ng-container *ngIf="searchable">
+      <!-- SEARCH -->
+      <mat-form-field appearance="fill">
+        <input matInput
+          (input)="search.emit(searchControl.value)"
+          placeholder="{{ 'searchOptions' | translate }}"
+          [formControl]="searchControl"
+          autofocus>
+
+        <!-- ICON -->
+        <mat-icon matPrefix>search</mat-icon>
+        <mat-icon matSuffix
+          (click)="searchControl.reset(); search.emit(searchControl.value)"
+          [class.hidden]="!searchControl.value">
+          clear
+        </mat-icon>
+
+      </mat-form-field>
+    </ng-container>
+
+    <div class="spinner-container"
+      *ngIf="loading">
+      <mat-progress-spinner
+        diameter="24"
+        mode="indeterminate"></mat-progress-spinner>
+    </div>
+
+    <div class="scrollable"
+      *ngIf="!loading"
+      fxLayout="column">
+
+      <ng-container *ngIf="multiple && !searchControl.value">
+        <mat-checkbox
+          class="filter__field"
+          [indeterminate]="selected.length > 0 && indeterminate"
+          color="primary"
+          [checked]="selected.length > 0"
+          (change)="selectAllChange($event)"
+          disableRipple>
+          {{'selectAll' | translate}}
+        </mat-checkbox>
+      </ng-container>
+
+      <ng-container *ngFor="let option of filteredOptions$ | async">
+        <mat-checkbox class="filter__field"
+          [class.single-select]="!multiple"
+          [class.selected]="!multiple && option.selected"
+          color="primary"
+          [checked]="option.selected"
+          (change)="select($event, option);">
+          <ng-container *ngIf="option.hasContent">
+            <span [innerHTML]="option.html"></span>
+          </ng-container>
+          <div dkTooltipPlacement="right"
+            dkTooltip="{{option.label}}"
+            truncate
+            *ngIf="!option.hasContent">
+            {{ option.label }}
+          </div>
+        </mat-checkbox>
+      </ng-container>
+
+    </div>
+
+
+    <div fxLayout="row"
+      fxFlex>
+      <span fxFlex></span>
+      <button mat-button
+        (click)="close()"
+        color="primary">Close
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #tooltipContent>
+  <ng-container *ngFor="let option of selected; let last = last">
+    {{option.label}}
+    <span *ngIf="!last">,</span>
+  </ng-container>
+</ng-template>
+

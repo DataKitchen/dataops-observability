@@ -1,0 +1,27 @@
+{
+    "variable": {
+        "OBSERVABILITY_VERSION": {}
+    },
+    "target": {
+        "backend": {
+            "dockerfile": "deploy/docker/observability-be.dockerfile",
+            "tags": [
+                "datakitchen/dataops-observability-be:v${OBSERVABILITY_VERSION}",
+                "datakitchen/dataops-observability-be:v${index(regex(\"([0-9]+\\\\.[0-9]+)\\\\.[0-9]+\", OBSERVABILITY_VERSION), 0)}",
+                "datakitchen/dataops-observability-be:v${index(regex(\"([0-9]+)\\\\.[0-9]+\\\\.[0-9]+\", OBSERVABILITY_VERSION), 0)}"
+            ],
+            "context": ".",
+            "platforms": ["linux/amd64", "linux/arm64"]
+        },
+        "ui": {
+            "dockerfile": "deploy/docker/observability-ui.dockerfile",
+            "tags": [
+                "datakitchen/dataops-observability-ui:v${OBSERVABILITY_VERSION}",
+                "datakitchen/dataops-observability-ui:v${index(regex(\"([0-9]+\\\\.[0-9]+)\\\\.[0-9]+\", OBSERVABILITY_VERSION), 0)}",
+                "datakitchen/dataops-observability-ui:v${index(regex(\"([0-9]+)\\\\.[0-9]+\\\\.[0-9]+\", OBSERVABILITY_VERSION), 0)}"
+            ],
+            "context": ".",
+            "platforms": ["linux/amd64", "linux/arm64"]
+        }
+    }
+}

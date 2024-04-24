@@ -1,0 +1,49 @@
+<div class="subheading text--secondary mb-2">
+  <i>{{'componentsPanel.expectedStartTime' | translate}}</i>
+</div>
+
+<div class="flex-row fx-align-flex-center">
+  <div class="fx-flex fx-grow-20">{{'componentsPanel.schedule.start' | translate}}</div>
+
+  <mat-icon dkTooltip="{{'componentsPanel.schedule.startTooltip' | translate}}"
+    class="mr-2 info-icon">
+    info_outline
+  </mat-icon>
+
+  <schedule-field class="fx-flex"
+    [formControl]="form.controls.startsAt"
+    [label]="'componentsPanel.schedule.start' | translate"></schedule-field>
+</div>
+
+<timespan-field label="{{'componentsPanel.gracePeriod' | translate}}"
+  [formControl]="form.controls.startsAt"></timespan-field>
+
+
+<div class="subheading text--secondary mt-5 mb-2">
+  <i>{{'componentsPanel.expectedEndTime' | translate}}</i>
+</div>
+
+<div class="flex-row">
+  <div class="fx-flex fx-grow-20">{{'componentsPanel.schedule.end' | translate}}</div>
+
+  <mat-icon dkTooltip="{{'componentsPanel.schedule.endTooltip' | translate}}"
+    class="mr-2 info-icon">
+    info_outline
+  </mat-icon>
+
+  <schedule-field class="fx-flex"
+    [formControl]="form.controls.endsAt"
+    [label]="'componentsPanel.schedule.end' | translate">
+  </schedule-field>
+</div>
+
+<div class="mat-error">
+  <div *ngIf="form.controls.startsAt.getError('schedule')">
+    Start schedule must be defined
+  </div>
+
+  <div *ngIf="form.controls.startsAt.getError('margin')">
+    Grace period must be defined
+  </div>
+
+</div>

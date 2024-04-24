@@ -1,0 +1,206 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+@use 'theme' as theme;
+@use 'variables' as variables;
+
+@mixin button-reset {
+  outline: none;
+  border: 1px solid transparent;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+
+  &:focus {
+      outline: none;
+  }
+}
+
+@mixin flex($direction, $wrap, $justify, $align, $inline) {
+  @if $inline {
+      display: inline-flex;
+  } @else {
+      display: flex;
+  }
+  flex-flow: $direction $wrap;
+  align-items: $align;
+  justify-content: $justify;
+}
+
+@mixin flex-row($wrap: nowrap, $justify: center, $align: center, $inline: false) {
+  @include flex(row, $wrap, $justify, $align, $inline);
+}
+
+@mixin flex-column($wrap: nowrap, $justify: center, $align: center, $inline: false) {
+  @include flex(column, $wrap, $justify, $align, $inline);
+}
+
+@mixin field-label() {
+  // Mimic floating label in Material fields
+  @include font-color(secondary);
+
+  font-size: 10.5px;
+  line-height: 11px;
+}
+
+@mixin font-color($color: primary, $theme: ligth, $property: color) {
+  @if map-has-key($map: variables.$font-colors, $key: $color) {
+      $color-shades: map-get($map: variables.$font-colors, $key: $color);
+      $base-shade: map-get($map: $color-shades, $key: 'base');
+
+      #{$property}: if($theme == dark, map-get($map: $color-shades, $key: 'light'), $base-shade);
+  }
+  @else if $color {
+      #{$property}: $color;
+  }
+}
+
+@mixin font-style($style: body, $color: primary, $theme: variables.$light-theme) {
+  $material-typography-lvl-map: (
+    headline: headline-5,
+    title: headline-6,
+    subheader: subtitle-1,
+    body: body-2,
+    menu: body-1,
+  );
+  $level: $style;
+  @if map-has-key($map: $material-typography-lvl-map, $key: $style) {
+    $level: map-get($map: $material-typography-lvl-map, $key: $style);
+  }
+  $typography: mat.get-typography-config(theme.$theme);
+
+  @include font-color($color, $theme);
+  @include mat.typography-level($typography, $level);
+}
+
+@mixin icon-button-size($size: null) {
+  width: $size;
+  height: $size;
+  line-height: $size;
+}
+
+@mixin icon-size($size) {
+  @include size($size, $size);
+
+  line-height: $size;
+  font-size: $size;
+}
+
+@mixin icon-right($margin: variables.$default-icon-margin) {
+  margin-left: $margin;
+}
+
+@mixin link($color: link, $inline: false) {
+  @include link-reset;
+  @include font-color($color);
+
+  cursor: pointer;
+  border-bottom: {
+      width: 1px;
+      style: solid;
+  };
+
+  @if $inline {
+      @include font-color($color: $color, $property: border-bottom-color);
+  } @else {
+      @include transition(0.1s);
+
+      border-bottom-color: transparent;
+
+      &:hover {
+          @include font-color($color: $color, $property: border-bottom-color);
+      }
+  }
+}
+
+@mixin link-with-icon($element: span, $color: link, $inline: false) {
+  @include font-color($color);
+
+  #{$element} {
+      @include link($color, $inline);
+  }
+
+  &:hover #{$element} {
+      border-bottom-color: $color;
+  }
+}
+
+@mixin mat-color($palette-name: 'primary', $hue: 'main', $property: 'color') {
+  $color-config: mat.get-color-config(theme.$theme);
+  $palette: map.get($color-config, $palette-name);
+
+  #{$property}: mat.get-color-from-palette($palette, $hue);
+}
+
+@mixin size($width: null, $height: null, $min-width: null, $min-height: null, $max-width: null, $max-height: null) {
+  width: $width;
+  min-width: $min-width;
+  max-width: $max-width;
+  height: $height;
+  min-height: $min-height;
+  max-height: $max-height;
+}
+
+@mixin transition($duration: variables.$default-transition-duration) {
+  transition: $duration;
+}
+
+@mixin hover-opacity($opacity: variables.$default-hover-opacity, $duration: variables.$default-transition-duration) {
+  @include transition($duration);
+
+  &:not(:disabled):not(.disabled):hover {
+    opacity: $opacity;
+  }
+}
+
+@mixin link-reset {
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+
+  &.disabled {
+    cursor: default;
+  }
+}
+
+@mixin icon-left($margin: variables.$default-icon-margin) {
+  margin-right: $margin;
+}
+
+
+$default-border-radius: 4px;
+@mixin border-radius($radius: $default-border-radius) {
+  border-radius: $radius;
+}
+
+@function rgba-to-rgb($rgba, $background: variables.$white) {
+  @return mix(rgb(red($rgba), green($rgba), blue($rgba)), $background, alpha($rgba) * 100%)
+}
+
+@mixin chip() {
+  font-family: variables.$font-mono;
+  font-weight: 600;
+  color: variables.$light-primary-text;
+  background-color: variables.$gray-500;
+  border-radius: variables.$border-radius;
+  padding: variables.$space-xxs;
+}
+
+@mixin left-backdrop($right) {
+  top: 0;
+  left: 0;
+  right: $right;
+  bottom: 0;
+  position: fixed;
+  display: block;
+  z-index: 3;
+  visibility: visible;
+  cursor: pointer;
+
+  transition-duration: 400ms;
+  transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition-property: background-color,visibility;
+
+  background-color: rgba(0, 0, 0, 0.6);
+}

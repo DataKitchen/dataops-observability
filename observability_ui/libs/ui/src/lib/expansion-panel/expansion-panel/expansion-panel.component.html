@@ -1,0 +1,16 @@
+
+<a (click)="open = !open" role="button">
+  <mat-icon>{{open ? 'arrow_drop_down' : 'arrow_right'}}</mat-icon>
+</a>
+
+<div fxLayout="column" fxFlex>
+
+  <ng-content select="expansion-panel-title"></ng-content>
+
+  <ng-container *ngIf="open">
+    <ng-content select="expansion-panel-content"></ng-content>
+  </ng-container>
+
+</div>
+
+

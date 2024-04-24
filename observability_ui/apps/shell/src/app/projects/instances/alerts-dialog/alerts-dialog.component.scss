@@ -1,0 +1,79 @@
+@use '@observability/ui/styles/variables' as variables;
+@use '@observability/ui/styles/mixins' as mixins;
+
+.table-wrapper-container {
+  height: 400px;
+  display: flex;
+
+  table-wrapper {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+  }
+}
+
+.description-container {
+  display: flex;
+  align-items: center;
+
+  mat-icon {
+    @include mixins.icon-size(16px);
+    margin-right: variables.$space-sm;
+    padding-right: variables.$space-sm;
+
+    &.WARNING {
+      color: variables.$amber-500;
+    }
+
+    &.ERROR {
+      color: variables.$red-500;
+    }
+  }
+}
+
+.toolbar {
+  display: flex;
+  width: 100%;
+
+  & > div {
+    flex: 1;
+  }
+}
+
+.dates-container {
+  @include mixins.flex-row();
+}
+
+.duration {
+  @include mixins.font-style(caption, secondary);
+
+  margin-left: variables.$space-sm;
+}
+
+.alerts-and-active {
+  @include mixins.flex-row($justify: space-between);
+
+  margin-top: variables.$space-sm;
+
+  span {
+    font-weight: 500;
+    margin-right: variables.$space-md;
+
+    &.active-instance {
+      color: variables.$blue-500;
+    }
+  }
+}
+
+.end-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.display-flex {
+  display: flex;
+}
+
+.component-container {
+  display: flex;
+  flex-wrap: wrap;
+}

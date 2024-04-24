@@ -1,0 +1,13 @@
+<div class="code-container">
+  <div class="code-header">
+    <strong>{{'code' | translate}}</strong>
+    <div class="copy-code"
+      (click)="copy()">
+      <mat-icon class="copy-icon">{{copied ? 'check' : 'content_copy'}}</mat-icon>
+      <strong>{{(copied ? 'copied' : 'copy') | translate}}</strong>
+    </div>
+  </div>
+  <div class="code-text" truncate #code>
+    <ng-content></ng-content>
+  </div>
+</div>

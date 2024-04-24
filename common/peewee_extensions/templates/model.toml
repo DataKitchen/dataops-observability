@@ -1,0 +1,7 @@
+table_name = "{{ table_name }}"
+fixture_id = "{{ fixture_id }}"{% if requires %}
+requires_id = "{{ requires_id }}"{% endif %}
+{% for row in rows %}
+[[row]]
+{% for field, data in row.items() %}{% if data["value"] is not none %}{{ field }} = {{ data|toml_value }}
+{% endif %}{% endfor %}{% endfor %}

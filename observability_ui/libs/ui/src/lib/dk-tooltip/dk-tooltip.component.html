@@ -1,0 +1,35 @@
+<div [class.mat-elevation-z6]="isDropdown"
+     [ngClass]="{
+        'dk-dropdown': isDropdown,
+        'dk-tooltip': !isDropdown,
+        'dk-tooltip-top': !isDropdown && placement === 'top',
+        'dk-tooltip-bottom': !isDropdown && placement === 'bottom',
+        'dk-tooltip-left': !isDropdown && placement === 'left',
+        'dk-tooltip-right': !isDropdown && placement === 'right'
+    }"
+     fxLayout="column">
+  <div *ngIf="isDropdown"
+       class="dk-tooltip-header"
+       fxLayout="row">
+    <span fxFlex></span>
+    <button mat-icon-button
+            (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <ng-container *ngIf="isTemplateRef; else stringTpl">
+    <div *ngIf="showArrow && !isDropdown"
+         class="arrow"></div>
+    <div [ngClass]="isDropdown ? 'dk-dropdown-content' : 'dk-tooltip-content'">
+      <ng-container [ngTemplateOutlet]="$any(content)"></ng-container>
+    </div>
+  </ng-container>
+</div>
+
+<ng-template #stringTpl>
+  <div *ngIf="showArrow && !isDropdown"
+       class="arrow"></div>
+  <div [ngClass]="isDropdown ? 'dk-dropdown-content' : 'dk-tooltip-content'"
+       [innerHTML]="content">
+  </div>
+</ng-template>

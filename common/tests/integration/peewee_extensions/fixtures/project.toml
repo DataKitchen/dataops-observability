@@ -1,0 +1,10 @@
+table_name = "project"
+fixture_id = "70fe8951-d433-426d-8c08-5ca96117f740"
+requires_id = "7030ed67-1fdd-4d7e-8ca0-f758599600b6"
+
+[[row]]
+id = "9fbee19e-5319-4366-b4b8-b3c589525297"
+active = true
+created_on = 1672179122156235
+name = "default"
+organization = "a80e6e65-e268-447b-aaef-68057915a7ef"

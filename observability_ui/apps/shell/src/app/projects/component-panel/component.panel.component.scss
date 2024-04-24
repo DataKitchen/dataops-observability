@@ -1,0 +1,197 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+$panel-width: 700px;
+
+:host {
+  @include mixins.flex-column($justify: normal, $align: normal);
+
+  top: 0;
+  right: 0;
+  bottom: 0;
+  position: fixed;
+
+  height: 100%;
+  width: $panel-width;
+  background-color: white;
+
+  .link {
+    mat-icon {
+      @include mixins.icon-size(12px);
+    }
+  }
+
+  overflow-y: auto;
+}
+
+.backdrop {
+  @include mixins.left-backdrop($panel-width);
+}
+
+.header {
+  @include mixins.flex-row($justify: flex-end, $align: baseline);
+
+  margin-bottom: variables.$space-sm;
+  border-bottom: 1px solid transparent;
+  padding: variables.$space-xs variables.$space-md;
+
+  h2 {
+    margin: unset;
+  }
+
+  a {
+    margin-right: variables.$space-xxs;
+  }
+  a + a {
+    margin-left: variables.$space-sm;
+  }
+
+  button {
+    @include mixins.font-color(secondary);
+  }
+
+  &.editing {
+    border-bottom: variables.$border;
+  }
+}
+
+.content {
+  @include mixins.flex-column($justify: flex-start, $align: flex-start);
+
+  flex: 1 1 0;
+  padding: 0 variables.$space-md;
+
+  .info {
+    width: 100%;
+    margin-bottom: variables.$space-md;
+
+    div.title {
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    text-field.title {
+      ::ng-deep {
+        .mat-placeholder-required {
+          display: none;
+        }
+
+        // NOTE: this style makes it impossible to render hints and errors for this field (we don't need them yet tho)
+        .mat-form-field-appearance-legacy .mat-form-field-wrapper {
+          padding-bottom: unset;
+        }
+        .mat-form-field-appearance-legacy .mat-form-field-underline {
+          bottom: 0;
+        }
+      }
+    }
+
+    .event-key {
+      margin-top: -8px;
+      margin-bottom: variables.$space-xs;
+    }
+
+    .creation-details {
+      @include mixins.font-style(body, secondary);
+
+      margin-bottom: variables.$space-xs;
+    }
+
+    .tags-container {
+      @include mixins.flex-row($justify: flex-start);
+
+      margin-top: 12px;
+    }
+  }
+
+  mat-expansion-panel {
+    width: 100%;
+    border: variables.$border;
+
+    mat-panel-title {
+      font-weight: 500;
+    }
+
+    ::ng-deep {
+      .mat-expansion-indicator::after {
+        @include mixins.font-color(primary);
+      }
+    }
+
+    .description {
+      @include mixins.font-color(secondary);
+    }
+  }
+
+  mat-expansion-panel + mat-expansion-panel {
+    margin-top: variables.$space-sm;
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  textarea {
+    width: 100%;
+  }
+}
+
+.footer {
+  @include mixins.flex-row($justify: flex-end);
+
+  width: 100%;
+  padding: variables.$space-sm;
+  border-top: variables.$border;
+  margin-top: variables.$space-sm;
+
+  .error {
+    @include mixins.flex-row($justify: flex-start);
+
+    mat-icon {
+      @include mixins.icon-size(18px);
+
+      color: variables.$error;
+      margin-right: variables.$space-xs;
+    }
+
+    span {
+      @include mixins.font-color(secondary);
+    }
+  }
+
+  button + button {
+    margin-left: variables.$space-xs;
+  }
+
+  .help-link {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .help-link > a {
+    @include mixins.link;
+    @include mixins.flex-row($justify: center, $align: center);
+
+    mat-icon {
+      @include mixins.icon-size(12px);
+    }
+  }
+}
+
+.related-journeys-panel {
+  max-height: 250px;
+  overflow-y: auto;
+
+  & span {
+    color: variables.$dark-accent-text
+  }
+}
+
+.journey-name {
+  color: variables.$dark-accent-text
+}
+
+.loading-container {
+  height: 100%;
+  @include mixins.flex-row();
+}

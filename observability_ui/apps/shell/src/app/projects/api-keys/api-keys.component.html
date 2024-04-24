@@ -1,0 +1,155 @@
+<div class="page-title">
+  <h1>API Keys</h1>
+</div>
+
+<div class="topbar">
+  <text-field label="Search API Keys"
+    placeholder="Search API Keys"
+    [formControl]="$any(search.controls.search)"
+    type="search"></text-field>
+  <span fxFlex></span>
+
+  <selected-actions
+    class="mr-2"
+    label="key"
+    [hideSelectMenu]="true"
+    [elements]="tableWrapper?.selection?.selected">
+    <button (click)="deleteSelected()"
+      mat-menu-item>Delete selected
+    </button>
+  </selected-actions>
+
+  <button (click)="openAddAPIKey()"
+    color="primary"
+    mat-flat-button>
+    <mat-icon>add</mat-icon>
+    Add API Key
+  </button>
+</div>
+
+<div class="scrolling-content">
+  <empty-state-setup *ngIf="!(total() > 0 || loading() === true || filtersApplied())"
+    class="mt-4">
+    <div class="title">Authenticate your Integrations</div>
+    <div class="body">Create and manage API keys for this project</div>
+    <mat-icon class="big-icon">key</mat-icon>
+
+    <button color="primary"
+      (click)="openAddAPIKey()"
+      mat-flat-button
+      class="add-button">
+      <mat-icon class="button-icon">add</mat-icon>
+      Create an API Key
+    </button>
+
+    <help-link
+      class="learn-more"
+      href="https://docs.datakitchen.io/article/dataops-observability-help/event-ingestion-api">
+      API Keys
+    </help-link>
+  </empty-state-setup>
+
+  <table-wrapper
+    [class.hidden]="!(total() > 0 || loading() === true || filtersApplied())"
+    #tableWrapper
+    fxFlex
+    class="mat-elevation-z2"
+    [items]="apiKeys()"
+    [total]="total()"
+    [loading]="loading() || createLoading()"
+    [columns]="['name', 'expires_at', 'send_events', 'manage_entities', 'agent_api', 'actions']"
+    entity="API Keys"
+    (tableChange)="onTableChange($event)"
+    [selectable]="true">
+
+    <ng-container matColumnDef="name"
+      sortDisabled
+      dragDisabled
+      toggleDisabled>
+      <ng-container *matHeaderCellDef>
+        <span headerLabel="name">Name</span>
+      </ng-container>
+      <ng-container *matCellDef="let apiKey">
+        {{apiKey.name}}
+      </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="expires_at"
+      sortDisabled
+      dragDisabled
+      toggleDisabled>
+      <ng-container *matHeaderCellDef>
+        <span headerLabel="expires_at">Expires at</span>
+      </ng-container>
+      <ng-container *matCellDef="let apiKey">
+        <div class="flex-column">
+          {{apiKey.expires_at | date: "medium"}}
+          <span *ngIf="apiKey.expired"
+            class="expired">expired</span>
+          <span *ngIf="apiKey.expiring_soon"
+            class="expiring">expiring soon</span>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="send_events"
+      sortDisabled
+      dragDisabled
+      toggleDisabled>
+      <ng-container *matHeaderCellDef>
+        <span headerLabel="send_events">Send Events</span>
+      </ng-container>
+      <ng-container *matCellDef="let apiKey">
+        <ng-container *ngIf="apiKey.send_events_allowed; else notAllowedTpl">
+          <mat-icon class="allowed">check_circle</mat-icon>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="manage_entities"
+      sortDisabled
+      dragDisabled
+      toggleDisabled>
+      <ng-container *matHeaderCellDef>
+        <span headerLabel="manage_entities">Manage Entities</span>
+      </ng-container>
+      <ng-container *matCellDef="let apiKey">
+        <ng-container *ngIf="apiKey.manage_entities_allowed; else notAllowedTpl">
+          <mat-icon class="allowed">check_circle</mat-icon>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="agent_api"
+      sortDisabled
+      dragDisabled
+      toggleDisabled>
+      <ng-container *matHeaderCellDef>
+        <span headerLabel="agent_api">Send Heartbeat</span>
+      </ng-container>
+      <ng-container *matCellDef="let apiKey">
+        <ng-container *ngIf="apiKey.send_heartbeat_allowed; else notAllowedTpl">
+          <mat-icon class="allowed">check_circle</mat-icon>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+
+    <ng-container matColumnDef="actions"
+      sortDisabled
+      dragDisabled
+      toggleDisabled>
+      <ng-container *matHeaderCellDef>
+        <span headerLabel="actions">Actions</span>
+      </ng-container>
+      <ng-container *matCellDef="let apiKey">
+        <mat-icon class="pointer"
+          (click)="confirmDelete(apiKey)">delete
+        </mat-icon>
+      </ng-container>
+    </ng-container>
+  </table-wrapper>
+</div>
+
+<ng-template #notAllowedTpl>
+  <mat-icon class="not-allowed">cancel</mat-icon>
+</ng-template>

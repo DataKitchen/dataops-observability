@@ -1,0 +1,56 @@
+<mat-card fxFlex>
+  <mat-card-content fxFlex
+    class="overflow-auto">
+
+    <ng-container *ngIf="(tasks$ | async)?.length === 0 && (loading$ | async) === false">
+      <div class="empty-state">
+        <span class="empty-state--message">No tasks found</span>
+      </div>
+    </ng-container>
+
+    <gantt-chart
+      [start]="ganttStartDate$ | async"
+      [end]="ganttEndDate$ | async"
+      [nowBar]="(run$ | async)?.active"
+      [timeformat]="timeformat$ | async"
+      [showDays]="spansMultipleDays$ | async">
+
+      <ng-template ganttLabel
+        let-taskGroup="group">
+        <span [dkTooltip]="taskGroup.label"
+          truncate>{{ taskGroup.label }}</span>
+      </ng-template>
+
+      <ng-container *ngFor="let task of tasks$ | async">
+        <ng-template [ganttBar]="task.id"
+          [ganttBarLabel]="task.task.display_name"
+          [ganttBarStart]="task.start_time"
+          [ganttBarEnd]="task.end_time"
+          [ganttBarGroupBy]="task.id"
+          [ganttBarContext]="task">
+          <gantt-task [ngClass]="task.status"
+            [dkTooltip]="barTooltip"
+            [routerLink]="task.status === 'MISSING' ? ['.'] : ['..', 'events']"
+            [queryParams]="{task_id: task.task.id}"
+            data-test="Task"
+            attr.data-test-name="{{ task.task.display_name }}"
+            attr.data-test-status="{{ task.status }}"></gantt-task>
+        </ng-template>
+
+        <ng-template #barTooltip>
+          <div class="gantt-bar-tooltip">
+            <span class="gantt-bar-tooltip--line gantt-bar-tooltip--name">{{ task.task.display_name }}</span>
+            <span class="gantt-bar-tooltip--line gantt-bar-tooltip--status">{{ 'runStatus.' + task.status | translate }}</span>
+            <span class="gantt-bar-tooltip--line gantt-bar-tooltip--key">Key: {{ task.task.key ?? '-' }}</span>
+            <span *ngIf="task.hasTime"
+              class="gantt-bar-tooltip--line gantt-bar-tooltip--start">Start Time: {{ task.start_time | date: (timeformat$ | async) }}</span>
+            <span *ngIf="task.hasTime && task.status !== 'RUNNING'"
+              class="gantt-bar-tooltip--line gantt-bar-tooltip--end">End Time: {{ task.end_time | date: (timeformat$ | async) }}</span>
+            <span *ngIf="task.hasTime"
+              class="gantt-bar-tooltip--line gantt-bar-tooltip--duration">Duration: {{ task.start_time | duration: task.end_time }}</span>
+          </div>
+        </ng-template>
+      </ng-container>
+    </gantt-chart>
+  </mat-card-content>
+</mat-card>
