@@ -3,6 +3,7 @@ from typing import Callable
 from flask import Blueprint, Flask
 
 from common.api.search_view import add_route_with_search
+from common.plugins import PluginManager
 from observability_api.endpoints.v1.actions import Actions, ActionById
 from observability_api.endpoints.v1.agents import Agents
 from observability_api.endpoints.v1.alerts import ProjectAlerts
@@ -260,5 +261,8 @@ def build_v1_routes(app: Flask, prefix: str) -> Views:
     views += build_upcoming_instance_routes(v1_bp)
     views += build_subcomponent_routes(v1_bp)
     views += build_test_outcomes_routes(v1_bp)
+
+    PluginManager.load_all("observability_api_v1", v1_bp, views)
+
     app.register_blueprint(v1_bp)
     return views

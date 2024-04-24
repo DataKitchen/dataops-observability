@@ -92,7 +92,6 @@ include-package-data = true
 include = [
       "agent_api*",
       "observability_api*",
-      "common*",
       "conf*",
       "event_api*",
       "cli*",
@@ -171,6 +170,7 @@ exclude = [
     'build/',
     'testlib/fixtures/',
     'benchmark/',
+    "common/",
 ]
 
 [[tool.mypy.overrides]]
@@ -292,7 +292,6 @@ branch=true
 # Every time there is a new top-level module, this will need to be expanded.
 source = [
     "agent_api",
-    "common",
     "conf",
     "observability_api",
     "event_api",
