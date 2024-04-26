@@ -11,7 +11,7 @@ observability:
   mysql_user: observability
   flask_debug: "true"
   image:
-    repository: ""
+    repository: "datakitchen"
     tag: "latest"
 
 observability_ui:

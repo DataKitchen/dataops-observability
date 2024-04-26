@@ -13,7 +13,7 @@ description = "DataOops Observability"
 urls = { "homepage" = "https://datakitchen.io" }
 authors = [
 ]
-license = { "text" = "CLOSED"  }
+license = { "file" = "LICENSE" }
 readme = "README.md"
 classifiers = [
     "Intended Audience :: Developers",
