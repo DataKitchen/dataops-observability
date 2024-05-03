@@ -43,7 +43,7 @@ export class AzureSynapsePipelinesToolComponent extends AbstractTool {
   static override _name = 'azure_synapse_pipelines';
   static override _displayName = 'Azure Synapse';
   static override _icon = 'azure_synapse_pipelines';
-  static override _image = 'docker.io/datakitchen/observability-agent-trial';
+  static override _image = 'docker.io/datakitchen/dataops-observability-agents';
   static override _version = 'production';
 
   private readonly defaultValues = {

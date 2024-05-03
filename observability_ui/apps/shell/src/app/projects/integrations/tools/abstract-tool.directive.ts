@@ -176,7 +176,9 @@ export abstract class AbstractTool implements OnInit {
     let dockerExtraEnvVars: string = '';
     let kubernetesExtraEnvVars: string = '';
     const valuePerVariable: {[name: string]: string} = {
+      // k8s does not like underscores
       target_service: this.name.replaceAll('_', '-'),
+      deployment_name: `${this.envListForm.controls['AGENT_TYPE']?.value}-${this.envListForm.controls['AGENT_KEY']?.value}`.replaceAll('_', '-'),
       docker_image: this.image,
       docker_tag: this.envListForm.controls['DOCKER_TAG'].value,
       default_deployment_mode: this.envListForm.controls['DEFAULT_DEPLOYMENT_MODE'].value,
@@ -188,7 +190,7 @@ export abstract class AbstractTool implements OnInit {
     for (const variable of this.envList) {
       if (!variable.hidden && !variable.excluded) {
         const slotInTemplate = variable.tpl ?? variable.name.toLowerCase();
-        let value = this.envListForm.controls[variable.name].value ?? variable.default ?? '';
+        let value = this.envListForm.controls[variable.name].value || variable.default || '';
         if (variable.formatter) {
           value = variable.formatter(value);
         }
