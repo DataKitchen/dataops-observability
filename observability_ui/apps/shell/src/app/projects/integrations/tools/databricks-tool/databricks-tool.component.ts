@@ -43,7 +43,7 @@ export class DatabricksToolComponent extends AbstractTool {
   static override _name = 'databricks';
   static override _displayName = 'Databricks';
   static override _icon = 'databricks';
-  static override _image = 'docker.io/datakitchen/observability-agent-trial';
+  static override _image = 'docker.io/datakitchen/dataops-observability-agents';
   static override _version = 'production';
 
   private readonly defaultValues = {
