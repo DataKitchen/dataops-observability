@@ -39,7 +39,7 @@ export class AirflowToolComponent extends AbstractTool {
   static override _name = 'airflow';
   static override _displayName = 'Airflow';
   static override _icon = 'airflow';
-  static override _image = 'docker.io/datakitchen/observability-agent-trial';
+  static override _image = 'docker.io/datakitchen/dataops-observability-agents';
   static override _version = 'production';
 
   private readonly defaultValues = {

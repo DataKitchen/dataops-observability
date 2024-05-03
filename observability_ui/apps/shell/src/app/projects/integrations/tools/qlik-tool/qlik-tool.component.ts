@@ -40,7 +40,7 @@ export class QlikToolComponent extends AbstractTool {
   static override _name = 'qlik';
   static override _displayName = 'Qlik';
   static override _icon = 'qlik';
-  static override _image = 'docker.io/datakitchen/observability-agent-trial';
+  static override _image = 'docker.io/datakitchen/dataops-observability-agents';
   static override _version = 'production';
 
   private readonly defaultValues = {

@@ -43,7 +43,7 @@ export class PowerBIToolComponent extends AbstractTool {
   static override _name = 'power_bi';
   static override _displayName = 'Microsoft Power BI';
   static override _icon = 'power_bi';
-  static override _image = 'docker.io/datakitchen/observability-agent-trial';
+  static override _image = 'docker.io/datakitchen/dataops-observability-agents';
   static override _version = 'production';
 
   private readonly defaultValues = {

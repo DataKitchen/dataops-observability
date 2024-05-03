@@ -8,7 +8,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { AlertComponent, CodeSnippetComponent, DkTooltipModule, TextFieldModule } from '@observability-ui/ui';
 import { RouterModule } from '@angular/router';
-import { CustomValidators } from '@observability-ui/core';
+import { CustomValidators, listEnvVariableFormatter } from '@observability-ui/core';
 import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox';
 import { MatLegacySelectModule } from '@angular/material/legacy-select';
 import { MatLegacyFormFieldModule } from '@angular/material/legacy-form-field';
@@ -42,7 +42,7 @@ export class AzureDataFactoryToolComponent extends AbstractTool {
   static override _name = 'data_factory';
   static override _displayName = 'Azure Data Factory';
   static override _icon = 'data_factory';
-  static override _image = 'docker.io/datakitchen/observability-agent-trial';
+  static override _image = 'docker.io/datakitchen/dataops-observability-agents';
   static override _version = 'production';
 
   private readonly defaultValues = {
@@ -51,7 +51,7 @@ export class AzureDataFactoryToolComponent extends AbstractTool {
 
   override readonly envList = [
     { name: 'AGENT_TYPE', tpl: 'agent_type', placeholder: '' },
-    { name: 'MESSAGE_TYPES', tpl: 'azure_eventhub_message_types', placeholder: '' },
+    { name: 'MESSAGE_TYPES', tpl: 'azure_eventhub_message_types', placeholder: '', formatter: listEnvVariableFormatter },
     { name: 'AGENT_KEY', tpl: 'agent_key', placeholder: '# assigns the identifier of the agent', required: true },
     { name: 'DK_API_URL', tpl: 'observability_base_url', placeholder: '# the URL to the Observability API', required: true },
     { name: 'DK_API_KEY', tpl: 'observability_service_account_key', placeholder: '# an API key for the Observability project', required: true },

@@ -39,7 +39,7 @@ export class SSISToolComponent extends AbstractTool {
   static override _name = 'ssis';
   static override _displayName = 'Microsoft SSIS';
   static override _icon = 'mssql';
-  static override _image = 'docker.io/datakitchen/observability-agent-trial';
+  static override _image = 'docker.io/datakitchen/dataops-observability-agents';
   static override _version = 'production';
 
   private readonly defaultValues = {
