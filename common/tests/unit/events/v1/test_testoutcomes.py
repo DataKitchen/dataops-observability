@@ -71,9 +71,9 @@ def test_testoutcomes_validate_default_values(test_outcomes_event_data):
 
 @pytest.mark.unit
 def test_testoutcomes_testgen_none_values(test_outcomes_testgen_event_data):
-    test_outcomes_testgen_event_data["component_integrations"]["integrations"]["testgen"]["tables"][
-        "include_list"
-    ] = None
+    test_outcomes_testgen_event_data["component_integrations"]["integrations"]["testgen"]["tables"]["include_list"] = (
+        None
+    )
     test_outcomes_testgen_event_data["component_integrations"]["integrations"]["testgen"]["tables"][
         "exclude_pattern"
     ] = None

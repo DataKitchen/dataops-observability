@@ -9,7 +9,6 @@ from .base_entity import BaseEntity
 from .company import Company
 
 
-
 class ActionImpl(Enum):
     SEND_EMAIL = "SEND_EMAIL"
     CALL_WEBHOOK = "CALL_WEBHOOK"

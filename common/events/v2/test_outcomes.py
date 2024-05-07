@@ -76,23 +76,19 @@ class TestGenIntegrations:
 
 
 @dataclass
-class TestGenBatchPipelineData(BatchPipelineData, TestGenIntegrations):
-    ...
+class TestGenBatchPipelineData(BatchPipelineData, TestGenIntegrations): ...
 
 
 @dataclass
-class TestGenDatasetData(DatasetData, TestGenIntegrations):
-    ...
+class TestGenDatasetData(DatasetData, TestGenIntegrations): ...
 
 
 @dataclass
-class TestGenServerData(ServerData, TestGenIntegrations):
-    ...
+class TestGenServerData(ServerData, TestGenIntegrations): ...
 
 
 @dataclass
-class TestGenStreamData(StreamData, TestGenIntegrations):
-    ...
+class TestGenStreamData(StreamData, TestGenIntegrations): ...
 
 
 @dataclass

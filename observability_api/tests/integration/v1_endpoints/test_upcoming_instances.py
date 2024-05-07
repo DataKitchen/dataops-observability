@@ -154,7 +154,7 @@ def test_list_company_upcoming_instances_instance_schedule(client, organization,
             ("start_range", start_time.isoformat()),
         ]
     )
-    response = client.get(f"/observability/v1/upcoming-instances", query_string=query)
+    response = client.get("/observability/v1/upcoming-instances", query_string=query)
     assert response.status_code == HTTPStatus.OK, response.json
 
     upcoming_instances = response.json["entities"]
@@ -180,7 +180,7 @@ def test_list_company_upcoming_instances_filters(client, project, organization, 
             ("count", 2),
         ]
     )
-    response = client.get(f"/observability/v1/upcoming-instances", query_string=query)
+    response = client.get("/observability/v1/upcoming-instances", query_string=query)
     assert response.status_code == HTTPStatus.OK, response.json
 
     upcoming_instances = response.json["entities"]
@@ -197,7 +197,7 @@ def test_list_company_upcoming_instances_filters(client, project, organization, 
             ("project_id", str(project.id)),
         ]
     )
-    response = client.get(f"/observability/v1/upcoming-instances", query_string=query)
+    response = client.get("/observability/v1/upcoming-instances", query_string=query)
     assert response.status_code == HTTPStatus.OK, response.json
 
     upcoming_instances = response.json["entities"]
@@ -230,5 +230,5 @@ def test_list_company_upcoming_instances_sa_key_auth_forbidden(client, journey, 
             ("end_range", (start_time + timedelta(hours=1)).isoformat()),
         ]
     )
-    response = client.get(f"/observability/v1/upcoming-instances", query_string=query)
+    response = client.get("/observability/v1/upcoming-instances", query_string=query)
     assert response.status_code == HTTPStatus.FORBIDDEN, response.json

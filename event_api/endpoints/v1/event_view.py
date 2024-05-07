@@ -65,7 +65,7 @@ class EventView(BaseView):
         try:
             with KafkaProducer({}) as producer:
                 producer.produce(TOPIC_UNIDENTIFIED_EVENTS, event)
-        except MessageTooLargeError as e:
+        except MessageTooLargeError:
             LOG.warning(
                 "Attempt to send a large '%s' event",
                 request.path,

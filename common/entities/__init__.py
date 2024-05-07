@@ -1,4 +1,5 @@
 """Any new model that's added should also be added here"""
+
 from .action import *
 from .agent import *
 from .alert import *

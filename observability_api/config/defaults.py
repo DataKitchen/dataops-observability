@@ -3,6 +3,7 @@ Observability API default settings.
 
 Settings here may be overridden by settings in development, test, production, etc...
 """
+
 import os
 from datetime import timedelta
 from typing import Optional
@@ -11,7 +12,7 @@ from typing import Optional
 from common.entities import Service
 
 PROPAGATE_EXCEPTIONS: Optional[bool] = None
-SERVER_NAME: str = os.environ.get("OBSERVABILITY_API_HOSTNAME", None)  # Use flask defaults if none set
+SERVER_NAME: Optional[str] = os.environ.get("OBSERVABILITY_API_HOSTNAME", None)  # Use flask defaults if none set
 USE_X_SENDFILE: bool = False  # If we serve files enable this in production settings when webserver support configured
 
 # Application settings

@@ -1,5 +1,7 @@
 __all__ = ["CompanyService"]
 
+from uuid import UUID
+
 from common.entities import Action, Company, Organization, User
 from common.entity_services.helpers import ActionFilters, ListRules
 from common.entity_services.helpers.list_rules import Page
@@ -26,9 +28,9 @@ class CompanyService:
     def get_users_with_rules(company_id: str, rules: ListRules) -> Page[User]:
         query = User.select().join(Company).where(Company.id == company_id)
         return Page[User].get_paginated_results(query, User.name, rules)
-    
+
     @staticmethod
-    def get_actions_with_rules(company_id: str, rules: ListRules, filters: ActionFilters) -> Page[Action]:
+    def get_actions_with_rules(company_id: UUID, rules: ListRules, filters: ActionFilters) -> Page[Action]:
         query = Action.company == company_id
         if filters.action_impls:
             query &= Action.action_impl.in_(filters.action_impls)

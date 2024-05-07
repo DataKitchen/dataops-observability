@@ -201,7 +201,7 @@ class KafkaTransactionalProducer(KafkaProducer):
                 LOG.error("Aborting transaction")
                 self.abort_tx()
             raise ProducerTransactionError from e
-        except Exception as e:
+        except Exception:
             LOG.exception("Exception in KafkaTransactionalProducer, aborting transaction")
             self.abort_tx()
             raise

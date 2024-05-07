@@ -35,11 +35,11 @@ def unicode_letters() -> str:
 
     Only letters that are identical to their decomposed compatibility form are included. Some letters have more than
     one form or codepoint. If the letter can be decomposed into two separate codepoints. For example the codepoint
-    Character: Ç can be expressed with the codepoint 00C7 i.e. "\u00C7" OR it can be expressed as a series of two
+    Character: Ç can be expressed with the codepoint 00C7 i.e. "\u00c7" OR it can be expressed as a series of two
     characters; a normal 'C' (0043) + '̧' (0327) i.e. "\u0043\u0327" and these are not the same when split::
 
         >>> a ="\u0043\u0327"
-        >>> b = "\u00C7"
+        >>> b = "\u00c7"
         >>> a[0]
         'C'
         >>> b[0]

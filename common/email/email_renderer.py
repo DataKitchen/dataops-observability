@@ -21,7 +21,6 @@ TEMPLATES: dict[str, type[BaseTemplate]] = {
 
 
 class HandlebarsEmailRenderer:
-
     @staticmethod
     def render(template_name: str, context_vars: dict) -> tuple[str, str]:
         if template_name not in TEMPLATES:

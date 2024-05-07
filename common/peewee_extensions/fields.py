@@ -234,7 +234,7 @@ class JSONDictListField(TextField):
             kwargs["default"] = list
         super().__init__(**kwargs)
 
-    def db_value(self, value: Optional[list[str]]) -> Optional[str]:
+    def db_value(self, value: Optional[list[dict]]) -> Optional[str]:
         """Dump a list of strings as a JSON string. Keeps key order consistent."""
         if value is not None:
             if not isinstance(value, list):
@@ -246,11 +246,11 @@ class JSONDictListField(TextField):
         else:
             return None
 
-    def python_value(self, value: Optional[str]) -> Optional[list[str]]:
+    def python_value(self, value: Optional[str]) -> Optional[list[dict]]:
         """Load the text retrieved from the JSON field into a list."""
         if value is not None:
             try:
-                dict_list: list[str] = json_loads(value)
+                dict_list: list[dict] = json_loads(value)
             except Exception as e:
                 raise ValueError(f"Unable to load value `{value}` as json.") from e
             if not isinstance(dict_list, list):

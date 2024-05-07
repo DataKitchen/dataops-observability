@@ -1,4 +1,4 @@
-_sdf_all__ = ["DatasetOperationView"]
+__all__ = ["DatasetOperationView"]
 
 from flask import Response
 

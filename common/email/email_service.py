@@ -44,5 +44,5 @@ class EmailService:
             LOG.exception("Failed to send Email")
             raise
         else:
-            LOG.info(f"Email Sent")
+            LOG.info("Email Sent")
             return response

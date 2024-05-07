@@ -203,7 +203,7 @@ class Filters:
             raise ValidationError(
                 {invalid: "Invalid 'status' query parameter. Consult the API Documentation." for invalid in invalid_stt}
             )
-        
+
     @staticmethod
     def validate_action_impls(action_impls_param: list[str]) -> None:
         ACTION_IMPLS = [action_impl.name for action_impl in ActionImpl]
@@ -387,7 +387,7 @@ class UpcomingInstanceFilters(Filters):
             raise ValidationError({START_RANGE_QUERY_NAME: "The start of the range must be set"})
         cls.validate_time_range(filters.start_range, filters.end_range, START_RANGE_QUERY_NAME)
         return filters
-    
+
 
 @dataclass
 class ActionFilters(Filters):

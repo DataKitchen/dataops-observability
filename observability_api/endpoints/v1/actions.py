@@ -7,13 +7,14 @@ from flask import Response, make_response, request
 
 from common.api.base_view import Permission
 from common.api.request_parsing import no_body_allowed
-from common.entities import Action, DB, Company
+from common.entities import Action, Company
 from common.entity_services import CompanyService
 from common.entity_services.helpers import ActionFilters, ListRules, Page
 from observability_api.endpoints.entity_view import BaseEntityView
 from observability_api.schemas import ActionSchema
 
 LOG = logging.getLogger(__name__)
+
 
 class Actions(BaseEntityView):
     PERMISSION_REQUIREMENTS: tuple[Permission, ...] = ()
@@ -94,7 +95,9 @@ class Actions(BaseEntityView):
                 schema: HTTPErrorSchema
         """
         _ = self.get_entity_or_fail(Company, Company.id == company_id)
-        page: Page = CompanyService.get_actions_with_rules(company_id, ListRules.from_params(request.args), ActionFilters.from_params(request.args))
+        page: Page = CompanyService.get_actions_with_rules(
+            company_id, ListRules.from_params(request.args), ActionFilters.from_params(request.args)
+        )
         actions = ActionSchema().dump(page.results, many=True)
         LOG.debug("List Actions for company_id '%s'. Found %d entries.", company_id, page.total)
         return make_response({"entities": actions, "total": page.total})
@@ -157,4 +160,3 @@ class ActionById(BaseEntityView):
         self.parse_body(schema=ActionSchema(action))
         self.save_entity_or_fail(action)
         return make_response(ActionSchema().dump(action))
-    

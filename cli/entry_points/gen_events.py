@@ -13,10 +13,9 @@ from requests_extensions import get_session
 
 from cli.base import ScriptBase
 from common.api.flask_ext.authentication import ServiceAccountAuth
+from common.events.v1 import EVENT_TYPE_MAP
 
 SA_KEY_ENV_NAME = "OBSERVABILITY_SERVICE_ACCOUNT_KEY"
-
-from common.events.v1 import EVENT_TYPE_MAP
 
 LOG = logging.getLogger(__name__)
 

@@ -10,7 +10,6 @@ from marshmallow.fields import Decimal, Nested, Str
 from ...entities.event import ApiEventType
 from ...schemas.validators import not_empty
 from ..event_handler import EventHandlerBase
-from ..v2.base import EventV2
 from .base import BasePayload, BasePayloadSchema, EventV2
 from .component_data import ComponentData, ComponentDataSchema
 

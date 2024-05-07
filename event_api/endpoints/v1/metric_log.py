@@ -10,7 +10,7 @@ from .event_view import EventView
 class MetricLog(EventView):
     """Posts an event related to a piece of datum of interest to the user."""
 
-    event_type = MetricLogEvent
+    event_type = MetricLogEvent  # noqa: F811
 
     def post(self) -> Response:
         """

@@ -21,7 +21,7 @@ class SearchView(BaseView):
         return self.get(*args, **kwargs)
 
     def get(self, *args: Any, **kwargs: Any) -> Response:
-        raise NotImplemented
+        raise NotImplementedError
 
     @property
     def args(self) -> MultiDict:

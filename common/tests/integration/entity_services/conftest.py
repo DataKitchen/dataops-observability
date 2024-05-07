@@ -51,11 +51,11 @@ def run(test_db, pipeline):
 def test_outcomes_instance(test_db, run, pipeline, instance_instance_set):
     common_data = dict(component=pipeline, run=run, instance_set=instance_instance_set.instance_set)
     return [
-        TestOutcome.create(**common_data, name=f"TO1", status=TestStatuses.PASSED.name),
-        TestOutcome.create(**common_data, name=f"TO2", status=TestStatuses.PASSED.name),
-        TestOutcome.create(**common_data, name=f"TO3", status=TestStatuses.PASSED.name),
-        TestOutcome.create(**common_data, name=f"TO4", status=TestStatuses.WARNING.name),
-        TestOutcome.create(**common_data, name=f"TO5", status=TestStatuses.WARNING.name),
+        TestOutcome.create(**common_data, name="TO1", status=TestStatuses.PASSED.name),
+        TestOutcome.create(**common_data, name="TO2", status=TestStatuses.PASSED.name),
+        TestOutcome.create(**common_data, name="TO3", status=TestStatuses.PASSED.name),
+        TestOutcome.create(**common_data, name="TO4", status=TestStatuses.WARNING.name),
+        TestOutcome.create(**common_data, name="TO5", status=TestStatuses.WARNING.name),
     ]
 
 

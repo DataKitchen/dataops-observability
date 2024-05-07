@@ -20,6 +20,7 @@ class SMTPConfigSchema(Schema):
     username = Str(required=True)
     password = Str(required=True, load_only=True)
 
+
 class EmailActionArgsSchema(Schema):
     from_address = Str(validate=not_empty(max=255))
     template = Str(validate=not_empty(max=255), load_default="NotifyTemplate")
@@ -116,7 +117,7 @@ class ActionSchema(BaseEntitySchema):
             action_schema = ValidActions[data["action_impl"]].value
             data["action_args"] = action_schema().load(data["action_args"])
         return data
-    
+
     @post_dump
     def dump_action_args(self, data: dict, **kwargs: dict) -> dict:
         if "action_args" in data:

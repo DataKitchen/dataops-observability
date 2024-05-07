@@ -20,7 +20,7 @@ from common.events.v2.testgen import TestgenItemTestParameters
 def test_testgen_item_test_parameters_json_dict(instance, expected):
     actual = instance.json_dict
     assert expected == actual
-    assert type(expected["value"]) is type(actual["value"])
+    assert type(expected["value"]) is type(actual["value"])  # noqa: E721
 
 
 @pytest.mark.unit

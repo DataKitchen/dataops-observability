@@ -23,7 +23,7 @@ INVALID_DOMAINS: tuple[str, ...] = (
     "happy.",  # Invalid because domains cannot end with a .
     "domain name",  # Invalid because domains cannot contain a space character
     "domain_name",  # Invalid because domains cannot contain an underscore
-    "fa\u00DFbender",  # Invalid because \u00DF breaks IDNA compatibility
+    "fa\u00dfbender",  # Invalid because \u00DF breaks IDNA compatibility
 )
 
 VALID_DOMAINS: tuple[str, ...] = (
@@ -34,7 +34,7 @@ VALID_DOMAINS: tuple[str, ...] = (
     "long-names.with-hyphens.many-times",
     "test.domain.com",
     "longer.subdomain.than.normal",
-    "t\u00FCrk",
+    "t\u00fcrk",
     "\u00c7irkin",
     "\u0043\u0327irkin",
 )
