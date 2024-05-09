@@ -45,7 +45,7 @@ export class LoginComponent {
     ).subscribe({
       next: (url) => this.router.navigateByUrl(url),
       error: (error) => {
-        this.loginError = 'Invalid credentials: Wrong email or password.';
+        this.loginError = error.error?.error || (error.status === 0 ? 'Unable to reach Observability API.' : error.message);
         console.error(error);
       },
     });
