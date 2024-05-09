@@ -53,7 +53,7 @@ export class AzureDataFactoryToolComponent extends AbstractTool {
     { name: 'AGENT_TYPE', tpl: 'agent_type', placeholder: '' },
     { name: 'MESSAGE_TYPES', tpl: 'azure_eventhub_message_types', placeholder: '', formatter: listEnvVariableFormatter },
     { name: 'AGENT_KEY', tpl: 'agent_key', placeholder: '# assigns the identifier of the agent', required: true },
-    { name: 'DK_API_URL', tpl: 'observability_base_url', placeholder: '# the URL to the Observability API', required: true },
+    { name: 'DK_API_URL', tpl: 'observability_base_url', placeholder: '# the base API URL for Observability', required: true },
     { name: 'DK_API_KEY', tpl: 'observability_service_account_key', placeholder: '# an API key for the Observability project', required: true },
     { name: 'NAME', tpl: 'azure_eventhub_name', placeholder: '# the name of your Azure Event Hubs instance', required: true },
     { name: 'CONNECTION_STRING', tpl: 'azure_eventhub_connection_string', placeholder: '# the connection string for Event Hubs', required: true },
