@@ -117,6 +117,8 @@ services:
   $TARGET_SERVICE:
     image: $image
     container_name: $TARGET_SERVICE
+    extra_hosts:
+      - host.docker.internal:host-gateway
     environment:
       - EVENTS_API_HOST='$EVENTS_API_HOST'
       - EVENTS_API_KEY='$EVENTS_API_KEY'

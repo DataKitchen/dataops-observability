@@ -44,7 +44,7 @@ export class AWSSQSToolComponent extends AbstractTool {
   override readonly envList = [
     ...this.commonEnvs,
     { name: 'ACCESS_KEY', placeholder: '# the access key for your AWS account', required: true },
-    { name: 'AWS_SECRET_KEY', placeholder: '# the secret key of your AWS account', required: true },
+    { name: 'SECRET_KEY', placeholder: '# the secret key of your AWS account', required: true },
     { name: 'AWS_DEFAULT_REGION', placeholder: '# the default region of your AWS account', required: true },
     { name: 'SQS_QUEUE_NAME', placeholder: '# name of the AWS SQS queue', required: true },
     { name: 'SESSION_TOKEN', placeholder: '# required if you\'re using temporary credentials', required: false },
@@ -55,7 +55,7 @@ export class AWSSQSToolComponent extends AbstractTool {
 
     ENABLED_PLUGINS: new FormControl('aws_s3_event_handler', Validators.required),
     ACCESS_KEY: new FormControl('', Validators.required),
-    AWS_SECRET_KEY: new FormControl('', Validators.required),
+    SECRET_KEY: new FormControl('', Validators.required),
     AWS_DEFAULT_REGION: new FormControl('', Validators.required),
     SQS_QUEUE_NAME: new FormControl('', Validators.required),
     SESSION_TOKEN: new FormControl(''),
