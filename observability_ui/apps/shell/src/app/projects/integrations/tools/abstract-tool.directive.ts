@@ -62,7 +62,7 @@ export abstract class AbstractTool implements OnInit {
   ];
   protected readonly eventsAgentsCommonEnvs: any[] = [];
   protected readonly commonEnvs = [
-    { name: 'EVENTS_API_HOST', placeholder: '', required: true },
+    { name: 'EVENTS_API_HOST', placeholder: '# the base API URL for Observability', required: true },
     { name: 'EVENTS_API_KEY', placeholder: '# an API key for the Observability project', required: true },
     { name: 'EVENTS_PROJECT_ID', placeholder: '# the ID of the Observability project', required: true },
     { name: 'EXTERNAL_PLUGINS_PATH', placeholder: '# the path where any custom plugins can be accessed', required: true },
@@ -140,7 +140,6 @@ export abstract class AbstractTool implements OnInit {
 
   ngOnInit(): void {
     [
-      this.commonEnvsForm.controls['EVENTS_API_HOST'],
       this.commonEnvsForm.controls['EVENTS_PROJECT_ID'],
       this.commonEnvsForm.controls['EXTERNAL_PLUGINS_PATH'],
       this.commonEnvsForm.controls['ENABLED_PLUGINS'],
