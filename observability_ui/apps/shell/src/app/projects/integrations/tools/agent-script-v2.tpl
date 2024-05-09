@@ -217,6 +217,9 @@ create_docker_compose_file() {
     "$DEPLOYMENT_NAME": {
       "image": "$DOCKER_IMAGE:$DOCKER_TAG",
       "container_name": "$DEPLOYMENT_NAME",
+      "extra_hosts": [
+        "host.docker.internal:host-gateway"
+      ],
       "environment": [
         "DK_AGENT_TYPE=$DK_AGENT_TYPE",
         "DK_AGENT_KEY=$DK_AGENT_KEY",
