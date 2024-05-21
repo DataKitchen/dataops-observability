@@ -23,6 +23,6 @@
 </small>
 
 <ng-template #tooltipTpl>
-  <div>Late by: {{actual | duration:expected}}</div>
+  <div>Late by: {{(actual || currentTime) | duration:expected}}</div>
   <div>Expected: {{expected | parseDate | date:"MMM d, h:mm:ss a"}}</div>
 </ng-template>

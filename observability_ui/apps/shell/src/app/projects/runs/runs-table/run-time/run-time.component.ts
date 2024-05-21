@@ -19,6 +19,11 @@ export class RunTimeComponent {
   @Input() iconLabel: string;
 
   private _actual = signal<string | null>(null);
+  get actual() {
+    return this._actual();
+  }
+
+  currentTime = new Date()
 
   time = computed(() => {
     return this._actual() || this.expected;
