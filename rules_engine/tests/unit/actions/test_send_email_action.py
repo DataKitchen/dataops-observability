@@ -74,7 +74,7 @@ def test_send_email_execute_ok(action, run_status_event, send_email_mock, projec
     email_from = "test@domain.com"
     template_name = "TestTemplateNested"
     action_executor = SendEmailAction(
-        action, {"from_address": email_from, "recipients": [email_to], "template": template_name}
+        action, {"from_address": email_from, "recipients": [email_to], "template": template_name, "smtp_config": {}}
     )
     result = action_executor.execute(run_status_event, rule_mock, uuid4())
     assert result is True
@@ -89,7 +89,7 @@ def test_send_email_execute_fail(action, run_status_event, send_email_mock, proj
     send_email_mock.side_effect = Exception({}, "")
 
     action_executor = SendEmailAction(
-        action, {"from_address": email_from, "recipients": [email_to], "template": template_name}
+        action, {"from_address": email_from, "recipients": [email_to], "template": template_name, "smtp_config": {}}
     )
     result = action_executor.execute(run_status_event, rule_mock, uuid4())
     assert result is False

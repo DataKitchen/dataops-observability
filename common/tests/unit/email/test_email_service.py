@@ -17,6 +17,7 @@ def smtp_client_mock():
 def test_send_email_smtp(smtp_client_mock):
     uuid = UUID("4333cd05-72f4-4839-8185-f0227f7f4750")
     response = EmailService.send_email(
+        smtp_config={},
         from_address="a@abc.com",
         recipients=["b@abc.com"],
         template_name="message_log",

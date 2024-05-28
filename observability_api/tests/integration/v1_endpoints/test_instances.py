@@ -303,7 +303,7 @@ def test_search_instances(client, journey, instances, g_user):
 
     response = client.post(
         f"/observability/v1/projects/{journey.project.id}/instances/search",
-        json={"params": {"start_range_end": datetime.now().isoformat()}},
+        json={"params": {"start_range_end": datetime.now(timezone.utc).isoformat()}},
     )
     assert response.status_code == HTTPStatus.OK, response.json
     assert response.json["total"] == 6

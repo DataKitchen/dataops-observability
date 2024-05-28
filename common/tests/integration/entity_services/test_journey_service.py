@@ -2,7 +2,7 @@ from uuid import uuid4
 
 import pytest
 
-from common.entities import Action, Company, Journey, JourneyDagEdge, Rule
+from common.entities import Action, ActionImpl, Company, Journey, JourneyDagEdge, Rule
 from common.entity_services import JourneyService
 from common.entity_services.helpers import ComponentFilters, ListRules
 from common.exceptions.service import MultipleActionsFound
@@ -53,7 +53,7 @@ def test_get_action_by_impl_pipeline_not_found(test_db, action):
 
 @pytest.mark.integration
 def test_get_action_by_impl_action_not_found(test_db, journey, action):
-    ret_action = JourneyService.get_action_by_implementation(journey.id, action.action_impl + "invalid")
+    ret_action = JourneyService.get_action_by_implementation(journey.id, ActionImpl.CALL_WEBHOOK.value)
     assert ret_action is None
 
 

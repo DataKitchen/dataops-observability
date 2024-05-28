@@ -73,6 +73,7 @@ from common.constants.defaults import SCHEDULE_START_CRON_TIMEZONE
 from common.entities import (
     DB,
     Action,
+    ActionImpl,
     Agent,
     AlertLevel,
     ApiEventType,
@@ -193,15 +194,15 @@ def user(test_db, company):
 
 @pytest.fixture()
 def basic_auth_user(test_db, company):
-    salt = b"baz"
-    password = base64.b64encode(hash_value(value=BASIC_AUTH_USER_PASSWORD, salt=salt.decode("utf8"))).decode()
+    salt = "abcd"
+    password = base64.b64encode(hash_value(value=BASIC_AUTH_USER_PASSWORD, salt=salt))
     return User.create(
         name="U2",
         email="u2@e.dev",
         primary_company=company,
         username="u2username",
         password=password,
-        salt=base64.b64encode(salt),
+        salt=salt,
     )
 
 
@@ -336,7 +337,7 @@ def journey_dag_edge(test_db, journey, pipeline_2):
 
 @pytest.fixture()
 def action(test_db, company):
-    return Action.create(name="A1", company=company, action_impl="some action")
+    return Action.create(name="A1", company=company, action_impl=ActionImpl.SEND_EMAIL.value)
 
 
 @pytest.fixture()

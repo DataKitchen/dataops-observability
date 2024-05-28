@@ -1,9 +1,15 @@
+from enum import Enum
 from unittest.mock import Mock, patch
 
 import pytest
 
 from common.entities import Action, Rule
 from rules_engine.actions import ACTION_CLASS_MAP, ImplementationNotFound, InvalidActionTemplate, action_factory
+
+
+class TestActionImpl(Enum):
+    DO_SOMETHING = "DO_SOMETHING"
+    DO_ANOTHER_THING = "DO_ANOTHER_THING"
 
 
 @pytest.fixture
@@ -13,7 +19,7 @@ def rule():
 
 @pytest.fixture
 def action():
-    return Action(action_impl="DO_SOMETHING", action_args={"arg2": "val2"})
+    return Action(action_impl=TestActionImpl.DO_SOMETHING, action_args={"arg2": "val2"})
 
 
 @pytest.fixture
@@ -49,6 +55,6 @@ def test_create_action_unknown_impl(rule, action_class_mock):
 @pytest.mark.unit
 def test_create_action_bad_template(rule, action_class_mock, action):
     # Setup
-    action.action_impl = "DO_ANOTHER_THING"
+    action.action_impl = TestActionImpl.DO_ANOTHER_THING
     with pytest.raises(InvalidActionTemplate, match="doesn't match Rule action"):
         action_factory(rule, action)

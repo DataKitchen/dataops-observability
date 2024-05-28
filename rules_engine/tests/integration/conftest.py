@@ -4,7 +4,17 @@ from uuid import uuid4
 
 import pytest
 
-from common.entities import Action, AlertLevel, InstanceAlertType, JourneyDagEdge, Pipeline, Rule, RunState, RunStatus
+from common.entities import (
+    Action,
+    ActionImpl,
+    AlertLevel,
+    InstanceAlertType,
+    JourneyDagEdge,
+    Pipeline,
+    Rule,
+    RunState,
+    RunStatus,
+)
 from common.events.enums import EventSources
 from common.events.v1 import ApiRunStatus, RunStatusEvent, TestOutcomesEvent, TestStatuses
 from common.kafka import TOPIC_IDENTIFIED_EVENTS, KafkaMessage
@@ -71,7 +81,7 @@ def journey_dag(journey, journey_2, components):
 
 @pytest.fixture
 def action(company):
-    action = Action.create(name="action1", company=company, action_impl="fake")
+    action = Action.create(name="action1", company=company, action_impl=ActionImpl.CALL_WEBHOOK.value)
     yield action
 
 
