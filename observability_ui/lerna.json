@@ -4,15 +4,7 @@
     "libs/*"
   ],
   "npmClient": "yarn",
-  "version": "1.100.5",
+  "version": "2.0.0",
   "granularPathspec": false,
-  "command": {
-    "version": {
-      "allowBranch": [
-        "main"
-      ],
-      "conventionalCommits": true,
-      "message": "chore(release): version %s"
-    }
-  }
+  "command": {}
 }

@@ -1,6 +1,6 @@
 {
   "name": "webpack-config",
-  "version": "1.80.0",
+  "version": "2.0.0",
   "description": "this is the shared configuration of observability mfe setup",
   "license": "MIT",
   "private": true

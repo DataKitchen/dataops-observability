@@ -1,6 +1,6 @@
 {
   "name": "@observability/ui",
-  "version": "1.100.5",
+  "version": "2.0.0",
   "description": "this is the core lib of observability mfe setup",
   "license": "MIT",
   "scripts": {
