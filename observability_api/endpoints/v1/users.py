@@ -95,7 +95,7 @@ class Users(BaseView):
 
 
 class UserById(BaseEntityView):
-    PERMISSION_REQUIREMENTS = (PERM_USER("GET"),)
+    PERMISSION_REQUIREMENTS = (PERM_USER,)
 
     @no_body_allowed
     def get(self, user_id: UUID) -> Response:

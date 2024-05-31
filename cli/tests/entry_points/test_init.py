@@ -82,7 +82,9 @@ def test_init_abort_invalid_args(has_tables, has_data, args, init_entry_point, c
 
 @pytest.mark.integration
 def test_init_json(init_entry_point, mock_user_input_json, user_data, capsys):
-    with (patch.dict(init_entry_point.kwargs, {"demo": True, "json": True}),):
+    with (
+        patch.dict(init_entry_point.kwargs, {"demo": True, "json": True}),
+    ):
         init_entry_point.subcmd_entry_point()
 
     assert Company.select().count() == 1

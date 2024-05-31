@@ -9,7 +9,7 @@ from observability_api.endpoints.v1.agents import Agents
 from observability_api.endpoints.v1.alerts import ProjectAlerts
 from observability_api.endpoints.v1.auth import BasicLogin, Logout
 from observability_api.endpoints.v1.batch_pipelines import BatchPipelineComponentById, BatchPipelineComponents
-from observability_api.endpoints.v1.companies import Companies, CompanyById
+from observability_api.endpoints.v1.companies import CompanyById
 from observability_api.endpoints.v1.components import ComponentById, Components, JourneyComponents
 from observability_api.endpoints.v1.datasets import DatasetComponentById, DatasetComponents
 from observability_api.endpoints.v1.instance_rules import InstanceRuleById, InstanceRuleCreate
@@ -72,11 +72,9 @@ def build_auth_routes(bp: Blueprint) -> list[Callable]:
 
 
 def build_company_routes(bp: Blueprint) -> Views:
-    companies_view = Companies.as_view("companies")
     company_by_id_view = CompanyById.as_view("company_by_id")
-    bp.add_url_rule("/companies", view_func=companies_view, methods=["GET"])
     bp.add_url_rule("/companies/<uuid:company_id>", view_func=company_by_id_view, methods=["GET"])
-    return [companies_view, company_by_id_view]
+    return [company_by_id_view]
 
 
 def build_instance_routes(bp: Blueprint) -> Views:
@@ -148,8 +146,8 @@ def build_project_routes(bp: Blueprint) -> Views:
 def build_user_routes(bp: Blueprint) -> Views:
     users_view = Users.as_view("users")
     user_by_id_view = UserById.as_view("user_by_id")
-    bp.add_url_rule("/users", view_func=users_view, methods=["GET", "POST"])
-    bp.add_url_rule("/users/<uuid:user_id>", view_func=user_by_id_view, methods=["GET", "PATCH", "DELETE"])
+    bp.add_url_rule("/users", view_func=users_view, methods=["GET"])
+    bp.add_url_rule("/users/<uuid:user_id>", view_func=user_by_id_view, methods=["GET"])
     return [users_view, user_by_id_view]
 
 

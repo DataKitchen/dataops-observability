@@ -6,6 +6,7 @@ create the artifact necessary to render the HTML documentation.
 WARNING: If you're working on this file locally, note that it pulls the Schemas from your last pip install of the
          project. So when testing with new schemas, run `pip install . && ./deploy/generate_swagger_spec.py`
 """
+
 import logging
 import sys
 from itertools import chain

@@ -5,6 +5,7 @@ This isn't a *unit* test per-say, but rather a stub file that validates the type
 decorator in ``common.decorators``. If the inferred hints do not match then mypy will raise an error. It allows us
 to verify that the type inference is working as expected.
 """
+
 from typing import Mapping
 
 from typing_extensions import assert_type

@@ -16,6 +16,5 @@ SMTP: dict[str, object] = {
     "password": "",
     "endpoint": "",
     "port": 25,
-
 }
 """Dummy SMTP parameters to please unit tests."""
