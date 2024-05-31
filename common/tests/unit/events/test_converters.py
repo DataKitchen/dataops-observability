@@ -94,7 +94,7 @@ def component_fields():
 
 
 @pytest.mark.unit
-@pytest.mark.slow
+@pytest.mark.converters_slow
 def test_convert_run_status_events(base_fields, id_fields, component_fields):
     run_status_fields = {
         "status": [RunStatus.RUNNING.name, RunStatus.PENDING.name],
@@ -107,7 +107,7 @@ def test_convert_run_status_events(base_fields, id_fields, component_fields):
 
 
 @pytest.mark.unit
-@pytest.mark.slow
+@pytest.mark.converters_slow
 def test_convert_message_log_events(base_fields, id_fields, component_fields):
     message_log_fields = {
         "log_level": [MessageEventLogLevel.ERROR.name],
@@ -124,7 +124,7 @@ def test_convert_message_log_events(base_fields, id_fields, component_fields):
 
 
 @pytest.mark.unit
-@pytest.mark.slow
+@pytest.mark.converters_slow
 def test_convert_metric_log_events(base_fields, id_fields, component_fields):
     metric_log_fields = {
         "metric_key": ["some metric key"],
@@ -141,7 +141,7 @@ def test_convert_metric_log_events(base_fields, id_fields, component_fields):
 
 
 @pytest.mark.unit
-@pytest.mark.slow
+@pytest.mark.converters_slow
 def test_convert_dataset_operation_event(base_fields, id_fields, component_fields):
     dataset_operation_fields = {
         "operation": [DatasetOperationType.WRITE.name],
@@ -155,7 +155,7 @@ def test_convert_dataset_operation_event(base_fields, id_fields, component_field
 
 
 @pytest.mark.unit
-@pytest.mark.slow
+@pytest.mark.converters_slow
 def test_convert_test_outcomes_events_without_testget(base_fields, id_fields, component_fields):
     test_outcome_fields = {
         "test_outcomes": [
@@ -233,7 +233,7 @@ def test_convert_test_outcomes_events_without_testget(base_fields, id_fields, co
 
 
 @pytest.mark.unit
-@pytest.mark.slow
+@pytest.mark.converters_slow
 def test_convert_test_outcomes_events_with_testgen(base_fields, id_fields, component_fields):
     test_outcome_fields = {
         "test_outcomes": [

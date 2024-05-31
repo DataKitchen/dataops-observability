@@ -236,31 +236,34 @@ def build_test_outcomes_routes(bp: Blueprint) -> Views:
     return [test_outcomes_by_id_view]
 
 
-def build_v1_routes(app: Flask, prefix: str) -> Views:
-    v1_bp = Blueprint("v1", __name__, url_prefix=f"/{prefix}/v1")
+def build_v1_routes(app: Flask, prefix: str, native_routes: bool = True, plugin_routes: bool = True) -> Views:
+    bp = Blueprint("v1", __name__, url_prefix=f"/{prefix}/v1")
     views = []
-    views += build_action_routes(v1_bp)
-    views += build_agent_routes(v1_bp)
-    views += build_auth_routes(v1_bp)
-    views += build_company_routes(v1_bp)
-    views += build_instance_routes(v1_bp)
-    views += build_instance_rule_routes(v1_bp)
-    views += build_journey_routes(v1_bp)
-    views += build_journey_dag_routes(v1_bp)
-    views += build_organization_routes(v1_bp)
-    views += build_project_routes(v1_bp)
-    views += build_rules_routes(v1_bp)
-    views += build_run_routes(v1_bp)
-    views += build_schedule_routes(v1_bp)
-    views += build_service_account_key_routes(v1_bp)
-    views += build_task_routes(v1_bp)
-    views += build_user_routes(v1_bp)
-    views += build_component_routes(v1_bp)
-    views += build_upcoming_instance_routes(v1_bp)
-    views += build_subcomponent_routes(v1_bp)
-    views += build_test_outcomes_routes(v1_bp)
 
-    PluginManager.load_all("observability_api_v1", v1_bp, views)
+    if native_routes:
+        views += build_action_routes(bp)
+        views += build_agent_routes(bp)
+        views += build_auth_routes(bp)
+        views += build_company_routes(bp)
+        views += build_instance_routes(bp)
+        views += build_instance_rule_routes(bp)
+        views += build_journey_routes(bp)
+        views += build_journey_dag_routes(bp)
+        views += build_organization_routes(bp)
+        views += build_project_routes(bp)
+        views += build_rules_routes(bp)
+        views += build_run_routes(bp)
+        views += build_schedule_routes(bp)
+        views += build_service_account_key_routes(bp)
+        views += build_task_routes(bp)
+        views += build_user_routes(bp)
+        views += build_component_routes(bp)
+        views += build_upcoming_instance_routes(bp)
+        views += build_subcomponent_routes(bp)
+        views += build_test_outcomes_routes(bp)
 
-    app.register_blueprint(v1_bp)
+    if plugin_routes:
+        PluginManager.load_all("observability_api_v1", bp, views)
+
+    app.register_blueprint(bp)
     return views

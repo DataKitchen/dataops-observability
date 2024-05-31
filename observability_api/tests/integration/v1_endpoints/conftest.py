@@ -166,7 +166,7 @@ def flask_app(test_user):
     os.makedirs(app.instance_path, exist_ok=True)
     # This has to go before route building. If it does not, the rules will not be affected.
     URLConverters(app)
-    build_v1_routes(app, prefix=API_PREFIX)
+    build_v1_routes(app, prefix=API_PREFIX, plugin_routes=False)
     ExceptionHandling(app)
     yield app
     shutil.rmtree(app.instance_path, ignore_errors=True)

@@ -73,7 +73,6 @@ def test_extract_digest_invalid():
 
 
 @pytest.mark.unit
-@pytest.mark.slow
 def test_generate_passphrase_collisions():
     """No collisions when generating passphrases."""
     # NOTE: This is not meant to test entropy or to be an exhaustive way to ensure the implementation yields no

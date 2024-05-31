@@ -93,42 +93,42 @@ def test_jwt_logout(jwt_client, valid_token, token_user):
 
 
 @pytest.mark.integration
-def test_jwt_invalid_user(jwt_client, token_user, invalid_token_bad_user):
+def test_jwt_invalid_user(jwt_client, token_user, invalid_token_bad_user, company):
     # Hit any endpoint that would normally need authorization and make sure that it raises an UNAUTHORIZED error
     response = jwt_client.get(
-        "/observability/v1/companies", headers={"Authorization": f"Bearer {invalid_token_bad_user}"}
+        f"/observability/v1/companies/{company.id}", headers={"Authorization": f"Bearer {invalid_token_bad_user}"}
     )
     assert response.status_code == HTTPStatus.UNAUTHORIZED, response.json
 
 
 @pytest.mark.integration
-def test_jwt_invalid_domain(jwt_client, token_user, valid_token):
+def test_jwt_invalid_domain(jwt_client, token_user, valid_token, company):
     # Hit any endpoint that would normally need authorization and make sure that it raises an UNAUTHORIZED error
     response = jwt_client.get(
-        "/observability/v1/companies",
+        f"/observability/v1/companies/{company.id}",
         headers={"Authorization": f"Bearer {valid_token}", "Origin": "https://wrongdomain.fake"},
     )
     assert response.status_code == HTTPStatus.UNAUTHORIZED, response.json
 
 
 @pytest.mark.integration
-def test_jwt_valid_user(jwt_client, token_user, valid_token):
+def test_jwt_valid_user(jwt_client, token_user, valid_token, company):
     # Hit any endpoint that would normally need authorization and make sure that returns okay
     response = jwt_client.get(
-        "/observability/v1/companies",
+        f"/observability/v1/companies/{company.id}",
         headers={"Authorization": f"Bearer {valid_token}", "Origin": "https://fakedomain.fake"},
     )
     assert response.status_code == HTTPStatus.OK, response.json
 
 
 @pytest.mark.integration
-def test_jwt_login_user(jwt_client, token_user):
+def test_jwt_login_user(jwt_client, token_user, company):
     with patch("common.api.flask_ext.authentication.jwt_plugin.get_domain", return_value="fakedomain.fake"):
         token = JWTAuth.log_user_in(token_user)
 
     # Hit any endpoint that would normally need authorization and make sure that returns okay
     response = jwt_client.get(
-        "/observability/v1/companies",
+        f"/observability/v1/companies/{company.id}",
         headers={"Authorization": f"Bearer {token}", "Origin": "https://fakedomain.fake"},
     )
     assert response.status_code == HTTPStatus.OK, response.json

@@ -13,7 +13,6 @@ def project():
 
 
 @pytest.mark.integration
-@pytest.mark.slow
 def test_generate_and_validate_key(project):
     new_key = service_key.generate_key(allowed_services=[Service.EVENTS_API.name], project=project).encoded_key
     data = service_key.validate_key(new_key)

@@ -118,7 +118,6 @@ def test_sa_key_auth_delete_authorized(auth_client, sa_key_headers, path, fixtur
 out_of_scope_endpoints = pytest.mark.parametrize(
     "path, fixture, methods",
     [
-        ("companies", None, ["GET"]),
         ("companies/{id}", "company", ["GET"]),
         ("companies/{id}/organizations", "company", ["GET"]),
         ("organizations/{id}", "organization", ["GET"]),

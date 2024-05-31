@@ -118,7 +118,7 @@ markers = [
     "unit: The test is a unit test and is thus expected to be fast with little setup",
     "integration: The test is an integration test and is thus expected to be somewhat slower with a little more setup",
     "functional: The test is a functional test and is thus expected to be slower with greater setup",
-    "slow: Mark tests which are known to be slow. Useful for filtering",
+    "converters_slow: Mark tests related to converting events that are known to be slow. Useful for filtering",
 ]
 filterwarnings = [
     # remove when resolved: https://github.com/marshmallow-code/apispec/issues/739
