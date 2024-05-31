@@ -3,13 +3,11 @@ __all__ = ["CompanyById"]
 import logging
 from uuid import UUID
 
-from flask import Response, make_response, request
+from flask import Response, make_response
 
-from common.api.base_view import PERM_USER, PERM_USER_ADMIN, BaseView
+from common.api.base_view import PERM_USER
 from common.api.request_parsing import no_body_allowed
 from common.entities import Company
-from common.entity_services import CompanyService
-from common.entity_services.helpers import ListRules, Page
 from observability_api.endpoints.entity_view import BaseEntityView
 from observability_api.schemas import CompanySchema
 

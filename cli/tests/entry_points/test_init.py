@@ -1,4 +1,3 @@
-import io
 import json
 from collections import OrderedDict
 from unittest.mock import patch
