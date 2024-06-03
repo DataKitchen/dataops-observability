@@ -12,7 +12,7 @@ from typing import Optional
 from common.entities import Service
 
 PROPAGATE_EXCEPTIONS: Optional[bool] = None
-SERVER_NAME: Optional[str] = os.environ.get("OBSERVABILITY_API_HOSTNAME", None)  # Use flask defaults if none set
+SERVER_NAME: Optional[str] = os.environ.get("OBSERVABILITY_API_HOSTNAME")  # Use flask defaults if none set
 USE_X_SENDFILE: bool = False  # If we serve files enable this in production settings when webserver support configured
 
 # Application settings
