@@ -2,7 +2,6 @@ from datetime import datetime, timezone
 from http import HTTPStatus
 
 import pytest
-from flask import url_for
 
 from agent_api.endpoints.v1.heartbeat import AGENT_CACHE
 from common.entities import Agent
@@ -31,7 +30,7 @@ def test_agent_heartbeat(client, database_ctx, headers):
         "version": "test-version",
         "latest_event_timestamp": last_event_timestamp.isoformat(),
     }
-    response = client.post(url_for("v1.agent-heartbeat"), json=data, headers=headers)
+    response = client.post("/agent/v1/heartbeat", json=data, headers=headers)
     assert HTTPStatus.NO_CONTENT == response.status_code, response.json
     assert 1 == AGENT_CACHE.miss_count
 
@@ -43,7 +42,7 @@ def test_agent_heartbeat_no_event_timestamp(client, database_ctx, headers):
         "tool": "test-tool",
         "version": "test-version",
     }
-    response = client.post(url_for("v1.agent-heartbeat"), json=data, headers=headers)
+    response = client.post("/agent/v1/heartbeat", json=data, headers=headers)
     assert HTTPStatus.NO_CONTENT == response.status_code, response.json
     agent = Agent.select().get()
     assert agent.latest_event_timestamp is None
@@ -61,7 +60,7 @@ def test_agent_heartbeat_update(client, database_ctx, headers):
         "latest_event_timestamp": last_event_timestamp.isoformat(),
     }
     assert 0 == Agent.select().count()  # Initially there should be no registered agents
-    response_1 = client.post(url_for("v1.agent-heartbeat"), json=data, headers=headers)
+    response_1 = client.post("/agent/v1/heartbeat", json=data, headers=headers)
     assert HTTPStatus.NO_CONTENT == response_1.status_code, response_1.json
     assert (
         1 == AGENT_CACHE.miss_count
@@ -76,7 +75,7 @@ def test_agent_heartbeat_update(client, database_ctx, headers):
     assert agent_1.latest_heartbeat < now
 
     # We hit the API again so now latest_event_timestamp should be newer than "now"
-    response_2 = client.post(url_for("v1.agent-heartbeat"), json=data, headers=headers)
+    response_2 = client.post("/agent/v1/heartbeat", json=data, headers=headers)
     assert HTTPStatus.NO_CONTENT == response_2.status_code, response_2.json
     agent_2 = Agent.select().get()
     assert agent_2.latest_heartbeat > now
@@ -98,14 +97,14 @@ def test_agent_heartbeat_existing_no_cache(client, database_ctx, headers):
         "version": "test-version",
         "latest_event_timestamp": last_event_timestamp.isoformat(),
     }
-    response_1 = client.post(url_for("v1.agent-heartbeat"), json=data, headers=headers)
+    response_1 = client.post("/agent/v1/heartbeat", json=data, headers=headers)
     assert HTTPStatus.NO_CONTENT == response_1.status_code, response_1.json
     assert 1 == AGENT_CACHE.miss_count
     assert 1 == Agent.select().count()  # There should be 1 agent now
 
     now = datetime.now(timezone.utc)
     _reset_agent_cache()  # Clear the cache again
-    response_2 = client.post(url_for("v1.agent-heartbeat"), json=data, headers=headers)
+    response_2 = client.post("/agent/v1/heartbeat", json=data, headers=headers)
     assert HTTPStatus.NO_CONTENT == response_2.status_code, response_2.json
     assert 1 == AGENT_CACHE.miss_count
     assert 1 == Agent.select().count()  # There should still be only 1 agent
@@ -122,7 +121,7 @@ def test_agent_heartbeat_existing_version_update(client, database_ctx, headers):
         "version": "0.1.0",
         "latest_event_timestamp": last_event_timestamp.isoformat(),
     }
-    response_1 = client.post(url_for("v1.agent-heartbeat"), json=data_1, headers=headers)
+    response_1 = client.post("/agent/v1/heartbeat", json=data_1, headers=headers)
     assert HTTPStatus.NO_CONTENT == response_1.status_code, response_1.json
 
     agent_1 = Agent.select().get()
@@ -130,7 +129,7 @@ def test_agent_heartbeat_existing_version_update(client, database_ctx, headers):
     data_2 = data_1.copy()
     data_2["version"] = "12.0.3"
 
-    response_2 = client.post(url_for("v1.agent-heartbeat"), json=data_2, headers=headers)
+    response_2 = client.post("/agent/v1/heartbeat", json=data_2, headers=headers)
     assert HTTPStatus.NO_CONTENT == response_2.status_code, response_2.json
     assert 1 == Agent.select().count()  # There should still be only 1 agent
     agent_2 = Agent.select().get()
@@ -147,7 +146,7 @@ def test_agent_heartbeat_update_no_cache(client, database_ctx, headers):
         "version": "0.1.0",
         "latest_event_timestamp": last_event_timestamp.isoformat(),
     }
-    response_1 = client.post(url_for("v1.agent-heartbeat"), json=data_1, headers=headers)
+    response_1 = client.post("/agent/v1/heartbeat", json=data_1, headers=headers)
     assert HTTPStatus.NO_CONTENT == response_1.status_code, response_1.json
 
     agent_1 = Agent.select().get()
@@ -157,7 +156,7 @@ def test_agent_heartbeat_update_no_cache(client, database_ctx, headers):
     data_2["latest_event_timestamp"] = datetime(2023, 10, 20, 4, 44, 44, tzinfo=timezone.utc).isoformat()
 
     _reset_agent_cache()  # Clear the cache before updating
-    response_2 = client.post(url_for("v1.agent-heartbeat"), json=data_2, headers=headers)
+    response_2 = client.post("/agent/v1/heartbeat", json=data_2, headers=headers)
     assert HTTPStatus.NO_CONTENT == response_2.status_code, response_2.json
     assert 1 == Agent.select().count()  # There should still be only 1 agent
     agent_2 = Agent.select().get()
@@ -174,7 +173,7 @@ def test_agent_heartbeat_update_with_cache(client, database_ctx, headers):
         "version": "0.1.0",
         "latest_event_timestamp": last_event_timestamp.isoformat(),
     }
-    response_1 = client.post(url_for("v1.agent-heartbeat"), json=data_1, headers=headers)
+    response_1 = client.post("/agent/v1/heartbeat", json=data_1, headers=headers)
     assert HTTPStatus.NO_CONTENT == response_1.status_code, response_1.json
 
     agent_1 = Agent.select().get()
@@ -183,7 +182,7 @@ def test_agent_heartbeat_update_with_cache(client, database_ctx, headers):
     data_2["version"] = "1.0.3"
     data_2["latest_event_timestamp"] = datetime(2023, 10, 20, 4, 44, 44, tzinfo=timezone.utc).isoformat()
 
-    response_2 = client.post(url_for("v1.agent-heartbeat"), json=data_2, headers=headers)
+    response_2 = client.post("/agent/v1/heartbeat", json=data_2, headers=headers)
     assert HTTPStatus.NO_CONTENT == response_2.status_code, response_2.json
     assert 1 == Agent.select().count()  # There should still be only 1 agent
     agent_2 = Agent.select().get()
