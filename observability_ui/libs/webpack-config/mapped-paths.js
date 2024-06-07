@@ -3,5 +3,4 @@ module.exports.mappedPaths = [
   '@observability-ui/core',
   '@observability-ui/ui',
   '@observability-ui/translate',
-  '@observability-ui/store',
 ];

@@ -23,7 +23,7 @@
         "libs/translate/src/index.ts"
       ],
       "@observability-ui/ui": [
-        "libs/ui/src/index.ts"
+        "libs/ui/src/index.ts",
       ]
     }
   },

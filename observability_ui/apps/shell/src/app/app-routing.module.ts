@@ -1,5 +1,5 @@
 import { InjectionToken, NgModule } from '@angular/core';
-import { ROUTES, RouterModule, Routes } from '@angular/router';
+import { RouterModule, ROUTES, Routes } from '@angular/router';
 import { IsOnlineGuard } from './guards/is-online.guard';
 import { OfflineComponent } from './components/offline/offline.component';
 import { AuthGuard, resetStores } from '@observability-ui/core';
@@ -32,21 +32,13 @@ const APP_ROUTES: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot([], { initialNavigation: 'enabledNonBlocking', enableTracing: false }),
+    RouterModule.forRoot(APP_ROUTES, { initialNavigation: 'enabledNonBlocking', enableTracing: false }),
     {
       ngModule: RouterModule,
       providers: [
         {
           provide: ROUTES,
-          useFactory: (dynamicRoutes: Routes) => {
-            let rootRoutes: Routes = [ ...APP_ROUTES ];
-
-            if (Array.isArray(dynamicRoutes)) {
-              rootRoutes = [ ...rootRoutes, ...dynamicRoutes ];
-            }
-
-            return rootRoutes;
-          },
+          useFactory: (dynamicRoutes: Routes) => dynamicRoutes,
           deps: [ PLATFORM_ROUTES ],
           multi: true,
         }
@@ -54,7 +46,7 @@ const APP_ROUTES: Routes = [
     },
   ],
   exports: [
-    RouterModule
+    RouterModule,
   ],
   declarations: [],
   providers: []

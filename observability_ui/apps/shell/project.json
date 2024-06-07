@@ -92,6 +92,15 @@
       },
       "defaultConfiguration": "production"
     },
+    "build-mfe": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx build basic-auth",
+          "nx build shell"
+        ]
+      }
+    },
     "serve": {
       "executor": "@nx/angular:webpack-dev-server",
       "configurations": {

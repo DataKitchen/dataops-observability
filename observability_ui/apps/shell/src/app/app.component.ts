@@ -26,7 +26,6 @@ export class AppComponent {
     this.entities.organization$.pipe(
       tap(({id}) => {
         this.projectStore.dispatch('findAll', {parentId: id});
-
       })
     ).subscribe();
 

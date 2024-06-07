@@ -39,7 +39,7 @@ export class BaseHttpInterceptor implements HttpInterceptor {
       this.sessionService.removeToken();
       this.snackbar.open('Your session has expired. Please login again', 'Login').onAction().pipe(
         tap(() => {
-          window.location.href = '/authentication/login';
+          window.location.href = '/authentication';
         }),
       ).subscribe();
       return EMPTY;

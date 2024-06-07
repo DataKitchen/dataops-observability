@@ -4,8 +4,6 @@ import { RouterModule } from '@angular/router';
 
 import { AuthenticationComponent } from './authentication.component';
 import { remoteRoutes } from './authentication.routes';
-import { SessionService } from '@observability-ui/core';
-import { BasicAuthService } from '../services/auth.service';
 
 @NgModule({
   declarations: [
@@ -15,8 +13,6 @@ import { BasicAuthService } from '../services/auth.service';
     CommonModule,
     RouterModule.forChild(remoteRoutes),
   ],
-  providers: [
-    { provide: SessionService, useClass: BasicAuthService },
-  ],
+  providers: [],
 })
 export class AuthenticationModule {}

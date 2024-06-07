@@ -128,5 +128,9 @@
         }
       }
     }
-  }
+  },
+  "implicitDependencies": [
+    "core",
+    "ui"
+  ]
 }
