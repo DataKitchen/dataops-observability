@@ -115,15 +115,12 @@ scheduler:
 
 cli_hook:
   enable:
-    - phases: ["pre-install"]
-      command: ["/dk/bin/cli", "init", "--tables"]
+    - phases: ["pre-install", "pre-upgrade"]
+      weight: 0
+      command: ["/dk/bin/yoyo-migrate", "apply"]
   image:
     name: dataops-observability-be
     pullPolicy: IfNotPresent
-
-# Remove when the images go public
-imagePullSecrets:
-- name: dk-dockerhub-secrets
 
 autoscaling:
   enabled: false

@@ -51,6 +51,7 @@ modules: tuple[str, ...] = (
     "cli.entry_points.service_account_key",
     "cli.entry_points.shell",
     "cli.entry_points.init",
+    "cli.entry_points.yoyo",
 )
 
 for module in modules:

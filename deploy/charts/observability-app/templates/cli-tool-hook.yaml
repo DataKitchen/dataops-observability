@@ -5,7 +5,7 @@ metadata:
   name: "cli-job"
   annotations:
     "helm.sh/hook": {{ join ", " .phases }}
-    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-weight": {{ default 0 .weight | quote }}
     "helm.sh/hook-delete-policy": hook-succeeded, before-hook-creation
 spec:
   template:
