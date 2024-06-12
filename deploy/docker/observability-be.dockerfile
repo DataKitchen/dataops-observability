@@ -26,7 +26,9 @@ FROM ${BASE_IMAGE_URL}python:3.10-slim-bullseye AS runtime-image
 # Grab the pre-built app from the build-image. This way we don't have
 # excess laying around in the final image.
 COPY --from=build-image /dk /dk
-COPY --from=build-image /tmp/dk/deploy/conf/gunicorn.conf.py /dk/
+
+COPY --from=build-image /tmp/dk/deploy/conf/gunicorn.conf.py /tmp/dk/deploy/conf/yoyo.ini /dk/
+COPY --from=build-image /tmp/dk/deploy/migrations/ /dk/lib/migrations/
 
 ENV PYTHONPATH ${PYTHONPATH}:/dk/lib/python3.10/site-packages
 ENV PATH ${PATH}:/dk/bin

@@ -38,7 +38,7 @@ class Shell(DatabaseScriptBase):
         )
 
         try:
-            from IPython import start_ipython  # type: ignore
+            from IPython import start_ipython
 
             # If you don't set argv to an empty value here, iPython will attempt to use the arguments passed to the
             # cli command and mayhem will ensue.
