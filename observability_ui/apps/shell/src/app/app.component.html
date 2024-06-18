@@ -1,7 +1,16 @@
 <div class="container">
 
   <ng-container *ngIf="(isAuth$ | async) === true; else unAuth">
-    <shell-header (toggleMenu)="sidenav.toggle()" [showMenuToggle]="!!(currentProject$ | async)"></shell-header>
+    <ng-container *ngIf="headerComponent; else baseHeaderTpl">
+      <ng-container [dynamicComponentOutlet]="headerComponent"
+        [dynamicComponentOutletOptions]="{showMenuToggle: !!(currentProject$ | async)}"
+        [dynamicComponentOutletOutputs]="['toggleMenu']"
+        (outputs)="sidenav.toggle()">
+      </ng-container>
+    </ng-container>
+    <ng-template #baseHeaderTpl>
+      <shell-header (toggleMenu)="sidenav.toggle()" [showMenuToggle]="!!(currentProject$ | async)"></shell-header>
+    </ng-template>
 
     <mat-sidenav-container class="sidenav-container"
                            [hasBackdrop]="false">
