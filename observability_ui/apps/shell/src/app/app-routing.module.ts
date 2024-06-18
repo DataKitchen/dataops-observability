@@ -32,7 +32,7 @@ const APP_ROUTES: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(APP_ROUTES, { initialNavigation: 'enabledNonBlocking', enableTracing: false }),
+    RouterModule.forRoot([], { initialNavigation: 'enabledNonBlocking', enableTracing: false }),
     {
       ngModule: RouterModule,
       providers: [
@@ -41,14 +41,18 @@ const APP_ROUTES: Routes = [
           useFactory: (dynamicRoutes: Routes) => dynamicRoutes,
           deps: [ PLATFORM_ROUTES ],
           multi: true,
-        }
+        },
+        {
+          provide: ROUTES,
+          useValue: APP_ROUTES,
+          multi: true,
+        },
       ],
     },
   ],
   exports: [
     RouterModule,
   ],
-  declarations: [],
-  providers: []
+  declarations: []
 })
 export class AppRoutingModule {}

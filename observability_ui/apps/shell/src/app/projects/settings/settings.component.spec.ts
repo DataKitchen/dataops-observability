@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SettingsComponent } from './settings.component';
 import { MockProvider } from 'ng-mocks';
-import { Company, EntitiesResolver, Project, ProjectStore } from '@heimdall-ui/core';
+import { Company, EntitiesResolver, Project, ProjectStore } from '@observability-ui/core';
 import { of } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';

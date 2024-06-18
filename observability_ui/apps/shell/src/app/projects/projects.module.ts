@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ENVIRONMENT_INITIALIZER, Injector, NgModule, Optional, inject, reflectComponentType } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SidenavMenuComponent } from '../components/sidenav-menu/sidenav-menu.component';
 import { ProjectOverviewComponent } from './overview/overview.component';
@@ -37,6 +37,10 @@ import { MultipleComponentPanelComponent } from './multiple-component-panel/mult
 import { ProjectDisplayComponent } from './project-display/project-display.component';
 import { SSISToolComponent } from './integrations/tools/ssis-tool/ssis-tool.component';
 import { QlikToolComponent } from './integrations/tools/qlik-tool/qlik-tool.component';
+import { REPLACEMENT_TOKENS } from '../../app/config';
+import { Menu } from '../components/sidenav-menu/sidenav-menu.model';
+
+let injector!: Injector; // https://github.com/angular/angular/issues/51532
 
 @NgModule({
   declarations: [
@@ -86,7 +90,11 @@ import { QlikToolComponent } from './integrations/tools/qlik-tool/qlik-tool.comp
       },
       {
         path: 'settings',
-        loadComponent: () => import('./settings/settings.component').then((c) => c.SettingsComponent),
+        loadComponent: () => import('./settings/settings.component').then((c) => {
+          // https://github.com/angular/angular/issues/28136
+          const componentMetadata = reflectComponentType(c.SettingsComponent);
+          return injector.get(componentMetadata.selector, c.SettingsComponent);
+        }),
         data: {
           helpLink: 'article/dataops-observability-help/project-settings'
         }
@@ -149,8 +157,21 @@ import { QlikToolComponent } from './integrations/tools/qlik-tool/qlik-tool.comp
   ],
   providers: [
     {
+      provide: ENVIRONMENT_INITIALIZER,
+      useFactory: () => {
+        injector = inject(Injector);
+        return () => {};
+      },
+      multi: true,
+    },
+    {
       provide: 'menusResolver',
-      useValue: () => ProjectsMenu,
+      useFactory: (replacementMenu: Menu[]) => {
+        return () => {
+          return replacementMenu ?? ProjectsMenu;
+        };
+      },
+      deps: [[new Optional(), REPLACEMENT_TOKENS.ProjectsMenu]]
     },
     {
       provide: INTEGRATION_TOOLS,
