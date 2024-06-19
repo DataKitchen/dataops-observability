@@ -17,7 +17,7 @@ CREATE TABLE `action` (
   `id` VARCHAR(40) NOT NULL PRIMARY KEY,
   `name` VARCHAR(255) NOT NULL,
   `company_id` VARCHAR(40) NOT NULL,
-  `action_impl` VARCHAR(255) NOT NULL,
+  `action_impl` VARCHAR(30) NOT NULL,
   `action_args` JSON NOT NULL,
   FOREIGN KEY (`company_id`) REFERENCES `company` (`id`) ON DELETE CASCADE
 );
@@ -87,7 +87,7 @@ CREATE TABLE `user` (
   `salt` VARCHAR(255),
   `created_by_id` VARCHAR(40),
   FOREIGN KEY (`primary_company_id`) REFERENCES `company` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `username_special_character` CHECK ((not (username like '%%:%%')))
+  CONSTRAINT `username_special_character` CHECK ((not (username like '%:%')))
 );
 
 CREATE INDEX `user_email` ON `user` (`email`);

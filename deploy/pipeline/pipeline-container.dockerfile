@@ -21,6 +21,8 @@ RUN apt-get update; apt-get install -y docker-ce-cli docker-compose-plugin-
 
 RUN apt-get clean; rm -rf /var/lib/apt/lists/*
 
+RUN curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
 WORKDIR /dk
 
 COPY ./pyproject.toml /dk
