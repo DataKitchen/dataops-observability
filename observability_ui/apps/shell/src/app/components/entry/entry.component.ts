@@ -36,7 +36,6 @@ export class EntryComponent extends CoreComponent implements OnInit, OnDestroy {
       }),
       takeUntil(this.destroyed$),
     ).subscribe();
-
   }
 
 }

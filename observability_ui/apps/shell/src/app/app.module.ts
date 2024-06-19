@@ -23,7 +23,6 @@ import { HeaderComponent } from './components/header/header.component';
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
 import { RouterModule } from '@angular/router';
 import { TranslationModule } from '@observability-ui/translate';
-import { SidenavMenuComponent } from './components/sidenav-menu/sidenav-menu.component';
 import { coreTranslations } from './core.translation';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
 import { DefaultErrorHandlerModule } from './components/default-error-handler/default-error-handler.module';
@@ -38,7 +37,6 @@ import { NgxMonacoEditorModule } from '@datakitchen/ngx-monaco-editor';
     AppComponent,
     OfflineComponent,
     HeaderComponent,
-    SidenavMenuComponent,
     EntryComponent,
   ],
   imports: [
@@ -73,7 +71,7 @@ import { NgxMonacoEditorModule } from '@datakitchen/ngx-monaco-editor';
     NgxMonacoEditorModule,
     MatCardModule,
     TruncateModule,
-    DkTooltipModule
+    DkTooltipModule,
   ],
   providers: [
     EntitiesResolver,

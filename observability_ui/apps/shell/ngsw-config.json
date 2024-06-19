@@ -2,10 +2,11 @@
   "$schema": "../../node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
   "appData": {
-    "shell": "1.97.2",
-    "@observability/core": "1.96.0",
-    "@observability/translate": "1.61.4",
-    "@observability/ui": "1.97.0"
+    "basic-auth": "2.0.0",
+    "shell": "2.0.0",
+    "@observability/core": "2.0.0",
+    "@observability/translate": "2.0.0",
+    "@observability/ui": "2.0.0"
   },
   "assetGroups": [
     {

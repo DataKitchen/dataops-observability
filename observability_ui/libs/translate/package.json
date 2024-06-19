@@ -1,6 +1,6 @@
 {
   "name": "@observability/translate",
-  "version": "1.61.4",
+  "version": "2.0.0",
   "description": "this is the core lib of observability mfe setup",
   "license": "MIT"
 }

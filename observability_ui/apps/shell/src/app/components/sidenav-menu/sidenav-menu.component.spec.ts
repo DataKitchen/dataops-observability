@@ -5,6 +5,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { MockComponent } from 'ng-mocks';
 
 import { SidenavMenuComponent } from './sidenav-menu.component';
+import { DynamicComponentModule } from '@observability-ui/ui';
 
 describe('SidenavMenuComponent', () => {
   let component: SidenavMenuComponent;
@@ -14,11 +15,11 @@ describe('SidenavMenuComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [
         SidenavMenuComponent,
-        MockComponent(MatIcon),
         MockComponent(MatNavList),
       ],
       imports: [
         RouterTestingModule,
+        DynamicComponentModule,
       ],
 
     })

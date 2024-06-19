@@ -19,7 +19,7 @@ export class AuthGuard  {
       map((isLoggedIn) => {
         if (!isLoggedIn) {
           this.sessionService.setLoginRedirect(state.url);
-          return this.router.parseUrl('/authentication/login');
+          return this.router.parseUrl('/authentication');
         }
 
         return isLoggedIn;

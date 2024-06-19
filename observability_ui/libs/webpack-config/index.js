@@ -5,12 +5,12 @@ const { libs } = require("./libs");
 const { mappedPaths } = require("./mapped-paths");
 
 
-module.exports.CreateConfig = function(moduleFedarationConfig) {
-  const workspaceRootPath = path.join(__dirname, '../../');
+module.exports.CreateConfig = function(moduleFedarationConfig, mappings, extraAliases) {
+  const workspaceRootPath = process.env.NX_WORKSPACE_ROOT ?? path.join(__dirname, '../../');
   const tsConfigPath = process.env.NX_TSCONFIG_PATH ?? path.join(workspaceRootPath, 'tsconfig.base.json');
 
   const sharedMappings = new mf.SharedMappings();
-  sharedMappings.register(tsConfigPath, mappedPaths, workspaceRootPath);
+  sharedMappings.register(tsConfigPath, mappings ?? mappedPaths, workspaceRootPath);
 
   const sharedLibraries = mf.share({
     ...libs,
@@ -48,6 +48,7 @@ module.exports.CreateConfig = function(moduleFedarationConfig) {
     resolve: {
       alias: {
         ...sharedMappings.getAliases(),
+        ...(extraAliases ?? {}),
       },
     },
     plugins: [

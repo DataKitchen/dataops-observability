@@ -47,7 +47,7 @@ describe('Auth Guard', () => {
 
       it('should return a url tree to login page', (done) => {
         authGuard.canActivate({ queryParams: {} } as ActivatedRouteSnapshot, { url: '/test-redirect-url' } as RouterStateSnapshot).subscribe((url) => {
-          expect((url as UrlTree)?.toString()).toEqual('/authentication/login');
+          expect((url as UrlTree)?.toString()).toEqual('/authentication');
           done();
         });
       });

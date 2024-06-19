@@ -1,5 +1,5 @@
 import { InjectionToken, NgModule } from '@angular/core';
-import { ROUTES, RouterModule, Routes } from '@angular/router';
+import { RouterModule, ROUTES, Routes } from '@angular/router';
 import { IsOnlineGuard } from './guards/is-online.guard';
 import { OfflineComponent } from './components/offline/offline.component';
 import { AuthGuard, resetStores } from '@observability-ui/core';
@@ -38,25 +38,21 @@ const APP_ROUTES: Routes = [
       providers: [
         {
           provide: ROUTES,
-          useFactory: (dynamicRoutes: Routes) => {
-            let rootRoutes: Routes = [ ...APP_ROUTES ];
-
-            if (Array.isArray(dynamicRoutes)) {
-              rootRoutes = [ ...rootRoutes, ...dynamicRoutes ];
-            }
-
-            return rootRoutes;
-          },
+          useFactory: (dynamicRoutes: Routes) => dynamicRoutes,
           deps: [ PLATFORM_ROUTES ],
           multi: true,
-        }
+        },
+        {
+          provide: ROUTES,
+          useValue: APP_ROUTES,
+          multi: true,
+        },
       ],
     },
   ],
   exports: [
-    RouterModule
+    RouterModule,
   ],
-  declarations: [],
-  providers: []
+  declarations: []
 })
 export class AppRoutingModule {}

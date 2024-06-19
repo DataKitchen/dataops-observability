@@ -1,10 +1,10 @@
 {
   "name": "observability-ui",
-  "version": "0.0.0",
+  "version": "2.0.0",
   "license": "MIT",
   "scripts": {
     "start": "nx serve-mfe",
-    "build": "yarn lerna run make:linkable && yarn link @observability/ui && yarn nx build basic-auth && yarn nx build",
+    "build": "yarn lerna run make:linkable && yarn link @observability/ui && yarn nx build-mfe",
     "postbuild": "cp apps/shell/src/module-federation.manifest.prod.json dist/shell/assets/module-federation.manifest.json",
     "build:ci": "nx reset && yarn build",
     "test": "jest",
@@ -107,7 +107,6 @@
     "nx": "16.6.0",
     "prettier": "^3.0.1",
     "replace-json-property": "^1.8.0",
-    "slack-notify": "^2.0.3",
     "testcafe": "^3.1.0",
     "ts-jest": "29.1.0",
     "ts-node": "10.9.1",

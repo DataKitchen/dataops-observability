@@ -8,7 +8,7 @@
     </div>
     <ng-container *ngFor="let menuItem of menu.items">
       <ng-container *ngIf="menuItem.label">
-        <a [routerLink]="menuItem.link" [relativeTo]="baseRoute"
+        <a [routerLink]="menuItem.link" [relativeTo]="baseRoute$ | async"
           routerLinkActive="active"
           class="menu--item"
           mat-list-item>

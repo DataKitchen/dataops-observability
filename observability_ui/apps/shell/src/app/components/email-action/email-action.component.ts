@@ -43,7 +43,7 @@ export class EmailActionComponent {
     })
   ));
   saving = toSignal(this.store.getLoadingFor('update'));
-  
+
   form: FormGroup;
 
   constructor(
@@ -75,12 +75,12 @@ export class EmailActionComponent {
 
   cancelEmailActionChanges(emailAction: EmailAction): void {
     const { smtp_config } = emailAction?.action_args || {};
-    this.form.patchValue({ 
-      endpoint: smtp_config?.endpoint, 
-      port: smtp_config?.port, 
-      username: smtp_config?.username, 
-      password: smtp_config?.password, 
-      from_address: smtp_config?.endpoint ? emailAction.action_args.from_address : null, 
+    this.form.patchValue({
+      endpoint: smtp_config?.endpoint,
+      port: smtp_config?.port,
+      username: smtp_config?.username,
+      password: smtp_config?.password,
+      from_address: smtp_config?.endpoint ? emailAction.action_args.from_address : null,
     });
   }
 }
