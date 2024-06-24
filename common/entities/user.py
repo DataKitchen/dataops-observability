@@ -49,7 +49,7 @@ class User(BaseEntity, ActivableEntityMixin, AuditEntityMixin):
         )
         constraints = [
             Check(
-                "(not (username like '%%:%%'))",
+                "(not (username like '%:%'))",
                 "username_special_character",
             )
         ]

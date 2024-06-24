@@ -101,8 +101,8 @@ spec:
       port: {{ .Values.observability_api.service.port }}
       targetPort: http
       protocol: TCP
-      {{- with .Values.observability_api.service.nodePort }}
-      nodePort: {{ . }}
+      {{- if eq .Values.observability_api.service.type "NodePort" }}
+      nodePort: {{ .Values.observability_api.service.nodePort }}
       {{- end }}
   selector:
     {{- include "observability.observability_api.selectorLabels" . | nindent 4 }}

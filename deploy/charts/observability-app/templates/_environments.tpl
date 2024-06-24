@@ -4,21 +4,21 @@ Environment
 
 {{- define "observability.environment.base" -}}
 - name: OBSERVABILITY_CONFIG
-  value: {{ include "observability.config_type" . | quote }}
+  value: {{ .Values.observability.config_type | quote }}
 {{- end -}}
 
 {{- define "observability.environment.pythonpath" -}}
 - name: PYTHONPATH
-  value: {{ include "observability.pythonpath" . | quote }}
+  value: {{ .Values.observability.pythonpath | quote }}
 {{- end -}}
 
 {{- define "observability.environment.flask" -}}
 - name: FLASK_DEBUG
-  value: {{ .Values.observability.flask_debug | default "false" | quote }}
+  value: {{ .Values.observability.flask_debug | quote }}
 {{- end -}}
 
 {{- define "observability.environment.database" -}}
-{{- if eq (include "observability.config_type" .) "minikube" -}}
+{{- if eq .Values.observability.config_type "minikube" -}}
 - name: MYSQL_USER
   value: {{ .Values.observability.mysql_user | quote }}
 - name: MYSQL_PASSWORD
@@ -52,7 +52,7 @@ Environment
 
 
 {{- define "observability.environment.kafka" -}}
-{{- if eq (include "observability.config_type" .) "cloud" -}}
+{{- if eq .Values.observability.config_type "cloud" -}}
 - name: KAFKA_CONNECTION_PARAMS
   valueFrom:
     secretKeyRef:
@@ -60,4 +60,3 @@ Environment
       key: KAFKA_CONNECTION_PARAMS
 {{- end -}}
 {{- end -}}
-

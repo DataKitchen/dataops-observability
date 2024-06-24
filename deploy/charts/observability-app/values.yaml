@@ -7,8 +7,11 @@ observability:
   mysql_secrets_name: mysql
   mysql_user: observability
   flask_debug: "false"
+  services_secrets_name: external-service-keys
+  keys_secrets_name: internal-keys
+  pythonpath: /dk/lib/python3.10/site-packages
   image:
-    repository: "docker.io/datakitchen"
+    repository: docker.io/datakitchen
     tag: "v2"
 
 observability_ui:
@@ -117,7 +120,7 @@ cli_hook:
   enable:
     - phases: ["pre-install", "pre-upgrade"]
       weight: 0
-      command: ["/dk/bin/yoyo-migrate", "apply"]
+      command: ["/dk/bin/cli", "migrate"]
   image:
     name: dataops-observability-be
     pullPolicy: IfNotPresent

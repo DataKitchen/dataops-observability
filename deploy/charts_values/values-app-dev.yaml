@@ -1,14 +1,8 @@
 #
 # Values for minikube deployment
 #
-# Required args from the external context:
-# - minikube_ip: Used to set the APIs hostname
-#
 
 observability:
-  config_type: minikube
-  mysql_secrets_name: mysql
-  mysql_user: observability
   flask_debug: "true"
   image:
     repository: "datakitchen"
@@ -18,13 +12,6 @@ observability_ui:
   enable: true
   image:
     pullPolicy: Never
-  service:
-    nodePort: 8082
-  podSecurityContext:
-    sysctls:
-      - name: net.core.somaxconn
-        value: "1024"
-  environmentJson: {"apiBaseUrl": "/api"}
 
 observability_api:
   image:
@@ -32,10 +19,6 @@ observability_api:
   service:
     type: NodePort
     nodePort: 5000
-  podSecurityContext:
-    sysctls:
-      - name: net.core.somaxconn
-        value: "1024"
 
 event_api:
   image:
@@ -43,10 +26,6 @@ event_api:
   service:
     type: NodePort
     nodePort: 5001
-  podSecurityContext:
-    sysctls:
-      - name: net.core.somaxconn
-        value: "1024"
 
 agent_api:
   image:
@@ -54,10 +33,6 @@ agent_api:
   service:
     type: NodePort
     nodePort: 5003
-  podSecurityContext:
-    sysctls:
-      - name: net.core.somaxconn
-        value: "1024"
 
 event_store:
   image:
@@ -78,7 +53,3 @@ scheduler:
 cli_hook:
   image:
     pullPolicy: Never
-  enable:
-    - phases: ["pre-install"]
-      command: ["/dk/bin/cli", "init", "--tables"]
-

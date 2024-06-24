@@ -19,7 +19,7 @@ class Action(BaseEntity):
 
     name = CharField(null=False)
     company = ForeignKeyField(Company, backref="actions", on_delete="CASCADE", null=False, index=True)
-    action_impl = EnumStrField(ActionImpl, null=False)
+    action_impl = EnumStrField(ActionImpl, null=False, max_length=30)
     action_args = JSONField(default=dict, null=False)
 
     class Meta:

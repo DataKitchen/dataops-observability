@@ -6,20 +6,6 @@ Chart name
 {{- end -}}
 
 {{/*
-Configuration type
-*/}}
-{{- define "observability.config_type" -}}
-{{- default "cloud" .Values.observability.config_type -}}
-{{- end -}}
-
-{{/*
-Python Path
-*/}}
-{{- define "observability.pythonpath" -}}
-{{- default "/dk/lib/python3.10/site-packages" .Values.observability.pythonpath -}}
-{{- end -}}
-
-{{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
@@ -201,4 +187,3 @@ CLI Hook
 {{- define "observability.cli_hook.image" }}
 {{- include "observability.image" (list . .Values.cli_hook) }}
 {{- end }}
-
