@@ -102,7 +102,9 @@ spec:
       targetPort: http
       protocol: TCP
       {{- if eq .Values.agent_api.service.type "NodePort" }}
-      nodePort: {{ .Values.agent_api.service.nodePort }}
+      {{- with .Values.agent_api.service.nodePort }}
+      nodePort: {{ . }}
+      {{- end }}
       {{- end }}
   selector:
     {{- include "observability.agent_api.selectorLabels" . | nindent 4 }}
