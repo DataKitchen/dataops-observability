@@ -53,7 +53,7 @@ spec:
             {{- toYaml .Values.observability_ui.resources | nindent 12 }}
           {{- if .Values.observability_ui.environmentJson }}
           volumeMounts:
-            - mountPath: /deploy/environments
+            - mountPath: /observability_ui/shell/environments
               name: {{ include "observability.observability_ui.name" . }}-configmap-volume
               readOnly: true
           {{- end }}
