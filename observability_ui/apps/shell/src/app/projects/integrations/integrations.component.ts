@@ -24,11 +24,7 @@ export class IntegrationsComponent extends CoreComponent implements OnInit, HasP
     filter(loading => !loading || !this.silentLoading),
   );
 
-  agents$ = this.agentStore.list$.pipe(
-    map((agents) => {
-      return agents.map((agent) => this.calculateLateness(agent));
-    })
-  );
+  agents$ = this.agentStore.list$
   total$ = this.agentStore.total$;
   pageSize = 10;
 
@@ -94,15 +90,5 @@ export class IntegrationsComponent extends CoreComponent implements OnInit, HasP
         filters,
       });
     });
-
-  }
-
-  private calculateLateness(agent: Agent) {
-    const now = Date.now();
-    const lastHeartBeat = new Date(agent.latest_heartbeat).getTime();
-
-    const lateness = Math.floor((now - lastHeartBeat)/1000);
-
-    return {...agent, lateness };
   }
 }

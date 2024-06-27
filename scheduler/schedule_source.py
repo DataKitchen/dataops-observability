@@ -3,7 +3,7 @@ __all__ = ["ScheduleSource", "RunTimeExecutor"]
 import logging
 from collections import defaultdict
 from datetime import datetime
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, Optional
 
 from apscheduler.executors.pool import ThreadPoolExecutor
 from apscheduler.job import Job
@@ -13,7 +13,7 @@ from apscheduler.triggers.base import BaseTrigger
 from apscheduler.triggers.interval import IntervalTrigger
 from peewee import Select
 
-from common.entities import InstanceRule, Schedule
+from common.entities import BaseEntity
 from common.kafka import KafkaProducer
 
 LOG = logging.getLogger(__name__)
@@ -99,7 +99,7 @@ class ScheduleSource:
 
         LOG.debug("Completed updating '%s' jobstore", self.jobstore_name)
 
-    def _create_and_add_job(self, schedule: Union[InstanceRule, Schedule]) -> None:
+    def _create_and_add_job(self, schedule: BaseEntity) -> None:
         """Create and add new scheduler job(s) based on schedule expectations or instance rule"""
         raise NotImplementedError
 
