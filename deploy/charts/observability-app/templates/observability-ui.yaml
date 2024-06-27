@@ -85,7 +85,9 @@ spec:
       targetPort: http
       protocol: TCP
       {{- if eq .Values.observability_ui.service.type "NodePort" }}
-      nodePort: {{ .Values.observability_ui.service.nodePort }}
+      {{- with .Values.observability_ui.service.nodePort }}
+      nodePort: {{ . }}
+      {{- end }}
       {{- end }}
   selector:
     {{- include "observability.observability_ui.selectorLabels" . | nindent 4 }}
