@@ -59,9 +59,9 @@
                   <span class="label">Latest heartbeat:</span>
                   <span class="value">{{(agent.latest_heartbeat | date:'MMM d, h:mm a') }}</span>
                   <div class="status-icon"
-                    [class.green]="agent.status == 'ONLINE'"
-                    [class.yellow]="agent.status == 'UNHEALTHY'"
-                    [class.red]="agent.status == 'OFFLINE'"
+                    [class.green]="agent.status == AgentStatus.Online"
+                    [class.yellow]="agent.status == AgentStatus.Unhealthy"
+                    [class.red]="agent.status == AgentStatus.Offline"
                   >
                   </div>
                 </div>
