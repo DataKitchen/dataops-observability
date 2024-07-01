@@ -53,7 +53,7 @@ spec:
             {{- toYaml .Values.observability_ui.resources | nindent 12 }}
           {{- if .Values.observability_ui.environmentJson }}
           volumeMounts:
-            - mountPath: /deploy/environments
+            - mountPath: /observability_ui/shell/environments
               name: {{ include "observability.observability_ui.name" . }}-configmap-volume
               readOnly: true
           {{- end }}
@@ -85,7 +85,9 @@ spec:
       targetPort: http
       protocol: TCP
       {{- if eq .Values.observability_ui.service.type "NodePort" }}
-      nodePort: {{ .Values.observability_ui.service.nodePort }}
+      {{- with .Values.observability_ui.service.nodePort }}
+      nodePort: {{ . }}
+      {{- end }}
       {{- end }}
   selector:
     {{- include "observability.observability_ui.selectorLabels" . | nindent 4 }}
