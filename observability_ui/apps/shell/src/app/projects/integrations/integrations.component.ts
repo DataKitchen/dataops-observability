@@ -1,13 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { BehaviorSubject, combineLatest, debounceTime, defer, filter, map, merge, takeUntil, tap, timer } from 'rxjs';
-import { Agent, AgentStatus, AgentStore, ProjectStore } from '@observability-ui/core';
+import { AgentStatus, AgentStore, ProjectStore } from '@observability-ui/core';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { ActivatedRoute } from '@angular/router';
 import { CoreComponent, HasPaginator, HasSearchForm, BindToQueryParams, PersistOnLocalStorage, Prop, TypedFormGroup, TypedFormControl, StorageService, ParameterService } from '@datakitchen/ngx-toolkit';
 
 type SearchFields = { search: string; };
-
-
 
 @Component({
   selector: 'shell-integrations',
@@ -26,7 +24,7 @@ export class IntegrationsComponent extends CoreComponent implements OnInit, HasP
     filter(loading => !loading || !this.silentLoading),
   );
 
-  agents$ = this.agentStore.list$
+  agents$ = this.agentStore.list$;
   total$ = this.agentStore.total$;
   pageSize = 10;
 
