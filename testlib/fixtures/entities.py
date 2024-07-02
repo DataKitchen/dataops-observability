@@ -11,6 +11,8 @@ __all__ = [
     "RUN_ALERT_ID",
     "RUN_ID",
     "action",
+    "agent_1",
+    "agent_2",
     "auth_provider",
     "basic_auth_user",
     "batch_end_schedule",

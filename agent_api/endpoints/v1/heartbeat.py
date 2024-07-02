@@ -8,7 +8,6 @@ from flask import Response, g, make_response
 from peewee import DoesNotExist
 
 from agent_api.schemas.heartbeat import HeartbeatSchema
-from common.agent import handle_agent_status_change
 from common.api.base_view import BaseView
 from common.entities import Agent
 from common.entities.agent import AgentStatus
@@ -41,13 +40,13 @@ def _update_or_create(
         agent.save(force_insert=True)
 
     agent.latest_heartbeat = cast(UTCTimestampField, latest_heartbeat)
-    # Only set if changed so it doesn't always get flagged as "dirty"
+    # Only set if changed, so it doesn't always get flagged as "dirty"
     if agent.version != version:
         agent.version = version
     if agent.latest_event_timestamp != latest_event_timestamp:
         agent.latest_event_timestamp = cast(UTCTimestampField, latest_event_timestamp)
-
-    handle_agent_status_change(agent, AgentStatus.ONLINE)
+    if agent.status != AgentStatus.ONLINE:
+        agent.status = AgentStatus.ONLINE
     agent.save()
 
 

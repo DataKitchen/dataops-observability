@@ -1,6 +1,5 @@
 from datetime import datetime, timezone
 from http import HTTPStatus
-from unittest.mock import patch
 
 import pytest
 
@@ -8,14 +7,8 @@ from common.entities import Agent
 from common.entities.agent import AgentStatus
 
 
-@pytest.fixture
-def status_change_handler_mock():
-    with patch("agent_api.endpoints.v1.heartbeat.handle_agent_status_change") as handler_mock:
-        yield handler_mock
-
-
 @pytest.mark.integration
-def test_agent_heartbeat(client, database_ctx, headers, status_change_handler_mock):
+def test_agent_heartbeat(client, database_ctx, headers):
     last_event_timestamp = datetime(2023, 10, 20, 4, 42, 42, tzinfo=timezone.utc)
     data = {
         "key": "test-key",
@@ -25,11 +18,10 @@ def test_agent_heartbeat(client, database_ctx, headers, status_change_handler_mo
     }
     response = client.post("/agent/v1/heartbeat", json=data, headers=headers)
     assert HTTPStatus.NO_CONTENT == response.status_code, response.json
-    status_change_handler_mock.assert_called_once()
 
 
 @pytest.mark.integration
-def test_agent_heartbeat_no_event_timestamp(client, database_ctx, headers, status_change_handler_mock):
+def test_agent_heartbeat_no_event_timestamp(client, database_ctx, headers):
     data = {
         "key": "test-key",
         "tool": "test-tool",
@@ -39,11 +31,10 @@ def test_agent_heartbeat_no_event_timestamp(client, database_ctx, headers, statu
     assert HTTPStatus.NO_CONTENT == response.status_code, response.json
     agent = Agent.select().get()
     assert agent.latest_event_timestamp is None
-    status_change_handler_mock.assert_called_once()
 
 
 @pytest.mark.integration
-def test_agent_heartbeat_update(client, database_ctx, headers, status_change_handler_mock):
+def test_agent_heartbeat_update(client, database_ctx, headers):
     last_event_timestamp = datetime(2023, 10, 20, 4, 42, 42, tzinfo=timezone.utc)
     data = {
         "key": "test-key",
@@ -68,11 +59,9 @@ def test_agent_heartbeat_update(client, database_ctx, headers, status_change_han
     assert agent_2.latest_heartbeat > now
     assert agent_2.status == AgentStatus.ONLINE
 
-    assert status_change_handler_mock.call_count == 2
-
 
 @pytest.mark.integration
-def test_agent_heartbeat_existing_update(client, database_ctx, headers, status_change_handler_mock):
+def test_agent_heartbeat_existing_update(client, database_ctx, headers):
     last_event_timestamp = datetime(2023, 10, 20, 4, 42, 42, tzinfo=timezone.utc)
     data_1 = {
         "key": "test-key",
@@ -100,5 +89,3 @@ def test_agent_heartbeat_existing_update(client, database_ctx, headers, status_c
     assert agent_2.latest_heartbeat is not None
     assert agent_1.latest_event_timestamp is not None
     assert agent_1.version != agent_2.version, "Expected agent version to change"
-
-    assert status_change_handler_mock.call_count == 2
