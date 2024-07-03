@@ -43,7 +43,6 @@ def test_get_rules_returned_actions(
         )
     assert 2 == RuleEntity.select().count()
 
-    # Snag all the rules that aren't globally registered
     rules = get_rules(rule_entities[0].journey.id)
     assert 2 == len(rules)
     for rule in rules:

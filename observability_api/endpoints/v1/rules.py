@@ -29,7 +29,7 @@ def _validate_rule_action(rule: Rule) -> None:
     """Validate that the current rule data is able to correctly generate an executable Action."""
     try:
         action = JourneyService.get_action_by_implementation(rule.journey, rule.action)
-        action_factory(rule, action)
+        action_factory(rule.action, rule.action_args, action)
     except ActionTemplateRequired:
         LOG.exception("Action '%s' not configured.", rule.action)
         raise InternalServerError(f"Action '{rule.action}' not configured, contact system administrator.")
