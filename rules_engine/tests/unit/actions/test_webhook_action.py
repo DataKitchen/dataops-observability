@@ -5,7 +5,7 @@ import pytest
 
 from common.entities import Action
 from common.events.v1 import ApiRunStatus, RunStatusEvent, TestOutcomesEvent, TestStatuses
-from observability_api.schemas import WebhookActionArgsSchema
+from common.schemas.action_schemas import WebhookActionArgsSchema
 from rules_engine.actions.webhook_action import WebhookAction
 
 

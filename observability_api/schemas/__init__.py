@@ -40,7 +40,7 @@ from .user_schemas import *
 # TestgenDatasetComponentSchema,
 # WebhookActionArgsSchema,
 ALL_SCHEMAS = [
-    ActionSchema,
+    ApiActionSchema,
     AgentSchema,
     CallWebhookRuleSchema,
     CompanyPatchSchema,
@@ -48,7 +48,6 @@ ALL_SCHEMAS = [
     ComponentPatchSchema,
     ComponentSchema,
     DatasetSchema,
-    EmailActionArgsSchema,
     EventResponseSchema,
     InstanceAlertSchema,
     InstanceDetailedSchema,

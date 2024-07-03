@@ -44,7 +44,7 @@ class BaseView(MethodView):
     A tuple of permissions required to access the view.
 
     For authentication exempted route, such as sso_login, use an empty tuple. Otherwise, at least one permission must be
-    defined. The request is dispatched when the first valid permission met, i.e. The elements of this tuple are "OR'ed"
+    defined. The request is dispatched when the first valid permission met, i.e. the elements of this tuple are "OR'ed"
     """
 
     @property
