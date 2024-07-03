@@ -11,6 +11,8 @@ __all__ = [
     "RUN_ALERT_ID",
     "RUN_ID",
     "action",
+    "agent_1",
+    "agent_2",
     "auth_provider",
     "basic_auth_user",
     "batch_end_schedule",
@@ -115,6 +117,7 @@ from common.entities import (
     User,
     UserRole,
 )
+from common.entities.agent import AgentStatus
 from conf import init_db
 
 AGENT_ID: UUID = UUID("fdcf7927-a43e-41ad-b8eb-e45d7b1a4d1a")
@@ -226,7 +229,14 @@ def organization(test_db, company, user):
 
 @pytest.fixture()
 def project(test_db, organization, user):
-    return Project.create(id=PROJECT_ID, name="P1", organization=organization, active=True, created_by=user)
+    return Project.create(
+        id=PROJECT_ID,
+        name="P1",
+        organization=organization,
+        active=True,
+        created_by=user,
+        agent_status_check_interval=30,
+    )
 
 
 @pytest.fixture()
@@ -554,6 +564,7 @@ def agent_1(test_db, project):
         key="test-agent-1-key",
         tool="test-agent-1-tool",
         version="1.0.0",
+        status=AgentStatus.OFFLINE,
         lastest_heartbeat=AGENT_LATEST_HEARTBEAT,
         latest_event_timestamp=AGENT_LATEST_EVENT,
     )
@@ -568,6 +579,7 @@ def agent_2(test_db, project):
         key="test-agent-2-key",
         tool="test-agent-2-tool",
         version="2.0.0",
+        status=AgentStatus.ONLINE,
         lastest_heartbeat=dt_2,
         latest_event_timestamp=dt_1,
     )

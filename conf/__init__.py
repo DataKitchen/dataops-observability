@@ -7,7 +7,6 @@ from typing import Any, Union
 from peewee import SqliteDatabase
 
 from common.decorators import cached_property
-from common.entities import ALL_MODELS, DB
 
 from . import defaults
 
@@ -93,6 +92,10 @@ settings = ConfigClass()
 
 def init_db() -> None:
     """Initialize the database engine and establish a connection."""
+
+    # Importing locally to avoid circular imports
+    from common.entities import ALL_MODELS, DB
+
     dbconfig = settings.DATABASE.copy()  # Don't modify config value
 
     # Get required name & engine parameters

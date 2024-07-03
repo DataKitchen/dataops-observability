@@ -1,13 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { BehaviorSubject, combineLatest, debounceTime, defer, filter, map, merge, takeUntil, tap, timer } from 'rxjs';
-import { Agent, AgentStore, ProjectStore } from '@observability-ui/core';
+import { AgentStatus, AgentStore, ProjectStore } from '@observability-ui/core';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { ActivatedRoute } from '@angular/router';
 import { CoreComponent, HasPaginator, HasSearchForm, BindToQueryParams, PersistOnLocalStorage, Prop, TypedFormGroup, TypedFormControl, StorageService, ParameterService } from '@datakitchen/ngx-toolkit';
 
 type SearchFields = { search: string; };
-
-
 
 @Component({
   selector: 'shell-integrations',
@@ -17,6 +15,8 @@ type SearchFields = { search: string; };
 export class IntegrationsComponent extends CoreComponent implements OnInit, HasPaginator, HasSearchForm<SearchFields> {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  readonly AgentStatus = AgentStatus;
+
   loading$ = merge(
     this.agentStore.getLoadingFor('getPage'),
     defer(() => this.antiFlickerLoading$.asObservable()),
@@ -24,11 +24,7 @@ export class IntegrationsComponent extends CoreComponent implements OnInit, HasP
     filter(loading => !loading || !this.silentLoading),
   );
 
-  agents$ = this.agentStore.list$.pipe(
-    map((agents) => {
-      return agents.map((agent) => this.calculateLateness(agent));
-    })
-  );
+  agents$ = this.agentStore.list$;
   total$ = this.agentStore.total$;
   pageSize = 10;
 
@@ -49,11 +45,6 @@ export class IntegrationsComponent extends CoreComponent implements OnInit, HasP
   silentLoading = false;
 
   storageKey!: string;
-
-  agentsLatenessThresholds = {
-    error: 10 * 60,
-    warning: 5 * 60,
-  };
 
   constructor(
     private projectStore: ProjectStore,
@@ -94,15 +85,5 @@ export class IntegrationsComponent extends CoreComponent implements OnInit, HasP
         filters,
       });
     });
-
-  }
-
-  private calculateLateness(agent: Agent) {
-    const now = Date.now();
-    const lastHeartBeat = new Date(agent.latest_heartbeat).getTime();
-
-    const lateness = Math.floor((now - lastHeartBeat)/1000);
-
-    return {...agent, lateness };
   }
 }
