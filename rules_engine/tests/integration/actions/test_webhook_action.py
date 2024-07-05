@@ -3,8 +3,7 @@ import pytest
 from common.entities import DB, Action, Company, Organization, Pipeline, Project, Run
 from common.events.v1 import ApiRunStatus, RunStatusEvent
 from conf import init_db
-from observability_api.schemas import WebhookActionArgsSchema
-from observability_api.schemas.action_schemas import HttpMethod
+from common.schemas.action_schemas import HttpMethod, WebhookActionArgsSchema
 from rules_engine.actions.webhook_action import WebhookAction
 from testlib.fixtures.web_server import webhook_server  # noqa: F401
 

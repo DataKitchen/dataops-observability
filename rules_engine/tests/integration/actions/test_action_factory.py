@@ -1,6 +1,6 @@
 import pytest
 
-from observability_api.schemas.action_schemas import ValidActions
+from common.schemas.action_schemas import ValidActions
 from rules_engine.actions import ACTION_CLASS_MAP
 
 

@@ -38,7 +38,7 @@ def test_create_action_ok(use_template, rule, action_class_mock, action):
     template = action if use_template else None
 
     # Run
-    action_object = action_factory(rule, template)
+    action_object = action_factory(rule.action, rule.action_args, template)
 
     # Verify
     action_class_mock.assert_called_once_with(template, rule.action_args)
@@ -49,7 +49,7 @@ def test_create_action_ok(use_template, rule, action_class_mock, action):
 def test_create_action_unknown_impl(rule, action_class_mock):
     rule.action = "DO_ANOTHER_THING"
     with pytest.raises(ImplementationNotFound, match="is not recognized"):
-        action_factory(rule, None)
+        action_factory(rule.action, rule.action_args, None)
 
 
 @pytest.mark.unit
@@ -57,4 +57,4 @@ def test_create_action_bad_template(rule, action_class_mock, action):
     # Setup
     action.action_impl = TestActionImpl.DO_ANOTHER_THING
     with pytest.raises(InvalidActionTemplate, match="doesn't match Rule action"):
-        action_factory(rule, action)
+        action_factory(rule.action, rule.action_args, action)

@@ -11,7 +11,7 @@ from common.entities import Action, Company
 from common.entity_services import CompanyService
 from common.entity_services.helpers import ActionFilters, ListRules, Page
 from observability_api.endpoints.entity_view import BaseEntityView
-from observability_api.schemas import ActionSchema
+from observability_api.schemas import ApiActionSchema
 
 LOG = logging.getLogger(__name__)
 
@@ -94,11 +94,11 @@ class Actions(BaseEntityView):
               application/json:
                 schema: HTTPErrorSchema
         """
-        _ = self.get_entity_or_fail(Company, Company.id == company_id)
+        self.get_entity_or_fail(Company, Company.id == company_id)
         page: Page = CompanyService.get_actions_with_rules(
             company_id, ListRules.from_params(request.args), ActionFilters.from_params(request.args)
         )
-        actions = ActionSchema().dump(page.results, many=True)
+        actions = ApiActionSchema().dump(page.results, many=True)
         LOG.debug("List Actions for company_id '%s'. Found %d entries.", company_id, page.total)
         return make_response({"entities": actions, "total": page.total})
 
@@ -157,6 +157,6 @@ class ActionById(BaseEntityView):
                 schema: HTTPErrorSchema
         """
         action = self.get_entity_or_fail(Action, Action.id == action_id)
-        self.parse_body(schema=ActionSchema(action))
+        self.parse_body(schema=ApiActionSchema(action))
         self.save_entity_or_fail(action)
-        return make_response(ActionSchema().dump(action))
+        return make_response(ApiActionSchema().dump(action))
