@@ -10,9 +10,9 @@ from testlib.fixtures.entities import *
 @pytest.fixture
 def actions(company):
     return [
-        Action.create(name=f"Action_1", company=company, action_impl=ActionImpl.CALL_WEBHOOK),
-        Action.create(name=f"Action_2", company=company, action_impl=ActionImpl.CALL_WEBHOOK),
-        Action.create(name=f"Action_3", company=company, action_impl=ActionImpl.SEND_EMAIL),
+        Action.create(name="Action_1", company=company, action_impl=ActionImpl.CALL_WEBHOOK),
+        Action.create(name="Action_2", company=company, action_impl=ActionImpl.CALL_WEBHOOK),
+        Action.create(name="Action_3", company=company, action_impl=ActionImpl.SEND_EMAIL),
     ]
 
 

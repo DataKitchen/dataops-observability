@@ -14,7 +14,7 @@ ACTION_CLASS_MAP: dict[str, Type[BaseAction]] = {"CALL_WEBHOOK": WebhookAction, 
 def action_factory(implementation: str, action_args: dict, template: Optional[Action]) -> BaseAction:
     try:
         action_class = ACTION_CLASS_MAP[implementation]
-    except KeyError as e:
+    except KeyError:
         raise ImplementationNotFound(f"Action implementation '{implementation}' is not recognized")
 
     if template and template.action_impl.name != implementation:

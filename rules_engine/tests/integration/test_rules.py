@@ -30,6 +30,7 @@ def test_get_rules_returned_actions(
         rule_entities.append(
             RuleEntity.create(
                 action=action.action_impl,
+                action_args={"idx": i},
                 component=pipeline,
                 journey=journey,
                 rule_schema="simple_v1",
@@ -47,11 +48,12 @@ def test_get_rules_returned_actions(
     assert 2 == len(rules)
     for rule in rules:
         rule.triggers[0](run_status_event, rule.rule_entity, rule_entities[0].journey.id)
-    assert 2 == len(action_factory_mock.call_args_list)
-    assert isinstance(action_factory_mock.call_args_list[0].args[0], RuleEntity)
-    # Collect all Rule entities from action_factory calls in a set to make sure
-    # that the same entity was not used twice (hint: there was a bug where this happened)
-    assert 2 == len({call.args[0] for call in action_factory_mock.call_args_list})
+    factory_calls = action_factory_mock.call_args_list
+    assert 2 == len(factory_calls)
+    assert factory_calls[0].args[0] == "CALL_WEBHOOK"
+    # Comparing all action args from action_factory calls to make sure that the same rule entity was not used twice
+    # (hint: there was a bug where this happened)
+    assert factory_calls[0].args[1] != factory_calls[1].args[1]
 
 
 @pytest.mark.integration
