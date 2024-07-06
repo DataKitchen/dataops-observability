@@ -8,7 +8,7 @@ from peewee import SelectQuery, fn
 from common.entities import Run
 from common.events.internal import RunAlert
 from common.events.v1 import Event
-from rules_engine import EVENT_TYPE
+from rules_engine.typing import EVENT_TYPE
 
 
 class DatabaseData:

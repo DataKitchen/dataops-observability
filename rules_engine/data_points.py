@@ -12,7 +12,7 @@ from common.entity_services import ProjectService
 from common.entity_services.helpers import ListRules
 from common.events.internal import RunAlert
 from common.events.v1 import Event
-from rules_engine import ALERT_EVENT, EVENT_TYPE
+from rules_engine.typing import ALERT_EVENT, EVENT_TYPE
 
 LOG = logging.getLogger(__name__)
 

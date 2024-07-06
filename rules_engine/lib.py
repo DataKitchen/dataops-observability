@@ -4,8 +4,8 @@ from dataclasses import asdict
 from common.entities import Journey, JourneyDagEdge
 from common.events.internal import InstanceAlert, RunAlert
 from common.events.v1 import Event
-from rules_engine import EVENT_TYPE
-from rules_engine.rules import Rule, get_rules
+from rules_engine.typing import EVENT_TYPE, Rule
+from rules_engine.journey_rules import get_rules
 
 LOG = logging.getLogger(__name__)
 

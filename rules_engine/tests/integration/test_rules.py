@@ -6,12 +6,12 @@ import pytest
 from common.entities import Rule as RuleEntity
 from common.entities import RunStatus
 from common.events.v1 import TestStatuses
-from rules_engine.rules import get_rules
+from rules_engine.journey_rules import get_rules
 
 
 @pytest.fixture
 def action_factory_mock():
-    with patch("rules_engine.rules.action_factory") as action_factory:
+    with patch("rules_engine.journey_rules.action_factory") as action_factory:
         yield action_factory
 
 

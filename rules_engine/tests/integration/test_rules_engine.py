@@ -11,7 +11,7 @@ from common.events.v1.test_outcomes_event import TestOutcomeItem
 from common.predicate_engine.query import ANY, R
 from rules_engine import lib
 from rules_engine.engine import RulesEngine
-from rules_engine.rules import Rule, get_rules
+from rules_engine.journey_rules import JourneyRule, get_rules
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -33,7 +33,7 @@ def test_rules_engine_matching_task(kafka_consumer, db_rule, run_status_event, j
     # This should be an affirmative match
     predicate = R(event__task__key__exact="T1")
     # Register the rule manually
-    get_rules_mock.return_value = [Rule(predicate, db_rule, action, journey_id=journey.id)]
+    get_rules_mock.return_value = [JourneyRule(predicate, db_rule, action, journey_id=journey.id)]
 
     rules_engine.process_events()
     # If the action as triggered then the match was successful
@@ -51,7 +51,7 @@ def test_rules_engine_non_matching_pipeline(
     # This should not match
     predicate = R(event__task__key__exact="T2")
     # Register the rule manually
-    get_rules_mock.return_value = [Rule(predicate, db_rule, action, journey_id=journey.id)]
+    get_rules_mock.return_value = [JourneyRule(predicate, db_rule, action, journey_id=journey.id)]
 
     rules_engine.process_events()
     # If the action as triggered then the match was successful - this shouldn't happen
@@ -69,7 +69,7 @@ def test_rules_engine_matching_status(kafka_consumer, db_rule, run_status_event,
     # This should be an affirmative match
     predicate = R(event__status__exact=RunStatus.RUNNING.name)
     # Register the rule manually
-    get_rules_mock.return_value = [Rule(predicate, db_rule, action, journey_id=journey.id)]
+    get_rules_mock.return_value = [JourneyRule(predicate, db_rule, action, journey_id=journey.id)]
 
     rules_engine.process_events()
     # If the action as triggered then the match was successful
@@ -102,7 +102,7 @@ def test_rules_engine_matching_single_test_outcome(
 
     predicate = R(event__test_outcomes__exact=ANY(TestStatuses.PASSED.name, attr_name="status"))
     get_rules_mock.return_value = [
-        Rule(predicate, db_rule, action, journey_id=journey.id, component_id=component.id),
+        JourneyRule(predicate, db_rule, action, journey_id=journey.id, component_id=component.id),
     ]
 
     rules_engine.process_events()
@@ -139,7 +139,7 @@ def test_rules_engine_multiple_test_outcomes_action_trigger_once(
     action = MagicMock(return_value=None)
 
     predicate = R(event__test_outcomes__exact=ANY(TestStatuses.PASSED.name, attr_name="status"))
-    get_rules_mock.return_value = [Rule(predicate, db_rule, action, journey_id=journey.id)]
+    get_rules_mock.return_value = [JourneyRule(predicate, db_rule, action, journey_id=journey.id)]
 
     kafka_consumer.__iter__.return_value = iter((test_outcome_event,))
     rules_engine.process_events()
@@ -159,7 +159,7 @@ def test_rules_engine_non_matching_status(kafka_consumer, run_status_event, db_r
     # This match should not succeed
     predicate = R(event__status__exact="nope")
     # Register the rule manually
-    get_rules_mock.return_value = [Rule(predicate, db_rule, action, journey_id=journey.id)]
+    get_rules_mock.return_value = [JourneyRule(predicate, db_rule, action, journey_id=journey.id)]
 
     rules_engine.process_events()
     # If the action as triggered then the match was successful
@@ -200,7 +200,7 @@ def test_rules_engine_process_multiple_component_types_simultaneously(
     action = MagicMock(return_value=None)
 
     predicate = R(event__test_outcomes__exact=ANY(TestStatuses.PASSED.name, attr_name="status"))
-    get_rules_mock.return_value = [Rule(predicate, db_rule, action, journey_id=journey.id)]
+    get_rules_mock.return_value = [JourneyRule(predicate, db_rule, action, journey_id=journey.id)]
 
     kafka_consumer.__iter__.return_value = iter(
         (batch_pipeline_test_outcome_event_message, dataset_test_outcome_event_message)

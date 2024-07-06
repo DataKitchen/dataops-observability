@@ -9,7 +9,7 @@ from requests_extensions import get_session
 from common.entities import Rule
 from common.events.internal import InstanceAlert, RunAlert
 from common.events.v1 import Event
-from rules_engine import EVENT_TYPE
+from rules_engine.typing import EVENT_TYPE
 from rules_engine.actions.action import ActionResult, BaseAction
 from rules_engine.data_points import AlertDataPoints, DataPoints
 

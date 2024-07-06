@@ -10,7 +10,7 @@ from common.email.email_service import EmailService
 from common.entities import Journey, Rule
 from common.events.internal import InstanceAlert, RunAlert
 from common.events.v1 import Event
-from rules_engine import EVENT_TYPE
+from rules_engine.typing import EVENT_TYPE
 from rules_engine.data_points import AlertDataPoints, DataPoints
 
 from .action import ActionResult, BaseAction
