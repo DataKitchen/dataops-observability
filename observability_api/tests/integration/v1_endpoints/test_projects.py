@@ -57,6 +57,8 @@ def test_get_project_by_id(client, g_user, project):
     assert response.status_code == HTTPStatus.OK, response.json
     data = response.json
     assert data["id"] == str(project.id)
+    assert "agent_status_check_interval" not in data
+    assert "alert_actions" not in data
 
 
 @pytest.mark.integration

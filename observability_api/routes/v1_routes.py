@@ -16,6 +16,7 @@ from observability_api.endpoints.v1.instance_rules import InstanceRuleById, Inst
 from observability_api.endpoints.v1.instances import CompanyInstances, InstanceById, InstanceDag, Instances
 from observability_api.endpoints.v1.journeys import JourneyById, JourneyDag, JourneyDagEdgeById, Journeys
 from observability_api.endpoints.v1.organizations import OrganizationById, Organizations
+from observability_api.endpoints.v1.project_settings import ProjectAlertsSettings
 from observability_api.endpoints.v1.projects import ProjectById, ProjectEvents, Projects
 from observability_api.endpoints.v1.rules import RuleById, Rules
 from observability_api.endpoints.v1.runs import RunById, Runs
@@ -145,6 +146,12 @@ def build_project_routes(bp: Blueprint) -> Views:
     return [projects_view, project_by_id, project_events, project_tests, project_alerts]
 
 
+def build_project_settings_routes(bp: Blueprint) -> Views:
+    alerts_view = ProjectAlertsSettings.as_view("project_alert_settings")
+    bp.add_url_rule("/projects/<uuid:project_id>/alert-settings", view_func=alerts_view, methods=["GET", "PATCH"])
+    return [alerts_view]
+
+
 def build_user_routes(bp: Blueprint) -> Views:
     users_view = Users.as_view("users")
     user_by_id_view = UserById.as_view("user_by_id")
@@ -253,6 +260,7 @@ def build_v1_routes(app: Flask, prefix: str, native_routes: bool = True, plugin_
         views += build_journey_dag_routes(bp)
         views += build_organization_routes(bp)
         views += build_project_routes(bp)
+        views += build_project_settings_routes(bp)
         views += build_rules_routes(bp)
         views += build_run_routes(bp)
         views += build_schedule_routes(bp)

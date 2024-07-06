@@ -14,7 +14,7 @@ from werkzeug.datastructures import MultiDict
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from common.constants import ADMIN_ROLE
-from common.entities import Project, User
+from common.entities import Project, User, BaseEntity
 
 LOG = logging.getLogger(__name__)
 
@@ -95,6 +95,10 @@ class BaseView(MethodView):
             return schema.load(data)
         except ValidationError as e:
             raise BadRequest(str(e)) from e
+
+    def patch_entity(self, *, schema: Schema, entity: BaseEntity) -> None:
+        for attr, value in self.parse_body(schema=schema).items():
+            setattr(entity, attr, value)
 
     def parse_args(self, *, schema: Schema) -> Any:
         """Parse the request arguments using the given schema."""

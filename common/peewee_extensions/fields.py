@@ -11,7 +11,9 @@ from typing import Any, Optional, Pattern, Type, Union, cast
 from unicodedata import normalize
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
+from marshmallow import Schema
 from peewee import CharField, IntegerField, TextField, TimestampField
+from playhouse.mysql_ext import JSONField
 
 from common.decorators import cached_property
 
@@ -261,3 +263,31 @@ class JSONDictListField(TextField):
             return dict_list
         else:
             return None
+
+
+class JSONSchemaField(JSONField):
+    """A field for storing JSON data to/from a marshmallow schema."""
+
+    def __init__(self, schema: Schema, **kwargs: Any) -> None:
+        self.schema = schema
+        super().__init__(**kwargs)
+
+    def db_value(self, value: Any) -> Optional[str]:
+        if value is None:
+            json_data = "null"
+        else:
+            try:
+                json_data = self.schema.dump(value)
+            except Exception as e:
+                raise ValueError(f"The value in '{self.name}' can not be dumped by {self.schema}.") from e
+        return cast(str, super().db_value(json_data))
+
+    def python_value(self, value: Optional[str]) -> Optional[Any]:
+        if value is None or value == "null":
+            return None
+        else:
+            json_value = super().python_value(value)
+            try:
+                return self.schema.load(json_value)
+            except Exception as e:
+                raise ValueError(f"The DB value for '{self.name}' can not be loaded by {self.schema}.") from e

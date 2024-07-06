@@ -13,6 +13,7 @@ class ProjectSchema(BaseEntitySchema, AuditEntitySchemaMixin):
 
     class Meta:
         model = Project
+        exclude = ("agent_status_check_interval", "alert_actions")
 
 
 class ProjectPatchSchema(ProjectSchema):
