@@ -6,6 +6,8 @@ from peewee import Select
 
 from common.entities import Project, Agent
 from common.entities.agent import AgentStatus
+from common.events.internal.system import AgentStatusChangeEvent
+from common.kafka import TOPIC_IDENTIFIED_EVENTS
 from conf import settings
 from scheduler.schedule_source import ScheduleSource
 
@@ -23,21 +25,8 @@ def _get_agent_status(check_interval_seconds: int, latest_heartbeat: datetime) -
         return AgentStatus.ONLINE
 
 
-def _check_agents_are_online(project: Project) -> None:
-    check_threshold = datetime.now(tz=timezone.utc) - timedelta(seconds=project.agent_status_check_interval)
-    for agent in Agent.select().where(
-        Agent.project == project.id,
-        Agent.latest_heartbeat < check_threshold,
-    ):
-        new_status = _get_agent_status(project.agent_status_check_interval, agent.latest_heartbeat)
-        if agent.status == new_status:
-            LOG.debug("Agent '%s' status did not change: %s", agent.id, agent.status)
-        else:
-            LOG.info("Agent '%s' status changed from %s to %s", agent.id, agent.status, new_status)
-            _update_agent_status(agent, new_status)
-
-
 def _update_agent_status(agent: Agent, status: AgentStatus) -> bool:
+    """'Atomically' update a given agent instance status without changing the instance itself."""
     count = (
         Agent.update(status=status)
         .where(
@@ -53,14 +42,44 @@ def _update_agent_status(agent: Agent, status: AgentStatus) -> bool:
 
 class AgentStatusScheduleSource(ScheduleSource):
     source_name = "agent_status"
+    kafka_topic = TOPIC_IDENTIFIED_EVENTS
 
     def _get_schedules(self) -> Select:
         return Project.select().where(Project.agent_status_check_interval > 0)
 
     def _create_and_add_job(self, schedule: Project) -> None:
         self.add_job(
-            _check_agents_are_online,
+            self._check_agents_are_online,
             str(schedule.id),
             IntervalTrigger(seconds=schedule.agent_status_check_interval),
             {"project": schedule},
         )
+
+    def _check_agents_are_online(self, project: Project) -> None:
+        check_threshold = datetime.now(tz=timezone.utc) - timedelta(seconds=project.agent_status_check_interval)
+        for agent in Agent.select().where(
+            Agent.project == project.id,
+            Agent.latest_heartbeat < check_threshold,
+        ):
+            new_status = _get_agent_status(project.agent_status_check_interval, agent.latest_heartbeat)
+            if agent.status == new_status:
+                LOG.debug("Agent '%s' status did not change: %s", agent.id, agent.status)
+            else:
+                LOG.info("Agent '%s' status changed from %s to %s", agent.id, agent.status, new_status)
+                if _update_agent_status(agent, new_status) and new_status == AgentStatus.OFFLINE:
+                    self._send_agent_status_change_event(agent, new_status)
+
+    def _send_agent_status_change_event(self, agent: Agent, new_status: AgentStatus) -> None:
+        event = AgentStatusChangeEvent(
+            project_id=agent.project_id,
+            agent_id=agent.id,
+            agent_key=agent.key,
+            agent_tool=agent.tool,
+            previous_status=agent.status,
+            current_status=new_status,
+            latest_heartbeat=agent.latest_heartbeat,
+            latest_event_timestamp=agent.latest_event_timestamp,
+        )
+
+        with self.event_producer as producer:
+            producer.produce(self.kafka_topic, event)

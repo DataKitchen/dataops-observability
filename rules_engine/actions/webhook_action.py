@@ -1,22 +1,22 @@
 __all__ = ["WebhookAction"]
 
 import logging
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, Mapping
 from uuid import UUID
 
 from requests_extensions import get_session
 
 from common.entities import Rule
-from common.events.internal import InstanceAlert, RunAlert
+from common.events.internal import InstanceAlert, RunAlert, AgentStatusChangeEvent
 from common.events.v1 import Event
 from rules_engine.typing import EVENT_TYPE
 from rules_engine.actions.action import ActionResult, BaseAction
-from rules_engine.data_points import AlertDataPoints, DataPoints
+from rules_engine.data_points import AlertDataPoints, DataPoints, AgentStatusChangeDataPoints
 
 LOG = logging.getLogger(__name__)
 
 
-def format_data(data: Union[None, list, dict, str], data_points: DataPoints) -> Any:
+def format_data(data: Union[None, list, dict, str], data_points: Mapping) -> Any:
     """
     Format strings found in data structure with the given data points
 
@@ -44,12 +44,16 @@ class WebhookAction(BaseAction):
     required_arguments = {"url", "method"}
 
     def _run(self, event: EVENT_TYPE, rule: Rule, _: Optional[UUID]) -> ActionResult:
-        data_points: Union[DataPoints, AlertDataPoints]
+        data_points: Mapping
         match event:
             case RunAlert() | InstanceAlert():
                 data_points = AlertDataPoints(event, rule)
+            case AgentStatusChangeEvent():
+                data_points = AgentStatusChangeDataPoints(event, rule)
             case Event():
                 data_points = DataPoints(event, rule)
+            case _:
+                data_points = {}  # type: ignore[unreachable]
         try:
             response = get_session().request(
                 self.arguments["method"],
@@ -62,7 +66,7 @@ class WebhookAction(BaseAction):
             return ActionResult(False, None, e)
         return ActionResult(True, {"status_code": response.status_code}, None)
 
-    def _parse_headers(self, data_points: DataPoints) -> Optional[dict[str, str]]:
+    def _parse_headers(self, data_points: Mapping) -> Optional[dict[str, str]]:
         if headers := self.arguments.get("headers"):
             return {h["key"]: format_data(h["value"], data_points) for h in headers}
         else:

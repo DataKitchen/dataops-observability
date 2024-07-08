@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Mapping
 
 from pybars import Compiler
 
@@ -6,6 +6,7 @@ from common.constants.email_templates import *
 from common.email.templates import *
 
 TEMPLATES: dict[str, type[BaseTemplate]] = {
+    AGENT_STATUS_CHANGE_TEMPLATE_NAME: AgentStatusChangeTemplate,
     INSTANCE_ALERT_TEMPLATE_NAME: InstanceAlertTemplate,
     MESSAGE_LOG_TEMPLATE_NAME: MessageLogTemplate,
     METRIC_LOG_TEMPLATE_NAME: MetricLogTemplate,
@@ -22,7 +23,7 @@ TEMPLATES: dict[str, type[BaseTemplate]] = {
 
 class HandlebarsEmailRenderer:
     @staticmethod
-    def render(template_name: str, context_vars: dict) -> tuple[str, str]:
+    def render(template_name: str, context_vars: Mapping) -> tuple[str, str]:
         if template_name not in TEMPLATES:
             raise ValueError(f"Template name {template_name} is not a valid selection for email action")
         template = TEMPLATES[template_name]

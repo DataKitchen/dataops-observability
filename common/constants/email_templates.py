@@ -10,6 +10,7 @@ ADDING A NEW TEMPLATE:
    and CONFIRM WITH THE UI TEAM that the look of the email is exactly right!
 """
 
+AGENT_STATUS_CHANGE_TEMPLATE_NAME = "agent_status_change"
 INSTANCE_ALERT_TEMPLATE_NAME = "instance_alert"
 MESSAGE_LOG_TEMPLATE_NAME = "message_log"
 METRIC_LOG_TEMPLATE_NAME = "metric_log"

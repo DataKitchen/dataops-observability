@@ -11,7 +11,8 @@ from common.kafka import ConsumerError, KafkaConsumer, MessageError
 from common.kubernetes import readiness_check_wrapper
 from conf import init_db
 
-from .lib import process_instance_alert, process_run_alert, process_v1_event
+from .lib import process_instance_alert, process_run_alert, process_v1_event, process_project_alert
+from .typing import PROJECT_EVENT
 
 LOG = logging.getLogger(__name__)
 
@@ -37,6 +38,8 @@ class RulesEngine:
                             process_run_alert(event)
                         case Event():
                             process_v1_event(event)
+                        case PROJECT_EVENT():
+                            process_project_alert(event)
                         case _:
                             LOG.info("Message payload %s is not a type supported by the rules engine.", type(event))
                 except (InterfaceError, OperationalError) as e:
