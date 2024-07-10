@@ -1,0 +1,31 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+.line {
+  @include mixins.flex-row($justify: flex-start, $align: center);
+
+  width: 100%;
+  padding: 2px;
+
+  [matInput] {
+    @include mixins.font-color(secondary);
+    border-bottom: 1px solid variables.$gray-500;
+    width: 55px !important;
+  }
+
+  span {
+    line-height: 21px;
+  }
+
+  * + * {
+    margin-left: variables.$space-xs !important;
+  }
+
+  &.wrap {
+    flex-wrap: wrap;
+  }
+}
+
+.line + .line {
+  margin-top: variables.$space-xs;
+}

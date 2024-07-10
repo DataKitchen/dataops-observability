@@ -14,6 +14,16 @@ export interface ServiceKey extends WithId {
   allowed_services?: Array<'EVENTS_API' | 'OBSERVABILITY_API' | 'AGENT_API'>
 }
 
+export interface ProjectAlertSettingsAction {
+  action_impl: string,
+  action_args: {},
+}
+
+export interface ProjectAlertSettings {
+  agent_check_interval: number;
+  actions: [ProjectAlertSettingsAction?];
+}
+
 export interface TestsSearchFields {
   start_range_begin?: string;
   start_range_end?: string;

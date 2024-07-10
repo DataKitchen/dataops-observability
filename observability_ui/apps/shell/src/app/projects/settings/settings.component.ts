@@ -9,6 +9,7 @@ import { MatLegacyFormFieldModule } from '@angular/material/legacy-form-field';
 import { MatLegacyInputModule } from '@angular/material/legacy-input';
 import { tap } from 'rxjs';
 import { EmailActionComponent } from '../../components/email-action/email-action.component';
+import { ProjectAlertsComponent } from "../../components/project-alerts/project-alerts.component";
 
 @Component({
   selector: 'shell-project-settings',
@@ -26,6 +27,7 @@ import { EmailActionComponent } from '../../components/email-action/email-action
     MatLegacyInputModule,
     TextFieldModule,
     EmailActionComponent,
+    ProjectAlertsComponent,
   ]
 })
 export class SettingsComponent {
