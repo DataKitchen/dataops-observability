@@ -7,7 +7,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 
 from common.entities import Project
 from common.entities.agent import AgentStatus
-from scheduler.agent_status import _check_agents_are_online, _get_agent_status
+from scheduler.agent_status import _get_agent_status
 
 CHECK_INTERVAL = 100
 
@@ -23,7 +23,7 @@ def test_add_job(agent_source):
 
     add_mock.assert_called_once()
     args = add_mock.call_args_list[0][0]
-    assert args[0] == _check_agents_are_online
+    assert args[0] == agent_source._check_agents_are_online
     assert args[1] == str(project.id)
     assert isinstance(args[2], IntervalTrigger)
     assert args[2].interval == timedelta(seconds=300)

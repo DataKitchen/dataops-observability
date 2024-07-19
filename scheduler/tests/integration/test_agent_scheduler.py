@@ -5,7 +5,7 @@ import pytest
 
 from common.entities import Agent
 from common.entities.agent import AgentStatus
-from scheduler.agent_status import _check_agents_are_online, _update_agent_status
+from scheduler.agent_status import _update_agent_status
 
 from testlib.fixtures.entities import *
 
@@ -31,9 +31,9 @@ def agents(project):
 
 
 @pytest.mark.integration
-def test_check_agents_are_online(project, agents):
+def test_check_agents_are_online(project, agents, agent_source):
     with patch("scheduler.agent_status._update_agent_status") as update_mock:
-        _check_agents_are_online(project)
+        agent_source._check_agents_are_online(project)
 
     assert update_mock.call_count == 2
     assert update_mock.call_args_list[0][0][1] == AgentStatus.UNHEALTHY

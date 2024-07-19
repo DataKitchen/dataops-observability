@@ -3,7 +3,6 @@ import logging
 import readline  # noqa: F401 Appears unused but is required for the interactive shell to function
 import sys
 from argparse import ArgumentParser
-from typing import Callable, Optional
 
 from cli.base import DatabaseScriptBase
 from common.entities import *
@@ -38,14 +37,14 @@ class Shell(DatabaseScriptBase):
             "          * Press #r<Ctrl-D> to exit at any time\n"
         )
 
-        start_ipython: Optional[Callable] = None
-
         try:
             from IPython import start_ipython
-        except ImportError:
-            pass
 
-        if start_ipython:
+            use_ipython = True
+        except ImportError:
+            use_ipython = False
+
+        if use_ipython:
             # If you don't set argv to an empty value here, iPython will attempt to use the arguments passed to the
             # cli command and mayhem will ensue.
             start_ipython(argv=[], user_ns=current_vars)
