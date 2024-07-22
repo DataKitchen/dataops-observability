@@ -1,22 +1,35 @@
 <mat-card-edit
   class="mt-4"
   #projectAlertSettingsEditor
-  title="Project Alerts"
-  iconTooltip="Edit the project alerts configuration"
+  title="Agent Alerts"
+  iconTooltip="Edit the agent alerts configuration"
   (save)="saveAction()"
   (cancel)="cancelAction()"
   [formGroup]="form"
   [saving]="saving()">
 
-  <div class="text--secondary mb-1"  *ngIf="!projectAlertSettingsEditor.editing">
-    <ng-container *ngIf="alertActions.length > 0">Alert when an agent goes offline:</ng-container>
+  <ng-container *ngIf="!projectAlertSettingsEditor.editing">
+    <div class="mb-3 mt-1">Check agent connectivity every {{ alertSettings().agent_check_interval }} seconds</div>
+  </ng-container>
+
+  <ng-container *ngIf="projectAlertSettingsEditor.editing">
+    <form [formGroup]="$any(form)">
+      <div class="line mb-3 mt-1">
+        <span>Check agent connectivity every</span>
+        <input matInput #checkInternalInput [formControl]="form.controls.agent_check_interval" type="number"/>
+        <span>seconds</span>
+      </div>
+    </form>
+  </ng-container>
+
+  <div class="text--secondary mb-2"  *ngIf="!projectAlertSettingsEditor.editing">
+    <ng-container *ngIf="alertActions.length > 0">When an agent goes offline</ng-container>
     <ng-container *ngIf="alertActions.length <= 0">No alerts configured</ng-container>
   </div>
 
   <ng-container *ngIf="projectAlertSettingsEditor.editing">
-    <div class="text--secondary mb-1">Alert when an agent goes offline:</div>
-    <div class="flex-row">
-      <span class="fx-flex"></span>
+    <div class="flex-row fx-justify-space-between">
+      <div class="text--secondary">When an agent goes offline</div>
       <button mat-button
         color="primary"
         [matMenuTriggerFor]="menu">
@@ -34,7 +47,7 @@
   </ng-container>
 
   <div class="flex-column fx-flex">
-    <mat-accordion>
+    <mat-accordion class="mb-1">
       <ng-container *ngFor="let action of alertActions; let i = index;">
         <ng-container #actions
           [dynamicComponentOutlet]="action.component"
@@ -45,22 +58,5 @@
       </ng-container>
     </mat-accordion>
   </div>
-
-  <div class="text--secondary mb-1 mt-3">Settings</div>
-
-  <ng-container *ngIf="!projectAlertSettingsEditor.editing">
-    <div class="text--secondary mb-1"></div>
-    <div>Check agent connectivity every {{ alertSettings().agent_check_interval }} seconds</div>
-  </ng-container>
-
-  <ng-container *ngIf="projectAlertSettingsEditor.editing">
-    <form [formGroup]="$any(form)">
-      <div class="line">
-        <span>Check agent connectivity every</span>
-        <input matInput #checkInternalInput [formControl]="form.controls.agent_check_interval" type="number"/>
-        <span>seconds</span>
-      </div>
-    </form>
-  </ng-container>
 
 </mat-card-edit>
