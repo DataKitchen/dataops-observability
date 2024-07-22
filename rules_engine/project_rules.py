@@ -7,7 +7,8 @@ from uuid import UUID
 from peewee import DoesNotExist, fn
 
 from common.entities import Project, Action, Company, Organization, Rule as RuleEntity
-from rules_engine.actions import BaseAction, action_factory
+from common.actions.action import BaseAction
+from common.actions.action_factory import action_factory
 from rules_engine.typing import PROJECT_EVENT, EVENT_TYPE
 
 LOG = logging.getLogger(__name__)

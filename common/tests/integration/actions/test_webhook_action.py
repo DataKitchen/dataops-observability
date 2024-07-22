@@ -1,10 +1,11 @@
 import pytest
 
-from common.entities import DB, Action, Company, Organization, Pipeline, Project, Run
+from common.entities import DB, Action, Company, Organization, Pipeline, Project, Run, ActionImpl, RunStatus, Rule
 from common.events.v1 import ApiRunStatus, RunStatusEvent
 from conf import init_db
 from common.schemas.action_schemas import HttpMethod, WebhookActionArgsSchema
-from rules_engine.actions.webhook_action import WebhookAction
+from common.actions.webhook_action import WebhookAction
+from rules_engine.journey_rules import _get_rules
 from testlib.fixtures.web_server import webhook_server  # noqa: F401
 
 
@@ -22,6 +23,30 @@ def run(database):
     proj = Project.create(name="Foo", active=True, organization=org)
     pipeline = Pipeline.create(key="Foo", project=proj)
     return Run.create(key="test key", status="SOME STATUS", pipeline=pipeline)
+
+
+@pytest.fixture
+def action(company):
+    action = Action.create(name="action1", company=company, action_impl=ActionImpl.CALL_WEBHOOK.value)
+    yield action
+
+
+@pytest.fixture
+def db_rule(journey, pipeline, action):
+    _get_rules.cache_clear()
+    rule = Rule.create(
+        action=action.action_impl,
+        component=pipeline,
+        journey=journey,
+        rule_schema="simple_v1",
+        rule_data={
+            "when": "all",
+            "conditions": [
+                {"task_status": {"matches": RunStatus.RUNNING.name}},
+            ],
+        },
+    )
+    yield rule
 
 
 @pytest.mark.integration

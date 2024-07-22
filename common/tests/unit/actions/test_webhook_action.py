@@ -6,12 +6,14 @@ import pytest
 from common.entities import Action
 from common.events.v1 import ApiRunStatus, RunStatusEvent, TestOutcomesEvent, TestStatuses
 from common.schemas.action_schemas import WebhookActionArgsSchema
-from rules_engine.actions.webhook_action import WebhookAction
+from common.actions.webhook_action import WebhookAction
+
+from testlib.fixtures.entities import *
 
 
 @pytest.fixture
 def session():
-    with patch("rules_engine.actions.webhook_action.get_session", new=Mock()) as session:
+    with patch("common.actions.webhook_action.get_session", new=Mock()) as session:
         session.return_value = Mock()
         yield session.return_value
 

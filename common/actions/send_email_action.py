@@ -11,9 +11,9 @@ from common.entities import Journey, Rule
 from common.events.internal import InstanceAlert, RunAlert, AgentStatusChangeEvent
 from common.events.v1 import Event
 from rules_engine.typing import EVENT_TYPE
-from rules_engine.data_points import AlertDataPoints, DataPoints, AgentStatusChangeDataPoints
+from common.actions.data_points import AlertDataPoints, DataPoints, AgentStatusChangeDataPoints
 
-from .action import ActionResult, BaseAction
+from common.actions.action import ActionResult, BaseAction
 
 LOG = logging.getLogger(__name__)
 

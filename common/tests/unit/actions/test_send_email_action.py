@@ -7,7 +7,7 @@ from peewee import DoesNotExist
 from common.datetime_utils import datetime_formatted
 from common.entities import AuthProvider
 from common.entity_services.helpers import Page
-from rules_engine.actions.send_email_action import SendEmailAction
+from common.actions.send_email_action import SendEmailAction
 
 
 @pytest.fixture()
@@ -20,7 +20,7 @@ def send_email_mock():
 def journey_mock():
     journey_mock = Mock()
     journey_mock.name = "test journey name"
-    with patch("rules_engine.actions.send_email_action.Journey.get_by_id", return_value=journey_mock):
+    with patch("common.actions.send_email_action.Journey.get_by_id", return_value=journey_mock):
         yield journey_mock
 
 
@@ -38,7 +38,7 @@ def auth_provider_domain():
 @pytest.fixture()
 def project_service(auth_provider_domain):
     with patch(
-        "rules_engine.data_points.ProjectService.get_auth_providers_with_rules",
+        "common.actions.data_points.ProjectService.get_auth_providers_with_rules",
         return_value=Page[AuthProvider](results=[AuthProvider(domain=auth_provider_domain)], total=1),
     ) as get_auth_providers:
         yield get_auth_providers
@@ -236,7 +236,7 @@ def test_journey_and_task_names_missing(action, mocked_test_outcomes_dataset_eve
     action = SendEmailAction(action, {"from_address": email_from, "recipients": [email_to], "template": template_name})
     project_service.return_value = Page(results=[], total=0)
     type(mocked_test_outcomes_dataset_event.task).display_name = PropertyMock(side_effect=DoesNotExist)
-    with patch("rules_engine.actions.send_email_action.Journey.get_by_id", side_effect=DoesNotExist):
+    with patch("common.actions.send_email_action.Journey.get_by_id", side_effect=DoesNotExist):
         expected_data_points = {
             **mocked_test_outcomes_dataset_event.as_dict(),
             "journey_name": "N/A",

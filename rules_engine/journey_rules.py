@@ -8,6 +8,8 @@ from functools import lru_cache
 from typing import Any, Callable, Optional
 from uuid import UUID
 
+from common.actions.action import ActionResult
+from common.actions.action_factory import action_factory
 from common.entities import Rule as RuleEntity
 from common.entity_services import JourneyService
 from common.events.internal import RunAlert
@@ -17,7 +19,6 @@ from common.predicate_engine.query import R
 from common.predicate_engine.schemas.simple_v1 import RuleDataSchema
 from conf import settings
 from rules_engine.typing import EVENT_TYPE
-from rules_engine.actions import ActionResult, action_factory
 from rules_engine.rule_data import RuleData
 
 LOG = logging.getLogger(__name__)

@@ -3,7 +3,7 @@ from uuid import uuid4
 
 import pytest
 
-from rules_engine.actions import ActionResult, ActionTemplateRequired, BaseAction
+from common.actions.action import BaseAction, ActionTemplateRequired, ActionResult
 
 
 @pytest.fixture
