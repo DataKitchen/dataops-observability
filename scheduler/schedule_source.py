@@ -3,7 +3,7 @@ __all__ = ["ScheduleSource", "RunTimeExecutor"]
 import logging
 from collections import defaultdict
 from datetime import datetime
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, Protocol, Generic, TypeVar
 
 from apscheduler.executors.pool import ThreadPoolExecutor
 from apscheduler.job import Job
@@ -11,9 +11,7 @@ from apscheduler.jobstores.memory import MemoryJobStore
 from apscheduler.schedulers.base import BaseScheduler
 from apscheduler.triggers.base import BaseTrigger
 from apscheduler.triggers.interval import IntervalTrigger
-from peewee import Select
 
-from common.entities import BaseEntity
 from common.kafka import KafkaProducer
 
 LOG = logging.getLogger(__name__)
@@ -34,7 +32,15 @@ class RunTimeExecutor(ThreadPoolExecutor):
         return super(RunTimeExecutor, self).submit_job(job, run_times)
 
 
-class ScheduleSource:
+class Schedule(Protocol):
+    @property
+    def id(self) -> str: ...
+
+
+ST = TypeVar("ST", bound=Schedule)
+
+
+class ScheduleSource(Generic[ST]):
     """Concentrates all features and configurations around a specific source of schedules."""
 
     source_name: str
@@ -73,7 +79,7 @@ class ScheduleSource:
         LOG.debug("Started updating '%s' jobstore", self.jobstore_name)
 
         current_jobs = {j.id for j in self.scheduler.get_jobs(self.jobstore_name)}
-        current_schedules = list(self._get_schedules())
+        current_schedules = self._get_schedules()
 
         jobs_by_sched_id = defaultdict(list)
         for job_id in current_jobs:
@@ -99,10 +105,10 @@ class ScheduleSource:
 
         LOG.debug("Completed updating '%s' jobstore", self.jobstore_name)
 
-    def _create_and_add_job(self, schedule: BaseEntity) -> None:
+    def _create_and_add_job(self, schedule: ST) -> None:
         """Create and add new scheduler job(s) based on schedule expectations or instance rule"""
         raise NotImplementedError
 
-    def _get_schedules(self) -> Select:
+    def _get_schedules(self) -> list[ST]:
         """Retrieve schedules from database"""
         raise NotImplementedError

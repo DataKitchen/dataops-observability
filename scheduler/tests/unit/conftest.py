@@ -6,7 +6,7 @@ import pytest
 
 from common.entities import ScheduleExpectation
 from common.events.enums import ScheduleType
-from scheduler.agent_status import AgentStatusScheduleSource
+from scheduler.agent_check import AgentCheckScheduleSource
 from scheduler.component_expectations import ComponentScheduleSource
 from scheduler.instance_expectations import InstanceScheduleSource
 
@@ -35,8 +35,8 @@ def instance_rule_source(scheduler, event_producer_mock):
 
 @pytest.fixture
 def agent_source(scheduler, event_producer_mock):
-    with patch.object(AgentStatusScheduleSource, "update"):
-        return AgentStatusScheduleSource(scheduler, event_producer_mock)
+    with patch.object(AgentCheckScheduleSource, "update"):
+        return AgentCheckScheduleSource(scheduler, event_producer_mock)
 
 
 @pytest.fixture

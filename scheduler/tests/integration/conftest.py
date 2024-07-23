@@ -4,7 +4,7 @@ import pytest
 
 from common.entities import DB, Company, Organization, Pipeline, Project
 from conf import init_db
-from scheduler.agent_status import AgentStatusScheduleSource
+from scheduler.agent_check import AgentCheckScheduleSource
 
 
 @pytest.fixture(autouse=True)
@@ -40,5 +40,5 @@ def event_producer_mock():
 
 @pytest.fixture
 def agent_source(event_producer_mock):
-    with patch.object(AgentStatusScheduleSource, "update"):
-        return AgentStatusScheduleSource(Mock(), event_producer_mock)
+    with patch.object(AgentCheckScheduleSource, "update"):
+        return AgentCheckScheduleSource(Mock(), event_producer_mock)

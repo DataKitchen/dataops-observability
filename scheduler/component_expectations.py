@@ -4,7 +4,6 @@ from typing import Optional
 from uuid import UUID
 
 from apscheduler.triggers.cron import CronTrigger
-from peewee import Select
 
 from common.apscheduler_extensions import DelayedTrigger, fix_weekdays
 from common.entities import Schedule, ScheduleExpectation
@@ -16,12 +15,12 @@ from scheduler.schedule_source import ScheduleSource
 LOG = logging.getLogger(__name__)
 
 
-class ComponentScheduleSource(ScheduleSource):
+class ComponentScheduleSource(ScheduleSource[Schedule]):
     source_name = "component_expectations"
     kafka_topic = TOPIC_SCHEDULED_EVENTS
 
-    def _get_schedules(self) -> Select:
-        return Schedule.select()
+    def _get_schedules(self) -> list[Schedule]:
+        return list(Schedule.select())
 
     def _produce_event(
         self,

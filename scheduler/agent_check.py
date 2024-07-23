@@ -2,7 +2,6 @@ import logging
 from datetime import datetime, timezone, timedelta
 
 from apscheduler.triggers.interval import IntervalTrigger
-from peewee import Select
 
 from common.entities import Project, Agent
 from common.entities.agent import AgentStatus
@@ -10,7 +9,6 @@ from common.events.internal.system import AgentStatusChangeEvent
 from common.kafka import TOPIC_IDENTIFIED_EVENTS
 from conf import settings
 from scheduler.schedule_source import ScheduleSource
-
 
 LOG = logging.getLogger(__name__)
 
@@ -40,19 +38,30 @@ def _update_agent_status(agent: Agent, status: AgentStatus) -> bool:
     return bool(count == 1)
 
 
-class AgentStatusScheduleSource(ScheduleSource):
+class AgentCheckSchedule:
+    def __init__(self, project: Project):
+        self.project = project
+
+    @property
+    def id(self) -> str:
+        # We add the check interval to the unique identifier to force the schedule to be replaced when the interva
+        # changes
+        return f"{self.project.id}-{self.project.agent_check_interval}"
+
+
+class AgentCheckScheduleSource(ScheduleSource[AgentCheckSchedule]):
     source_name = "agent_status"
     kafka_topic = TOPIC_IDENTIFIED_EVENTS
 
-    def _get_schedules(self) -> Select:
-        return Project.select().where(Project.agent_check_interval > 0)
+    def _get_schedules(self) -> list[AgentCheckSchedule]:
+        return [AgentCheckSchedule(p) for p in Project.select()]
 
-    def _create_and_add_job(self, schedule: Project) -> None:
+    def _create_and_add_job(self, schedule: AgentCheckSchedule) -> None:
         self.add_job(
             self._check_agents_are_online,
-            str(schedule.id),
-            IntervalTrigger(seconds=schedule.agent_check_interval),
-            {"project": schedule},
+            schedule.id,
+            IntervalTrigger(seconds=schedule.project.agent_check_interval),
+            {"project": schedule.project},
         )
 
     def _check_agents_are_online(self, project: Project) -> None:
