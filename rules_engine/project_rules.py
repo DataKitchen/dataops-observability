@@ -32,7 +32,7 @@ def get_project_rules(project_id: UUID) -> list[ProjectRule]:
             Project.select()
             .where(
                 Project.id == project_id,
-                Project.agent_status_check_interval > 0,
+                Project.agent_check_interval > 0,
                 fn.JSON_LENGTH(Project.alert_actions) > 0,
             )
             .get()

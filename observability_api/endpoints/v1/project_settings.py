@@ -149,7 +149,6 @@ class ProjectAlertsSettings(ProjectSettingByID):
 
         fields: dict[str, Field | type] = {
             "agent_check_interval": Int(
-                attribute="agent_status_check_interval",
                 required=True,
                 validate=Range(min=MIN_AGENT_CHECK_INTERVAL_SECONDS, max=MAX_AGENT_CHECK_INTERVAL_SECONDS),
             ),

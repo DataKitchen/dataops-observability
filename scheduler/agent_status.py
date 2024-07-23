@@ -45,23 +45,23 @@ class AgentStatusScheduleSource(ScheduleSource):
     kafka_topic = TOPIC_IDENTIFIED_EVENTS
 
     def _get_schedules(self) -> Select:
-        return Project.select().where(Project.agent_status_check_interval > 0)
+        return Project.select().where(Project.agent_check_interval > 0)
 
     def _create_and_add_job(self, schedule: Project) -> None:
         self.add_job(
             self._check_agents_are_online,
             str(schedule.id),
-            IntervalTrigger(seconds=schedule.agent_status_check_interval),
+            IntervalTrigger(seconds=schedule.agent_check_interval),
             {"project": schedule},
         )
 
     def _check_agents_are_online(self, project: Project) -> None:
-        check_threshold = datetime.now(tz=timezone.utc) - timedelta(seconds=project.agent_status_check_interval)
+        check_threshold = datetime.now(tz=timezone.utc) - timedelta(seconds=project.agent_check_interval)
         for agent in Agent.select().where(
             Agent.project == project.id,
             Agent.latest_heartbeat < check_threshold,
         ):
-            new_status = _get_agent_status(project.agent_status_check_interval, agent.latest_heartbeat)
+            new_status = _get_agent_status(project.agent_check_interval, agent.latest_heartbeat)
             if agent.status == new_status:
                 LOG.debug("Agent '%s' status did not change: %s", agent.id, agent.status)
             else:

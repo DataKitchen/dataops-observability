@@ -57,7 +57,7 @@ def test_patch_alert_settings(client, g_user, project, action, base_patch_data):
 
     assert response.status_code == HTTPStatus.OK, response.json
     project_db = Project.get_by_id(project.id)
-    assert project_db.agent_status_check_interval == 60
+    assert project_db.agent_check_interval == 60
     assert project_db.alert_actions[0]["action_impl"] == "SEND_EMAIL"
 
 

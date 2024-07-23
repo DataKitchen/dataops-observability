@@ -240,7 +240,7 @@ def project(test_db, organization, user):
         organization=organization,
         active=True,
         created_by=user,
-        agent_status_check_interval=30,
+        agent_check_interval=30,
         alert_actions=[
             {"action_impl": "CALL_WEBHOOK", "action_args": {"url": "https://some.callback/url", "method": "POST"}},
         ],

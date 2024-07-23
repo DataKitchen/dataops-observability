@@ -1,6 +1,7 @@
 import contextlib
 from unittest.mock import Mock, patch
 
+
 @contextlib.contextmanager
 def patch_select(target: str, **kwargs):
     with patch(target=f"{target}.select") as select_mock:
