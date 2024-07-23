@@ -4,9 +4,9 @@ from uuid import uuid4
 
 import pytest
 
+from common.actions.webhook_action import WebhookAction
 from common.entities import (
     AlertLevel,
-    AuthProvider,
     Instance,
     InstanceAlert,
     InstanceAlertsComponents,
@@ -23,6 +23,7 @@ from common.entities import (
     RunStatus,
     Server,
     TestOutcome,
+    ActionImpl,
 )
 from common.entity_services import ProjectService
 from common.entity_services.helpers import (
@@ -34,6 +35,7 @@ from common.entity_services.helpers import (
     TestOutcomeItemFilters,
 )
 from common.events.v1 import TestStatuses
+from common.exceptions.service import MultipleActionsFound
 from testlib.fixtures.entities import *
 
 NUMBER_OF_RUNS = 6
@@ -522,38 +524,6 @@ def test_get_instances_with_rules_time_filtering_end(instances, journey, current
 
 
 @pytest.mark.integration
-def test_get_auth_provider_with_rules_exists(project, company):
-    [
-        AuthProvider.create(
-            client_id="foo",
-            client_secret="bar",
-            domain=f"example{i}.com",
-            company=company,
-            discovery_doc_url="https://baz.com/discover",
-        )
-        for i in range(5)
-    ]
-    p = ProjectService.get_auth_providers_with_rules(
-        str(project.id),
-        ListRules(sort=SortOrder.DESC, count=2),
-    )
-    assert p.total == 5
-    assert len(p.results) == 2
-    assert p.results[0].domain == "example4.com"
-    assert p.results[1].domain == "example3.com"
-
-
-@pytest.mark.integration
-def test_get_auth_provider_with_rules_empty(project):
-    p = ProjectService.get_auth_providers_with_rules(
-        str(project.id),
-        ListRules(),
-    )
-    assert p.total == 0
-    assert len(p.results) == 0
-
-
-@pytest.mark.integration
 def test_get_journeys_with_rules_journey_exists(test_db, project, journey):
     rules_page = ProjectService.get_journeys_with_rules(project.id, ListRules())
     assert rules_page.total == 1
@@ -778,3 +748,37 @@ def test_get_test_outcome_project_with_test_outcomes(test_db, project, run, test
     }
 
     assert expected_outcomes == actual_outcomes
+
+
+@pytest.mark.integration
+def test_get_template_actions(test_db, project, action):
+    actions = ProjectService.get_template_actions(project, [ActionImpl.SEND_EMAIL, ActionImpl.CALL_WEBHOOK])
+
+    assert len(actions) == 1
+    assert actions[ActionImpl.SEND_EMAIL.name] == action
+
+
+@pytest.mark.integration
+def test_get_template_actions_multiple(test_db, project, action):
+    action.id = uuid4()
+    action.name += " 2"
+    action.save(force_insert=True)
+
+    with pytest.raises(MultipleActionsFound):
+        actions = ProjectService.get_template_actions(project, [ActionImpl.SEND_EMAIL])
+
+
+@pytest.mark.integration
+def test_get_alert_actions(test_db, project):
+    (webhook_action,) = ProjectService.get_alert_actions(project)
+
+    assert isinstance(webhook_action, WebhookAction)
+    assert webhook_action.override_arguments == project.alert_actions[0]["action_args"]
+
+
+def test_get_alert_actions_empty(test_db, project):
+    project.alert_actions = []
+
+    actions = ProjectService.get_alert_actions(project)
+
+    assert actions == []

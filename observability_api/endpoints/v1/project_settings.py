@@ -1,27 +1,37 @@
 __all__ = ["ProjectAlertsSettings"]
 
+from typing import Optional, cast, Any
 from uuid import UUID
 
 from flask import Response, make_response
-from marshmallow import Schema
+from marshmallow import Schema, ValidationError
 from marshmallow.fields import Nested, Field, Int
+from marshmallow.validate import Range
 
-
+from common.actions.action import ActionTemplateRequired, ActionException
+from common.actions.action_factory import action_factory
 from common.api.base_view import PERM_PROJECT, PERM_USER, Permission
 from common.api.request_parsing import no_body_allowed
+from common.constants import MAX_AGENT_CHECK_INTERVAL_SECONDS, MIN_AGENT_CHECK_INTERVAL_SECONDS
 from common.entities import Project
+from common.entity_services import ProjectService
+from common.exceptions.service import MultipleActionsFound
 from common.schemas.action_schemas import ActionSchema
 from observability_api.endpoints.entity_view import BaseEntityView
 
 
 class ProjectSettingByID(BaseEntityView):
+    """This abstract view provides the common functionality for retrieving and patching project-attached settings."""
+
     PERMISSION_REQUIREMENTS: tuple[Permission, ...] = (PERM_USER, PERM_PROJECT)
 
-    fields: dict[str, Field | type] = NotImplemented
+    _project: Optional[Project]
 
-    @property
-    def request_schema_class(self) -> type:
-        return Schema.from_dict(self.fields, name=f"{self.__class__.__name__}Schema")
+    def get_fields(self) -> dict[str, Field | type]:
+        raise NotImplementedError
+
+    def get_request_schema(self) -> Schema:
+        return cast(Schema, Schema.from_dict(self.get_fields(), name=f"{self.__class__.__name__}Schema")())
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:
@@ -60,11 +70,11 @@ class ProjectSettingByID(BaseEntityView):
               application/json:
                 schema: HTTPErrorSchema
         """
-        project = self.get_entity_or_fail(Project, Project.id == project_id)
-        return make_response(self.request_schema_class().dump(project))
+        self._project = self.get_entity_or_fail(Project, Project.id == project_id)
+        return make_response(self.get_request_schema().dump(self._project))
 
     def patch(self, project_id: UUID) -> Response:
-        """Update a nespaced Project setting by project ID
+        """Update a nested Project setting by project ID
         ---
         tags: ["Project"]
         description: Updates settings for a single namespace under project.
@@ -103,14 +113,52 @@ class ProjectSettingByID(BaseEntityView):
               application/json:
                 schema: HTTPErrorSchema
         """
-        project = self.get_entity_or_fail(Project, Project.id == project_id)
-        self.patch_entity(schema=self.request_schema_class(), entity=project)
-        self.save_entity_or_fail(project)
-        return make_response(self.request_schema_class().dump(project))
+        self._project = self.get_entity_or_fail(Project, Project.id == project_id)
+        schema = self.get_request_schema()
+        self.patch_entity(schema=schema, entity=self._project)
+        self.save_entity_or_fail(self._project)
+        return make_response(schema.dump(self._project))
 
 
 class ProjectAlertsSettings(ProjectSettingByID):
-    fields = {
-        "agent_check_interval": Int(attribute="agent_status_check_interval", required=True),
-        "actions": Nested(ActionSchema(many=True), attribute="alert_actions", required=True, dump_default=[]),
-    }
+    """ProjectSettings implementation for alert settings."""
+
+    def get_fields(self) -> dict[str, Field | type]:
+        def _validate_actions(actions: list[dict[str, Any]]) -> None:
+            template_actions = ProjectService.get_template_actions(
+                cast(Project, self._project), [a["action_impl"] for a in actions]
+            )
+            error_messages = []
+            for idx, action in enumerate(actions):
+                try:
+                    action_factory(
+                        action["action_impl"],
+                        action.get("action_args", {}),
+                        template_actions.get(action["action_impl"], None),
+                    )
+                except ActionTemplateRequired:
+                    error_messages.append(
+                        f"Action {idx} ({action['action_impl']}) is lacking arguments or misconfigured"
+                    )
+                except (MultipleActionsFound, ActionException, ValueError):
+                    error_messages.append(
+                        f"Action {idx} ({action['action_impl']}) is misconfigured and can not be used"
+                    )
+            if error_messages:
+                raise ValidationError(error_messages)
+
+        fields: dict[str, Field | type] = {
+            "agent_check_interval": Int(
+                attribute="agent_status_check_interval",
+                required=True,
+                validate=Range(min=MIN_AGENT_CHECK_INTERVAL_SECONDS, max=MAX_AGENT_CHECK_INTERVAL_SECONDS),
+            ),
+            "actions": Nested(
+                ActionSchema(many=True),
+                attribute="alert_actions",
+                required=True,
+                dump_default=[],
+                validate=_validate_actions,
+            ),
+        }
+        return fields

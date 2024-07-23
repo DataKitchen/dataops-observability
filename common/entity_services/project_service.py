@@ -4,10 +4,10 @@ from functools import reduce
 from operator import or_
 from typing import Any, Optional
 
-from peewee import PREFETCH_TYPE, Value, fn, prefetch
+from peewee import PREFETCH_TYPE, Value, fn, prefetch, DoesNotExist
 
 from common.entities import (
-    AuthProvider,
+    Action,
     Company,
     Component,
     Instance,
@@ -29,6 +29,7 @@ from common.entities import (
     Schedule,
     TestgenDatasetComponent,
     TestOutcome,
+    ActionImpl,
 )
 from common.entity_services.upcoming_instance_service import UpcomingInstanceService
 from observability_api.schemas.alert_schemas import UIAlertSchema
@@ -44,6 +45,9 @@ from .helpers import (
     TestOutcomeItemFilters,
 )
 from .instance_service import InstanceService
+from ..actions.action import BaseAction
+from ..actions.action_factory import action_factory
+from ..exceptions.service import MultipleActionsFound
 
 
 class ProjectService:
@@ -207,17 +211,6 @@ class ProjectService:
         return Page[Instance](results=results, total=query.count())
 
     @staticmethod
-    def get_auth_providers_with_rules(project_id: str, rules: ListRules) -> Page[AuthProvider]:
-        query = (
-            AuthProvider.select(AuthProvider)
-            .left_outer_join(Company)
-            .join(Organization)
-            .join(Project)
-            .where(Project.id == project_id)
-        )
-        return Page[AuthProvider].get_paginated_results(query, AuthProvider.domain, rules)
-
-    @staticmethod
     def get_journeys_with_rules(project_id: str, rules: ListRules, component_id: Optional[str] = None) -> Page[Journey]:
         base_query = Journey.project == project_id
         if rules.search is not None:
@@ -328,3 +321,41 @@ class ProjectService:
             reverse=True if rules.sort == SortOrder.DESC else False,
         )
         return Page(results=UIAlertSchema().dump(combined_alerts, many=True), total=alerts.count())
+
+    @staticmethod
+    def get_template_actions(project: Project, actions: list[ActionImpl]) -> dict[str, Action]:
+        template_actions = {}
+        template_actions_query = (
+            Action.select()
+            .join(Company)
+            .join(Organization)
+            .join(Project)
+            .where(Project.id == project.id, Action.action_impl.in_(actions))
+        )
+        try:
+            for ta in template_actions_query:
+                if ta.action_impl.name in template_actions:
+                    raise MultipleActionsFound(
+                        f"Expected 0..1 template action for {ta.action_impl.name} but found multiple"
+                    )
+                template_actions[ta.action_impl.name] = ta
+        except DoesNotExist:
+            pass
+        return template_actions
+
+    @classmethod
+    def get_alert_actions(cls, project: Project) -> list[BaseAction]:
+        """Initializes the Action classes required by a project alerts configuration."""
+
+        if not project.alert_actions:
+            return []
+
+        template_actions = cls.get_template_actions(project, [pa["action_impl"] for pa in project.alert_actions])
+        actions = []
+        for action in project.alert_actions:
+            actions.append(
+                action_factory(
+                    action["action_impl"], action["action_args"], template_actions.get(action["action_impl"], None)
+                )
+            )
+        return actions

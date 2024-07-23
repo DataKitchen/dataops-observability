@@ -7,9 +7,7 @@ from uuid import UUID
 from peewee import DoesNotExist
 
 from common.datetime_utils import datetime_formatted, datetime_iso8601
-from common.entities import Rule
-from common.entity_services import ProjectService
-from common.entity_services.helpers import ListRules
+from common.entities import Rule, AuthProvider, Company, Organization, Project
 from common.events.internal import RunAlert, AgentStatusChangeEvent
 from common.events.v1 import Event
 from rules_engine.typing import ALERT_EVENT, EVENT_TYPE
@@ -320,9 +318,18 @@ class CompanyDataPoints(NamespacedDataPointsBase):
 
     def _ui_url(self) -> str:
         # Multiple auth providers is not something we support atm so we can assume to take the first one
-        page = ProjectService.get_auth_providers_with_rules(str(self.event.project_id), ListRules(count=1))
-        ret: str = page.results[0].domain
-        return ret
+        try:
+            auth_provider = (
+                AuthProvider.select(AuthProvider.domain)
+                .left_outer_join(Company)
+                .join(Organization)
+                .join(Project)
+                .where(Project.id == self.event.project_id)
+                .get()
+            )
+            return cast(str, auth_provider.domain)
+        except DoesNotExist:
+            return ""
 
 
 class BaseDataPoints(Mapping):

@@ -6,8 +6,9 @@ from peewee import DoesNotExist
 
 from common.datetime_utils import datetime_formatted
 from common.entities import AuthProvider
-from common.entity_services.helpers import Page
 from common.actions.send_email_action import SendEmailAction
+
+from testlib.peewee import patch_select
 
 
 @pytest.fixture()
@@ -36,12 +37,11 @@ def auth_provider_domain():
 
 
 @pytest.fixture()
-def project_service(auth_provider_domain):
-    with patch(
-        "common.actions.data_points.ProjectService.get_auth_providers_with_rules",
-        return_value=Page[AuthProvider](results=[AuthProvider(domain=auth_provider_domain)], total=1),
-    ) as get_auth_providers:
-        yield get_auth_providers
+def auth_provider_mock(auth_provider_domain):
+    with patch_select(
+        "common.actions.data_points.AuthProvider", return_value=AuthProvider(domain=auth_provider_domain)
+    ) as select_mock:
+        yield select_mock
 
 
 @pytest.mark.unit
@@ -69,7 +69,7 @@ def test_send_email_constructor_missing_action_argument(argument, action):
 
 
 @pytest.mark.unit
-def test_send_email_execute_ok(action, run_status_event, send_email_mock, project_service, journey_mock, rule_mock):
+def test_send_email_execute_ok(action, run_status_event, send_email_mock, auth_provider_mock, journey_mock, rule_mock):
     email_to = "success@example.com"
     email_from = "test@domain.com"
     template_name = "TestTemplateNested"
@@ -82,7 +82,9 @@ def test_send_email_execute_ok(action, run_status_event, send_email_mock, projec
 
 
 @pytest.mark.unit
-def test_send_email_execute_fail(action, run_status_event, send_email_mock, project_service, journey_mock, rule_mock):
+def test_send_email_execute_fail(
+    action, run_status_event, send_email_mock, auth_provider_mock, journey_mock, rule_mock
+):
     email_to = "success@example.com"
     email_from = "test@domain.com"
     template_name = "TestTemplateNested"
@@ -98,7 +100,7 @@ def test_send_email_execute_fail(action, run_status_event, send_email_mock, proj
 
 @pytest.mark.unit
 def test_get_more_data_points_action_args_domain(
-    action, run_status_event, project_service, auth_provider_domain, journey_mock, rule_mock
+    action, run_status_event, auth_provider_mock, auth_provider_domain, journey_mock, rule_mock
 ):
     # This test can be removed when we're sure that all action_args with "base_url" are gone.
     email_to = "success@example.com"
@@ -132,7 +134,7 @@ def test_get_more_data_points_action_args_domain(
 
 @pytest.mark.unit
 def test_get_more_data_points_no_start_time(
-    action, run_status_event, project_service, auth_provider_domain, journey_mock, rule_mock
+    action, run_status_event, auth_provider_mock, auth_provider_domain, journey_mock, rule_mock
 ):
     # This test can be removed when we're sure that all action_args with "base_url" are gone.
     email_to = "success@example.com"
@@ -167,7 +169,7 @@ def test_get_more_data_points_no_start_time(
 
 @pytest.mark.unit
 def test_get_more_data_points_auth_provider_domain(
-    action, run_status_event, project_service, auth_provider_domain, journey_mock, rule_mock
+    action, run_status_event, auth_provider_mock, auth_provider_domain, journey_mock, rule_mock
 ):
     email_to = "success@example.com"
     email_from = "test@domain.com"
@@ -197,13 +199,13 @@ def test_get_more_data_points_auth_provider_domain(
 
 @pytest.mark.unit
 def test_get_more_data_points_no_domain(
-    action, mocked_test_outcomes_dataset_event, project_service, journey_mock, rule_mock
+    action, mocked_test_outcomes_dataset_event, auth_provider_mock, journey_mock, rule_mock
 ):
     email_to = "success@example.com"
     email_from = "test@domain.com"
     template_name = "TestTemplateNested"
     action = SendEmailAction(action, {"from_address": email_from, "recipients": [email_to], "template": template_name})
-    project_service.return_value = Page(results=[], total=0)
+    auth_provider_mock.side_effect = DoesNotExist
 
     expected_data_points = {
         **mocked_test_outcomes_dataset_event.as_dict(),
@@ -229,12 +231,12 @@ def test_get_more_data_points_no_domain(
 
 
 @pytest.mark.unit
-def test_journey_and_task_names_missing(action, mocked_test_outcomes_dataset_event, rule_mock, project_service):
+def test_journey_and_task_names_missing(action, mocked_test_outcomes_dataset_event, rule_mock, auth_provider_mock):
     email_to = "success@example.com"
     email_from = "test@domain.com"
     template_name = "TestTemplateNested"
     action = SendEmailAction(action, {"from_address": email_from, "recipients": [email_to], "template": template_name})
-    project_service.return_value = Page(results=[], total=0)
+    auth_provider_mock.side_effect = DoesNotExist
     type(mocked_test_outcomes_dataset_event.task).display_name = PropertyMock(side_effect=DoesNotExist)
     with patch("common.actions.send_email_action.Journey.get_by_id", side_effect=DoesNotExist):
         expected_data_points = {

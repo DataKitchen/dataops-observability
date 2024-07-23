@@ -241,7 +241,9 @@ def project(test_db, organization, user):
         active=True,
         created_by=user,
         agent_status_check_interval=30,
-        alert_actions=[{"action_impl": "CALL_WEBHOOK", "action_args": {"url": "https://some.callback/url"}}],
+        alert_actions=[
+            {"action_impl": "CALL_WEBHOOK", "action_args": {"url": "https://some.callback/url", "method": "POST"}},
+        ],
     )
 
 
@@ -353,7 +355,12 @@ def journey_dag_edge(test_db, journey, pipeline_2):
 
 @pytest.fixture()
 def action(test_db, company):
-    return Action.create(name="A1", company=company, action_impl=ActionImpl.SEND_EMAIL.value)
+    return Action.create(
+        name="A1",
+        company=company,
+        action_impl=ActionImpl.SEND_EMAIL.value,
+        action_args={"from_address": "sender@example.com"},
+    )
 
 
 @pytest.fixture()

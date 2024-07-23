@@ -7,7 +7,6 @@ from common.entities import Action
 from common.events.v1 import ApiRunStatus, RunStatusEvent, TestOutcomesEvent, TestStatuses
 from common.schemas.action_schemas import WebhookActionArgsSchema
 from common.actions.webhook_action import WebhookAction
-
 from testlib.fixtures.entities import *
 
 

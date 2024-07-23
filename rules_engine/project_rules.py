@@ -4,11 +4,10 @@ import logging
 from typing import Callable, cast
 from uuid import UUID
 
-from peewee import DoesNotExist, fn
+from peewee import fn
 
-from common.entities import Project, Action, Company, Organization, Rule as RuleEntity
-from common.actions.action import BaseAction
-from common.actions.action_factory import action_factory
+from common.entities import Project, Rule as RuleEntity
+from common.entity_services import ProjectService
 from rules_engine.typing import PROJECT_EVENT, EVENT_TYPE
 
 LOG = logging.getLogger(__name__)
@@ -24,34 +23,6 @@ class ProjectRule:
 
     def __str__(self) -> str:
         return f"{self.__module__}.{self.__class__.__name__}"
-
-
-def _get_actions_from_project(project: Project) -> list[BaseAction]:
-    if not project.alert_actions:
-        return []
-
-    template_actions_query = (
-        Action.select()
-        .join(Company)
-        .join(Organization)
-        .join(Project)
-        .where(Project.id == project.id, Action.action_impl.in_([pa["action_impl"] for pa in project.alert_actions]))
-    )
-    try:
-        template_actions = {ta.action_impl.name: ta for ta in template_actions_query}
-    except DoesNotExist:
-        template_actions = {}
-
-    actions = []
-    for action in project.alert_actions:
-        LOG.info(f"{template_actions}, {action} <- AQUI")
-
-        actions.append(
-            action_factory(
-                action["action_impl"], action["action_args"], template_actions.get(action["action_impl"], None)
-            )
-        )
-    return actions
 
 
 def get_project_rules(project_id: UUID) -> list[ProjectRule]:
@@ -70,7 +41,7 @@ def get_project_rules(project_id: UUID) -> list[ProjectRule]:
         return rules
 
     def action_trigger(event: PROJECT_EVENT) -> None:
-        actions = _get_actions_from_project(project)
+        actions = ProjectService.get_alert_actions(project)
         if actions:
             for action in actions:
                 LOG.info("Executing action %s from project '%s'", action, project.id)
