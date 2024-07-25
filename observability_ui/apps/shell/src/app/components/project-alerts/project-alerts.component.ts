@@ -1,13 +1,13 @@
-import { Component, Inject, QueryList, ViewChildren } from '@angular/core';
+import { Component, Inject, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { ActionType, EntitiesResolver, ProjectAlertSettings, ProjectAlertSettingsAction, ProjectStore } from '@observability-ui/core';
 import { NgForOf, NgIf } from '@angular/common';
-import { DynamicComponentModule, DynamicComponentOutletDirective, MatCardEditComponent, TextFieldModule } from '@observability-ui/ui';
+import { DkTooltipModule, DynamicComponentModule, DynamicComponentOutletDirective, MatCardEditComponent, TextFieldModule } from '@observability-ui/ui';
 import { WebhookActionComponent } from "../rules-actions/implementations/actions/webhook/webhook-action.component";
 import { SendEmailActionComponent } from "../rules-actions/implementations/actions/send-email/send-email-action.component";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { ProjectAlertSettingsStore } from "./project-alerts.store";
 import { TypedFormControl } from "@datakitchen/ngx-toolkit";
-import { FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import { MatLegacyInputModule as MatInputModule } from "@angular/material/legacy-input";
 import { RulesActionsModule } from "../rules-actions/rules-actions.module";
 import { MatIconModule } from "@angular/material/icon";
@@ -19,6 +19,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { filter, tap } from "rxjs";
 import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
 import { DefaultErrorHandlerComponent } from "../default-error-handler/default-error-handler.component";
+import { MatLegacyCardModule } from "@angular/material/legacy-card";
 
 
 interface ActionComponentInstance {
@@ -48,9 +49,11 @@ interface ActionComponentInstance {
     MatLegacyButtonModule,
     MatExpansionModule,
     DynamicComponentModule,
+    MatLegacyCardModule,
+    DkTooltipModule,
   ]
 })
-export class ProjectAlertsComponent {
+export class ProjectAlertsComponent implements OnInit {
 
   alertSettings = toSignal(this.store.alertSettings$);
 
@@ -62,12 +65,37 @@ export class ProjectAlertsComponent {
   alertActions: ActionComponentInstance[] = [];
 
   form = new FormGroup({
-    agent_check_interval: new TypedFormControl<number>()
+    agent_check_interval: new TypedFormControl<number>(
+      undefined,
+      [Validators.required, Validators.min(60), Validators.max(24 * 60 * 60)]
+    ),
   });
 
   saving = toSignal(this.store.getLoadingFor('update'));
 
   errorMsg: string = "";
+
+  editing: boolean = false;
+
+  inputIsValid: boolean = false;
+
+  loading$ = this.store.loading$.pipe(
+    filter(({ code }) => code === "update" ),
+    tap(({ error, status }) => {
+      if (error) {
+        if (error.status === 400) {
+          this.errorMsg = "Error configuring actions. Please contact a system administrator";
+        } else {
+          this.snackbar.openFromComponent(DefaultErrorHandlerComponent, {
+            data: error,
+            duration: 2000,
+          });
+        }
+      } else {
+        this.editing = status;
+      }
+    }),
+  ).subscribe();
 
   constructor(
     private snackbar: MatSnackBar,
@@ -79,32 +107,21 @@ export class ProjectAlertsComponent {
   }
 
   ngOnInit(): void {
-
     this.store.alertSettings$.subscribe((settings) => {
       this.resetUiState(settings);
     });
 
     this.store.dispatch('get', this.currentProject()?.id);
-
   }
 
-  loading$ = this.store.loading$.pipe(
-    filter(({ code }) => code === "update" ),
-    tap(({ error, status }) => {
-      console.log(error);
-      console.log(status);
-      if (error) {
-        if (error.status === 400) {
-          this.errorMsg = "Error configuring actions. Please contact a system administrator";
-        } else {
-          this.snackbar.openFromComponent(DefaultErrorHandlerComponent, {
-            data: error,
-            duration: 2000,
-          });
-        }
-      }
-    }),
-  ).subscribe();
+  startEditing() {
+    this.editing = true;
+  }
+
+  cancelEditing() {
+    this.resetUiState(this.alertSettings());
+    this.editing = false;
+  }
 
   resetUiState(settings: ProjectAlertSettings) {
     this.form.patchValue(settings);
@@ -118,6 +135,14 @@ export class ProjectAlertsComponent {
     this.errorMsg = "";
   }
 
+  isInputValid() : boolean {
+    return this.actionDisplayerDirective.reduce(
+      (prevValue, actionComponent) => {
+        return prevValue && actionComponent.ref.instance.form.valid;
+      },
+      true) &&  this.form.valid;
+  }
+
   saveSettings() {
     let data: ProjectAlertSettings = {
       actions: this.actionDisplayerDirective.map((actionComponent) => {
@@ -125,13 +150,8 @@ export class ProjectAlertsComponent {
         return {action_impl: json.action, action_args: json.action_args};
       }),
       agent_check_interval: this.form.value.agent_check_interval,
-
     };
     this.store.dispatch("update", this.currentProject()?.id, data);
-  }
-
-  cancelSettingsChanges() {
-    this.resetUiState(this.alertSettings());
   }
 
   addAction(component: typeof AbstractAction) {

@@ -27,3 +27,13 @@
     line-height: 21px;
   }
 }
+
+.edit-icon {
+  @include mixins.icon-size(16px);
+  @include mixins.font-color(secondary);
+
+  position: absolute;
+  top: variables.$space-sm;
+  right: variables.$space-sm;
+  cursor: pointer;
+}

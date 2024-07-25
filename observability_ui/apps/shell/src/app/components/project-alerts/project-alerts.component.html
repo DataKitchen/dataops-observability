@@ -1,64 +1,87 @@
-<mat-card-edit
-  class="mt-4"
-  #projectAlertSettingsEditor
-  title="Agent Alerts"
-  iconTooltip="Edit the agent alerts configuration"
-  (save)="saveSettings()"
-  (cancel)="cancelSettingsChanges()"
-  [formGroup]="form"
-  [saving]="saving()">
+<section class="mb-3">
 
-  <ng-container *ngIf="!projectAlertSettingsEditor.editing">
-    <div class="mb-3 mt-1">Check agent connectivity every {{ alertSettings().agent_check_interval }} seconds</div>
-  </ng-container>
+  <div class="title mb-2">Agent Alerts</div>
 
-  <ng-container *ngIf="projectAlertSettingsEditor.editing">
-    <form [formGroup]="$any(form)">
-      <div class="line mb-3 mt-1">
-        <span>Check agent connectivity every</span>
-        <input matInput #checkInternalInput [formControl]="form.controls.agent_check_interval" type="number"/>
-        <span>seconds</span>
-      </div>
-    </form>
-  </ng-container>
+  <mat-card class="mt-4">
+    <mat-card-content>
+      <mat-icon
+        *ngIf="!editing"
+        class="edit-icon"
+        (click)="startEditing();"
+        [dkTooltip]="'Edit the agent alerts configuration'"
+      >edit
+      </mat-icon>
 
-  <div class="text--secondary mb-2"  *ngIf="!projectAlertSettingsEditor.editing">
-    <ng-container *ngIf="alertActions.length > 0">When an agent goes offline</ng-container>
-    <ng-container *ngIf="alertActions.length <= 0">No alerts configured</ng-container>
-  </div>
-
-  <ng-container *ngIf="projectAlertSettingsEditor.editing">
-    <div class="flex-row fx-justify-space-between">
-      <div class="text--secondary">When an agent goes offline</div>
-      <button mat-button
-        color="primary"
-        [matMenuTriggerFor]="menu">
-        <mat-icon>add</mat-icon>
-        Add Action
-      </button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item
-          *ngFor="let component of actionComponents"
-          (click)="addAction(component)">
-          {{ component.label }}
-        </button>
-      </mat-menu>
-    </div>
-  </ng-container>
-
-  <div class="flex-column fx-flex">
-    <mat-accordion class="mb-1">
-      <ng-container *ngFor="let action of alertActions; let i = index;">
-        <ng-container #actions
-          [dynamicComponentOutlet]="action.component"
-          [dynamicComponentOutletOptions]="{editMode: projectAlertSettingsEditor.editing, data: action.data, expanded: action.editing}"
-          [dynamicComponentOutletOutputs]="['delete']"
-          (outputs)="removeAction(i)">
-        </ng-container>
+      <ng-container *ngIf="!editing">
+        <div class="mb-3 mt-1">Check agent connectivity every {{ alertSettings().agent_check_interval }} seconds</div>
       </ng-container>
-    </mat-accordion>
-  </div>
 
-  <div *ngIf="errorMsg" class="left-actions error-message"><span class="text--error">{{ errorMsg }}</span></div>
+      <ng-container *ngIf="editing">
+        <form [formGroup]="$any(form)">
+          <div class="line mb-3 mt-1">
+            <span>Check agent connectivity every</span>
+            <input matInput #checkInternalInput [formControl]="form.controls.agent_check_interval" type="number"/>
+            <span>seconds</span>
+          </div>
+        </form>
+      </ng-container>
 
-</mat-card-edit>
+      <div class="text--secondary mb-2"  *ngIf="!editing">
+        <ng-container *ngIf="alertActions.length > 0">When an agent goes offline</ng-container>
+        <ng-container *ngIf="alertActions.length <= 0">No alerts configured</ng-container>
+      </div>
+
+      <ng-container *ngIf="editing">
+        <div class="flex-row fx-justify-space-between">
+          <div class="text--secondary">When an agent goes offline</div>
+          <button mat-button
+            color="primary"
+            [matMenuTriggerFor]="menu">
+            <mat-icon>add</mat-icon>
+            Add Action
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item
+              *ngFor="let component of actionComponents"
+              (click)="addAction(component)">
+              {{ component.label }}
+            </button>
+          </mat-menu>
+        </div>
+      </ng-container>
+
+      <div class="flex-column fx-flex">
+        <mat-accordion class="mb-1">
+          <ng-container *ngFor="let action of alertActions; let i = index;">
+            <ng-container #actions
+              [dynamicComponentOutlet]="action.component"
+              [dynamicComponentOutletOptions]="{editMode: editing, data: action.data, expanded: action.editing}"
+              [dynamicComponentOutletOutputs]="['delete']"
+              (outputs)="removeAction(i)">
+            </ng-container>
+          </ng-container>
+        </mat-accordion>
+      </div>
+
+      <mat-card-actions *ngIf="editing">
+        <div class="flex-row">
+          <div *ngIf="errorMsg" class="left-actions error-message"><span class="text--error">{{ errorMsg }}</span></div>
+          <span class="fx-flex"></span>
+          <button [disabled]="saving === true"
+                  class="text--secondary"
+                  (click)="cancelEditing();"
+                  mat-button>
+            Cancel
+          </button>
+          <button [disabled]="!isInputValid()"
+                  color="primary"
+                  (click)="saveSettings()"
+                  mat-button>
+            Save
+          </button>
+        </div>
+      </mat-card-actions>
+
+    </mat-card-content>
+  </mat-card>
+</section>
