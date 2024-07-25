@@ -1,4 +1,4 @@
-import { Component, effect, Inject, QueryList, ViewChildren } from '@angular/core';
+import { Component, Inject, QueryList, ViewChildren } from '@angular/core';
 import { ActionType, EntitiesResolver, ProjectAlertSettings, ProjectAlertSettingsAction, ProjectStore } from '@observability-ui/core';
 import { NgForOf, NgIf } from '@angular/common';
 import { DynamicComponentModule, DynamicComponentOutletDirective, MatCardEditComponent, TextFieldModule } from '@observability-ui/ui';
@@ -16,6 +16,9 @@ import { RULE_ACTIONS } from "../rules-actions/actions.model";
 import { AbstractAction } from "../rules-actions/abstract-action.directive";
 import { MatLegacyButtonModule } from "@angular/material/legacy-button";
 import { MatExpansionModule } from "@angular/material/expansion";
+import { filter, tap } from "rxjs";
+import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
+import { DefaultErrorHandlerComponent } from "../default-error-handler/default-error-handler.component";
 
 
 interface ActionComponentInstance {
@@ -53,24 +56,6 @@ export class ProjectAlertsComponent {
 
   currentProject = toSignal(this.projectStore.current$);
 
-  constructor(
-    private entities: EntitiesResolver,
-    private store: ProjectAlertSettingsStore,
-    private projectStore: ProjectStore,
-    @Inject(RULE_ACTIONS) public actionComponents: typeof AbstractAction[],
-  ) {
-    effect(() => {
-      const projectId = this.currentProject()?.id;
-      this.store.dispatch('get', projectId);
-    });
-  }
-
-  ngOnInit(): void {
-    this.store.alertSettings$.subscribe((settings) => {
-      this.resetUiState(settings);
-    });
-  }
-
   @ViewChildren('actions', { read: DynamicComponentOutletDirective })
   actionDisplayerDirective!: QueryList<DynamicComponentOutletDirective<AbstractAction>>;
 
@@ -82,6 +67,45 @@ export class ProjectAlertsComponent {
 
   saving = toSignal(this.store.getLoadingFor('update'));
 
+  errorMsg: string = "";
+
+  constructor(
+    private snackbar: MatSnackBar,
+    private entities: EntitiesResolver,
+    private store: ProjectAlertSettingsStore,
+    private projectStore: ProjectStore,
+    @Inject(RULE_ACTIONS) public actionComponents: typeof AbstractAction[],
+  ) {
+  }
+
+  ngOnInit(): void {
+
+    this.store.alertSettings$.subscribe((settings) => {
+      this.resetUiState(settings);
+    });
+
+    this.store.dispatch('get', this.currentProject()?.id);
+
+  }
+
+  loading$ = this.store.loading$.pipe(
+    filter(({ code }) => code === "update" ),
+    tap(({ error, status }) => {
+      console.log(error);
+      console.log(status);
+      if (error) {
+        if (error.status === 400) {
+          this.errorMsg = "Error configuring actions. Please contact a system administrator";
+        } else {
+          this.snackbar.openFromComponent(DefaultErrorHandlerComponent, {
+            data: error,
+            duration: 2000,
+          });
+        }
+      }
+    }),
+  ).subscribe();
+
   resetUiState(settings: ProjectAlertSettings) {
     this.form.patchValue(settings);
     this.alertActions= settings.actions.map((entry: ProjectAlertSettingsAction) => {
@@ -91,24 +115,26 @@ export class ProjectAlertsComponent {
           editing: false,
         };
     });
+    this.errorMsg = "";
   }
 
-  saveAction() {
-    let data = {
+  saveSettings() {
+    let data: ProjectAlertSettings = {
       actions: this.actionDisplayerDirective.map((actionComponent) => {
         let json = actionComponent.ref.instance.toJSON();
         return {action_impl: json.action, action_args: json.action_args};
       }),
-      ...this.form.value,
+      agent_check_interval: this.form.value.agent_check_interval,
+
     };
-    this.store.dispatch("update", this.currentProject()?.id, <ProjectAlertSettings>data);
+    this.store.dispatch("update", this.currentProject()?.id, data);
   }
 
-  cancelAction() {
+  cancelSettingsChanges() {
     this.resetUiState(this.alertSettings());
   }
 
-  addActionAction(component: typeof AbstractAction) {
+  addAction(component: typeof AbstractAction) {
     let data = {};
     if (component._type == ActionType.SendEmail) {
       data = {template: "agent_status_change", recipients: []};
@@ -118,7 +144,7 @@ export class ProjectAlertsComponent {
     );
   }
 
-  removeActionAction(idx: number) {
+  removeAction(idx: number) {
     this.alertActions.splice(idx, 1);
   }
 }

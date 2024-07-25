@@ -7,6 +7,10 @@
   width: 100%;
 }
 
+.error-message {
+  padding-left: 12px;
+}
+
 .line {
   @include mixins.flex-row($justify: flex-start, $align: center);
 
@@ -22,16 +26,4 @@
   span {
     line-height: 21px;
   }
-
-  * + * {
-    margin-left: variables.$space-xs !important;
-  }
-
-  &.wrap {
-    flex-wrap: wrap;
-  }
-}
-
-.line + .line {
-  margin-top: variables.$space-xs;
 }

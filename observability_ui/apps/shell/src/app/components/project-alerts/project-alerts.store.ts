@@ -39,7 +39,7 @@ export class ProjectAlertSettingsStore
   }
 
   @Reduce()
-  onGet<O>(state: ProjectAlertSettingsState, payload: ProjectAlertSettings): ProjectAlertSettingsState {
+  onGet(state: ProjectAlertSettingsState, payload: ProjectAlertSettings): ProjectAlertSettingsState {
     if (payload) {
       return { alertSettings: payload };
     } else {
@@ -53,7 +53,7 @@ export class ProjectAlertSettingsStore
   }
 
   @Reduce()
-  onUpdate<O>(state: ProjectAlertSettingsState, payload: ProjectAlertSettings): ProjectAlertSettingsState {
+  onUpdate(state: ProjectAlertSettingsState, payload: ProjectAlertSettings): ProjectAlertSettingsState {
     if (payload) {
       return { alertSettings: payload };
     } else {

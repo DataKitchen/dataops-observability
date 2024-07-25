@@ -3,8 +3,8 @@
   #projectAlertSettingsEditor
   title="Agent Alerts"
   iconTooltip="Edit the agent alerts configuration"
-  (save)="saveAction()"
-  (cancel)="cancelAction()"
+  (save)="saveSettings()"
+  (cancel)="cancelSettingsChanges()"
   [formGroup]="form"
   [saving]="saving()">
 
@@ -39,7 +39,7 @@
       <mat-menu #menu="matMenu">
         <button mat-menu-item
           *ngFor="let component of actionComponents"
-          (click)="addActionAction(component)">
+          (click)="addAction(component)">
           {{ component.label }}
         </button>
       </mat-menu>
@@ -53,10 +53,12 @@
           [dynamicComponentOutlet]="action.component"
           [dynamicComponentOutletOptions]="{editMode: projectAlertSettingsEditor.editing, data: action.data, expanded: action.editing}"
           [dynamicComponentOutletOutputs]="['delete']"
-          (outputs)="removeActionAction(i)">
+          (outputs)="removeAction(i)">
         </ng-container>
       </ng-container>
     </mat-accordion>
   </div>
+
+  <div *ngIf="errorMsg" class="left-actions error-message"><span class="text--error">{{ errorMsg }}</span></div>
 
 </mat-card-edit>

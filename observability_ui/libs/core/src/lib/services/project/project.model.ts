@@ -16,12 +16,12 @@ export interface ServiceKey extends WithId {
 
 export interface ProjectAlertSettingsAction {
   action_impl: string,
-  action_args: {},
+  action_args: any,
 }
 
 export interface ProjectAlertSettings {
   agent_check_interval: number;
-  actions: [ProjectAlertSettingsAction?];
+  actions: ProjectAlertSettingsAction[];
 }
 
 export interface TestsSearchFields {
