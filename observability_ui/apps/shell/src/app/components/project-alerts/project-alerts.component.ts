@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { AbstractAction, ActionType, EntitiesResolver, ProjectAlertSettings, ProjectAlertSettingsAction, ProjectStore, RULE_ACTIONS } from '@observability-ui/core';
+import { AbstractAction, ActionType, ProjectAlertSettings, ProjectAlertSettingsAction, ProjectStore, RULE_ACTIONS } from '@observability-ui/core';
 import { NgForOf, NgIf } from '@angular/common';
 import { DkTooltipModule, DynamicComponentModule, DynamicComponentOutletDirective, MatCardEditComponent, TextFieldModule } from '@observability-ui/ui';
 import { WebhookActionComponent } from "../rules-actions/implementations/actions/webhook/webhook-action.component";
@@ -96,7 +96,6 @@ export class ProjectAlertsComponent implements OnInit {
 
   constructor(
     private snackbar: MatSnackBar,
-    private entities: EntitiesResolver,
     private store: ProjectAlertSettingsStore,
     private projectStore: ProjectStore,
     @Inject(RULE_ACTIONS) private actionComponents: typeof AbstractAction[],

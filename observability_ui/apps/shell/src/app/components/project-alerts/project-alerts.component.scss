@@ -37,3 +37,7 @@
   right: variables.$space-sm;
   cursor: pointer;
 }
+
+.title {
+  @include mixins.font-style($style: menu);
+}

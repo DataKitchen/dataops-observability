@@ -19,6 +19,10 @@ export class ProjectAlertSettingsStore
   implements makeStore<ProjectAlertSettingsState, ProjectAlertSettingsActions>
 {
 
+  protected service: ProjectService;
+
+  alertSettings$ = this.select(state => state.alertSettings);
+
   constructor(projectService: ProjectService) {
     super({
       alertSettings: {
@@ -28,10 +32,6 @@ export class ProjectAlertSettingsStore
     });
     this.service = projectService;
   }
-
-  protected service: ProjectService;
-
-  alertSettings$ = this.select(state => state.alertSettings);
 
   @Effect()
   get(projectId: string): Observable<ProjectAlertSettings> {
