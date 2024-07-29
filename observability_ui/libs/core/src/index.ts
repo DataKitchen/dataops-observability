@@ -4,7 +4,6 @@ export * from './lib/config';
 
 export * from './lib/utilities/validators';
 export * from './lib/utilities/batch-runs.utilities';
-export * from './lib/utilities/dataset.utilities';
 export * from './lib/utilities/instance.utilities';
 export * from './lib/utilities/observable.utilities';
 export * from './lib/utilities/tools.utilities';

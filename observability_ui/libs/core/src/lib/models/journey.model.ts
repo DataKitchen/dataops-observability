@@ -6,8 +6,8 @@ export interface Journey extends Entity {
   instance_rules?: JourneyInstanceRule[];
 }
 
-export interface JourneyDag {
-  nodes: JourneyDagNode[];
+export interface JourneyDag<Node = JourneyDagNode> {
+  nodes: Node[];
 }
 
 export interface JourneyDagNode {

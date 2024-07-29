@@ -22,101 +22,90 @@
   [restoreFromLocalStorage]="true"
   (renderError)="handleError($event)">
   <ng-container *ngFor="let node of nodes$|async; trackBy: nodeTrackByFn">
-    <div *dagNode="node.info.component.id"
+    <div *dagNode="node.component.id"
       class="component"
       data-test="InstanceComponent"
-      attr.data-test-id="{{ node.info.component.id }}"
-      attr.data-test-name="{{ node.info.component.display_name }}"
-      [ngClass]="[ node.details ? node.details.status :'border-skeleton', node.info.component.type ]">
-      <ng-container *ngIf="node.info.component.type === componentType.BatchPipeline">
-        <span [dkTooltip]="node.details?.status | translate | titlecase"
-          class="component--status"
-          [ngClass]="!node.details && 'background-skeleton'">
-          <ng-container *ngIf="node.details">
-            <mat-icon *ngIf="node.details.status === runStatus.Pending">hourglass_empty</mat-icon>
-            <mat-icon *ngIf="node.details.status === runStatus.Running">play_arrow</mat-icon>
-            <mat-icon *ngIf="node.details.status === runStatus.Completed">check</mat-icon>
-            <mat-icon *ngIf="node.details.status === runStatus.CompletedWithWarnings"
+      attr.data-test-id="{{ node.component.id }}"
+      attr.data-test-name="{{ node.component.display_name }}"
+      [ngClass]="[ node.status, node.component.type ]">
+      <ng-container *ngIf="node.component.type === componentType.BatchPipeline">
+        <span [dkTooltip]="node?.status | translate | titlecase"
+          class="component--status">
+          <ng-container *ngIf="node">
+            <mat-icon *ngIf="node.status === runStatus.Pending">hourglass_empty</mat-icon>
+            <mat-icon *ngIf="node.status === runStatus.Running">play_arrow</mat-icon>
+            <mat-icon *ngIf="node.status === runStatus.Completed">check</mat-icon>
+            <mat-icon *ngIf="node.status === runStatus.CompletedWithWarnings"
               svgIcon="completed_with_warnings"></mat-icon>
-            <mat-icon *ngIf="node.details.status === runStatus.Failed">priority_high</mat-icon>
-            <mat-icon *ngIf="node.details.status === runStatus.Missing">question_mark</mat-icon>
+            <mat-icon *ngIf="node.status === runStatus.Failed">priority_high</mat-icon>
+            <mat-icon *ngIf="node.status === runStatus.Missing">question_mark</mat-icon>
           </ng-container>
         </span>
       </ng-container>
 
       <div class="component--title">
         <component-icon class="mr-1"
-          [tool]="node.info.component.tool"
-          [type]="node.info.component.type"
+          [tool]="node.component.tool"
+          [type]="node.component.type"
           size="12"></component-icon>
 
         <span class="component--title--name"
-          [dkTooltip]="node.info.component.display_name"
-          truncate>{{ node.info.component.display_name }}</span>
+          [dkTooltip]="node.component.display_name"
+          truncate>{{ node.component.display_name }}</span>
       </div>
 
       <div class="component--divider">
       </div>
 
-      <div class="flex-row"
-        *ngIf="node.info.component.type === componentType.BatchPipeline">
+      <div *ngIf="node.component.type === componentType.BatchPipeline"
+        class="flex-row">
         <div class="component--stats-container mr-3">
-          <a *ngIf="node.details"
-            [routerLink]="[ '..', 'runs' ]"
-            [queryParams]="{component_id: node.info.component.id}"
+          <a [routerLink]="[ '..', 'runs' ]"
+            [queryParams]="{component_id: node.component.id}"
             class="component--stats">
-            Runs: {{ node.details.runs_count }}
+            Runs: {{ node.runs_summary | sum:'count' }}
           </a>
-          <div *ngIf="!node.details"
-            class="text-skeleton"></div>
         </div>
 
-        <shell-instance-runs-summary *ngIf="node.details"
-          [summaries]="node.details.runs_summary"></shell-instance-runs-summary>
+        <shell-instance-runs-summary [summaries]="node.runs_summary"></shell-instance-runs-summary>
       </div>
 
-      <div class="flex-row"
-        *ngIf="node.info.component.type === componentType.Dataset">
+      <div *ngIf="node.component.type === componentType.Dataset"
+        class="flex-row">
         <div class="component--stats-container mr-3">
-          <a *ngIf="node.details"
-            [routerLink]="[ '..', 'events' ]"
-            [queryParams]="{component_id: node.info.component.id}"
+          <a [routerLink]="[ '..', 'events' ]"
+            [queryParams]="{component_id: node.component.id}"
             class="component--stats">
-            Operations: {{ node.details.events.length }}
+            Operations: {{ node.operations_summary | sum:'count' }}
           </a>
-          <div *ngIf="!node.details"
-            class="text-skeleton"></div>
         </div>
 
-        <div class="flex-container text-caption--secondary"
-          *ngIf="node.details && node.details.events.length > 0">
-          <div class="flex-container mr-2">
-            <mat-icon class="flex-container icon-size-12">edit</mat-icon>
-            <span>{{ (node.details.events | operation: 'WRITE').length }}</span>
-          </div>
-
-          <div class="flex-container">
-            <mat-icon class="flex-container icon-size-12">auto_stories</mat-icon>
-            <span>{{ (node.details.events | operation: 'READ').length }}</span>
+        <div *ngIf="node.operations_summary.length > 0"
+          class="flex-container text-caption--secondary">
+          <div *ngFor="let summary of node.operations_summary"
+            class="flex-container mr-2">
+            <mat-icon class="flex-container icon-size-12">
+              <ng-container *ngIf="summary.operation === 'WRITE'">edit</ng-container>
+              <ng-container *ngIf="summary.operation === 'READ'">auto_stories</ng-container>
+            </mat-icon>
+            <span>{{ summary.count }}</span>
           </div>
         </div>
       </div>
 
       <div class="flex-row fx-align-baseline mt-1">
         <div class="component--stats-container mr-3">
-          <a *ngIf="node.details"
+          <a *ngIf="node"
             [routerLink]="[ '..', 'tests' ]"
-            [queryParams]="{component_id: node.info.component.id}"
+            [queryParams]="{component_id: node.component.id}"
             class="component--stats">
-            Tests: {{ node.details.tests_count }}
+            Tests: {{ node.tests_summary | sum:'count' }}
           </a>
-          <div *ngIf="!node.details"
-            class="text-skeleton"></div>
         </div>
 
-        <shell-task-test-summary *ngIf="node.details"
+        <shell-task-test-summary *ngIf="node"
           [showLabels]="false"
-          [testsSummaries]="node.details.tests_summary"></shell-task-test-summary>
+          [testsSummaries]="node.tests_summary"></shell-task-test-summary>
       </div>
     </div>
   </ng-container>

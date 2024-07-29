@@ -2,10 +2,10 @@ import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { BaseComponent, JourneyDagEdge, ProjectStore } from '@observability-ui/core';
+import { BaseComponent, JourneyDagEdge, JourneyDagNode, ProjectStore } from '@observability-ui/core';
 import { DagComponent, DagEdgeDirective, DagNodeDirective } from '@observability-ui/ui';
 import { BehaviorSubject, Observable, combineLatest, debounceTime, filter, map, startWith } from 'rxjs';
-import { DagCompleteNode, DagStore } from '../../../stores/dag/dag.store';
+import { DagStore } from '../../../stores/dag/dag.store';
 import { MatLegacyCheckbox } from '@angular/material/legacy-checkbox';
 
 @Component({
@@ -141,8 +141,8 @@ export class JourneyRelationshipsComponent {
     this.error$.next(message);
   }
 
-  nodeTrackByFn(_: number, node: DagCompleteNode): string {
-    return node.info.component.id;
+  nodeTrackByFn(_: number, node: JourneyDagNode): string {
+    return node.component.id;
   }
 
   edgeTrackByFn(_: number, edge: JourneyDagEdge): string {

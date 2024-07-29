@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, Optional } from '@angular/core';
-import { BaseComponent, ConfigService, EntityListResponse, EntityService, EntityType, Instance, InstancesSearchFields, UpcomingInstance, UpcomingInstancesSearchFields } from '@observability-ui/core';
+import { BaseComponent, ConfigService, EntityListResponse, EntityService, EntityType, Instance, InstanceDag, InstancesSearchFields, UpcomingInstance, UpcomingInstancesSearchFields } from '@observability-ui/core';
 import { Observable, of, switchMap } from 'rxjs';
 import { JourneysService } from '../journeys/journeys.service';
 
@@ -25,9 +25,8 @@ export class InstancesService extends EntityService<Instance, InstancesSearchFie
     return this.journeyService.getComponentsByJourney(journeyId);
   }
 
-  /* istanbul ignore next */
-  getJourneyDag(journeyId: string) {
-    return this.journeyService.getJourneyDag(journeyId);
+  getDag(instanceId: string): Observable<InstanceDag> {
+    return this.http.get<InstanceDag>(`${this.getUrl()}/${ instanceId }/dag`);
   }
 
   getOrganizationInstances(filters: InstancesSearchFields): Observable<EntityListResponse<Instance>> {

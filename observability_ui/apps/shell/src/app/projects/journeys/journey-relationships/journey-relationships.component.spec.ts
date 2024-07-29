@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { BaseComponent, JourneyDagEdge, ProjectStore } from '@observability-ui/core';
+import { BaseComponent, JourneyDagEdge, JourneyDagNode, ProjectStore } from '@observability-ui/core';
 import { LoadingState } from '@microphi/store';
 import { ActivatedRouteMock } from '@datakitchen/ngx-toolkit';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
@@ -14,7 +14,7 @@ import { Mocked } from '@datakitchen/ngx-toolkit';
 import { TestScheduler } from '@datakitchen/rxjs-marbles';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { DagCompleteNode, DagStore } from '../../../stores/dag/dag.store';
+import { DagStore } from '../../../stores/dag/dag.store';
 import { JourneyDagLegendComponent } from '../../journey-dag-legend/journey-dag-legend.component';
 
 describe('Journey Relationships', () => {
@@ -258,7 +258,7 @@ describe('Journey Relationships', () => {
 
   describe('nodeTrackByFn()', () => {
     it('should track nodes by component id', () => {
-      expect(component.nodeTrackByFn(0, { info: nodes[0] } as unknown as DagCompleteNode)).toEqual(nodes[0].component.id);
+      expect(component.nodeTrackByFn(0, nodes[0] as JourneyDagNode)).toEqual(nodes[0].component.id);
     });
   });
 
