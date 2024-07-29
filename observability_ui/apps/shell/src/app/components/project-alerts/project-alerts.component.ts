@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { ActionType, EntitiesResolver, ProjectAlertSettings, ProjectAlertSettingsAction, ProjectStore } from '@observability-ui/core';
+import { AbstractAction, ActionType, EntitiesResolver, ProjectAlertSettings, ProjectAlertSettingsAction, ProjectStore, RULE_ACTIONS } from '@observability-ui/core';
 import { NgForOf, NgIf } from '@angular/common';
 import { DkTooltipModule, DynamicComponentModule, DynamicComponentOutletDirective, MatCardEditComponent, TextFieldModule } from '@observability-ui/ui';
 import { WebhookActionComponent } from "../rules-actions/implementations/actions/webhook/webhook-action.component";
@@ -12,15 +12,12 @@ import { MatLegacyInputModule as MatInputModule } from "@angular/material/legacy
 import { RulesActionsModule } from "../rules-actions/rules-actions.module";
 import { MatIconModule } from "@angular/material/icon";
 import { MatLegacyMenuModule } from "@angular/material/legacy-menu";
-import { RULE_ACTIONS } from "../rules-actions/actions.model";
-import { AbstractAction } from "../rules-actions/abstract-action.directive";
 import { MatLegacyButtonModule } from "@angular/material/legacy-button";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { filter, tap } from "rxjs";
 import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
 import { DefaultErrorHandlerComponent } from "../default-error-handler/default-error-handler.component";
 import { MatLegacyCardModule } from "@angular/material/legacy-card";
-
 
 interface ActionComponentInstance {
   component: typeof AbstractAction;
@@ -51,7 +48,7 @@ interface ActionComponentInstance {
     DynamicComponentModule,
     MatLegacyCardModule,
     DkTooltipModule,
-  ]
+  ],
 })
 export class ProjectAlertsComponent implements OnInit {
 
@@ -102,7 +99,7 @@ export class ProjectAlertsComponent implements OnInit {
     private entities: EntitiesResolver,
     private store: ProjectAlertSettingsStore,
     private projectStore: ProjectStore,
-    @Inject(RULE_ACTIONS) public actionComponents: typeof AbstractAction[],
+    @Inject(RULE_ACTIONS) private actionComponents: typeof AbstractAction[],
   ) {
   }
 

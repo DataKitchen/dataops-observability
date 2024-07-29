@@ -39,9 +39,6 @@ import { SSISToolComponent } from './integrations/tools/ssis-tool/ssis-tool.comp
 import { QlikToolComponent } from './integrations/tools/qlik-tool/qlik-tool.component';
 import { REPLACEMENT_TOKENS } from '../../app/config';
 import { Menu } from '../components/sidenav-menu/sidenav-menu.model';
-import { RULE_ACTIONS } from "../components/rules-actions/actions.model";
-import { SendEmailActionComponent } from "../components/rules-actions/implementations/actions/send-email/send-email-action.component";
-import { WebhookActionComponent } from "../components/rules-actions/implementations/actions/webhook/webhook-action.component";
 
 let injector!: Injector; // https://github.com/angular/angular/issues/51532
 
@@ -217,15 +214,6 @@ let injector!: Injector; // https://github.com/angular/angular/issues/51532
         { _name: 'oracle_database', _displayName: 'Oracle Database', _icon: 'oracle_database' },
       ],
     },
-    {
-      provide: RULE_ACTIONS,
-      useValue: [
-        SendEmailActionComponent,
-        WebhookActionComponent,
-        // ExampleActionComponent,
-      ],
-    },
-
   ],
   exports: []
 })

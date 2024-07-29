@@ -1,13 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnInit, Optional, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { CoreComponent, Memoize, TypedFormControl } from '@datakitchen/ngx-toolkit';
-import { BaseComponent, ComponentType } from '@observability-ui/core';
+import { AbstractAction, BaseComponent, ComponentType, RULE_ACTIONS } from '@observability-ui/core';
 import { DynamicComponentOutletDirective } from '@observability-ui/ui';
 import { AbstractRule } from '../abstract.rule';
-import { AbstractAction } from '../abstract-action.directive';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { RuleStore } from '../rule.store';
 import { Rule, RULES, RuleUI } from '../rule.model';
-import { RULE_ACTIONS } from '../actions.model';
 import { filter, map, Observable, takeUntil, tap } from 'rxjs';
 import { DefaultErrorHandlerComponent } from '../../default-error-handler/default-error-handler.component';
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';

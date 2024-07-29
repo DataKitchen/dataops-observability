@@ -9,7 +9,6 @@ import { Mocked, MockProvider } from '@datakitchen/ngx-toolkit';
 import { RuleStore } from '../rule.store';
 import { RULES } from '../rule.model';
 import { ExampleRuleComponent } from '../implementations/rules/example/example-rule.component';
-import { RULE_ACTIONS } from '../actions.model';
 import { ExampleActionComponent } from '../implementations/actions/example/example-action.component';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar';
@@ -23,6 +22,7 @@ import { TemplatingLabelComponent } from '../label/templating-label.component';
 import { TranslatePipeMock } from '@observability-ui/translate';
 import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 import { TemplatingAlertComponent } from '../alert/templating-alert.component';
+import { RULE_ACTIONS } from '@observability-ui/core';
 
 describe('rule-display', () => {
 

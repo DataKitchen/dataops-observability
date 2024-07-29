@@ -27,3 +27,6 @@ export * from './lib/entity';
 export * from './lib/entity/mock/mock.decorator';
 
 export * from './lib/entities';
+
+export * from './lib/templating';
+export * from './lib/actions';

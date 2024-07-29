@@ -1,6 +1,6 @@
 import { Directive, TemplateRef, ViewChild } from '@angular/core';
 import { Rule } from './rule.model';
-import { AbstractTemplating } from './abstract-templating.directive';
+import { AbstractTemplating } from '@observability-ui/core';
 
 @Directive()
 export abstract class AbstractRule extends AbstractTemplating {
