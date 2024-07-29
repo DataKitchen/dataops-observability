@@ -1,6 +1,6 @@
 __all__ = ["InstanceSchema", "InstanceDetailedSchema"]
 
-from marshmallow import pre_dump
+from marshmallow import pre_dump, Schema
 from marshmallow.fields import Bool, DateTime, List, Nested, Pluck, Str
 
 from common.entities import Instance, InstanceStatus

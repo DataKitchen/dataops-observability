@@ -162,7 +162,11 @@ BASIC_AUTH_USER_PASSWORD: str = "abcxyz12345"
 
 @pytest.fixture()
 def test_db():
-    yield init_db()
+    def sqlite_if(cond, a, b):
+        return a if cond else b
+    init_db()
+    DB.obj.register_function(sqlite_if, "IF", 3)
+    yield
     DB.close()
 
 
