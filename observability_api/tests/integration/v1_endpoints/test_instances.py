@@ -121,6 +121,9 @@ class TestProjectContext:
         num_instances: int = 1,
         instance_alert_ct: AlertCount = AlertCount(error_ct=1, warning_ct=0),
         run_alert_ct: AlertCount = AlertCount(error_ct=1, warning_ct=0),
+        create_dag: bool = False,
+        create_test_outcomes: bool = False,
+        create_database_operations: bool = False,
     ):
         self.project = Project.create(name=f"Project-{name}", organization=org, active=True)
         self.journey = Journey.create(name=f"Journey-{name}", project=self.project)
@@ -144,9 +147,12 @@ class TestProjectContext:
         self.instance_alerts = list(InstanceAlert.select().where(InstanceAlert.instance.in_(self.instances)))
         self.create_run_alerts(self.runs, run_alert_ct)
         self.run_alerts = list(RunAlert.select().where(RunAlert.run.in_(self.runs)))
-        self.create_journey_dag(self.project, self.journey, self.pipeline, self.dataset)
-        self.create_test_outcomes(self.instances, self.pipeline)
-        self.create_dataset_operations(self.instances, self.dataset)
+        if create_dag:
+            self.create_journey_dag(self.project, self.journey, self.pipeline, self.dataset)
+        if create_test_outcomes:
+            self.create_test_outcomes(self.instances, self.pipeline)
+        if create_database_operations:
+            self.create_dataset_operations(self.instances, self.dataset)
 
     @staticmethod
     def create_instance_alerts(instances: list[Instance], alert_ct: AlertCount):
@@ -875,7 +881,13 @@ def test_list_company_instances_expected_end_time(
 
 @pytest.mark.integration
 def test_get_instance_dag(client, g_user, organization):
-    context = TestProjectContext(org=organization, name="test_instance_dag")
+    context = TestProjectContext(
+        org=organization,
+        name="test_instance_dag",
+        create_dag=True,
+        create_test_outcomes=True,
+        create_database_operations=True,
+    )
     instance = context.instances[0]
 
     response = client.get(f"/observability/v1/instances/{instance.id}/dag")
