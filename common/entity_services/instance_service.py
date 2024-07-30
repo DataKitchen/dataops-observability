@@ -40,7 +40,7 @@ class InstanceService:
     @staticmethod
     def runs_summary_query(ids: Iterable[UUID]) -> ModelSelect:
         return (
-            Run.select(InstancesInstanceSets.instance, Run.status, fn.COUNT(Run.id).alias("count")) 
+            Run.select(InstancesInstanceSets.instance, Run.status, fn.COUNT(Run.id).alias("count"))
             .join(InstanceSet)
             .join(InstancesInstanceSets)
             .group_by(InstancesInstanceSets.instance, Run.status)

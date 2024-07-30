@@ -422,4 +422,4 @@ class InstanceDag(BaseEntityView):
         instance: Instance = self.get_entity_from_query_or_fail(
             Instance.select(Instance, Journey).where(Instance.id == instance_id)
         )
-        return InstanceDagSchema().dump(InstanceDagService.get_nodes_with_summaries(instance))
+        return make_response(InstanceDagSchema().dump(InstanceDagService.get_nodes_with_summaries(instance)))

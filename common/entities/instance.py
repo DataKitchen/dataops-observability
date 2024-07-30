@@ -62,11 +62,11 @@ class Instance(BaseEntity, AuditUpdateTimeEntityMixin):
     @property
     def journey_dag(self) -> DefaultDict[Component, set[JourneyDagEdge]]:
         """Return a graph of Components taken from the Journey."""
-        return self.journey.journey_dag
+        return cast(DefaultDict[Component, set[JourneyDagEdge]], self.journey.journey_dag)
 
     @property
     def dag_nodes(self) -> list[Component]:
-        return self.journey.dag_nodes
+        return cast(list[Component], self.journey.dag_nodes)
 
     @staticmethod
     def make_status_filter(statuses: list[str]) -> list:

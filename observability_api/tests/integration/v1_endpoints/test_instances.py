@@ -882,9 +882,8 @@ def test_get_instance_dag(client, g_user, organization):
 
     assert response.status_code == HTTPStatus.OK, response.json
     assert "nodes" in response.json and isinstance(response.json["nodes"], list)
-    assert (
-        sorted([n["component"]["id"] for n in response.json["nodes"]])
-        == sorted([str(n.id) for n in instance.dag_nodes])
+    assert sorted([n["component"]["id"] for n in response.json["nodes"]]) == sorted(
+        [str(n.id) for n in instance.dag_nodes]
     )
 
     pipeline_node = [n for n in response.json["nodes"] if n["component"]["id"] == str(context.pipeline.id)][0]
@@ -894,7 +893,8 @@ def test_get_instance_dag(client, g_user, organization):
 
     dataset_node = [n for n in response.json["nodes"] if n["component"]["id"] == str(context.dataset.id)][0]
     assert (
-        dataset_node["operations_summary"] and dataset_node["operations_summary"][1]["operation"] == "WRITE"
+        dataset_node["operations_summary"]
+        and dataset_node["operations_summary"][1]["operation"] == "WRITE"
         and dataset_node["operations_summary"][1]["count"] == 1
     )
 

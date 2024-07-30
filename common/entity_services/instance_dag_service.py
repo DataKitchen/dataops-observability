@@ -24,13 +24,13 @@ from common.entity_services.instance_service import ADDITIONAL_ALERT_DESCRIPTION
 from common.events.v2.test_outcomes import TestStatus
 
 RUN_STATUS_WEIGHT = {
-  RunStatus.FAILED.value: 6,
-  RunStatus.MISSING.value: 5,
-  RunStatus.COMPLETED_WITH_WARNINGS.value: 4,
-  RunStatus.RUNNING.value: 3,
-  RunStatus.PENDING.value: 2,
-  RunStatus.COMPLETED.value: 1,
-  None: -1,
+    RunStatus.FAILED.value: 6,
+    RunStatus.MISSING.value: 5,
+    RunStatus.COMPLETED_WITH_WARNINGS.value: 4,
+    RunStatus.RUNNING.value: 3,
+    RunStatus.PENDING.value: 2,
+    RunStatus.COMPLETED.value: 1,
+    None: -1,
 }
 
 
@@ -48,19 +48,21 @@ class InstanceDagService:
         operations_summary = InstanceDagService._get_operations_summary(instance)
 
         for component in instance_dag_nodes:
-            nodes.append({
-                "component": component,
-                "edges": instance_dag[component],
-                "status": statuses.get(component.id, RunStatus.PENDING.value),
-                "runs_summary": runs_summary.get(component.id, []),
-                "tests_summary": tests_summary.get(component.id, []),
-                "alerts_summary": alerts_summary.get(component.id, []),
-                "operations_summary": operations_summary.get(component.id, []),
-            })
+            nodes.append(
+                {
+                    "component": component,
+                    "edges": instance_dag[component],
+                    "status": statuses.get(component.id, RunStatus.PENDING.value),
+                    "runs_summary": runs_summary.get(component.id, []),
+                    "tests_summary": tests_summary.get(component.id, []),
+                    "alerts_summary": alerts_summary.get(component.id, []),
+                    "operations_summary": operations_summary.get(component.id, []),
+                }
+            )
         return {"nodes": nodes}
 
     @staticmethod
-    def _get_nodes_status(instance: Instance, nodes: list[Component]) -> dict[UUID, str]:
+    def _get_nodes_status(instance: Instance, nodes: list[Component]) -> dict[UUID, str | None]:
         runs_status_query = (
             Run.select(Run.pipeline, fn.COALESCE(Run.status, Value(RunStatus.PENDING.value)))
             .join(InstanceSet)
@@ -75,9 +77,22 @@ class InstanceDagService:
                 Case(
                     None,
                     (
-                        (fn.SUM(fn.IF(DatasetOperation.operation == DatasetOperationType.WRITE.value, 1, 0)) > 0, Value(RunStatus.COMPLETED.value)),
-                        ((fn.SUM(fn.IF(DatasetOperation.operation == DatasetOperationType.WRITE.value, 1, 0))) <= 0 & fn.SUM(fn.IF(Schedule.id != None, 1, 0)) > 0, Value(RunStatus.MISSING.value)),
-                        ((fn.SUM(fn.IF(DatasetOperation.operation == DatasetOperationType.WRITE.value, 1, 0))) <= 0 & fn.SUM(fn.IF(Schedule.id != None, 1, 0)) <= 0, Value(RunStatus.PENDING.value)),
+                        (
+                            fn.SUM(fn.IF(DatasetOperation.operation == DatasetOperationType.WRITE.value, 1, 0)) > 0,
+                            Value(RunStatus.COMPLETED.value),
+                        ),
+                        (
+                            (fn.SUM(fn.IF(DatasetOperation.operation == DatasetOperationType.WRITE.value, 1, 0)) <= 0)
+                            & fn.SUM(fn.IF(Schedule.id != None, 1, 0))
+                            > 0,
+                            Value(RunStatus.MISSING.value),
+                        ),
+                        (
+                            (fn.SUM(fn.IF(DatasetOperation.operation == DatasetOperationType.WRITE.value, 1, 0)) <= 0)
+                            & fn.SUM(fn.IF(Schedule.id != None, 1, 0))
+                            <= 0,
+                            Value(RunStatus.PENDING.value),
+                        ),
                     ),
                     Value(RunStatus.MISSING.value),
                 ).alias("status"),
@@ -109,7 +124,7 @@ class InstanceDagService:
             .tuples()
         )
 
-        component_statuses: dict[str, str] = defaultdict(lambda: None)
+        component_statuses: dict[UUID, str | None] = defaultdict(lambda: None)
         for component_id, status in chain(runs_status_query, datasets_status_query, tests_status_query):
             component_statuses[component_id] = max(
                 component_statuses[component_id],
@@ -151,13 +166,10 @@ class InstanceDagService:
     @staticmethod
     def _get_alerts_summary(instance: Instance) -> dict[UUID, list[dict]]:
         instance_alerts_query = InstanceService.instance_alerts_query([instance])
-        instance_alerts_query = (
-            instance_alerts_query.select(
-                *instance_alerts_query.selected_columns,
-                InstanceAlertsComponents.component.alias("component_id"),
-            )
-            .join(InstanceAlertsComponents, on=(InstanceAlertsComponents.instance_alert == InstanceAlert.id))
-        )
+        instance_alerts_query = instance_alerts_query.select(
+            *instance_alerts_query.selected_columns,
+            InstanceAlertsComponents.component.alias("component_id"),
+        ).join(InstanceAlertsComponents, on=(InstanceAlertsComponents.instance_alert == InstanceAlert.id))
 
         run_alerts_query = InstanceService.run_alerts_query([instance])
         run_alerts_query = run_alerts_query.select(
@@ -172,8 +184,8 @@ class InstanceDagService:
             alerts.c.level,
             fn.COUNT(alerts.c.alert_id).alias("count"),
             fn.ROW_NUMBER()
-                .over(partition_by=[alerts.c.component_id], order_by=[fn.COUNT(alerts.c.alert_id).desc()])
-                .alias("row_num"),
+            .over(partition_by=[alerts.c.component_id], order_by=[fn.COUNT(alerts.c.alert_id).desc()])
+            .alias("row_num"),
         ).group_by(alerts.c.component_id, alerts.c.description, alerts.c.level)
         agg_data = list(agg_alerts)
 

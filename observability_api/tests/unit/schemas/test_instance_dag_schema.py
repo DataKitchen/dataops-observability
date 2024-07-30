@@ -6,9 +6,7 @@ from testlib.fixtures.entities import *
 
 @pytest.mark.unit
 def test_instance_dag_schema_dump():
-    data = InstanceDagSchema().dump({
-        "nodes": [],
-    })
+    data = InstanceDagSchema().dump({"nodes": []})
 
     assert isinstance(data["nodes"], list)
 
@@ -20,25 +18,27 @@ def test_instance_dag_node_schema_dump(component, pipeline):
         {"id": "2", "left": pipeline},
     ]
 
-    data = InstanceDagNodeSchema().dump({
-        "component": component,
-        "status": "RUNNING",
-        "edges": edges,
-        "runs_summary": [
-            {"status": "COMPLETED_WITH_WARNINGS", "count": 1},
-            {"status": "PENDING", "count": 2},
-        ],
-        "alerts_summary": [
-            {"level": "WARNING", "description": "...", "count": 1},
-        ],
-        "tests_summary": [
-            {"status": "PASSED", "count": 3},
-            {"status": "FAILED", "count": 3},
-        ],
-        "operations_summary": [
-            {"operation": "WRITE", "count": 2},
-        ],
-    })
+    data = InstanceDagNodeSchema().dump(
+        {
+            "component": component,
+            "status": "RUNNING",
+            "edges": edges,
+            "runs_summary": [
+                {"status": "COMPLETED_WITH_WARNINGS", "count": 1},
+                {"status": "PENDING", "count": 2},
+            ],
+            "alerts_summary": [
+                {"level": "WARNING", "description": "...", "count": 1},
+            ],
+            "tests_summary": [
+                {"status": "PASSED", "count": 3},
+                {"status": "FAILED", "count": 3},
+            ],
+            "operations_summary": [
+                {"operation": "WRITE", "count": 2},
+            ],
+        }
+    )
 
     assert data["component"]["id"] == str(component.id)
     assert data["status"] == "RUNNING"

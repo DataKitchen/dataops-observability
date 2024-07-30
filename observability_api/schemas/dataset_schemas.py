@@ -1,7 +1,7 @@
 __all__ = ["DatasetSchema", "DatasetOperationsSummarySchema"]
 
 from marshmallow import Schema
-from marshmallow.fields import Int, Str
+from marshmallow.fields import Int
 
 from common.entities.component import ComponentType
 from common.events.v2 import DatasetOperationType
