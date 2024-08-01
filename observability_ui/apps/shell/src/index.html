@@ -16,9 +16,16 @@
     <link rel="preload"
       href="https://cdn.materialdesignicons.com/6.5.95/css/materialdesignicons.min.css"
       as="style"
-      onload="this.onload=null;this.rel='stylesheet'"
       integrity="sha512-Zw6ER2h5+Zjtrej6afEKgS8G5kehmDAHYp9M2xf38MPmpUWX39VrYmdGtCrDQbdLQrTnBVT8/gcNhgS4XPgvEg=="
-      crossorigin="anonymous">
+      crossorigin="anonymous"
+      id="preloadMaterialIcons">
+    <script nonce="RandomNonceValue">
+      window.addEventListener('load', function() {
+        var preloadMaterialIcons = document.getElementById('preloadMaterialIcons');
+        preloadMaterialIcons.rel = 'stylesheet';
+      });
+    </script>
+
     <noscript><link rel="stylesheet" href="styles.css"></noscript>
 
     <link rel="manifest" href="manifest.webmanifest">
@@ -159,11 +166,10 @@
 
   <body class="mat-typography">
 
-    <shell-root>
+    <shell-root ngCspNonce="RandomNonceValue">
       <div id="loading">
         <progress class="material-progress" />
       </div>
     </shell-root>
-
   </body>
 </html>

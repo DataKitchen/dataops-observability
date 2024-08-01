@@ -15,7 +15,6 @@
       "resources": {
         "files": [
           "/favicon.ico",
-          "/index.html",
           "/manifest.webmanifest",
           "/*.css",
           "/*.js",
@@ -35,12 +34,12 @@
       }
     },
     {
-      "name": "remotes",
+      "name": "auth",
       "installMode": "prefetch",
       "updateMode": "prefetch",
       "resources": {
         "files": [
-          "/remotes/**/*.(js|css)"
+          "/auth/**/*.(js|css)"
         ]
       }
     },
