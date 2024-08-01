@@ -10,6 +10,9 @@ from werkzeug.datastructures import MultiDict
 from common.entities import (
     AlertLevel,
     Company,
+    Dataset,
+    DatasetOperation,
+    DatasetOperationType,
     Instance,
     InstanceAlert,
     InstanceAlertsComponents,
@@ -17,6 +20,7 @@ from common.entities import (
     InstanceSet,
     InstanceStatus,
     Journey,
+    JourneyDagEdge,
     Organization,
     Pipeline,
     Project,
@@ -104,6 +108,7 @@ class TestProjectContext:
     project: Project
     journey: Journey
     pipeline: Pipeline
+    dataset: Dataset
     runs: list[Run]
     instances: list[Instance]
     instance_alerts: list[InstanceAlert]
@@ -116,10 +121,14 @@ class TestProjectContext:
         num_instances: int = 1,
         instance_alert_ct: AlertCount = AlertCount(error_ct=1, warning_ct=0),
         run_alert_ct: AlertCount = AlertCount(error_ct=1, warning_ct=0),
+        create_dag: bool = False,
+        create_test_outcomes: bool = False,
+        create_database_operations: bool = False,
     ):
         self.project = Project.create(name=f"Project-{name}", organization=org, active=True)
         self.journey = Journey.create(name=f"Journey-{name}", project=self.project)
         self.pipeline = Pipeline.create(key=f"Pipeline-{name}", project=self.project)
+        self.dataset = Dataset.create(key=f"Dataset-{name}", project=self.project)
 
         for i in range(num_instances):
             instance = Instance.create(journey=self.journey)
@@ -131,12 +140,19 @@ class TestProjectContext:
                 status=RunStatus.RUNNING.value,
                 instance_set=instance_set,
             )
+
         self.instances = list(Instance.select().where(Instance.journey == self.journey))
         self.runs = list(Run.select().where(Run.pipeline == self.pipeline))
         self.create_instance_alerts(self.instances, instance_alert_ct)
         self.instance_alerts = list(InstanceAlert.select().where(InstanceAlert.instance.in_(self.instances)))
         self.create_run_alerts(self.runs, run_alert_ct)
         self.run_alerts = list(RunAlert.select().where(RunAlert.run.in_(self.runs)))
+        if create_dag:
+            self.create_journey_dag(self.project, self.journey, self.pipeline, self.dataset)
+        if create_test_outcomes:
+            self.create_test_outcomes(self.instances, self.pipeline)
+        if create_database_operations:
+            self.create_dataset_operations(self.instances, self.dataset)
 
     @staticmethod
     def create_instance_alerts(instances: list[Instance], alert_ct: AlertCount):
@@ -191,6 +207,47 @@ class TestProjectContext:
                 ]
             )
             RunAlert.bulk_create(alerts, batch_size=100)
+
+    @staticmethod
+    def create_journey_dag(project: Project, journey: Journey, node_1: Pipeline, node_3: Dataset):
+        node_2 = Pipeline.create(key="Batch-Pipeline-2", project=project)
+        node_4 = Pipeline.create(key="Batch-Pipeline-4", project=project)
+        node_5 = Pipeline.create(key="Batch-Pipeline-5", project=project)
+
+        JourneyDagEdge.create(journey=journey, right=node_1)
+        JourneyDagEdge.create(journey=journey, left=node_1, right=node_2)
+        JourneyDagEdge.create(journey=journey, left=node_1, right=node_3)
+        JourneyDagEdge.create(journey=journey, left=node_2, right=node_3)
+        JourneyDagEdge.create(journey=journey, left=node_3, right=node_4)
+        JourneyDagEdge.create(journey=journey, left=node_3, right=node_5)
+
+    @staticmethod
+    def create_test_outcomes(instances: list[Instance], component: Pipeline | Dataset):
+        for instance in instances:
+            instance_set = InstanceSet.get_or_create([instance.id])
+            for i in range(3):
+                TestOutcome.create(
+                    name=f"DKTest{i}",
+                    description=f"Description{i}",
+                    status=f"{TestStatuses.PASSED.name if i % 2 == 0 else TestStatuses.FAILED.name}",
+                    start_time=datetime.now(tz=timezone.utc) + timedelta(minutes=5 * i),
+                    end_time=datetime.now(tz=timezone.utc) + timedelta(minutes=15 * i),
+                    component=component,
+                    instance_set=instance_set,
+                )
+
+    @staticmethod
+    def create_dataset_operations(instances: list[Instance], dataset: Dataset):
+        for instance in instances:
+            instance_set = InstanceSet.get_or_create([instance.id])
+            for i in range(3):
+                DatasetOperation.create(
+                    dataset=dataset,
+                    instance_set=instance_set,
+                    operation_time=datetime.now(tz=timezone.utc),
+                    operation=f"{DatasetOperationType.READ.name if i % 2 == 0 else DatasetOperationType.WRITE.name}",
+                    path="/path/to/file",
+                )
 
 
 @pytest.fixture
@@ -820,3 +877,38 @@ def test_list_company_instances_expected_end_time(
     assert response.json["entities"][1]["id"] == str(inactive_instance.id)
     assert response.json["entities"][1]["end_time"] is not None
     assert response.json["entities"][1]["expected_end_time"] is None
+
+
+@pytest.mark.integration
+def test_get_instance_dag(client, g_user, organization):
+    context = TestProjectContext(
+        org=organization,
+        name="test_instance_dag",
+        create_dag=True,
+        create_test_outcomes=True,
+        create_database_operations=True,
+    )
+    instance = context.instances[0]
+
+    response = client.get(f"/observability/v1/instances/{instance.id}/dag")
+
+    assert response.status_code == HTTPStatus.OK, response.json
+    assert "nodes" in response.json and isinstance(response.json["nodes"], list)
+    assert sorted([n["component"]["id"] for n in response.json["nodes"]]) == sorted(
+        [str(n.id) for n in instance.dag_nodes]
+    )
+
+    pipeline_node = [n for n in response.json["nodes"] if n["component"]["id"] == str(context.pipeline.id)][0]
+    assert pipeline_node["alerts_summary"] and pipeline_node["alerts_summary"][0]["level"] == "ERROR"
+    assert pipeline_node["runs_summary"] and pipeline_node["runs_summary"][0]["status"] == "RUNNING"
+    assert pipeline_node["tests_summary"] and pipeline_node["tests_summary"][0]["status"] == "FAILED"
+
+    dataset_node = [n for n in response.json["nodes"] if n["component"]["id"] == str(context.dataset.id)][0]
+    assert (
+        dataset_node["operations_summary"]
+        and dataset_node["operations_summary"][1]["operation"] == "WRITE"
+        and dataset_node["operations_summary"][1]["count"] == 1
+    )
+
+    assert pipeline_node["status"] == RunStatus.FAILED.name
+    assert dataset_node["status"] == RunStatus.COMPLETED.name

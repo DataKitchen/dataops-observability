@@ -41,24 +41,24 @@
   (renderError)="handleError($event)"
   tabindex="-1">
   <ng-container *ngFor="let node of nodes$ | async; trackBy: nodeTrackByFn">
-    <div *dagNode="node.info.component.id"
+    <div *dagNode="node.component.id"
       class="component"
       data-test="JourneyComponent"
-      attr.data-test-id="{{ node.info.component.id }}"
-      attr.data-test-name="{{ node.info.component.display_name }}"
+      attr.data-test-id="{{ node.component.id }}"
+      attr.data-test-name="{{ node.component.display_name }}"
       [class.selected]="node.selected"
-      [ngClass]="node.info.component.type">
+      [ngClass]="node.component.type">
 
-      <component-icon [tool]="node.info.component.tool"
-        [type]="node.info.component.type"
+      <component-icon [tool]="node.component.tool"
+        [type]="node.component.type"
         size="24"
         class="mr-2"></component-icon>
 
       <span class="component--name"
-        [dkTooltip]="node.info.component.display_name"
-        truncate>{{ node.info.component.display_name }}</span>
+        [dkTooltip]="node.component.display_name"
+        truncate>{{ node.component.display_name }}</span>
 
-      <a [routerLink]="['../../..', { outlets: { rightPanel: [node.info.component.id] } }]"
+      <a [routerLink]="['../../..', { outlets: { rightPanel: [node.component.id] } }]"
         dkTooltip="View component details"
         class="component--view">
         <mat-icon>visibility</mat-icon>

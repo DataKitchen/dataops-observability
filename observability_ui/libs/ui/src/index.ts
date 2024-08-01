@@ -53,6 +53,8 @@ export * from './lib/pipes/humanize/humanize.pipe';
 
 export * from './lib/pipes/get-integration/get-integration.pipe';
 
+export * from './lib/pipes/sum/sum.pipe';
+
 export * from './lib/element-ref/element-ref.directive';
 
 export * from './lib/dots-chart/dot.component';

@@ -2,9 +2,9 @@ import { Entity } from '../entity/entity.model';
 import { Project } from '../services/project/project.model';
 import { Alert, AlertLevel } from './alert.model';
 import { ComponentType } from './component.model';
-import { EventType, TestStatus } from './event.model';
+import { TestStatus } from './event.model';
 import { RunProcessedStatus, TestSummary } from './runs.model';
-import { JourneyDagNode } from './journey.model';
+import { JourneyDag, JourneyDagNode } from './journey.model';
 
 export interface Instance extends Entity {
   start_time: string;
@@ -65,19 +65,25 @@ export enum InstanceAlertType {
   TestsHadWarnings = 'TESTS_HAD_WARNINGS',
 }
 
+export interface InstanceDag extends JourneyDag<InstanceDagNode> {}
+
 export interface InstanceDagNode extends JourneyDagNode {
   status: RunProcessedStatus;
-  runs_count: number;
   runs_summary: InstanceRunSummary[];
   tests_summary: TestSummary[];
-  tests_count: number;
-  events?: EventType[];
+  alerts_summary: AlertSummary[];
+  operations_summary: OperationSummary[];
 }
 
 export interface AlertSummary {
   count: number;
   description: string;
   level: AlertLevel;
+}
+
+export interface OperationSummary {
+  operation: 'READ' | 'WRITE';
+  count: number;
 }
 
 export interface UpcomingInstance {
