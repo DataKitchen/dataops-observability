@@ -178,15 +178,19 @@ class InstanceDagService:
         )
 
         alerts = instance_alerts_query.union_all(run_alerts_query)
-        agg_alerts = alerts.select_from(
-            alerts.c.component_id,
-            alerts.c.description,
-            alerts.c.level,
-            fn.COUNT(alerts.c.alert_id).alias("count"),
-            fn.ROW_NUMBER()
-            .over(partition_by=[alerts.c.component_id], order_by=[fn.COUNT(alerts.c.alert_id).desc()])
-            .alias("row_num"),
-        ).group_by(alerts.c.component_id, alerts.c.description, alerts.c.level)
+        agg_alerts = (
+            alerts.select_from(
+                alerts.c.component_id,
+                alerts.c.description,
+                alerts.c.level,
+                fn.COUNT(alerts.c.alert_id).alias("count"),
+                fn.ROW_NUMBER()
+                .over(partition_by=[alerts.c.component_id], order_by=[fn.COUNT(alerts.c.alert_id).desc()])
+                .alias("row_num"),
+            )
+            .group_by(alerts.c.component_id, alerts.c.description, alerts.c.level)
+            .order_by(fn.COUNT(alerts.c.alert_id).desc())
+        )
         agg_data = list(agg_alerts)
 
         # top 10 alerts by count for each instance
