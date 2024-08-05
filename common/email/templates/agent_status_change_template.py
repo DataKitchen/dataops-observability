@@ -79,14 +79,6 @@ class AgentStatusChangeTemplate(BaseTemplate):
       color: rgba(0, 0, 0, 0.87);
     }
 
-    .title__status {
-      color: #F44336;
-      font-size: 28px;
-      line-height: 20px;
-      vertical-align: middle;
-      font-family: Arial sans-serif;
-    }
-
     .summary {
       padding: 4px 16px 16px;
       border: 1px solid rgba(0, 0, 0, 0.12);
@@ -237,9 +229,7 @@ class AgentStatusChangeTemplate(BaseTemplate):
                   <!--<![endif]-->
                 </td>
                 <!-- TITLE -->
-                <td class="title">
-                  <span class="title__status">Agent Offline&nbsp;<span>&#8226;</span></span>
-                </td>
+                <td class="title">Agent Offline</td>
               </tr>
             </table>
           </td>
@@ -280,7 +270,7 @@ class AgentStatusChangeTemplate(BaseTemplate):
                   <td class="summary__value">{{ agent.latest_heartbeat.human }}</td>
                 </tr>
                 <tr>
-                  <td class="summary__label">Latest Event Timestamp</td>
+                  <td class="summary__label">Latest Event</td>
                   <td class="summary__value">{{ agent.latest_event_timestamp.human }}</td>
                 </tr>
               </table>

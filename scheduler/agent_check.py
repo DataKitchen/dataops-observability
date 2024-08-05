@@ -44,7 +44,7 @@ class AgentCheckSchedule:
 
     @property
     def id(self) -> str:
-        # We add the check interval to the unique identifier to force the schedule to be replaced when the interva
+        # We add the check interval to the unique identifier to force the schedule to be replaced when the interval
         # changes
         return f"{self.project.id}-{self.project.agent_check_interval}"
 

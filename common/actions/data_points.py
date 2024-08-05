@@ -546,8 +546,7 @@ class AgentDataPoints(NamespacedDataPointsBase):
 
 class AgentStatusChangeDataPoints(BaseDataPoints):
     def get_namespaces(self, event: EVENT_TYPE, rule: Rule) -> dict[str, NamespacedDataPointsBase]:
-        namespaces = super().get_namespaces(event, rule)
-        match event:
-            case AgentStatusChangeEvent():
-                namespaces["agent"] = AgentDataPoints(event)
-        return namespaces
+        return {
+            **super().get_namespaces(event, rule),
+            "agent": AgentDataPoints(cast(AgentStatusChangeEvent, event)),
+        }

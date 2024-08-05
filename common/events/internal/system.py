@@ -1,4 +1,4 @@
-__all__ = ("AgentStatusChangeEvent", "ProjectAlertEvent")
+__all__ = ["AgentStatusChangeEvent"]
 
 from datetime import datetime
 from dataclasses import dataclass
@@ -9,12 +9,7 @@ from common.events.base import EventBaseMixin, ProjectMixin
 
 
 @dataclass(kw_only=True)
-class ProjectAlertEvent(EventBaseMixin, ProjectMixin):
-    pass
-
-
-@dataclass(kw_only=True)
-class AgentStatusChangeEvent(ProjectAlertEvent):
+class AgentStatusChangeEvent(EventBaseMixin, ProjectMixin):
     agent_id: UUID
     agent_key: str
     agent_tool: str
