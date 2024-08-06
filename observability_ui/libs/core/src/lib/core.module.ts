@@ -13,6 +13,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CompanyService } from './services/company/company.service';
 import { OrganizationService } from './services/organization/organization.service';
 
+import loader from '@monaco-editor/loader';
+
+
 @NgModule({
   imports: [
     CommonModule,
@@ -42,6 +45,22 @@ import { OrganizationService } from './services/organization/organization.servic
       },
       multi: true,
       deps: [ ConfigService, HttpClient ],
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => {
+        return () => {
+          return new Promise((resolve) => {
+            loader.config({
+              paths: {
+                vs: '/assets/monaco-editor/min/vs',
+              }
+            });
+            resolve(true);
+          });
+        };
+      },
+      multi: true,
     },
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS }
   ],
