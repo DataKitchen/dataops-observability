@@ -4,9 +4,9 @@ from typing import Optional, Type
 
 from common.entities import Action
 
-from .action import BaseAction, ImplementationNotFound, InvalidActionTemplate
-from .send_email_action import SendEmailAction
-from .webhook_action import WebhookAction
+from common.actions.action import BaseAction, ImplementationNotFound, InvalidActionTemplate
+from common.actions.send_email_action import SendEmailAction
+from common.actions.webhook_action import WebhookAction
 
 ACTION_CLASS_MAP: dict[str, Type[BaseAction]] = {"CALL_WEBHOOK": WebhookAction, "SEND_EMAIL": SendEmailAction}
 

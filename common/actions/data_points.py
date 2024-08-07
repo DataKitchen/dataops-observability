@@ -7,12 +7,10 @@ from uuid import UUID
 from peewee import DoesNotExist
 
 from common.datetime_utils import datetime_formatted, datetime_iso8601
-from common.entities import Rule
-from common.entity_services import ProjectService
-from common.entity_services.helpers import ListRules
-from common.events.internal import RunAlert
+from common.entities import Rule, AuthProvider, Company, Organization, Project
+from common.events.internal import RunAlert, AgentStatusChangeEvent
 from common.events.v1 import Event
-from rules_engine import ALERT_EVENT, EVENT_TYPE
+from rules_engine.typing import ALERT_EVENT, EVENT_TYPE
 
 LOG = logging.getLogger(__name__)
 
@@ -28,6 +26,14 @@ class NamespacedDataPointsBase:
                 raise AttributeError(f"Error when fetching data point '{attr}'") from e
         else:
             raise AttributeError(f"'{attr}' is not a valid data point")
+
+
+class DatetimeDataPoints(NamespacedDataPointsBase):
+    def __init__(self, value: datetime):
+        self.mappings = {
+            "human": lambda: datetime_formatted(value),
+            "iso": lambda: datetime_iso8601(value),
+        }
 
 
 class EventDataPoints(NamespacedDataPointsBase):
@@ -312,24 +318,23 @@ class CompanyDataPoints(NamespacedDataPointsBase):
 
     def _ui_url(self) -> str:
         # Multiple auth providers is not something we support atm so we can assume to take the first one
-        page = ProjectService.get_auth_providers_with_rules(str(self.event.project_id), ListRules(count=1))
-        ret: str = page.results[0].domain
-        return ret
+        try:
+            auth_provider = (
+                AuthProvider.select(AuthProvider.domain)
+                .left_outer_join(Company)
+                .join(Organization)
+                .join(Project)
+                .where(Project.id == self.event.project_id)
+                .get()
+            )
+            return cast(str, auth_provider.domain)
+        except DoesNotExist:
+            return ""
 
 
-class DataPoints(Mapping):
-    def __init__(self, event: Event, rule: Rule):
-        self.namespaces = {
-            "company": CompanyDataPoints(event),
-            "component": ComponentDataPoints(event),
-            "event": EventDataPoints(event),
-            "pipeline": ComponentDataPoints(event),
-            "project": ProjectDataPoints(event),
-            "rule": RuleDataPoints(rule),
-            "run": RunDataPoints(event),
-            "run_task": RunTaskDataPoints(event),
-            "task": TaskDataPoints(event),
-        }
+class BaseDataPoints(Mapping):
+    def __init__(self, event: EVENT_TYPE, rule: Rule):
+        self.namespaces = self.get_namespaces(event, rule)
 
     def __getattr__(self, attr: str) -> Any:
         return self.namespaces[attr]
@@ -342,6 +347,27 @@ class DataPoints(Mapping):
 
     def __len__(self) -> int:
         return len(self.namespaces)
+
+    def get_namespaces(self, event: EVENT_TYPE, rule: Rule) -> dict[str, NamespacedDataPointsBase]:
+        return {
+            "company": CompanyDataPoints(event),
+            "project": ProjectDataPoints(event),
+        }
+
+
+class DataPoints(BaseDataPoints):
+    def get_namespaces(self, event: EVENT_TYPE, rule: Rule) -> dict[str, NamespacedDataPointsBase]:
+        event = cast(Event, event)
+        return {
+            **super().get_namespaces(event, rule),
+            "component": ComponentDataPoints(event),
+            "event": EventDataPoints(event),
+            "pipeline": ComponentDataPoints(event),
+            "rule": RuleDataPoints(rule),
+            "run": RunDataPoints(event),
+            "run_task": RunTaskDataPoints(event),
+            "task": TaskDataPoints(event),
+        }
 
 
 class InternalEventDataPoints(NamespacedDataPointsBase):
@@ -493,14 +519,34 @@ class RuleDataPoints(NamespacedDataPointsBase):
 
 
 class AlertDataPoints(DataPoints):
-    def __init__(self, event: ALERT_EVENT, rule: Rule):
-        self.namespaces = {
+    def get_namespaces(self, event: EVENT_TYPE, rule: Rule) -> dict[str, NamespacedDataPointsBase]:
+        event = cast(ALERT_EVENT, event)
+        namespaces = {
+            **super().get_namespaces(event, rule),
             "alert": AlertEventDataPoints(event),
             "event": InternalEventDataPoints(event),
-            "project": ProjectDataPoints(event),
-            "company": CompanyDataPoints(event),
-            "rule": RuleDataPoints(rule),
         }
         if isinstance(event, RunAlert):
-            self.namespaces["component"] = InternalComponentDataPoints(event)
-            self.namespaces["run"] = RunAlertDatapoints(event)
+            namespaces["component"] = InternalComponentDataPoints(event)
+            namespaces["run"] = RunAlertDatapoints(event)
+
+        return namespaces
+
+
+class AgentDataPoints(NamespacedDataPointsBase):
+    def __init__(self, event: AgentStatusChangeEvent) -> None:
+        self.event = event
+        self.mappings = {
+            "key": lambda: event.agent_key,
+            "tool": lambda: event.agent_tool,
+            "latest_heartbeat": lambda: DatetimeDataPoints(event.latest_heartbeat),
+            "latest_event_timestamp": lambda: DatetimeDataPoints(event.latest_event_timestamp),
+        }
+
+
+class AgentStatusChangeDataPoints(BaseDataPoints):
+    def get_namespaces(self, event: EVENT_TYPE, rule: Rule) -> dict[str, NamespacedDataPointsBase]:
+        return {
+            **super().get_namespaces(event, rule),
+            "agent": AgentDataPoints(cast(AgentStatusChangeEvent, event)),
+        }

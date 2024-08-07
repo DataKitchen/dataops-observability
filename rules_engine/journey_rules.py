@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-__all__ = ["get_rules", "Rule"]
+__all__ = ["get_rules", "JourneyRule"]
 
 import logging
 import time
@@ -8,6 +8,8 @@ from functools import lru_cache
 from typing import Any, Callable, Optional
 from uuid import UUID
 
+from common.actions.action import ActionResult
+from common.actions.action_factory import action_factory
 from common.entities import Rule as RuleEntity
 from common.entity_services import JourneyService
 from common.events.internal import RunAlert
@@ -16,14 +18,13 @@ from common.predicate_engine.compilers import compile_schema
 from common.predicate_engine.query import R
 from common.predicate_engine.schemas.simple_v1 import RuleDataSchema
 from conf import settings
-from rules_engine import EVENT_TYPE
-from rules_engine.actions import ActionResult, action_factory
+from rules_engine.typing import EVENT_TYPE
 from rules_engine.rule_data import RuleData
 
 LOG = logging.getLogger(__name__)
 
 
-class Rule:
+class JourneyRule:
     """A rule definition. Takes an R object for rules evaluation and a list of callables to trigger for matches."""
 
     __slots__ = ("journey_id", "r_obj", "rule_entity", "component_id", "triggers")
@@ -79,27 +80,25 @@ class Rule:
         return f"{self.__module__}.{self.__class__.__name__}: {self.r_obj}"
 
 
-def _execute_action(event: EVENT_TYPE, rule_entity: Optional[RuleEntity], journey_id: Optional[UUID]) -> Any:
-    if not rule_entity:
-        raise ValueError("'rule_entity' can not be None.")
+def _execute_action(event: EVENT_TYPE, rule_entity: RuleEntity, journey_id: Optional[UUID]) -> Any:
     action_entity = JourneyService.get_action_by_implementation(rule_entity.journey_id, rule_entity.action)
     action = action_factory(rule_entity.action, rule_entity.action_args, action_entity)
     action.execute(event, rule_entity, journey_id)
 
 
 @lru_cache(maxsize=50)
-def _get_rules(journey_ids: frozenset[UUID], _ttl: int) -> list[Rule]:
+def _get_rules(journey_ids: frozenset[UUID], _ttl: int) -> list[JourneyRule]:
     # Makes linter not implode
     del _ttl
 
-    rules: list[Rule] = []
+    rules: list[JourneyRule] = []
 
     rule_entities = RuleEntity.select(RuleEntity).where(RuleEntity.journey.in_(journey_ids))
     for rule_entity in rule_entities:
         try:
             parsed_rule_data = RuleDataSchema().load(rule_entity.rule_data)
             rule_obj = compile_schema(rule_entity.rule_schema, parsed_rule_data)
-            r = Rule(
+            r = JourneyRule(
                 rule_obj,
                 rule_entity,
                 _execute_action,
@@ -113,7 +112,7 @@ def _get_rules(journey_ids: frozenset[UUID], _ttl: int) -> list[Rule]:
     return rules
 
 
-def get_rules(*journey_ids: UUID) -> list[Rule]:
+def get_rules(*journey_ids: UUID) -> list[JourneyRule]:
     """
     Return a list of Rule objects. Uses _get_rules for LRU cache.
 

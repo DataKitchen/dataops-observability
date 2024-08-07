@@ -1,9 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AbstractRule } from '../../../abstract.rule';
-import { TaskStatusEmailTemplate } from '../../../actions.model';
 import { SendEmailActionComponent } from './send-email-action.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { RunProcessedStatus } from '@observability-ui/core';
+import { RunProcessedStatus, TaskStatusEmailTemplate } from '@observability-ui/core';
 
 describe('send-email-action', () => {
 

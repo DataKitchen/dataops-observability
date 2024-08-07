@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AlertsSearchFields, Project, ServiceKey, TestsSearchFields } from './project.model';
+import { AlertsSearchFields, Project, ProjectAlertSettings, ServiceKey, TestsSearchFields } from './project.model';
 import { EntityListResponse, EntityService, EntityType, FindAllRequest, PaginatedRequest } from '../../entity';
 import { EventType, EventSearchFields, TestOutcomeItem } from '../../models/event.model';
 import { Observable, of, switchMap } from 'rxjs';
@@ -71,5 +71,16 @@ export class ProjectService extends EntityService<Project> {
 
     const url = `${this.getUrl()}/${parentId}/alerts`;
     return this.http.get<EntityListResponse<InstanceAlert>>(url, { params });
+  }
+
+  getAlertSettings(projectId: string): Observable<ProjectAlertSettings> {
+    return this.http.get<ProjectAlertSettings>(`${this.getUrl()}/${projectId}/alert-settings`);
+  }
+
+  updateAlertSettings(projectId: string, projectAlertSettings: ProjectAlertSettings): Observable<ProjectAlertSettings> {
+    return this.http.patch<ProjectAlertSettings>(
+      `${this.getUrl()}/${projectId}/alert-settings`,
+      projectAlertSettings,
+    );
   }
 }

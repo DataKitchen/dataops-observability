@@ -102,7 +102,7 @@ class Projects(BaseEntityView):
 
 
 class ProjectById(BaseEntityView):
-    PERMISSION_REQUIREMENTS: tuple[Permission, ...] = (PERM_USER, PERM_PROJECT("GET", "PATCH"))
+    PERMISSION_REQUIREMENTS: tuple[Permission, ...] = (PERM_USER, PERM_PROJECT)
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:

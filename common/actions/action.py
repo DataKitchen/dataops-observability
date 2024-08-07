@@ -12,7 +12,7 @@ from typing import Any, NamedTuple, Optional
 from uuid import UUID
 
 from common.entities import Action, Rule
-from rules_engine import EVENT_TYPE
+from rules_engine.typing import EVENT_TYPE
 
 LOG = logging.getLogger(__name__)
 

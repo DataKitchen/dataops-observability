@@ -3,8 +3,9 @@ from unittest.mock import Mock, patch
 
 import pytest
 
+from common.actions.action_factory import ACTION_CLASS_MAP, action_factory
+from common.actions.action import ImplementationNotFound, InvalidActionTemplate
 from common.entities import Action, Rule
-from rules_engine.actions import ACTION_CLASS_MAP, ImplementationNotFound, InvalidActionTemplate, action_factory
 
 
 class TestActionImpl(Enum):

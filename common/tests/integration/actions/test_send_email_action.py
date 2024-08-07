@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 
 from common.datetime_utils import datetime_formatted
-from rules_engine.actions.send_email_action import SendEmailAction
+from common.actions.send_email_action import SendEmailAction
 from testlib.fixtures import entities
 from testlib.fixtures.v1_events import RUNNING_run_status_event, event_data  # noqa: F401
 

@@ -9,6 +9,8 @@ from flask import Response, make_response, request
 from peewee import IntegrityError
 from werkzeug.exceptions import BadRequest, Conflict, InternalServerError, NotFound
 
+from common.actions.action import ActionTemplateRequired, ActionException
+from common.actions.action_factory import action_factory
 from common.api.base_view import Permission
 from common.api.request_parsing import no_body_allowed
 from common.entities import DB, Component, Journey, Rule
@@ -20,7 +22,6 @@ from common.predicate_engine.exceptions import InvalidRuleData
 from common.predicate_engine.schemas.simple_v1 import RuleDataSchema
 from observability_api.endpoints.entity_view import BaseEntityView
 from observability_api.schemas import RulePatchSchema, RuleSchema
-from rules_engine.actions import ActionException, ActionTemplateRequired, action_factory
 
 LOG = logging.getLogger(__name__)
 

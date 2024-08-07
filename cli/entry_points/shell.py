@@ -40,10 +40,15 @@ class Shell(DatabaseScriptBase):
         try:
             from IPython import start_ipython
 
+            use_ipython = True
+        except ImportError:
+            use_ipython = False
+
+        if use_ipython:
             # If you don't set argv to an empty value here, iPython will attempt to use the arguments passed to the
             # cli command and mayhem will ensue.
             start_ipython(argv=[], user_ns=current_vars)
-        except ImportError:
+        else:
             shell = code.InteractiveConsole(current_vars)
             shell.interact()
 

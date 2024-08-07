@@ -1,7 +1,7 @@
 import pytest
 
+from common.actions.action_factory import ACTION_CLASS_MAP
 from common.schemas.action_schemas import ValidActions
-from rules_engine.actions import ACTION_CLASS_MAP
 
 
 @pytest.mark.integration

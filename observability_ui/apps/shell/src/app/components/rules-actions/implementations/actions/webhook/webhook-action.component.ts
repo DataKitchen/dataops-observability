@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
-import { AbstractAction } from '../../../abstract-action.directive';
-import { stringify } from '@observability-ui/core';
+import { AbstractAction, stringify } from '@observability-ui/core';
 import { TypedFormControl, TypedFormGroup } from '@datakitchen/ngx-toolkit';
 import { NgxMonacoEditorModule } from '@datakitchen/ngx-monaco-editor';
 import { ActionTemplateComponent } from '../../../action/action-template.component';
@@ -146,7 +145,7 @@ import { NgForOf, NgIf } from '@angular/common';
     `
   ]
 })
-export class WebhookActionComponent extends AbstractAction {
+export class WebhookActionComponent extends AbstractAction<Rule> {
   static override label = 'Web Request';
   static override _type = 'CALL_WEBHOOK';
 

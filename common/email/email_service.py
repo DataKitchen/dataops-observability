@@ -5,6 +5,7 @@ import smtplib
 import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from typing import Mapping
 
 from common.email.email_renderer import HandlebarsEmailRenderer
 from conf import settings
@@ -19,7 +20,7 @@ class EmailService:
         from_address: str,
         recipients: list[str],
         template_name: str,
-        template_context_vars: dict,
+        template_context_vars: Mapping,
     ) -> dict:
         try:
             content, subject = HandlebarsEmailRenderer.render(template_name, template_context_vars)

@@ -14,7 +14,7 @@ export abstract class AbstractTemplating implements OnChanges {
 
   static _type: string;
 
-  get type() {
+  get type(): string {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return this.constructor._type;
@@ -26,7 +26,7 @@ export abstract class AbstractTemplating implements OnChanges {
     return this.constructor.label;
   }
 
-  @Input() editMode: boolean;
+  @Input() editMode!: boolean;
   @Input() data: any;
 
   abstract form: FormControl | FormGroup;

@@ -1,0 +1,43 @@
+@use '@observability/ui/styles/mixins' as mixins;
+@use '@observability/ui/styles/variables' as variables;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.error-message {
+  padding-left: 12px;
+}
+
+.line {
+  @include mixins.flex-row($justify: flex-start, $align: center);
+
+  width: 100%;
+  padding: 2px;
+
+  [matInput] {
+    @include mixins.font-color(secondary);
+    border-bottom: 1px solid variables.$gray-500;
+    width: 55px !important;
+  }
+
+  span {
+    line-height: 21px;
+  }
+}
+
+.edit-icon {
+  @include mixins.icon-size(16px);
+  @include mixins.font-color(secondary);
+
+  position: absolute;
+  top: variables.$space-sm;
+  right: variables.$space-sm;
+  cursor: pointer;
+}
+
+.title {
+  @include mixins.font-style($style: menu);
+}

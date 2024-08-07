@@ -6,7 +6,7 @@ from common.datetime_utils import datetime_formatted
 from common.entities.component import ComponentType
 from common.entities.rule import RunState
 from common.events.v1 import ApiRunStatus, MessageEventLogLevel, MessageLogEvent, MetricLogEvent, RunStatusEvent
-from rules_engine.data_points import AlertDataPoints, DataPoints
+from common.actions.data_points import AlertDataPoints, DataPoints
 
 
 @pytest.fixture

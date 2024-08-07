@@ -1,7 +1,6 @@
-import { WithId } from '@observability-ui/core';
+import { AbstractAction, WithId } from '@observability-ui/core';
 import { AbstractRule } from './abstract.rule';
 import { InjectionToken } from '@angular/core';
-import { AbstractAction } from './abstract-action.directive';
 
 export interface Rule extends WithId {
   component?: string;

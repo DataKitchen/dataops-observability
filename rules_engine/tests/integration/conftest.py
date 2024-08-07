@@ -18,8 +18,8 @@ from common.entities import (
 from common.events.enums import EventSources
 from common.events.v1 import ApiRunStatus, RunStatusEvent, TestOutcomesEvent, TestStatuses
 from common.kafka import TOPIC_IDENTIFIED_EVENTS, KafkaMessage
-from rules_engine.actions.action_factory import ACTION_CLASS_MAP
-from rules_engine.rules import _get_rules
+from common.actions.action_factory import ACTION_CLASS_MAP
+from rules_engine.journey_rules import _get_rules
 from testlib.fixtures.entities import *
 from testlib.fixtures.v2_events import *
 

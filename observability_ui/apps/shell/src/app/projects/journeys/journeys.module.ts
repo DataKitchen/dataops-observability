@@ -24,9 +24,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { RulesActionsModule } from '../../components/rules-actions/rules-actions.module';
 import { RULES } from '../../components/rules-actions/rule.model';
 import { TaskStatusRuleComponent } from '../../components/rules-actions/implementations/rules/task-status/task-status-rule.component';
-import { RULE_ACTIONS } from '../../components/rules-actions/actions.model';
-import { SendEmailActionComponent } from '../../components/rules-actions/implementations/actions/send-email/send-email-action.component';
-import { WebhookActionComponent } from '../../components/rules-actions/implementations/actions/webhook/webhook-action.component';
 import { MatRippleModule } from '@angular/material/core';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { journeysTranslations } from './journeys.translation';
@@ -58,14 +55,6 @@ import { JourneyDagLegendComponent } from '../journey-dag-legend/journey-dag-leg
         TestStatusRuleComponent,
         InstanceHasAlertRuleComponent,
         // ExampleRuleComponent,
-      ],
-    },
-    {
-      provide: RULE_ACTIONS,
-      useValue: [
-        SendEmailActionComponent,
-        WebhookActionComponent,
-        // ExampleActionComponent,
       ],
     },
   ],

@@ -6,6 +6,9 @@ import { Routes } from '@angular/router';
 import { getManifest, loadManifest, loadRemoteModule } from '@angular-architects/module-federation';
 import { PLATFORM_ROUTES } from './app/app-routing.module';
 import { ComponentReplacement, Manifest, REPLACEMENT_TOKENS } from './app/config';
+import { SendEmailActionComponent } from './app/components/rules-actions/implementations/actions/send-email/send-email-action.component';
+import { WebhookActionComponent } from './app/components/rules-actions/implementations/actions/webhook/webhook-action.component';
+import { RULE_ACTIONS } from '@observability-ui/core';
 
 if (environment.production) {
   enableProdMode();
@@ -57,6 +60,13 @@ loadManifest('/assets/module-federation.manifest.json').then(async () => {
     {
       provide: PLATFORM_ROUTES,
       useValue: platformRoutes,
+    },
+    {
+      provide: RULE_ACTIONS,
+      useValue: [
+        SendEmailActionComponent,
+        WebhookActionComponent,
+      ],
     },
     ...componentReplacementProviders,
   ])

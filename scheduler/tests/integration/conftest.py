@@ -1,7 +1,10 @@
+from unittest.mock import patch, Mock, MagicMock
+
 import pytest
 
 from common.entities import DB, Company, Organization, Pipeline, Project
 from conf import init_db
+from scheduler.agent_check import AgentCheckScheduleSource
 
 
 @pytest.fixture(autouse=True)
@@ -28,3 +31,14 @@ def project(organization):
 @pytest.fixture
 def pipeline(project):
     return Pipeline.create(key="Test Pipeline", project=project)
+
+
+@pytest.fixture
+def event_producer_mock():
+    return MagicMock()
+
+
+@pytest.fixture
+def agent_source(event_producer_mock):
+    with patch.object(AgentCheckScheduleSource, "update"):
+        return AgentCheckScheduleSource(Mock(), event_producer_mock)
