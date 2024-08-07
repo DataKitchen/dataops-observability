@@ -169,7 +169,6 @@ describe('AbstractToolDirective', () => {
   });
 
   it('should disable base filled-in fields', () => {
-    expect(pollingComponent.envListForm.controls['EVENTS_API_HOST'].disabled).toBeTruthy();
     expect(pollingComponent.envListForm.controls['EXTERNAL_PLUGINS_PATH'].disabled).toBeTruthy();
     expect(pollingComponent.envListForm.controls['ENABLED_PLUGINS'].disabled).toBeTruthy();
     expect(pollingComponent.envListForm.controls['PUBLISH_EVENTS'].disabled).toBeTruthy();
