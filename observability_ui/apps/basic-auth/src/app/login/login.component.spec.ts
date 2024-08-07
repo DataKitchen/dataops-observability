@@ -64,10 +64,11 @@ describe('LoginComponent', () => {
     });
 
     it('should set loginError in case of failure', () => {
-      authService.login.mockReturnValue(throwError(() => 'something happened'));
+      const error = { message: 'something happened' };
+      authService.login.mockReturnValue(throwError(() => error));
 
       component.login();
-      expect(component.loginError).toEqual('Invalid credentials: Wrong email or password.');
+      expect(component.loginError).toEqual(error.message);
     });
 
     it('should log the original error in case of failure', () => {
