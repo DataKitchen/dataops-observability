@@ -62,7 +62,7 @@ export abstract class AbstractTool implements OnInit {
   ];
   protected readonly eventsAgentsCommonEnvs: any[] = [];
   protected readonly commonEnvs = [
-    { name: 'EVENTS_API_HOST', placeholder: '', required: true },
+    { name: 'EVENTS_API_HOST', placeholder: '# the base API URL for Observability', required: true },
     { name: 'EVENTS_API_KEY', placeholder: '# an API key for the Observability project', required: true },
     { name: 'EVENTS_PROJECT_ID', placeholder: '# the ID of the Observability project', required: true },
     { name: 'EXTERNAL_PLUGINS_PATH', placeholder: '# the path where any custom plugins can be accessed', required: true },
@@ -140,7 +140,6 @@ export abstract class AbstractTool implements OnInit {
 
   ngOnInit(): void {
     [
-      this.commonEnvsForm.controls['EVENTS_API_HOST'],
       this.commonEnvsForm.controls['EVENTS_PROJECT_ID'],
       this.commonEnvsForm.controls['EXTERNAL_PLUGINS_PATH'],
       this.commonEnvsForm.controls['ENABLED_PLUGINS'],
@@ -176,7 +175,9 @@ export abstract class AbstractTool implements OnInit {
     let dockerExtraEnvVars: string = '';
     let kubernetesExtraEnvVars: string = '';
     const valuePerVariable: {[name: string]: string} = {
+      // k8s does not like underscores
       target_service: this.name.replaceAll('_', '-'),
+      deployment_name: `${this.envListForm.controls['AGENT_TYPE']?.value}-${this.envListForm.controls['AGENT_KEY']?.value}`.replaceAll('_', '-'),
       docker_image: this.image,
       docker_tag: this.envListForm.controls['DOCKER_TAG'].value,
       default_deployment_mode: this.envListForm.controls['DEFAULT_DEPLOYMENT_MODE'].value,
@@ -188,7 +189,7 @@ export abstract class AbstractTool implements OnInit {
     for (const variable of this.envList) {
       if (!variable.hidden && !variable.excluded) {
         const slotInTemplate = variable.tpl ?? variable.name.toLowerCase();
-        let value = this.envListForm.controls[variable.name].value ?? variable.default ?? '';
+        let value = this.envListForm.controls[variable.name].value || variable.default || '';
         if (variable.formatter) {
           value = variable.formatter(value);
         }

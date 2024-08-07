@@ -40,7 +40,7 @@ export class QlikToolComponent extends AbstractTool {
   static override _name = 'qlik';
   static override _displayName = 'Qlik';
   static override _icon = 'qlik';
-  static override _image = 'docker.io/datakitchen/observability-agent-trial';
+  static override _image = 'docker.io/datakitchen/dataops-observability-agents';
   static override _version = 'production';
 
   private readonly defaultValues = {
@@ -51,7 +51,7 @@ export class QlikToolComponent extends AbstractTool {
   override readonly envList = [
     { name: 'AGENT_TYPE', tpl: 'agent_type', placeholder: '' },
     { name: 'AGENT_KEY', tpl: 'agent_key', placeholder: '# assigns the identifier of the agent', required: true },
-    { name: 'DK_API_URL', tpl: 'observability_base_url', placeholder: '# the URL to the Observability API', required: true },
+    { name: 'DK_API_URL', tpl: 'observability_base_url', placeholder: '# the base API URL for Observability', required: true },
     { name: 'DK_API_KEY', tpl: 'observability_service_account_key', placeholder: '# an API key for the Observability project', required: true },
     { name: 'TENANT', tpl: 'qlik_tenant', placeholder: '# the tenant ID of the Qlik Cloud account', required: true },
     { name: 'API_KEY', tpl: 'qlik_api_key', placeholder: '# an API key for the Qlik Cloud account', required: true },

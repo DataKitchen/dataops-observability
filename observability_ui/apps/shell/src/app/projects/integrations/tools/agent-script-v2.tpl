@@ -5,7 +5,7 @@ set -eo pipefail
 SCRIPT_NAME=$(basename "$0")
 DOCKER_DEPLOY_FILE="deploy-docker-agent.json"
 KUBERNETES_DEPLOY_FILE="deploy-kubernetes-agent.json"
-DEPLOYMENT_NAME="{{agent_type}}_{{agent_key}}"
+DEPLOYMENT_NAME="{{deployment_name}}"
 SECRET_NAME="observability-agent-secret"
 NAMESPACE="datakitchen"
 
@@ -217,6 +217,9 @@ create_docker_compose_file() {
     "$DEPLOYMENT_NAME": {
       "image": "$DOCKER_IMAGE:$DOCKER_TAG",
       "container_name": "$DEPLOYMENT_NAME",
+      "extra_hosts": [
+        "host.docker.internal:host-gateway"
+      ],
       "environment": [
         "DK_AGENT_TYPE=$DK_AGENT_TYPE",
         "DK_AGENT_KEY=$DK_AGENT_KEY",

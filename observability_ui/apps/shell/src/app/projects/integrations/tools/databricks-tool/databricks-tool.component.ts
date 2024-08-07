@@ -43,7 +43,7 @@ export class DatabricksToolComponent extends AbstractTool {
   static override _name = 'databricks';
   static override _displayName = 'Databricks';
   static override _icon = 'databricks';
-  static override _image = 'docker.io/datakitchen/observability-agent-trial';
+  static override _image = 'docker.io/datakitchen/dataops-observability-agents';
   static override _version = 'production';
 
   private readonly defaultValues = {
@@ -56,7 +56,7 @@ export class DatabricksToolComponent extends AbstractTool {
   override readonly envList = [
     { name: 'AGENT_TYPE', tpl: 'agent_type', placeholder: '' },
     { name: 'AGENT_KEY', tpl: 'agent_key', placeholder: '# assigns the identifier of the agent', required: true },
-    { name: 'DK_API_URL', tpl: 'observability_base_url', placeholder: '# the URL to the Observability API', required: true },
+    { name: 'DK_API_URL', tpl: 'observability_base_url', placeholder: '# the base API URL for Observability', required: true },
     { name: 'DK_API_KEY', tpl: 'observability_service_account_key', placeholder: '# an API key for the Observability project', required: true },
     { name: 'HOST', tpl: 'databricks_host', placeholder: '# the URL of the Databricks instance', required: true },
     { name: 'AUTHENTICATION_TYPE', placeholder: '# method of authentication can be set to token, basic, or service_principal', required: true },
