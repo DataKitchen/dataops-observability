@@ -20,26 +20,21 @@ from common.schemas.action_schemas import ActionSchema
 from observability_api.endpoints.entity_view import BaseEntityView
 
 
-class ProjectSettingByID(BaseEntityView):
-    """This abstract view provides the common functionality for retrieving and patching project-attached settings."""
-
+class ProjectAlertsSettings(BaseEntityView):
     PERMISSION_REQUIREMENTS: tuple[Permission, ...] = (PERM_USER, PERM_PROJECT)
 
     _project: Optional[Project]
-
-    def get_fields(self) -> dict[str, Field | type]:
-        raise NotImplementedError
 
     def get_request_schema(self) -> Schema:
         return cast(Schema, Schema.from_dict(self.get_fields(), name=f"{self.__class__.__name__}Schema")())
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:
-        """Get Project by ID
+        """Get the alert settings of a given project.
         ---
         tags: ["Project"]
-        operationId: GetProjectById
-        description: Retrieves the settings for a single namespace under project.
+        operationId: GetProjectAlertsSettings
+        description: Retrieves the alerts settings of a given project.
         security:
           - SAKey: []
         parameters:
@@ -50,10 +45,10 @@ class ProjectSettingByID(BaseEntityView):
             required: true
         responses:
           200:
-            description: Request successful - project returned.
+            description: Request successful - settings returned.
             content:
               application/json:
-                schema: ProjectSchema
+                schema: ProjectAlertsSettingsSchema
           400:
             description: Request bodies are not supported by this endpoint.
             content:
@@ -74,11 +69,11 @@ class ProjectSettingByID(BaseEntityView):
         return make_response(self.get_request_schema().dump(self._project))
 
     def patch(self, project_id: UUID) -> Response:
-        """Update a nested Project setting by project ID
+        """Update the alert settings of a given project.
         ---
         tags: ["Project"]
-        description: Updates settings for a single namespace under project.
-        operationId: PatchProjectSettingById
+        description: Updates the alert settings of a given project.
+        operationId: PatchProjectAlertsSettings
         security:
           - APIKey: []
           - SAKey: []
@@ -89,14 +84,14 @@ class ProjectSettingByID(BaseEntityView):
               type: string
             required: true
         requestBody:
-          description: The update data for the project.
+          description: The update data for the project alert settings.
           required: true
         responses:
           200:
-            description: Request successful - project updated.
+            description: Request successful - project settings updated.
             content:
               application/json:
-                schema: ProjectSchema
+                schema: ProjectAlertsSettingsSchema
           400:
             description: There is invalid or missing data in the request body.
             content:
@@ -118,10 +113,6 @@ class ProjectSettingByID(BaseEntityView):
         self.patch_entity(schema=schema, entity=self._project)
         self.save_entity_or_fail(self._project)
         return make_response(schema.dump(self._project))
-
-
-class ProjectAlertsSettings(ProjectSettingByID):
-    """ProjectSettings implementation for alert settings."""
 
     def get_fields(self) -> dict[str, Field | type]:
         def _validate_actions(actions: list[dict[str, Any]]) -> None:

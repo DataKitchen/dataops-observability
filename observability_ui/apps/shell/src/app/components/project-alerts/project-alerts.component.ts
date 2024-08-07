@@ -4,7 +4,7 @@ import { NgForOf, NgIf } from '@angular/common';
 import { DkTooltipModule, DynamicComponentModule, DynamicComponentOutletDirective, MatCardEditComponent, TextFieldModule } from '@observability-ui/ui';
 import { WebhookActionComponent } from "../rules-actions/implementations/actions/webhook/webhook-action.component";
 import { SendEmailActionComponent } from "../rules-actions/implementations/actions/send-email/send-email-action.component";
-import { toSignal } from "@angular/core/rxjs-interop";
+import { takeUntilDestroyed, toSignal } from "@angular/core/rxjs-interop";
 import { ProjectAlertSettingsStore } from "./project-alerts.store";
 import { TypedFormControl } from "@datakitchen/ngx-toolkit";
 import {FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -14,7 +14,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatLegacyMenuModule } from "@angular/material/legacy-menu";
 import { MatLegacyButtonModule } from "@angular/material/legacy-button";
 import { MatExpansionModule } from "@angular/material/expansion";
-import { filter, tap } from "rxjs";
+import { filter, Subscription, tap } from "rxjs";
 import { MatLegacySnackBar as MatSnackBar } from "@angular/material/legacy-snack-bar";
 import { DefaultErrorHandlerComponent } from "../default-error-handler/default-error-handler.component";
 import { MatLegacyCardModule } from "@angular/material/legacy-card";
@@ -76,23 +76,7 @@ export class ProjectAlertsComponent implements OnInit {
 
   inputIsValid: boolean = false;
 
-  loading$ = this.store.loading$.pipe(
-    filter(({ code }) => code === "update" ),
-    tap(({ error, status }) => {
-      if (error) {
-        if (error.status === 400) {
-          this.errorMsg = "Error configuring actions. Please contact a system administrator";
-        } else {
-          this.snackbar.openFromComponent(DefaultErrorHandlerComponent, {
-            data: error,
-            duration: 2000,
-          });
-        }
-      } else {
-        this.editing = status;
-      }
-    }),
-  ).subscribe();
+  loading$: Subscription;
 
   constructor(
     private snackbar: MatSnackBar,
@@ -100,6 +84,24 @@ export class ProjectAlertsComponent implements OnInit {
     private projectStore: ProjectStore,
     @Inject(RULE_ACTIONS) private actionComponents: typeof AbstractAction[],
   ) {
+    this.loading$ = this.store.loading$.pipe(
+      filter(({ code }) => code === "update" ),
+      tap(({ error, status }) => {
+        if (error) {
+          if (error.status === 400) {
+            this.errorMsg = "Error configuring actions. Please contact a system administrator";
+          } else {
+            this.snackbar.openFromComponent(DefaultErrorHandlerComponent, {
+              data: error,
+              duration: 2000,
+            });
+          }
+        } else {
+          this.editing = status;
+        }
+      }),
+      takeUntilDestroyed(),
+    ).subscribe();
   }
 
   ngOnInit(): void {
