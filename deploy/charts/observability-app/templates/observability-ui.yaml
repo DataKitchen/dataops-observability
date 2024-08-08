@@ -51,6 +51,11 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml .Values.observability_ui.resources | nindent 12 }}
+          {{- if .Values.observability_api.hostname }}
+          env:
+            - name: OBSERVABILITY_API_HOSTNAME
+              value: {{ tpl .Values.observability_api.hostname . | quote }}
+          {{- end }}
           {{- if .Values.observability_ui.environmentJson }}
           volumeMounts:
             - mountPath: /observability_ui/shell/environments
