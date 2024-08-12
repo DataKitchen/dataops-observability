@@ -4,6 +4,7 @@ Thanks to everyone who has contributed to DataOps Observability!
 
 💻 = code, 🚇 = infrastructure, 📖 = documentation, 📆 = project management, 🤔 = product management, 💬 = user support
 
+- [Micaela Greisoris](https://www.linkedin.com/in/micaela-greisoris/) 🤔 📆
 - [Samantha Hamilton](https://www.linkedin.com/in/shamilton-darlingdocs/) 📖
 - [David Kershaw](https://www.linkedin.com/in/evisioner/) 🤔
 - [Khanh Tran](https://www.linkedin.com/in/k-tran) 💻
