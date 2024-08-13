@@ -41,3 +41,13 @@
 .title {
   @include mixins.font-style($style: menu);
 }
+
+.info-icon {
+  @include mixins.icon-size(16px);
+  @include mixins.font-color(secondary);
+}
+
+.info-list {
+  margin: 0;
+  padding-left: 12px;
+}

@@ -2,18 +2,23 @@
 
   <div class="title mb-2">Agent Alerts</div>
 
-  <mat-card class="mt-4">
+  <mat-card>
     <mat-card-content>
       <mat-icon
         *ngIf="!editing"
         class="edit-icon"
         (click)="startEditing();"
-        [dkTooltip]="'Edit the agent alerts configuration'"
+        [dkTooltip]="'Edit agent alerts'"
       >edit
       </mat-icon>
 
       <ng-container *ngIf="!editing">
-        <div class="mb-3 mt-1">Check agent connectivity every {{ alertSettings().agent_check_interval }} seconds</div>
+        <div class="line mb-3 mt-1">
+          Check agent connectivity every {{ alertSettings().agent_check_interval }} seconds
+          <mat-icon dkTooltipPlacement="top"
+            [dkTooltip]="intervalTooltip"
+            class="ml-1 info-icon">info_outline</mat-icon>
+        </div>
       </ng-container>
 
       <ng-container *ngIf="editing">
@@ -22,9 +27,21 @@
             <span>Check agent connectivity every</span>
             <input matInput #checkInternalInput [formControl]="form.controls.agent_check_interval" type="number"/>
             <span>seconds</span>
+            <mat-icon dkTooltipPlacement="top"
+            [dkTooltip]="intervalTooltip"
+            class="ml-1 info-icon">info_outline</mat-icon>
           </div>
         </form>
       </ng-container>
+
+      <ng-template #intervalTooltip>
+        The status of an agent is determined as follows.
+        <ul class="info-list">
+          <li><i>Online</i>: a heartbeat signal was received within the last interval.</li>
+          <li><i>Unhealthy</i>: a heartbeat signal was last received between 2 and 4 intervals ago.</li>
+          <li><i>Offline</i>: a heartbeat signal was last received more than 4 intervals ago.</li>
+        </ul>
+      </ng-template>
 
       <div class="text--secondary mb-2"  *ngIf="!editing">
         <ng-container *ngIf="alertActions.length > 0">When an agent goes offline</ng-container>
