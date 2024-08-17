@@ -229,7 +229,7 @@ export abstract class AbstractTool implements OnInit {
 
     for (const variableName of variables) {
       const variableValue = variablesValues[variableName];
-      dockerExtraEnvVars.push(`      - ${variableName.toUpperCase()}='${variableValue}'\n`);
+      dockerExtraEnvVars.push(`      - ${variableName.toUpperCase()}=${variableValue}\n`);
       kubernetesExtraEnvVars.push(`  ${variableName.toUpperCase()}: '${variableValue}'\n`);
     }
 
