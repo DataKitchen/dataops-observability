@@ -54,15 +54,15 @@ class EventService:
             filter_list.append(EventEntity.task << filters.task_ids)
         if filters.date_range_start:
             filter_list.append(
-                EventEntity.timestamp_coalesce() >= EventEntity.timestamp.db_value(filters.date_range_start)
+                EventEntity.timestamp >= EventEntity.timestamp.db_value(filters.date_range_start)
             )
         if filters.date_range_end:
             filter_list.append(
-                EventEntity.timestamp_coalesce() < EventEntity.timestamp.db_value(filters.date_range_end)
+                EventEntity.timestamp < EventEntity.timestamp.db_value(filters.date_range_end)
             )
 
         query = query.where(*filter_list)
-        page = Page[EventEntity].get_paginated_results(query, EventEntity.timestamp_coalesce(), rules)
+        page = Page[EventEntity].get_paginated_results(query, EventEntity.timestamp, rules)
 
         # Using a single query to fetch the Instance and Journey data
         instance_set_ids = {e.instance_set_id for e in page.results}

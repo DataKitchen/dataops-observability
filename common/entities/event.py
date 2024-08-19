@@ -44,10 +44,6 @@ class EventEntity(BaseEntity):
     instance_set = ForeignKeyField(InstanceSet, null=True, backref="events", on_delete="SET NULL")
     v2_payload = JSONField(null=False)
 
-    @classmethod
-    def timestamp_coalesce(cls) -> Node:
-        return fn.COALESCE(cls.timestamp, cls.created_timestamp)
-
     @property
     def components(self) -> list[Component]:
         return [self.component] if self.component else []
