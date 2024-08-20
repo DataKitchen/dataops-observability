@@ -26,7 +26,7 @@ class CompanyService:
 
     @staticmethod
     def get_users_with_rules(company_id: str, rules: ListRules) -> Page[User]:
-        query = User.select().join(Company).where(Company.id == company_id)
+        query = User.select().join(Company).where(User.primary_company == company_id)
         return Page[User].get_paginated_results(query, User.name, rules)
 
     @staticmethod

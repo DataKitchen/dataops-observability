@@ -55,36 +55,37 @@ class ProjectService:
     def get_test_outcomes_with_rules(
         project: Project, rules: ListRules, filters: TestOutcomeItemFilters
     ) -> Page[TestOutcome]:
-        clauses = [TestOutcome.component.in_(project.components)]
+        query = TestOutcome.select(TestOutcome).where(TestOutcome.component.in_(project.components))
         if rules.search is not None:
-            clauses.append(
+            query = query.where(
                 ((TestOutcome.name ** f"%{rules.search}%") | (TestOutcome.description ** f"%{rules.search}%"))
             )
+
         if filters:
             if statuses := filters.statuses:
-                clauses.append(TestOutcome.status.in_(statuses))
+                query = query.where(TestOutcome.status.in_(statuses))
             if component_ids := filters.component_ids:
-                clauses.append(TestOutcome.component << component_ids)
+                query = query.where(TestOutcome.component << component_ids)
             if start_range_begin := filters.start_range_begin:
-                clauses.append(TestOutcome.start_time >= start_range_begin)
+                query = query.where(TestOutcome.start_time >= start_range_begin)
             if start_range_end := filters.start_range_end:
-                clauses.append(TestOutcome.start_time < start_range_end)
+                query = query.where(TestOutcome.start_time < start_range_end)
             if end_range_begin := filters.end_range_begin:
-                clauses.append(TestOutcome.end_time >= end_range_begin)
+                query = query.where(TestOutcome.end_time >= end_range_begin)
             if end_range_end := filters.end_range_end:
-                clauses.append(TestOutcome.end_time < end_range_end)
+                query = query.where(TestOutcome.end_time < end_range_end)
             if run_ids := filters.run_ids:
-                clauses.append(TestOutcome.run.in_(run_ids))
+                query = query.where(TestOutcome.run.in_(run_ids))
             if instance_ids := filters.instance_ids:
-                clauses.append(InstancesInstanceSets.instance.in_(instance_ids))
+                instance_set_subquery = (
+                    InstanceSet.select(InstanceSet.id)
+                    .join(InstancesInstanceSets)
+                    .where(InstancesInstanceSets.instance.in_(instance_ids))
+                )
+                query = query.where(TestOutcome.instance_set.in_(instance_set_subquery))
             if key := filters.key:
-                clauses.append(TestOutcome.key == key)
+                query = query.where(TestOutcome.key == key)
 
-        # If filtering on instance_ids we need to join the InstanceSet tables
-        if filters and filters.instance_ids:
-            query = TestOutcome.select(TestOutcome).join(InstanceSet).join(InstancesInstanceSets).where(*clauses)
-        else:
-            query = TestOutcome.select(TestOutcome).where(*clauses)
         return Page[TestOutcome].get_paginated_results(query, TestOutcome.start_time, rules)
 
     @staticmethod
