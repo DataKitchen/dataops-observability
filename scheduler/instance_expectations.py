@@ -2,7 +2,6 @@ import logging
 from datetime import datetime
 
 from apscheduler.triggers.cron import CronTrigger
-from peewee import Select
 
 from common.apscheduler_extensions import fix_weekdays
 from common.entities import InstanceRule, InstanceRuleAction
@@ -13,12 +12,12 @@ from scheduler.schedule_source import ScheduleSource
 LOG = logging.getLogger(__name__)
 
 
-class InstanceScheduleSource(ScheduleSource):
+class InstanceScheduleSource(ScheduleSource[InstanceRule]):
     source_name = "instance_expectations"
     kafka_topic = TOPIC_SCHEDULED_EVENTS
 
-    def _get_schedules(self) -> Select:
-        return InstanceRule.select().where(InstanceRule.expression.is_null(False))
+    def _get_schedules(self) -> list[InstanceRule]:
+        return list(InstanceRule.select().where(InstanceRule.expression.is_null(False)))
 
     def _produce_event(
         self,

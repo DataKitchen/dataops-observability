@@ -13,9 +13,10 @@ from observability_api.endpoints.v1.companies import CompanyById
 from observability_api.endpoints.v1.components import ComponentById, Components, JourneyComponents
 from observability_api.endpoints.v1.datasets import DatasetComponentById, DatasetComponents
 from observability_api.endpoints.v1.instance_rules import InstanceRuleById, InstanceRuleCreate
-from observability_api.endpoints.v1.instances import CompanyInstances, InstanceById, Instances
+from observability_api.endpoints.v1.instances import CompanyInstances, InstanceById, InstanceDag, Instances
 from observability_api.endpoints.v1.journeys import JourneyById, JourneyDag, JourneyDagEdgeById, Journeys
 from observability_api.endpoints.v1.organizations import OrganizationById, Organizations
+from observability_api.endpoints.v1.project_settings import ProjectAlertsSettings
 from observability_api.endpoints.v1.projects import ProjectById, ProjectEvents, Projects
 from observability_api.endpoints.v1.rules import RuleById, Rules
 from observability_api.endpoints.v1.runs import RunById, Runs
@@ -80,6 +81,7 @@ def build_company_routes(bp: Blueprint) -> Views:
 def build_instance_routes(bp: Blueprint) -> Views:
     instances_view = Instances.as_view("instances")
     instance_by_id_view = InstanceById.as_view("instance_by_id")
+    instance_dag_view = InstanceDag.as_view("instance_dag")
     company_instances_view = CompanyInstances.as_view("company_instances")
     instance_search_view = add_route_with_search(
         bp,
@@ -87,6 +89,7 @@ def build_instance_routes(bp: Blueprint) -> Views:
         view_func=instances_view,
         methods=["GET"],
     )
+    bp.add_url_rule("/instances/<uuid:instance_id>/dag", view_func=instance_dag_view, methods=["GET"])
     bp.add_url_rule("/instances/<uuid:instance_id>", view_func=instance_by_id_view, methods=["GET"])
     bp.add_url_rule("/instances", view_func=company_instances_view, methods=["GET"])
     return [instances_view, instance_search_view, instance_by_id_view, company_instances_view]
@@ -141,6 +144,12 @@ def build_project_routes(bp: Blueprint) -> Views:
     bp.add_url_rule("/projects/<uuid:project_id>/tests", view_func=project_tests, methods=["GET"])
     bp.add_url_rule("/projects/<uuid:project_id>/alerts", view_func=project_alerts, methods=["GET"])
     return [projects_view, project_by_id, project_events, project_tests, project_alerts]
+
+
+def build_project_settings_routes(bp: Blueprint) -> Views:
+    alerts_view = ProjectAlertsSettings.as_view("project_alert_settings")
+    bp.add_url_rule("/projects/<uuid:project_id>/alert-settings", view_func=alerts_view, methods=["GET", "PATCH"])
+    return [alerts_view]
 
 
 def build_user_routes(bp: Blueprint) -> Views:
@@ -251,6 +260,7 @@ def build_v1_routes(app: Flask, prefix: str, native_routes: bool = True, plugin_
         views += build_journey_dag_routes(bp)
         views += build_organization_routes(bp)
         views += build_project_routes(bp)
+        views += build_project_settings_routes(bp)
         views += build_rules_routes(bp)
         views += build_run_routes(bp)
         views += build_schedule_routes(bp)

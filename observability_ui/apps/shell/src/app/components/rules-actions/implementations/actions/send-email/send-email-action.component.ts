@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { AbstractAction } from '../../../abstract-action.directive';
-import { CustomValidators } from '@observability-ui/core';
+import { AbstractAction, CustomValidators, TaskStatusEmailTemplate } from '@observability-ui/core';
 import { Rule, RuleType } from '../../../rule.model';
-import { TaskStatusEmailTemplate } from '../../../actions.model';
 import { AbstractRule } from '../../../abstract.rule';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips';
@@ -95,7 +93,7 @@ import { ActionTemplateComponent } from '../../../action/action-template.compone
     AsyncPipe,
   ]
 })
-export class SendEmailActionComponent extends AbstractAction {
+export class SendEmailActionComponent extends AbstractAction<AbstractRule> {
   static override label = 'Send Email';
   static override _type = 'SEND_EMAIL';
 

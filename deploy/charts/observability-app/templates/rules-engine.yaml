@@ -44,6 +44,7 @@ spec:
             {{- include "observability.environment.base" . | nindent 12 }}
             {{- include "observability.environment.database" . | nindent 12 }}
             {{- include "observability.environment.kafka" . | nindent 12 }}
+            {{- include "observability.environment.smtp" . | nindent 12 }}
           command: [ "/dk/bin/rules-engine" ]
           {{- include "observability.probes.readiness_cmd" "rules-engine" | nindent 10 -}}
       {{- with .Values.rules_engine.nodeSelector }}

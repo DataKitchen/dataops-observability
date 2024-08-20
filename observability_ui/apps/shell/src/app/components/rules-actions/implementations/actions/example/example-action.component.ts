@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { AbstractAction } from '../../../abstract-action.directive';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ActionTemplateComponent } from '../../../action/action-template.component';
+import { AbstractAction } from '@observability-ui/core';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector

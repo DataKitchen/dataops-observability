@@ -14,4 +14,5 @@ export enum EntityType {
     ServiceKey = 'ServiceAccountKey',
     Dashboards = 'Dashboards',
     Agent = 'Agent',
+    ProjectAlertSettings = 'ProjectAlertSettings',
 }

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { IntegrationsComponent } from './integrations.component';
 import { Mocked, MockProvider } from '@datakitchen/ngx-toolkit';
-import { Agent, AgentStore, ProjectStore } from '@observability-ui/core';
+import { AgentStore, ProjectStore } from '@observability-ui/core';
 import { rxjsScheduler } from '@datakitchen/ngx-toolkit';
 import { of } from 'rxjs';
 import { TranslatePipeMock } from '@observability-ui/translate';
@@ -80,20 +80,6 @@ describe('integrations', () => {
 
   it('should load agents', () => {
     expect(store.dispatch).toHaveBeenCalledWith('getPage', expect.anything());
-  });
-
-  describe('#calculateLateness', () => {
-
-    it('should add difference between now and the latest heartbeat in seconds', () => {
-      const heartBeat = new Date();
-      heartBeat.setMilliseconds(heartBeat.getMilliseconds() - 32_750);
-
-      const agent = {
-        latest_heartbeat: heartBeat,
-      };
-
-      expect(component['calculateLateness'](agent as unknown as Agent).lateness).toEqual(32);
-    });
   });
 
 });

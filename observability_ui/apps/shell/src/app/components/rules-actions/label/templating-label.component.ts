@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { AbstractTemplating } from '../abstract-templating.directive';
+import { AbstractTemplating } from '@observability-ui/core';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector

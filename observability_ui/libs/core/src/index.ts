@@ -4,7 +4,6 @@ export * from './lib/config';
 
 export * from './lib/utilities/validators';
 export * from './lib/utilities/batch-runs.utilities';
-export * from './lib/utilities/dataset.utilities';
 export * from './lib/utilities/instance.utilities';
 export * from './lib/utilities/observable.utilities';
 export * from './lib/utilities/tools.utilities';
@@ -28,3 +27,6 @@ export * from './lib/entity';
 export * from './lib/entity/mock/mock.decorator';
 
 export * from './lib/entities';
+
+export * from './lib/templating';
+export * from './lib/actions';

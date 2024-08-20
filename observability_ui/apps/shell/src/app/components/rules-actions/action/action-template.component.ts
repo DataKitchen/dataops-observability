@@ -3,7 +3,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { NgIf } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { AbstractAction } from '../abstract-action.directive';
+import { AbstractAction } from '@observability-ui/core';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector

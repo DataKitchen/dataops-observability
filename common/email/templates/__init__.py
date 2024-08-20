@@ -1,4 +1,5 @@
 from .base_template import *
+from .agent_status_change_template import *
 from .instance_alert_template import *
 from .message_log_template import *
 from .metric_log_template import *

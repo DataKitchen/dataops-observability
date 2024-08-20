@@ -17,7 +17,7 @@ from common.entities import Rule
 from common.predicate_engine.schemas.simple_v1 import RuleDataSchema
 from common.schemas.fields import EnumStr
 from observability_api.schemas import ComponentSchema, JourneySchema
-from observability_api.schemas.action_schemas import EmailActionArgsSchema, ValidActions, WebhookActionArgsSchema
+from common.schemas.action_schemas import EmailActionArgsSchema, WebhookActionArgsSchema, ValidActions
 from observability_api.schemas.base_schemas import BaseEntitySchema
 
 

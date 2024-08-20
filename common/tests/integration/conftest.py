@@ -8,6 +8,7 @@ from flask import Flask
 from common.api.flask_ext.exception_handling import ExceptionHandling
 from common.api.flask_ext.health import Health
 from testlib.fixtures.entities import *
+from testlib.fixtures.v2_events import *
 
 
 @pytest.fixture

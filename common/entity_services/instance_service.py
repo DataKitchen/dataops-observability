@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Iterable, Optional
 from uuid import UUID
 
-from peewee import Value, fn
+from peewee import ModelSelect, Value, fn
 
 from common.entities import (
     AlertLevel,
@@ -30,75 +30,50 @@ ADDITIONAL_ALERT_DESCRIPTION = {
 class InstanceService:
     @staticmethod
     def aggregate_runs_summary(instances: Iterable[Instance]) -> None:
-        runs_summary = (
-            Run.select(InstancesInstanceSets.instance, Run.status, fn.COUNT(Run.id).alias("count"))
-            .join(InstanceSet)
-            .join(InstancesInstanceSets)
-            .group_by(InstancesInstanceSets.instance, Run.status)
-            .where(InstancesInstanceSets.instance << [inst.id for inst in instances])
-            .tuples()
-        )
-
         runs_summary_dict = defaultdict(list)
-        for inst, status, count in runs_summary:
+        for inst, status, count in InstanceService.runs_summary_query([inst.id for inst in instances]).tuples():
             runs_summary_dict[inst].append({"status": status, "count": count})
 
         for instance in instances:
             instance.runs_summary = runs_summary_dict[instance.id]
 
     @staticmethod
-    def aggregate_tests_summary(instances: Iterable[Instance]) -> None:
-        tests_summary = (
-            TestOutcome.select(
-                InstancesInstanceSets.instance, TestOutcome.status, fn.COUNT(TestOutcome.id).alias("count")
-            )
+    def runs_summary_query(ids: Iterable[UUID]) -> ModelSelect:
+        return (
+            Run.select(InstancesInstanceSets.instance, Run.status, fn.COUNT(Run.id).alias("count"))
             .join(InstanceSet)
             .join(InstancesInstanceSets)
-            .group_by(InstancesInstanceSets.instance, TestOutcome.status)
-            .where(InstancesInstanceSets.instance << [inst.id for inst in instances])
-            .tuples()
+            .group_by(InstancesInstanceSets.instance, Run.status)
+            .where(InstancesInstanceSets.instance << ids)
         )
 
+    @staticmethod
+    def aggregate_tests_summary(instances: Iterable[Instance]) -> None:
         tests_summary_dict = defaultdict(list)
-        for inst, status, count in tests_summary:
+        for inst, status, count in InstanceService.tests_summary_query([inst.id for inst in instances]).tuples():
             tests_summary_dict[inst].append({"status": status, "count": count})
 
         for instance in instances:
             instance.tests_summary = tests_summary_dict[instance.id]
 
     @staticmethod
-    def aggregate_alerts_summary(instances: Iterable[Instance]) -> None:
-        # Additional filter to help query performance
-        journeys = [i.journey.id for i in instances]
-        instance_alerts = (
-            InstanceAlert.select(
-                InstanceAlert.id.alias("alert_id"),
-                InstanceAlert.description.alias("description"),
-                InstanceAlert.level.alias("level"),
-                Instance.id.alias("instance_id"),
-                Journey.id,
-                Journey.project,
+    def tests_summary_query(ids: Iterable[UUID]) -> ModelSelect:
+        return (
+            TestOutcome.select(
+                InstancesInstanceSets.instance, TestOutcome.status, fn.COUNT(TestOutcome.id).alias("count")
             )
-            .join(Instance)
-            .join(Journey)
-            .where((Instance.id.in_(instances)) & (Journey.id.in_(journeys)))
-        )
-        run_alerts = (
-            RunAlert.select(
-                RunAlert.id.alias("alert_id"),
-                RunAlert.description.alias("description"),
-                RunAlert.level.alias("level"),
-                Instance.id.alias("instance_id"),
-                Journey.id,
-                Journey.project,
-            )
-            .join(Run)
             .join(InstanceSet)
             .join(InstancesInstanceSets)
-            .join(Instance)
-            .join(Journey)
-            .where((Instance.id.in_(instances)) & (Journey.id.in_(journeys)))
+            .group_by(InstancesInstanceSets.instance, TestOutcome.status)
+            .where(InstancesInstanceSets.instance << ids)
+            .tuples()
         )
+
+    @staticmethod
+    def aggregate_alerts_summary(instances: Iterable[Instance]) -> None:
+        instance_alerts = InstanceService.instance_alerts_query(instances)
+        run_alerts = InstanceService.run_alerts_query(instances)
+
         # Query all instance alerts and run alerts of the specified instances
         alerts = instance_alerts.union_all(run_alerts)
         # Aggregate alerts by description and level for each instance
@@ -145,6 +120,43 @@ class InstanceService:
                     k["description"],
                 ),
             )
+
+    @staticmethod
+    def instance_alerts_query(instances: Iterable[Instance]) -> ModelSelect:
+        return (
+            InstanceAlert.select(
+                InstanceAlert.id.alias("alert_id"),
+                InstanceAlert.description.alias("description"),
+                InstanceAlert.level.alias("level"),
+                Instance.id.alias("instance_id"),
+                Journey.id,
+                Journey.project,
+            )
+            .join(Instance)
+            .join(Journey)
+            # Additional filter by journey id to help query performance
+            .where((Instance.id.in_(instances)) & (Journey.id.in_([i.journey.id for i in instances])))
+        )
+
+    @staticmethod
+    def run_alerts_query(instances: Iterable[Instance]) -> ModelSelect:
+        return (
+            RunAlert.select(
+                RunAlert.id.alias("alert_id"),
+                RunAlert.description.alias("description"),
+                RunAlert.level.alias("level"),
+                Instance.id.alias("instance_id"),
+                Journey.id,
+                Journey.project,
+            )
+            .join(Run)
+            .join(InstanceSet)
+            .join(InstancesInstanceSets)
+            .join(Instance)
+            .join(Journey)
+            # Additional filter by journey id to help query performance
+            .where((Instance.id.in_(instances)) & (Journey.id.in_([i.journey.id for i in instances])))
+        )
 
     @staticmethod
     def get_instance_run_counts(

@@ -18,8 +18,8 @@ from common.entities import (
 from common.events.enums import EventSources
 from common.events.v1 import ApiRunStatus, RunStatusEvent, TestOutcomesEvent, TestStatuses
 from common.kafka import TOPIC_IDENTIFIED_EVENTS, KafkaMessage
-from rules_engine.actions.action_factory import ACTION_CLASS_MAP
-from rules_engine.rules import _get_rules, _rule_local
+from common.actions.action_factory import ACTION_CLASS_MAP
+from rules_engine.journey_rules import _get_rules
 from testlib.fixtures.entities import *
 from testlib.fixtures.v2_events import *
 
@@ -43,14 +43,6 @@ def base_event_data():
         "task_name": None,
         "run_task_id": None,
     }
-
-
-@pytest.fixture(autouse=True)
-def clear_rules():
-    yield None
-    # Clear any rules that were registered
-    if (rule_list := getattr(_rule_local, "registered_rules", None)) is not None:
-        rule_list.clear()
 
 
 @pytest.fixture

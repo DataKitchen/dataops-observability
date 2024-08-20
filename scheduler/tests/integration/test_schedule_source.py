@@ -37,10 +37,10 @@ class TestScheduleSource(ScheduleSource):
     kafka_topic = Topic
 
     def _create_and_add_job(self, schedule: Schedule):
-        yield Mock()
+        pass
 
     def _get_schedules(self):
-        yield Mock()
+        return []
 
 
 @pytest.fixture

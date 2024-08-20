@@ -4,6 +4,8 @@ from marshmallow.fields import DateTime, String
 from marshmallow.validate import Length
 
 from common.entities import Agent
+from common.entities.agent import AgentStatus
+from common.schemas.fields import EnumStr
 
 from .base_schemas import BaseEntitySchema
 
@@ -18,6 +20,7 @@ class AgentSchema(BaseEntitySchema):
     version = String(
         required=True, validate=Length(max=255), metadata={"description": "The version of the agent deployed."}
     )
+    status = EnumStr(required=True, enum=AgentStatus, metadata={"description": "Agent connectivity status."})
     latest_heartbeat = DateTime(
         required=True,
         metadata={

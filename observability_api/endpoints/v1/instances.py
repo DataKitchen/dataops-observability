@@ -12,9 +12,12 @@ from common.entities import Component, Instance, InstanceRule, Journey, Project,
 from common.entity_services import InstanceService, ProjectService, UpcomingInstanceService
 from common.entity_services.helpers import Filters, ListRules, Page
 from common.entity_services.helpers.filter_rules import PROJECT_ID_QUERY_NAME
+from common.entity_services.instance_dag_service import InstanceDagService
 from common.schemas.filter_schemas import CompanyInstanceFiltersSchema, InstanceFiltersSchema
 from observability_api.endpoints.entity_view import BaseEntityView
 from observability_api.schemas.instance_schemas import InstanceDetailedSchema
+from observability_api.schemas.instance_dag_schemas import InstanceDagSchema
+
 
 LOG = logging.getLogger(__name__)
 
@@ -374,3 +377,49 @@ class InstanceById(BaseEntityView):
         InstanceService.aggregate_tests_summary([result])
         InstanceService.aggregate_alerts_summary([result])
         return make_response(InstanceDetailedSchema().dump(result))
+
+
+class InstanceDag(BaseEntityView):
+    PERMISSION_REQUIREMENTS: tuple[Permission, ...] = ()
+
+    @no_body_allowed
+    def get(self, instance_id: UUID) -> Response:
+        """Get DAG by instance ID
+        --
+        tags: ["Instance"]
+        operationId: GetInstanceDag
+        description: Retrieves the DAG of an instance.
+        security:
+          - SAKey: []
+        parameters:
+          - in: path
+            name: instance_id
+            schema:
+              type: string
+            required: true
+        responses:
+          200:
+            description: Request successful - instance returned.
+            content:
+              application/json:
+                schema: InstanceDetailedSchema
+          400:
+            description: Request bodies are not supported by this endpoint.
+            content:
+              application/json:
+                schema: HTTPErrorSchema
+          404:
+            description: Instance not found.
+            content:
+              application/json:
+                schema: HTTPErrorSchema
+          500:
+            description: Unverified error. Consult the response body for more details.
+            content:
+              application/json:
+                schema: HTTPErrorSchema
+        """
+        instance: Instance = self.get_entity_from_query_or_fail(
+            Instance.select(Instance, Journey).where(Instance.id == instance_id)
+        )
+        return make_response(InstanceDagSchema().dump(InstanceDagService.get_nodes_with_summaries(instance)))

@@ -6,15 +6,26 @@
     <base href="/" />
     <meta name="description" content="Monitor events. Build journeys. Get visibility.">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
 
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="apple-touch-icon" href="/assets/icons/icon-96x96.png" />
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <link rel="preload" href="https://cdn.materialdesignicons.com/6.5.95/css/materialdesignicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload"
+      href="https://cdn.materialdesignicons.com/6.5.95/css/materialdesignicons.min.css"
+      as="style"
+      integrity="sha512-Zw6ER2h5+Zjtrej6afEKgS8G5kehmDAHYp9M2xf38MPmpUWX39VrYmdGtCrDQbdLQrTnBVT8/gcNhgS4XPgvEg=="
+      crossorigin="anonymous"
+      id="preloadMaterialIcons">
+    <script nonce="RandomNonceValue">
+      window.addEventListener('load', function() {
+        var preloadMaterialIcons = document.getElementById('preloadMaterialIcons');
+        preloadMaterialIcons.rel = 'stylesheet';
+      });
+    </script>
+
     <noscript><link rel="stylesheet" href="styles.css"></noscript>
 
     <link rel="manifest" href="manifest.webmanifest">
@@ -155,11 +166,10 @@
 
   <body class="mat-typography">
 
-    <shell-root>
+    <shell-root ngCspNonce="RandomNonceValue">
       <div id="loading">
         <progress class="material-progress" />
       </div>
     </shell-root>
-
   </body>
 </html>

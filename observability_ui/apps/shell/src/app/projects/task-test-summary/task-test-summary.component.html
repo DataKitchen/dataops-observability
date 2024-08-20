@@ -35,11 +35,11 @@
 
 <ng-template #tasksTooltip>
   <div class="tooltip">
-    <div *ngIf="tasksSummaryAggregate.TOTAL > 0">
-      <span class="status-description">{{'total' | translate | titlecase}}:</span><span>{{ tasksSummaryAggregate.TOTAL }}</span>
+    <div *ngIf="tasksSummaryAggregate().TOTAL > 0">
+      <span class="status-description">{{'total' | translate | titlecase}}:</span><span>{{ tasksSummaryAggregate().TOTAL }}</span>
     </div>
 
-    <ng-container *ngFor="let item of tasksSummaryAggregate | keyvalue">
+    <ng-container *ngFor="let item of tasksSummaryAggregate() | keyvalue">
       <div *ngIf="item.key !== 'TOTAL' && item.value > 0">
         <span class="status-description">{{'runStatus.' + item.key | translate}}:</span> {{ item.value }}
       </div>
@@ -49,11 +49,11 @@
 
 <ng-template #testsTooltip>
   <div class="tooltip">
-    <div *ngIf="testsSummaryAggregate.TOTAL > 0">
-      <span class="status-description">{{'total' | translate | titlecase}}:</span><span>{{ testsSummaryAggregate.TOTAL }}</span>
+    <div *ngIf="testsSummaryAggregate().TOTAL > 0">
+      <span class="status-description">{{'total' | translate | titlecase}}:</span><span>{{ testsSummaryAggregate().TOTAL }}</span>
     </div>
 
-    <ng-container *ngFor="let item of testsSummaryAggregate | keyvalue">
+    <ng-container *ngFor="let item of testsSummaryAggregate() | keyvalue">
       <div *ngIf="item.key !== 'TOTAL' && item.value > 0">
         <span class="status-description">{{'testStatus.' + item.key | translate}}:</span> {{ item.value }}
       </div>

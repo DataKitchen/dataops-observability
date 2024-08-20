@@ -2,7 +2,7 @@ __all__ = ["RUN_ALERT_DESCRIPTIONS", "INSTANCE_ALERT_DESCRIPTIONS"]
 
 from common.entities import InstanceAlertType, RunAlertType
 
-RUN_ALERT_DESCRIPTIONS = {
+RUN_ALERT_DESCRIPTIONS: dict[RunAlertType, str] = {
     RunAlertType.LATE_END: "Batch pipeline '{name}' ended late",
     RunAlertType.LATE_START: "Batch pipeline '{name}' started late",
     RunAlertType.MISSING_RUN: "Batch pipeline '{name}' run missed",
@@ -12,7 +12,7 @@ RUN_ALERT_DESCRIPTIONS = {
 }
 """Description templates for run alerts"""
 
-INSTANCE_ALERT_DESCRIPTIONS = {
+INSTANCE_ALERT_DESCRIPTIONS: dict[InstanceAlertType, str] = {
     InstanceAlertType.DATASET_NOT_READY: "{component_name} asset did not arrive when expected",
     InstanceAlertType.INCOMPLETE: "Instance ended; component progress incomplete",
     InstanceAlertType.OUT_OF_SEQUENCE: "Journey executed out-of-sequence",

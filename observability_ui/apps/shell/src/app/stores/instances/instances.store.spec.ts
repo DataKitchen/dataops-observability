@@ -154,7 +154,7 @@ describe('instances.store', () => {
         MockProvider(InstancesService, {
           findAll: jest.fn().mockReturnValue(of({ entities: instances, total: instances.length })),
           getComponents: jest.fn().mockReturnValue(of({ entities: components, total: components.length })),
-          getJourneyDag: jest.fn().mockReturnValue(of(dagResponse)),
+          getDag: jest.fn().mockReturnValue(of(dagResponse)),
           findUpcomingInstances: jest.fn().mockReturnValue(of({ entities: [ upcomingInstance, ] })),
         }),
         MockProvider(ComponentsService, {

@@ -2,11 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { TestScheduler } from '@datakitchen/rxjs-marbles';
 import { MockProvider } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
-import { BaseComponent, ComponentType, EventTypes, InstanceAlert, InstanceAlertType, JourneyDag, JourneyDagEdge, JourneyDagNode, ProjectService } from '@observability-ui/core';
+import { BaseComponent, ComponentType, InstanceDag, JourneyDag, JourneyDagEdge, RunProcessedStatus, TestStatus } from '@observability-ui/core';
 import { ComponentsService } from '../../services/components/components.service';
 import { JourneysService } from '../../services/journeys/journeys.service';
 import { DagStore } from './dag.store';
-import { ProjectRunsService } from '../../services/project-runs/project-runs.service';
+import { InstancesService } from '../../services/instances/instances.service';
 
 describe('dag.store', () => {
   const projectId = '15';
@@ -33,84 +33,65 @@ describe('dag.store', () => {
     ],
   };
 
-  const runs = [
-    {
-      'end_time': '2023-02-18T03:52:23',
-      'id': 'f05db1f5-3430-4067-a06d-75cbbeafcc65',
-      'key': 'def',
-      'listening': false,
-      'pipeline': { 'display_name': 'aarthy_g', 'id': '362154b4-5653-49dd-8d73-601264da30b7', 'key': 'aarthy_g' },
-      'run_states': [],
-      'start_time': '2023-02-18T03:52:17',
-      'status': 'COMPLETED',
-      'tasks_summary': [ { 'count': 0, 'status': 'MISSING' }, {
-        'count': 0,
-        'status': 'COMPLETED_WITH_WARNINGS'
-      }, { 'count': 0, 'status': 'RUNNING' }, { 'count': 0, 'status': 'PENDING' }, {
-        'count': 0,
-        'status': 'COMPLETED'
-      }, { 'count': 0, 'status': 'FAILED' } ]
-    },
-    {
-      'end_time': '2023-02-18T03:09:44',
-      'id': '6baf5e8d-fd57-4f76-958e-c718bae30eb4',
-      'key': 'abc',
-      'listening': false,
-      'pipeline': {
-        'display_name': 'Aarthy Pipeline E',
-        'id': 'a577e35a-d0ae-44b9-b952-1be76a94b849',
-        'key': 'aarthy_e'
+  const instanceDag: InstanceDag = {
+    nodes: [
+      {
+        component: {
+          id: '123',
+          type: ComponentType.BatchPipeline,
+          key: 'component-a',
+          name: 'Component A',
+          display_name: 'Component A',
+        } as BaseComponent,
+        edges: [
+          {
+            id: '1',
+            component: null,
+          }
+        ],
+        status: RunProcessedStatus.Completed,
+        alerts_summary: [],
+        operations_summary: [],
+        runs_summary: [],
+        tests_summary: [
+          {status: TestStatus.Passed, count: 2},
+          {status: TestStatus.Warning, count: 1},
+        ],
       },
-      'run_states': [] as any[],
-      'start_time': '2023-02-18T02:20:24',
-      'status': 'COMPLETED',
-      'tasks_summary': [ { 'status': 'RUNNING' }, { 'count': 0, 'status': 'MISSING' }, {
-        'count': 0,
-        'status': 'FAILED'
-      }, { 'count': 0, 'status': 'COMPLETED_WITH_WARNINGS' }, { 'count': 0, 'status': 'COMPLETED' }, {
-        'count': 0,
-        'status': 'PENDING'
-      } ]
-    },
-    {
-      'end_time': '2023-02-18T03:10:03',
-      'id': 'fcf7de49-1208-4492-921d-fcfa612731f2',
-      'key': 'abc',
-      'listening': false,
-      'pipeline': { 'display_name': 'aarthy_f', 'id': '347f5dda-d620-40f3-ac4e-e6f73ddea4f3', 'key': 'aarthy_f' },
-      'run_states': [],
-      'start_time': '2023-02-18T03:09:58',
-      'status': 'COMPLETED',
-      'tasks_summary': [ { 'count': 0, 'status': 'MISSING' }, {
-        'count': 0,
-        'status': 'COMPLETED_WITH_WARNINGS'
-      }, { 'count': 0, 'status': 'RUNNING' }, { 'count': 0, 'status': 'PENDING' }, {
-        'count': 0,
-        'status': 'COMPLETED'
-      }, { 'count': 0, 'status': 'FAILED' } ]
-    }
-  ];
-
-  const tests = [ { id: 'test-id-1', name: 'test 1' }, { id: 'test-id-2', name: 'test 2' } ];
-
-  const alerts = [
-    {
-      id: '1',
-      run: null,
-      level: 'ERROR',
-      type: InstanceAlertType.OutOfSequence,
-      name: 'Some Alert',
-      description: '',
-      created_on: null,
-      components: [],
-    } as InstanceAlert,
-  ];
+      {
+        component: {
+          id: '1234',
+          type: ComponentType.BatchPipeline,
+          key: 'component-a',
+          name: 'Component A',
+          display_name: 'Component A',
+        } as BaseComponent,
+        edges: [
+          {
+            id: '2',
+            component: '123',
+          }
+        ],
+        status: RunProcessedStatus.Completed,
+        alerts_summary: [
+          {level: 'ERROR', description: '...', count: 2},
+        ],
+        operations_summary: [
+          {operation: 'WRITE', count: 1},
+          {operation: 'READ', count: 1},
+        ],
+        runs_summary: [
+          {status: RunProcessedStatus.Missing, count: 1}
+        ],
+        tests_summary: [],
+      },
+    ],
+  };
 
   let store: DagStore;
   let journeysService: JourneysService;
   let componentsService: ComponentsService;
-  let runService: ProjectRunsService;
-  let projectService: ProjectService;
+  let instanceService: InstancesService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -126,15 +107,8 @@ describe('dag.store', () => {
           getPage: jest.fn().mockReturnValue(of(components)),
           getSchedules: jest.fn().mockReturnValue(of([]))
         }),
-        MockProvider(ProjectRunsService, {
-          findAll: jest.fn().mockReturnValue(of({ entities: runs, total: runs.length })),
-        }),
-        MockProvider(ProjectService, {
-          getTestById: jest.fn().mockReturnValue(of(tests[1])),
-          getTests: jest.fn().mockReturnValue(of({ entities: tests, total: tests.length })),
-          getAllTests: jest.fn().mockReturnValue(of({ entities: [] })),
-          getAllEvents: jest.fn().mockReturnValue(of({ entities: [] })),
-          getAlerts: jest.fn().mockReturnValue(of({ entities: alerts, total: alerts.length })),
+        MockProvider(InstancesService, {
+          getDag: jest.fn().mockReturnValue(of(instanceDag)),
         }),
       ],
     });
@@ -142,8 +116,7 @@ describe('dag.store', () => {
     store = TestBed.inject(DagStore);
     journeysService = TestBed.inject(JourneysService);
     componentsService = TestBed.inject(ComponentsService);
-    runService = TestBed.inject(ProjectRunsService);
-    projectService = TestBed.inject(ProjectService);
+    instanceService = TestBed.inject(InstancesService);
   });
 
   it('should create', () => {
@@ -191,7 +164,7 @@ describe('dag.store', () => {
 
     it('should include all the nodes from the dag in the store', () => {
       expect(store.onGetDag({} as any, dag)).toEqual(expect.objectContaining({
-        nodes: [ expect.objectContaining({ info: dag.nodes[0] }), expect.objectContaining({ info: dag.nodes[1] }) ],
+        nodes: [ expect.objectContaining(dag.nodes[0]), expect.objectContaining(dag.nodes[1]) ],
       }));
     });
 
@@ -336,9 +309,8 @@ describe('dag.store', () => {
         edge
       })).toEqual(
         expect.objectContaining({
-          nodes: [{ info: { component, edges: [] }}],
+          nodes: [{ component, edges: [] }],
         })
-        // {}
       );
     });
 
@@ -368,12 +340,12 @@ describe('dag.store', () => {
   describe('updateNodeInfo', () => {
     it('should update a node\'s component if it is in the DAG', () => {
       const component = { id: 'component-a', display_name: 'original' } as BaseComponent;
-      expect(store.onUpdateNodeInfo({ nodes: [ { info: { component } , edges: [] } ] } as any, {
+      expect(store.onUpdateNodeInfo({ nodes: [ { component , edges: [] } ] } as any, {
         ...component,
         display_name: 'new'
       })).toEqual(expect.objectContaining({
         nodes: [ {
-          info: { component: {...component, display_name: 'new' }},
+          component: {...component, display_name: 'new' },
           edges: []
         } ]
       }));
@@ -394,19 +366,14 @@ describe('dag.store', () => {
     });
 
     it('should exclude selected nodes from the dag', () => {
-      store.dispatch('toggleSelection', 'B', true, 'Node');
+      store.dispatch('toggleSelection', components[1].id, true, 'Node');
 
       new TestScheduler().run(({ expectObservable }) => {
         expectObservable(store.deleteSelected()).toBe('(a|)', {
           a: expect.objectContaining({
-            nodes: [ {
-              info: {
-                component: { id: 'A', name: 'Component A' },
-                edges: expect.anything()
-              }
-            } ],
-
-
+            nodes: [
+              dag.nodes[0],
+            ],
           }),
         });
       });
@@ -478,58 +445,47 @@ describe('dag.store', () => {
     });
   });
 
-  describe('getDagNodeDetail', () => {
+  describe('getInstanceDag', () => {
     const instanceId = '15';
-    const projectId = '1';
 
+    beforeEach(() => {
+      store.dispatch('getInstanceDag', instanceId);
+    });
 
-    it('should get all the runs from the service if component is batch pipeline', () => {
-      const node: JourneyDagNode = {
-        component: {
-          id: '2',
-          type: ComponentType.BatchPipeline
-        }
-      } as any;
+    it('should get the dag from the instance service', () => {
+      expect(instanceService.getDag).toBeCalledWith(instanceId);
+    });
 
-      store.dispatch('getDagNodeDetail', projectId, instanceId, node);
-
-      expect(runService.findAll).toBeCalledWith({
-        parentId: projectId,
-        filters: { instance_id: instanceId, pipeline_id: node.component.id }
+    it('should update the store with the list of nodes', () => {
+      new TestScheduler().run(({ expectObservable }) => {
+        expectObservable(store.nodes$).toBe('a', {
+          a: instanceDag.nodes.map((n) => ({ ...n, selected: false })),
+        });
       });
     });
 
-    it('should get all the events from the service if component is dataset', () => {
-      const node: JourneyDagNode = {
-        component: {
-          id: '2',
-          type: ComponentType.Dataset
-        }
-      } as any;
-
-      store.dispatch('getDagNodeDetail', projectId, instanceId, node);
-
-      expect(projectService.getAllEvents).toBeCalledWith({
-        parentId: projectId,
-        filters: {
-          instance_id: instanceId,
-          component_id: node.component.id,
-          event_type: EventTypes.DatasetOperationEvent.toString()
-        }
+    it('should update the store with the list of edges', () => {
+      new TestScheduler().run(({ expectObservable }) => {
+        expectObservable(store.edges$).toBe('a', {
+          a: instanceDag.nodes
+            .reduce(
+              (edges, n) => [
+                ...edges,
+                ...n.edges.map((edge) => ({id: edge.id, from: edge.component, to: n.component.id, selected: false})),
+              ],
+              [] as JourneyDagEdge[]
+            )
+            .filter((edge) => !!edge.from),
+        });
       });
     });
 
-    it('should get all the schedules from the service if component is dataset', () => {
-      const node: JourneyDagNode = {
-        component: {
-          id: '2',
-          type: ComponentType.Dataset
-        }
-      } as any;
-
-      store.dispatch('getDagNodeDetail', projectId, instanceId, node);
-
-      expect(componentsService.getSchedules).toBeCalledWith(node.component.id);
+    it('should set components in DAG', () => {
+      new TestScheduler().run(({ expectObservable }) => {
+        expectObservable(store.componentsInDag$).toBe('a', {
+          a: instanceDag.nodes.reduce((result, n) => ({ ...result, [n.component.id]: true }), {}),
+        });
+      });
     });
   });
 });

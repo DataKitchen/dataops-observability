@@ -11,6 +11,8 @@ __all__ = [
     "RUN_ALERT_ID",
     "RUN_ID",
     "action",
+    "agent_1",
+    "agent_2",
     "auth_provider",
     "basic_auth_user",
     "batch_end_schedule",
@@ -115,6 +117,7 @@ from common.entities import (
     User,
     UserRole,
 )
+from common.entities.agent import AgentStatus
 from conf import init_db
 
 AGENT_ID: UUID = UUID("fdcf7927-a43e-41ad-b8eb-e45d7b1a4d1a")
@@ -162,7 +165,12 @@ BASIC_AUTH_USER_PASSWORD: str = "abcxyz12345"
 
 @pytest.fixture()
 def test_db():
-    yield init_db()
+    def sqlite_if(cond, a, b):
+        return a if cond else b
+
+    init_db()
+    DB.obj.register_function(sqlite_if, "IF", 3)
+    yield
     DB.close()
 
 
@@ -226,7 +234,17 @@ def organization(test_db, company, user):
 
 @pytest.fixture()
 def project(test_db, organization, user):
-    return Project.create(id=PROJECT_ID, name="P1", organization=organization, active=True, created_by=user)
+    return Project.create(
+        id=PROJECT_ID,
+        name="P1",
+        organization=organization,
+        active=True,
+        created_by=user,
+        agent_check_interval=30,
+        alert_actions=[
+            {"action_impl": "CALL_WEBHOOK", "action_args": {"url": "https://some.callback/url", "method": "POST"}},
+        ],
+    )
 
 
 @pytest.fixture()
@@ -337,7 +355,12 @@ def journey_dag_edge(test_db, journey, pipeline_2):
 
 @pytest.fixture()
 def action(test_db, company):
-    return Action.create(name="A1", company=company, action_impl=ActionImpl.SEND_EMAIL.value)
+    return Action.create(
+        name="A1",
+        company=company,
+        action_impl=ActionImpl.SEND_EMAIL.value,
+        action_args={"from_address": "sender@example.com"},
+    )
 
 
 @pytest.fixture()
@@ -554,6 +577,7 @@ def agent_1(test_db, project):
         key="test-agent-1-key",
         tool="test-agent-1-tool",
         version="1.0.0",
+        status=AgentStatus.OFFLINE,
         lastest_heartbeat=AGENT_LATEST_HEARTBEAT,
         latest_event_timestamp=AGENT_LATEST_EVENT,
     )
@@ -568,6 +592,7 @@ def agent_2(test_db, project):
         key="test-agent-2-key",
         tool="test-agent-2-tool",
         version="2.0.0",
+        status=AgentStatus.ONLINE,
         lastest_heartbeat=dt_2,
         latest_event_timestamp=dt_1,
     )

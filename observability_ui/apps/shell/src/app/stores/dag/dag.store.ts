@@ -1,22 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Effect, makeStore, Reduce, Store } from '@microphi/store';
 import { defer, forkJoin, iif, map, Observable, of, throwError } from 'rxjs';
-import { BaseComponent, ComponentType, EntityListResponse, EventType, EventTypes, getDatasetStatus, getSummary, InstanceDagNode, InstanceRunSummary, InstanceTestSummary, mostImportantStatus, PaginatedRequest, ProjectService, Run, Schedule, TestOutcomeItem } from '@observability-ui/core';
+import { BaseComponent, InstanceDag, InstanceDagNode, PaginatedRequest } from '@observability-ui/core';
 import { JourneyDag, JourneyDagEdge, JourneyDagNode } from '@observability-ui/core';
 import { ComponentsService } from '../../services/components/components.service';
 import { JourneysService } from '../../services/journeys/journeys.service';
-import { ProjectRunsService } from '../../services/project-runs/project-runs.service';
-
-export interface DagCompleteNode {
-  info: JourneyDagNode;
-  details?: InstanceDagNode;
-}
+import { InstancesService } from '../../services/instances/instances.service';
 
 interface DagState {
   journeyId?: string;
   components: BaseComponent[];
 
-  nodes: DagCompleteNode[];
+  nodes: Array<JourneyDagNode | InstanceDagNode>;
   edges: JourneyDagEdge[];
 
   componentsInDag: { [componentId: string]: boolean };
@@ -27,6 +22,7 @@ interface DagState {
 
 interface DagActions {
   getDag(id: string): Observable<JourneyDag>;
+  getInstanceDag(id: string): Observable<InstanceDag>;
 
   getComponents(req: PaginatedRequest): Observable<BaseComponent[]>;
 
@@ -49,11 +45,9 @@ interface DagActions {
 
   deleteSelected(): Observable<{
     edges: JourneyDagEdge[];
-    nodes: DagCompleteNode[],
+    nodes: JourneyDagNode[],
     componentsInDag: { [componentId: string]: boolean }
   }>;
-
-  getDagNodeDetail(projectId: string, instanceId: string, node: JourneyDagNode): Observable<[ EntityListResponse<TestOutcomeItem>, EntityListResponse<Run>, JourneyDagNode, EntityListResponse<EventType>, EntityListResponse<Schedule> ]>;
 }
 
 
@@ -61,10 +55,10 @@ interface DagActions {
   providedIn: 'root',
 })
 export class DagStore extends Store<DagState, DagActions> implements makeStore<DagState, DagActions> {
-  nodes$: Observable<Array<DagCompleteNode & { selected?: boolean }>> = this.select(state => {
+  nodes$: Observable<Array<(JourneyDagNode | InstanceDagNode) & { selected?: boolean }>> = this.select(state => {
     const nodes = [];
     for (const node of state.nodes) {
-      nodes.push({ ...node, selected: state.selectedNodes[node.info.component.id] ?? false });
+      nodes.push({ ...node, selected: state.selectedNodes[node.component.id] ?? false });
     }
     return nodes;
   });
@@ -84,9 +78,8 @@ export class DagStore extends Store<DagState, DagActions> implements makeStore<D
 
   constructor(
     private journeyService: JourneysService,
+    private instanceService: InstancesService,
     private componentsService: ComponentsService,
-    private projectService: ProjectService,
-    private runsService: ProjectRunsService
   ) {
     super({
       components: [],
@@ -105,12 +98,37 @@ export class DagStore extends Store<DagState, DagActions> implements makeStore<D
 
   @Reduce()
   onGetDag(state: DagState, dag: JourneyDag): DagState {
-    const nodes: DagCompleteNode[] = [];
+    const nodes: JourneyDagNode[] = dag.nodes;
     const edges: Array<JourneyDagEdge> = [];
     const componentsInDag: { [componentId: string]: boolean } = {};
 
     for (const node of dag.nodes) {
-      nodes.push({ info: node });
+      for (const { id, component } of node.edges) {
+        edges.push({ id, from: component, to: node.component.id });
+      }
+      componentsInDag[node.component.id] = true;
+    }
+
+    return {
+      ...state,
+      nodes,
+      edges,
+      componentsInDag,
+    };
+  }
+
+  @Effect()
+  getInstanceDag(id: string): Observable<InstanceDag> {
+    return this.instanceService.getDag(id);
+  }
+
+  @Reduce()
+  onGetInstanceDag(state: DagState, dag: InstanceDag): DagState {
+    const nodes: InstanceDagNode[] = dag.nodes;
+    const edges: Array<JourneyDagEdge> = [];
+    const componentsInDag: { [componentId: string]: boolean } = {};
+
+    for (const node of dag.nodes) {
       for (const { id, component } of node.edges) {
         edges.push({ id, from: component, to: node.component.id });
       }
@@ -183,7 +201,7 @@ export class DagStore extends Store<DagState, DagActions> implements makeStore<D
     const state = this._store$.getValue();
 
     const noEdgeBetweenTheSelectedNodes = !state.edges.some(edge => edge.from === fromNode && edge.to === toNode);
-    const willNotCauseCycles = !this.hasCycles(state.nodes.map(n => n.info), [ ...state.edges, {
+    const willNotCauseCycles = !this.hasCycles(state.nodes, [ ...state.edges, {
       id: 'Any',
       from: fromNode,
       to: toNode
@@ -228,7 +246,7 @@ export class DagStore extends Store<DagState, DagActions> implements makeStore<D
     return {
       ...state,
       componentsInDag,
-      nodes: [ ...state.nodes, { info: { component: component, edges: [] } } ],
+      nodes: [ ...state.nodes, { component: component, edges: [] } ],
       edges: [ ...state.edges, edge ],
     };
   }
@@ -241,9 +259,9 @@ export class DagStore extends Store<DagState, DagActions> implements makeStore<D
   @Reduce()
   onUpdateNodeInfo(state: DagState, component: BaseComponent): DagState {
     const nodes = state.nodes;
-    const nodeIdx = nodes.findIndex(n => n.info.component.id === component.id);
+    const nodeIdx = nodes.findIndex(n => n.component.id === component.id);
     if (nodeIdx > -1) {
-      nodes[nodeIdx] = { ...nodes[nodeIdx], info: { ...nodes[nodeIdx].info, component: component } };
+      nodes[nodeIdx] = { ...nodes[nodeIdx], component: component };
       return { ...state, nodes };
     }
 
@@ -253,7 +271,7 @@ export class DagStore extends Store<DagState, DagActions> implements makeStore<D
   @Effect('concatMap')
   deleteSelected(): Observable<{
     edges: JourneyDagEdge[];
-    nodes: DagCompleteNode[],
+    nodes: JourneyDagNode[],
     componentsInDag: { [componentId: string]: boolean }
   }> {
     const state = this._store$.getValue();
@@ -263,7 +281,7 @@ export class DagStore extends Store<DagState, DagActions> implements makeStore<D
     let nodes = state.nodes;
 
     for (const [ nodeId, ] of Object.entries(state.selectedNodes)) {
-      nodes = nodes.filter(node => node.info.component.id !== nodeId);
+      nodes = nodes.filter(node => node.component.id !== nodeId);
       delete componentsInDag[nodeId];
     }
 
@@ -286,7 +304,7 @@ export class DagStore extends Store<DagState, DagActions> implements makeStore<D
   @Reduce()
   onDeleteSelected(state: DagState, { edges, nodes, componentsInDag }: {
     edges: JourneyDagEdge[];
-    nodes: DagCompleteNode[],
+    nodes: JourneyDagNode[],
     componentsInDag: { [componentId: string]: boolean }
   }): DagState {
     return {
@@ -297,64 +315,6 @@ export class DagStore extends Store<DagState, DagActions> implements makeStore<D
       selectedEdges: {},
       selectedNodes: {},
     };
-  }
-
-  @Effect('concatMap')
-  getDagNodeDetail(projectId: string, instanceId: string, node: JourneyDagNode): Observable<[ EntityListResponse<TestOutcomeItem>, EntityListResponse<Run>, JourneyDagNode, EntityListResponse<EventType>, EntityListResponse<Schedule> ]> {
-    return forkJoin([
-      this.projectService.getAllTests({
-        parentId: projectId,
-        filters: { instance_id: instanceId, component_id: node.component.id }
-      }),
-      node.component.type === ComponentType.BatchPipeline ? this.runsService.findAll({
-        parentId: projectId,
-        filters: { instance_id: instanceId, pipeline_id: node.component.id }
-      }) : of(null),
-      of(node),
-      node.component.type === ComponentType.Dataset ? this.projectService.getAllEvents({
-        parentId: projectId,
-        filters: {
-          instance_id: instanceId,
-          component_id: node.component.id,
-          event_type: EventTypes.DatasetOperationEvent.toString()
-        }
-      }) : of(null),
-      node.component.type === ComponentType.Dataset ? this.componentsService.getSchedules(node.component.id) : of(null)
-    ]);
-  }
-
-  @Reduce()
-  onGetDagNodeDetail(state: DagState, [ { entities: tests }, runs, node, events, schedules ]: [ EntityListResponse<TestOutcomeItem>, EntityListResponse<Run>, JourneyDagNode, EntityListResponse<EventType>, EntityListResponse<Schedule> ]): DagState {
-    let componentRuns = runs ? runs.entities : [];
-    let componentEvents = events ? events.entities : [];
-
-    const runs_summary = getSummary(componentRuns.map(run => ({ status: run.status.toString() }))) as unknown as InstanceRunSummary[];
-    const tests_summary = getSummary(tests.map(run => ({ status: run.status.toString() }))) as unknown as InstanceTestSummary[];
-    let status = mostImportantStatus([ ...componentRuns, ...tests ]);
-
-    if (node.component.type === ComponentType.Dataset) {
-      status = getDatasetStatus(componentEvents, tests, schedules?.entities ?? []);
-    }
-
-    const nodeDetails: InstanceDagNode = {
-      ...node,
-      runs_summary,
-      runs_count: componentRuns.length,
-      status,
-      tests_count: tests.length,
-      tests_summary,
-      events: componentEvents
-    };
-
-    const nodes = state.nodes;
-    const nodeIdx = nodes.findIndex(n => n.info.component.id === node.component.id);
-
-    if (nodeIdx > -1) {
-      nodes[nodeIdx] = { ...nodes[nodeIdx], details: nodeDetails };
-      return { ...state, nodes };
-    }
-
-    return state;
   }
 
   private hasCycles(nodes: JourneyDagNode[], edges: JourneyDagEdge[]): boolean {

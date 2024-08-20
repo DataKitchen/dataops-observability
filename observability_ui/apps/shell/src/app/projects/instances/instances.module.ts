@@ -5,7 +5,7 @@ import { InstancesListComponent } from './instances-list/instances-list.componen
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { AlertComponent, DagModule, DetailsHeaderModule, DkTooltipModule, DurationModule, FilterFieldModule, GanttChartModule, GetIngrationPipe, HelpLinkComponent, EmptyStateSetupComponent, TableWrapperModule, TextFieldModule, TruncateModule } from '@observability-ui/ui';
+import { AlertComponent, DagModule, DetailsHeaderModule, DkTooltipModule, DurationModule, FilterFieldModule, GanttChartModule, GetIngrationPipe, HelpLinkComponent, EmptyStateSetupComponent, SumPipe, TableWrapperModule, TextFieldModule, TruncateModule } from '@observability-ui/ui';
 import { FlexModule } from '@angular/flex-layout';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
@@ -30,7 +30,6 @@ import { SummaryComponent } from '../../components/summary/summary.component';
 import { SummaryItemComponent } from '../../components/summary-item/summary-item.component';
 import { ComponentIconComponent } from '../components/component-icon/component-icon.component';
 import { ToolSelectorComponent } from '../integrations/tool-selector/tool-selector.component';
-import { OperationPipe } from './instance-status/operation.pipe';
 import { InstanceAlertsComponent } from './instance-alerts/instance-alerts.component';
 import { JourneyDagLegendComponent } from '../journey-dag-legend/journey-dag-legend.component';
 
@@ -80,11 +79,11 @@ import { JourneyDagLegendComponent } from '../journey-dag-legend/journey-dag-leg
     SummaryItemComponent,
     ToolSelectorComponent,
     GetIngrationPipe,
-    OperationPipe,
     InstanceAlertsComponent,
     JourneyDagLegendComponent,
     EmptyStateSetupComponent,
-    HelpLinkComponent
+    HelpLinkComponent,
+    SumPipe,
   ]
 })
 export class InstancesModule {

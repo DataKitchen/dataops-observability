@@ -2,7 +2,7 @@ __all__ = ["Instance", "InstanceSet", "InstancesInstanceSets", "InstanceStatus",
 
 import json
 from enum import Enum
-from typing import Iterable, Union, cast
+from typing import DefaultDict, Iterable, Union, cast
 from uuid import UUID
 
 from peewee import BooleanField, CharField, CompositeKey, Expression, ForeignKeyField, fn
@@ -11,7 +11,8 @@ from playhouse.hybrid import hybrid_property
 from common.peewee_extensions.fields import EnumStrField, UTCTimestampField
 
 from .base_entity import AuditUpdateTimeEntityMixin, BaseEntity, BaseModel
-from .journey import Journey
+from .component import Component
+from .journey import Journey, JourneyDagEdge
 
 
 class InstanceStatus(Enum):
@@ -57,6 +58,15 @@ class Instance(BaseEntity, AuditUpdateTimeEntityMixin):
             return InstanceStatus.ACTIVE.value
         else:
             return InstanceStatus.COMPLETED.value
+
+    @property
+    def journey_dag(self) -> DefaultDict[Component, set[JourneyDagEdge]]:
+        """Return a graph of Components taken from the Journey."""
+        return cast(DefaultDict[Component, set[JourneyDagEdge]], self.journey.journey_dag)
+
+    @property
+    def dag_nodes(self) -> list[Component]:
+        return cast(list[Component], self.journey.dag_nodes)
 
     @staticmethod
     def make_status_filter(statuses: list[str]) -> list:

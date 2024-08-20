@@ -10,6 +10,7 @@ from common.kafka import KafkaProducer
 from common.kubernetes import readiness_check_wrapper, readiness_probe
 from common.logging import JsonFormatter
 from conf import init_db
+from scheduler.agent_check import AgentCheckScheduleSource
 from scheduler.component_expectations import ComponentScheduleSource
 from scheduler.instance_expectations import InstanceScheduleSource
 
@@ -62,6 +63,7 @@ def main() -> None:
     scheduler = BlockingScheduler(job_defaults={"timezone": zoneinfo.ZoneInfo("UTC")})
     ComponentScheduleSource(scheduler, event_producer)
     InstanceScheduleSource(scheduler, event_producer)
+    AgentCheckScheduleSource(scheduler, event_producer)
 
     signal.signal(signal.SIGINT, lambda *_: scheduler.shutdown())
     signal.signal(signal.SIGTERM, lambda *_: scheduler.shutdown())

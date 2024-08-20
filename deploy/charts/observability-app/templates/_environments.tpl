@@ -50,7 +50,6 @@ Environment
 {{- end -}}
 {{- end -}}
 
-
 {{- define "observability.environment.kafka" -}}
 {{- if eq .Values.observability.config_type "cloud" -}}
 - name: KAFKA_CONNECTION_PARAMS
@@ -58,5 +57,30 @@ Environment
     secretKeyRef:
       name: {{ .Values.observability.services_secrets_name | quote }}
       key: KAFKA_CONNECTION_PARAMS
+{{- end -}}
+{{- end -}}
+
+{{- define "observability.environment.smtp" -}}
+{{- if eq .Values.observability.config_type "cloud" -}}
+- name: SMTP_ENDPOINT
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.observability.services_secrets_name | quote }}
+      key: SMTP_ENDPOINT
+- name: SMTP_PORT
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.observability.services_secrets_name | quote }}
+      key: SMTP_PORT
+- name: SMTP_USER
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.observability.services_secrets_name | quote }}
+      key: SMTP_USER
+- name: SMTP_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.observability.services_secrets_name | quote }}
+      key: SMTP_PASSWORD
 {{- end -}}
 {{- end -}}

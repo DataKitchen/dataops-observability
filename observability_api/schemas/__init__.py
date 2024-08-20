@@ -13,6 +13,7 @@ from .company_schemas import *
 from .component_schemas import *
 from .dataset_schemas import *
 from .event_schemas import *
+from .instance_dag_schemas import *
 from .instance_rule_schemas import *
 from .instance_schemas import *
 from .journey_dag_schemas import *
@@ -40,7 +41,7 @@ from .user_schemas import *
 # TestgenDatasetComponentSchema,
 # WebhookActionArgsSchema,
 ALL_SCHEMAS = [
-    ActionSchema,
+    ApiActionSchema,
     AgentSchema,
     CallWebhookRuleSchema,
     CompanyPatchSchema,
@@ -48,7 +49,6 @@ ALL_SCHEMAS = [
     ComponentPatchSchema,
     ComponentSchema,
     DatasetSchema,
-    EmailActionArgsSchema,
     EventResponseSchema,
     InstanceAlertSchema,
     InstanceDetailedSchema,
