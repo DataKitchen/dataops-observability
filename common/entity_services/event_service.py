@@ -53,13 +53,9 @@ class EventService:
         if filters.task_ids:
             filter_list.append(EventEntity.task << filters.task_ids)
         if filters.date_range_start:
-            filter_list.append(
-                EventEntity.timestamp >= EventEntity.timestamp.db_value(filters.date_range_start)
-            )
+            filter_list.append(EventEntity.timestamp >= EventEntity.timestamp.db_value(filters.date_range_start))
         if filters.date_range_end:
-            filter_list.append(
-                EventEntity.timestamp < EventEntity.timestamp.db_value(filters.date_range_end)
-            )
+            filter_list.append(EventEntity.timestamp < EventEntity.timestamp.db_value(filters.date_range_end))
 
         query = query.where(*filter_list)
         page = Page[EventEntity].get_paginated_results(query, EventEntity.timestamp, rules)

@@ -65,10 +65,9 @@ class Page(Generic[T]):
 
         results_query = query.clone()
         results_query._where = None
-        results_query = (
-            results_query.join(paginated_subquery, join_type=JOIN.INNER, on=(model.id == paginated_subquery.c.id))
-            .order_by(ordering)
-        )
+        results_query = results_query.join(
+            paginated_subquery, join_type=JOIN.INNER, on=(model.id == paginated_subquery.c.id)
+        ).order_by(ordering)
 
         return cls(results=list(results_query), total=paginated_subquery.count(clear_limit=True))
 

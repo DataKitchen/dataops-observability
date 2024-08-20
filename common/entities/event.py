@@ -2,7 +2,7 @@ __all__ = ["EventEntity", "EventVersion", "ApiEventType"]
 
 from enum import Enum, IntEnum
 
-from peewee import ForeignKeyField, Node, fn
+from peewee import ForeignKeyField
 from playhouse.mysql_ext import JSONField
 
 from common.peewee_extensions.fields import EnumIntField, EnumStrField, UTCTimestampField
