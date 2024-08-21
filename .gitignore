@@ -156,9 +156,6 @@ events_v2.html
 # MacOS
 *.DS_STORE
 
-# Helm charts packages
-*.tgz
-
 # Diff/merge files
 *.orig
 
