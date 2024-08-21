@@ -1,0 +1,50 @@
+apiVersion: v1
+entries:
+  dataops-observability-app:
+  - apiVersion: v2
+    appVersion: 2.x.x
+    created: "2024-08-21T03:42:51.364831918Z"
+    description: DataOps Observability
+    digest: 0d1d54cbf996f65694da7f0fc4d69c248961fcb22fa3038cbd0e93aa4d7b7087
+    home: https://datakitchen.io
+    icon: https://cloud.datakitchen.io/assets/image/dk-logo.svg
+    keywords:
+    - datakitchen
+    - dataops
+    maintainers:
+    - name: DataKitchen
+      url: https://datakitchen.io
+    name: dataops-observability-app
+    type: application
+    urls:
+    - dataops-observability-app-2.0.0.tgz
+    version: 2.0.0
+  dataops-observability-services:
+  - apiVersion: v2
+    appVersion: 2.x.x
+    created: "2024-08-21T03:42:51.504589346Z"
+    dependencies:
+    - condition: kafka.enable
+      name: kafka
+      repository: https://charts.bitnami.com/bitnami
+      version: 20.0.4
+    - condition: mysql.enable
+      name: mysql
+      repository: https://charts.bitnami.com/bitnami
+      version: 9.4.5
+    description: DataOps Observability Supporting Services
+    digest: 263ff7eafa9966c7a3516157f3f88c36d5c95991b545eb166ad82c6af607164f
+    home: https://datakitchen.io
+    icon: https://cloud.datakitchen.io/assets/image/dk-logo.svg
+    keywords:
+    - datakitchen
+    - dataops
+    maintainers:
+    - name: DataKitchen
+      url: https://datakitchen.io
+    name: dataops-observability-services
+    type: application
+    urls:
+    - dataops-observability-services-2.0.0.tgz
+    version: 2.0.0
+generated: "2024-08-21T03:42:51.504597221Z"
