@@ -46,6 +46,7 @@ dependencies = [
     "tomli==2.0.1",
     "Werkzeug==2.2.3",
     "WTForms==3.0.1",
+    "yoyo-migrations~=8.2.0",
 ]
 
 [project.optional-dependencies]
