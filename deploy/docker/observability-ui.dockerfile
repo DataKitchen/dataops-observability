@@ -23,6 +23,7 @@ FROM ${BASE_IMAGE_URL}nginxinc/nginx-unprivileged:1.25
 WORKDIR /observability_ui
 
 ENV OBSERVABILITY_API_HOSTNAME=
+ENV OBSERVABILITY_CSP_EXTRA=
 ENV NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
 
 COPY --from=build-image --chown=nginx:nginx /observability_ui/dist /observability_ui
