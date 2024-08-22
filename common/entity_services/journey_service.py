@@ -52,16 +52,18 @@ class JourneyService:
 
     @staticmethod
     def get_components_with_rules(journey_id: str, rules: ListRules, filters: ComponentFilters) -> Page[Component]:
-        query = JourneyDagEdge.journey_id == journey_id
+        join_on = (JourneyDagEdge.journey_id == journey_id) & (
+            (JourneyDagEdge.left == Component.id) | (JourneyDagEdge.right == Component.id)
+        )
+        query = Component.select(Component).join(JourneyDagEdge, on=join_on)
         if rules.search is not None:
-            query &= Component.key ** f"%{rules.search}%"
+            query = query.where(Component.key ** f"%{rules.search}%")
         if filters.component_types:
-            query &= Component.type.in_(filters.component_types)
+            query = query.where(Component.type.in_(filters.component_types))
         if filters.tools:
-            query &= Component.tool.in_(filters.tools)
-        join_on = (JourneyDagEdge.left == Component.id) | (JourneyDagEdge.right == Component.id)
-        query = Component.select(Component).join(JourneyDagEdge, on=join_on).where(query).distinct()
-        return Page[Component].get_paginated_results(query, Component.key, rules)
+            query = query.where(Component.tool.in_(filters.tools))
+
+        return Page[Component].get_paginated_results(query.distinct(), Component.key, rules)
 
     @staticmethod
     def get_upstream_nodes(journey: Journey, component_id: UUID) -> set:

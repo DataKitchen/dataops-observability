@@ -2,7 +2,7 @@ __all__ = ["EventEntity", "EventVersion", "ApiEventType"]
 
 from enum import Enum, IntEnum
 
-from peewee import ForeignKeyField, Node, fn
+from peewee import ForeignKeyField
 from playhouse.mysql_ext import JSONField
 
 from common.peewee_extensions.fields import EnumIntField, EnumStrField, UTCTimestampField
@@ -43,10 +43,6 @@ class EventEntity(BaseEntity):
     run_task = ForeignKeyField(RunTask, backref="events", on_delete="SET NULL", null=True)
     instance_set = ForeignKeyField(InstanceSet, null=True, backref="events", on_delete="SET NULL")
     v2_payload = JSONField(null=False)
-
-    @classmethod
-    def timestamp_coalesce(cls) -> Node:
-        return fn.COALESCE(cls.timestamp, cls.created_timestamp)
 
     @property
     def components(self) -> list[Component]:
