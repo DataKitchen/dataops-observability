@@ -94,7 +94,7 @@ def extract_key(value: str) -> AuthenticationKeyParts:
     Given an authenticaton key, extract the key id and passphrase.
 
     An authentication key is always 2 components of identical length. A UUID representing the primary key for the API
-    key, and the actual passphrase which is also a UUID.
+    key, and the actual passphrase which is a string of random characters.
     """
     key_bytes: bytes = b64decode(value)
     key_text = key_bytes.decode("utf-8")
