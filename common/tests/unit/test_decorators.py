@@ -11,16 +11,16 @@ class ExampleObject:
 
     @cached_property
     def total(self) -> int:
-        "Test `total` docstring."
+        """Test `total` docstring."""
         return self.x + self.y + self.z
 
     @cached_property
     def __product__(self) -> int:
-        "Test `__product__` docstring."
+        """Test `__product__` docstring."""
         return self.x * self.y * self.z
 
     def random_value(self) -> str:
-        "Test `random_value` docstring."
+        """Test `random_value` docstring."""
         return f"Random: {6 + self.__product__ + self.total}"
 
     random = cached_property(random_value)
@@ -51,7 +51,6 @@ def test_cached_property_docstrings():
 @pytest.mark.unit
 def test_cached_property_caches_values():
     """Values are cached in the instances __dict__."""
-
     instance = ExampleObject(1, 5, 34)
 
     # Value not (yet) in __dict__

@@ -20,7 +20,9 @@ class DatasetOperation(EventView):
         description: Event reports that a read or write operation has occurred for the specified dataset.
         security:
             - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
            - in: header
              name: EVENT-SOURCE
              description: Set the source of the event. If unset, the Event Ingestion API will assume the source of the
@@ -59,5 +61,6 @@ class DatasetOperation(EventView):
                 content:
                     application/json:
                         schema: HTTPErrorSchema
+
         """
         return super().post()

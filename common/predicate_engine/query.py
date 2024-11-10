@@ -9,7 +9,8 @@ from copy import copy, deepcopy
 from datetime import datetime, timezone
 from enum import Enum
 from functools import partial, reduce
-from typing import Any, Callable, Final, Iterable, Optional, Union
+from typing import Any, Final, Optional, Union
+from collections.abc import Callable, Iterable
 
 from ._operators import QueryOperator, get_operator, get_operators, split_operators
 

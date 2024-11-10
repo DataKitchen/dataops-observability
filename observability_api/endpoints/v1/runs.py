@@ -23,14 +23,17 @@ class Runs(BaseEntityView):
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:
-        """Run LIST
+        """
+        Run LIST
         ---
         tags: ["Run"]
         description: List all runs in a pipeline.
         operationId: ListRuns
         security:
           - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
           - in: path
             name: project_id
             description: the ID of the project being queried.
@@ -177,6 +180,7 @@ class Runs(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         _ = self.get_entity_or_fail(Project, Project.id == project_id)
         pipeline_ids: list[str] = request.args.getlist("pipeline_id")
@@ -195,7 +199,8 @@ class RunById(BaseEntityView):
 
     @no_body_allowed
     def get(self, run_id: UUID) -> Response:
-        """Get Run by ID
+        """
+        Get Run by ID
         ---
         tags: ["Run"]
         description: Retrieves the details of a single run by its ID.
@@ -248,7 +253,7 @@ class RunById(BaseEntityView):
                 .where(Run.id == run_id)
                 .prefetch(tasks_summary, alerts, tests_summary, prefetch_type=PREFETCH_TYPE.JOIN)
             ).pop()
-        except IndexError:
+        except IndexError as ie:
             LOG.info("No run exists with the following ID: '%s'", run_id)
-            raise NotFound(f"No run exists with the following ID: '{run_id}")
+            raise NotFound(f"No run exists with the following ID: '{run_id}") from ie
         return make_response(RunSchema().dump(run))

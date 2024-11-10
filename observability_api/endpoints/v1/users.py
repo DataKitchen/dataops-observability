@@ -22,7 +22,8 @@ class Users(BaseView):
 
     @no_body_allowed
     def get(self) -> Response:
-        """User LIST
+        """
+        User LIST
         ---
         tags: ["User"]
         description: Lists all users in the system, filtered by optional parameters.
@@ -99,7 +100,8 @@ class UserById(BaseEntityView):
 
     @no_body_allowed
     def get(self, user_id: UUID) -> Response:
-        """Get User by ID
+        """
+        Get User by ID
         ---
         tags: ["User"]
         description: Retrieves a single user by its ID.
@@ -138,6 +140,6 @@ class UserById(BaseEntityView):
 
         try:
             user = User.get_by_id(user_id)
-        except DoesNotExist:
-            raise NotFound(f"No User exists with the ID '{user_id}")
+        except DoesNotExist as dne:
+            raise NotFound(f"No User exists with the ID '{user_id}") from dne
         return make_response(UserSchema().dump(user))

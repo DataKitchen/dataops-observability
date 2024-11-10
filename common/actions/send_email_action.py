@@ -46,7 +46,6 @@ class SendEmailAction(BaseAction):
         """
         Get the data points to be used in the email template
         """
-
         context: dict | AgentStatusChangeDataPoints = dict()
 
         match event:

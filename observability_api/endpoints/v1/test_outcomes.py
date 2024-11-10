@@ -16,7 +16,8 @@ class ProjectTests(BaseEntityView):
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:
-        """Project test outcomes LIST
+        """
+        Project test outcomes LIST
         ---
 
         tags: ["TestOutcome"]
@@ -24,7 +25,9 @@ class ProjectTests(BaseEntityView):
         operationId: ListProjectTestOutcomes
         security:
           - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
           - in: path
             name: project_id
             description: the ID of the project being queried.
@@ -161,6 +164,7 @@ class ProjectTests(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         project = self.get_entity_or_fail(Project, Project.id == project_id)
         page: Page = ProjectService.get_test_outcomes_with_rules(
@@ -176,14 +180,17 @@ class TestOutcomeById(BaseEntityView):
 
     @no_body_allowed
     def get(self, test_outcome_id: UUID) -> Response:
-        """Get TestOutcome by ID
+        """
+        Get TestOutcome by ID
         ---
         tags: ["TestOutcome"]
         operationId: GetTestOutcomeById
         description: Retrieves a single test outcome by its ID.
         security:
           - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
           - in: path
             name: test_outcome_id
             schema:
@@ -210,6 +217,7 @@ class TestOutcomeById(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         test_outcome = self.get_entity_or_fail(TestOutcome, TestOutcome.id == test_outcome_id)
         return make_response(TestOutcomeItemSchema().dump(test_outcome))

@@ -1,7 +1,7 @@
 __all__ = ["EventInterface"]
 
 import json
-from typing import Any, Type, TypeVar
+from typing import Any, TypeVar
 
 from common.events.v1.event_schemas import EventApiSchema, EventSchema, EventSchemaInterface
 
@@ -16,8 +16,8 @@ class EventInterface:
     Most classes should inherit from Event.
     """
 
-    __schema__: Type[EventSchemaInterface] = EventSchema
-    __api_schema__: Type[EventApiSchema] = EventApiSchema
+    __schema__: type[EventSchemaInterface] = EventSchema
+    __api_schema__: type[EventApiSchema] = EventApiSchema
     """
     A reference to a Marshmallow schema defined for the subclassed Events. It will be used for all deserialization,
     and for validation of the fields during that deserialization. Must be subclassed.
@@ -29,13 +29,13 @@ class EventInterface:
         raise NotImplementedError
 
     @classmethod
-    def from_dict(cls: Type[EventInterfaceType], data: dict, **kwargs: Any) -> EventInterfaceType:
+    def from_dict(cls: type[EventInterfaceType], data: dict, **kwargs: Any) -> EventInterfaceType:
         if cls.__schema__ is EventSchema:
             raise AttributeError("Subclasses of Event must define its own '__schema__'")
         return cls(**cls.__schema__(**kwargs).load(data))
 
     @classmethod
-    def from_bytes(cls: Type[EventInterfaceType], data: bytes) -> EventInterfaceType:
+    def from_bytes(cls: type[EventInterfaceType], data: bytes) -> EventInterfaceType:
         return cls.from_dict(json.loads(data.decode("utf-8")))
 
     def as_dict(self) -> dict:

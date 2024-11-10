@@ -1,6 +1,6 @@
 __all__ = ("build_v1_routes",)
 
-from typing import Callable
+from collections.abc import Callable
 
 from flask import Blueprint, Flask
 

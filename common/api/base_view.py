@@ -4,7 +4,7 @@ import json
 import logging
 from dataclasses import dataclass
 from functools import cached_property
-from typing import Any, Optional, Type
+from typing import Any, Optional
 
 from flask import g, request
 from flask.typing import ResponseReturnValue
@@ -35,7 +35,7 @@ PERM_PROJECT = Permission("project")
 
 
 class SearchableView(MethodView):
-    FILTERS_SCHEMA: Type[Schema]
+    FILTERS_SCHEMA: type[Schema]
 
 
 class BaseView(MethodView):
@@ -84,8 +84,8 @@ class BaseView(MethodView):
         if request_body is None and request.data is not None:
             try:
                 request_body = json.loads(request.data)
-            except json.JSONDecodeError:
-                raise BadRequest("The request does not contain a valid JSON body")
+            except json.JSONDecodeError as je:
+                raise BadRequest("The request does not contain a valid JSON body") from je
         return request_body
 
     def parse_body(self, *, schema: Schema) -> Any:

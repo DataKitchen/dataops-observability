@@ -57,9 +57,7 @@ class ProjectService:
     ) -> Page[TestOutcome]:
         clauses = [TestOutcome.component.in_(project.components)]
         if rules.search is not None:
-            clauses.append(
-                ((TestOutcome.name ** f"%{rules.search}%") | (TestOutcome.description ** f"%{rules.search}%"))
-            )
+            clauses.append((TestOutcome.name ** f"%{rules.search}%") | (TestOutcome.description ** f"%{rules.search}%"))
         if filters:
             if statuses := filters.statuses:
                 clauses.append(TestOutcome.status.in_(statuses))
@@ -240,8 +238,8 @@ class ProjectService:
         run_alerts_clause = [Project.id == project_id]
         instance_alerts_clause = [Project.id == project_id]
         if rules.search is not None:
-            instance_alerts_clause.append((InstanceAlert.description ** f"%{rules.search}%"))
-            run_alerts_clause.append((RunAlert.description ** f"%{rules.search}%"))
+            instance_alerts_clause.append(InstanceAlert.description ** f"%{rules.search}%")
+            run_alerts_clause.append(RunAlert.description ** f"%{rules.search}%")
         if filters:
             if filters.date_range_start:
                 instance_alerts_clause.append(InstanceAlert.created_on >= filters.date_range_start)
@@ -346,7 +344,6 @@ class ProjectService:
     @classmethod
     def get_alert_actions(cls, project: Project) -> list[BaseAction]:
         """Initializes the Action classes required by a project alerts configuration."""
-
         if not project.alert_actions:
             return []
 

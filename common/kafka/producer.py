@@ -6,7 +6,8 @@ import logging
 import uuid
 from contextlib import contextmanager
 from types import TracebackType
-from typing import Any, Callable, Generator, Optional, Type
+from typing import Any, Optional
+from collections.abc import Callable, Generator
 
 from confluent_kafka import KafkaError, KafkaException, Message, Producer
 
@@ -87,7 +88,7 @@ class KafkaProducer:
         return self
 
     def __exit__(
-        self, exc_type: Optional[Type[BaseException]], exc_value: Optional[BaseException], tb: Optional[TracebackType]
+        self, exc_type: Optional[type[BaseException]], exc_value: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None:
         self.disconnect()
 
@@ -125,7 +126,7 @@ class KafkaProducer:
             raise
         except KafkaException as ex:
             if ex.args[0].code() == KafkaError.MSG_SIZE_TOO_LARGE:
-                raise MessageTooLargeError("Payload is too large to fit into a single Kafka message")
+                raise MessageTooLargeError("Payload is too large to fit into a single Kafka message") from ex
             else:
                 raise ProducerError("Error producing message to Kafka") from ex
         except Exception as ex:

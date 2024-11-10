@@ -30,14 +30,17 @@ class ProjectAlertsSettings(BaseEntityView):
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:
-        """Get the alert settings of a given project.
+        """
+        Get the alert settings of a given project.
         ---
         tags: ["Project"]
         operationId: GetProjectAlertsSettings
         description: Retrieves the alerts settings of a given project.
         security:
           - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
           - in: path
             name: project_id
             schema:
@@ -64,12 +67,14 @@ class ProjectAlertsSettings(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         self._project = self.get_entity_or_fail(Project, Project.id == project_id)
         return make_response(self.get_request_schema().dump(self._project))
 
     def patch(self, project_id: UUID) -> Response:
-        """Update the alert settings of a given project.
+        """
+        Update the alert settings of a given project.
         ---
         tags: ["Project"]
         description: Updates the alert settings of a given project.
@@ -77,7 +82,9 @@ class ProjectAlertsSettings(BaseEntityView):
         security:
           - APIKey: []
           - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
           - in: path
             name: project_id
             schema:
@@ -107,6 +114,7 @@ class ProjectAlertsSettings(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         self._project = self.get_entity_or_fail(Project, Project.id == project_id)
         schema = self.get_request_schema()

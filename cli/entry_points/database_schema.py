@@ -1,6 +1,8 @@
 import re
 from argparse import ArgumentParser
-from typing import Any, Iterable, Optional, Pattern
+from typing import Any, Optional
+from re import Pattern
+from collections.abc import Iterable
 
 from peewee import MySQLDatabase
 

@@ -1,7 +1,8 @@
 __all__ = ["JWTAuth"]
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Callable, Optional, cast
+from typing import Optional, cast
+from collections.abc import Callable
 
 from flask import current_app, g, request
 from jwt import decode, encode
@@ -20,12 +21,12 @@ def get_token_expiration(claims: JWT_CLAIMS) -> datetime:
     """Returns the JWT expiration as a datetime object."""
     try:
         exp_timestamp = claims["exp"]
-    except KeyError:
-        raise ValueError("Token claims missing 'exp' key")
+    except KeyError as ke:
+        raise ValueError("Token claims missing 'exp' key") from ke
     try:
         return datetime.fromtimestamp(cast(float | int, exp_timestamp), tz=timezone.utc)
-    except Exception:
-        raise ValueError(f"Unable to parse expiration from '{claims['exp']}'")
+    except Exception as e:
+        raise ValueError(f"Unable to parse expiration from '{claims['exp']}'") from e
 
 
 class JWTAuth(BaseAuthPlugin):
@@ -72,12 +73,12 @@ class JWTAuth(BaseAuthPlugin):
 
         try:
             user = User.select().where(User.id == claims["user_id"], User.primary_company == claims["company_id"]).get()
-        except DoesNotExist:
+        except DoesNotExist as dne:
             LOG.error("User in claims does not exist")
-            raise Unauthorized("Invalid authentication token")
-        except KeyError:
+            raise Unauthorized("Invalid authentication token") from dne
+        except KeyError as ke:
             LOG.error("Mandatory claims missing. Impossible to authorize user")
-            raise Unauthorized("Invalid authentication token")
+            raise Unauthorized("Invalid authentication token") from ke
 
         g.user = user
         g.claims = claims

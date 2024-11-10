@@ -21,14 +21,17 @@ class RunTasks(BaseEntityView):
 
     @no_body_allowed
     def get(self, run_id: UUID) -> Response:
-        """Run LIST
+        """
+        Run LIST
         ---
         tags: ["Task"]
         description: List all RunTasks in a Run.
         operationId: ListRunTasks
         security:
           - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
           - in: path
             name: run_id
             description: the ID of the run being queried.
@@ -69,6 +72,7 @@ class RunTasks(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         _ = self.get_entity_or_fail(Run, Run.id == run_id)
         page: Page = RunService.get_runtasks_with_rules(run_id, ListRules.from_params(request.args))

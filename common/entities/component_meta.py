@@ -1,11 +1,11 @@
-from typing import Any, Optional, Type, Union
+from typing import Any, Optional, Union
 
 from peewee import Field, ForeignKeyField, ModelBase, ModelSelect, ModelUpdate
 
 from .base_entity import BaseModel
 from .component import Component
 
-BASE_COMPONENT_CLASS: Type[Component] = Component
+BASE_COMPONENT_CLASS: type[Component] = Component
 """This is the base Component class."""
 
 
@@ -18,11 +18,11 @@ class SimpleComponentMeta(ModelBase):
     is identified. This value gets stored at the `type` field of the Component entity.
     """
 
-    def __new__(mcs, name: str, bases: tuple[type, ...], attrs: dict[str, object]) -> Type[BaseModel]:
+    def __new__(cls, name: str, bases: tuple[type, ...], attrs: dict[str, object]) -> type[BaseModel]:
         try:
             component_type: str = str(attrs["component_type"])
         except KeyError as e:
-            raise ValueError(f"Component class '{name}' must define the {e} attribute.")
+            raise ValueError(f"Component class '{name}' must define the {e} attribute.") from e
 
         if any(isinstance(v, Field) for v in attrs.values()):
             raise ValueError(
@@ -45,9 +45,9 @@ class SimpleComponentMeta(ModelBase):
         new_component_type_field.default = component_type
         attrs["type"] = new_component_type_field
 
-        entity_class: Type[BaseModel] = super(SimpleComponentMeta, mcs).__new__(mcs, name, bases, attrs)
+        entity_class: type[BaseModel] = super().__new__(cls, name, bases, attrs)
 
-        def select(cls: Type[BaseModel], *fields: object) -> ModelSelect:
+        def select(cls: type[BaseModel], *fields: object) -> ModelSelect:
             # The join is useful to allow using the Component entity fields in WHERE clauses, regardless of
             # the component class, increasing the compatibility with the components with additional fields
             query = (
@@ -59,11 +59,11 @@ class SimpleComponentMeta(ModelBase):
             )
             return query
 
-        def update(cls: Type[BaseModel], **fields: object) -> ModelUpdate:
+        def update(cls: type[BaseModel], **fields: object) -> ModelUpdate:
             query = super(cls, cls).update(**fields).where(cls.type == cls.component_type)
             return query
 
-        def delete(cls: Type[BaseModel]) -> ModelUpdate:
+        def delete(cls: type[BaseModel]) -> ModelUpdate:
             query = super(cls, cls).delete().where(cls.type == cls.component_type)
             return query
 
@@ -101,11 +101,11 @@ class ComplexComponentMeta(ModelBase):
     is identified. This value gets stored at the `type` field from the Component entity.
     """
 
-    def __new__(mcs, name: str, bases: tuple[type, ...], attrs: dict[str, object]) -> Type[BaseModel]:
+    def __new__(cls, name: str, bases: tuple[type, ...], attrs: dict[str, object]) -> type[BaseModel]:
         try:
             component_type: str = str(attrs["component_type"])
         except KeyError as e:
-            raise ValueError(f"Component class '{name}' must define the '{e}' attribute.")
+            raise ValueError(f"Component class '{name}' must define the '{e}' attribute.") from e
 
         if not any(isinstance(v, Field) for v in attrs.values()):
             raise ValueError(
@@ -129,13 +129,13 @@ class ComplexComponentMeta(ModelBase):
             on_delete="CASCADE",
         )
 
-        entity_class: Type[BaseModel] = super(ComplexComponentMeta, mcs).__new__(mcs, name, bases, attrs)
+        entity_class: type[BaseModel] = super().__new__(cls, name, bases, attrs)
 
-        def select(cls: Type[BaseModel], *fields: object) -> ModelSelect:
+        def select(cls: type[BaseModel], *fields: object) -> ModelSelect:
             query = super(cls, cls).select(*fields, BASE_COMPONENT_CLASS).join(BASE_COMPONENT_CLASS)
             return query
 
-        def create(cls: Type[BaseModel], **data: object) -> BaseModel:
+        def create(cls: type[BaseModel], **data: object) -> BaseModel:
             base_args = {k: v for k, v in data.items() if k in base_fields}
             base_component = BASE_COMPONENT_CLASS.create(type=cls.component_type, **base_args)
 

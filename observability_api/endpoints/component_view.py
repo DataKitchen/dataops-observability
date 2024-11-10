@@ -2,7 +2,7 @@ __all__ = ["ComponentByIdAbstractView", "ComponentListAbstractView"]
 
 import logging
 from http import HTTPStatus
-from typing import Any, Optional, Type
+from typing import Any, Optional
 from uuid import UUID
 
 from flask import Blueprint, Response, make_response
@@ -19,9 +19,9 @@ LOG = logging.getLogger(__name__)
 class ComponentByIdAbstractView(BaseEntityView):
     PERMISSION_REQUIREMENTS: tuple[Permission, ...] = ()
     route: str
-    entity: Type[BaseEntity]
-    schema: Type[ModelSchema]
-    patch_schema: Optional[Type[ModelSchema]] = None
+    entity: type[BaseEntity]
+    schema: type[ModelSchema]
+    patch_schema: Optional[type[ModelSchema]] = None
 
     def get(self, component_id: UUID) -> Response:
         component = self.get_entity_or_fail(self.entity, self.entity.id == component_id)
@@ -47,8 +47,8 @@ class ComponentByIdAbstractView(BaseEntityView):
 class ComponentListAbstractView(BaseEntityView):
     PERMISSION_REQUIREMENTS: tuple[Permission, ...] = ()
     route: str
-    entity: Type[BaseEntity]
-    schema: Type[ModelSchema]
+    entity: type[BaseEntity]
+    schema: type[ModelSchema]
 
     def post(self, project_id: UUID) -> Response:
         component = self.parse_body(schema=self.schema())

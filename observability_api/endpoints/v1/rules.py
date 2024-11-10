@@ -31,12 +31,12 @@ def _validate_rule_action(rule: Rule) -> None:
     try:
         action = JourneyService.get_action_by_implementation(rule.journey, rule.action)
         action_factory(rule.action, rule.action_args, action)
-    except ActionTemplateRequired:
+    except ActionTemplateRequired as atr:
         LOG.exception("Action '%s' not configured.", rule.action)
-        raise InternalServerError(f"Action '{rule.action}' not configured, contact system administrator.")
-    except (MultipleActionsFound, ActionException):
+        raise InternalServerError(f"Action '{rule.action}' not configured, contact system administrator.") from atr
+    except (MultipleActionsFound, ActionException) as ae:
         LOG.exception("Action '%s' misconfigured.", rule.action)
-        raise InternalServerError(f"Action '{rule.action}' misconfigured, contact system administrator.")
+        raise InternalServerError(f"Action '{rule.action}' misconfigured, contact system administrator.") from ae
 
 
 def _validate_rule_predicate(rule: Rule) -> None:
@@ -44,9 +44,9 @@ def _validate_rule_predicate(rule: Rule) -> None:
     try:
         parsed_rule_data = RuleDataSchema().load(rule.rule_data)
         compile_schema(rule.rule_schema, parsed_rule_data)
-    except InvalidRuleData:
+    except InvalidRuleData as ird:
         LOG.exception("Invalid rule pattern.\nRule data: %s", pformat(rule.rule_data))
-        raise BadRequest("Invalid rule pattern.")
+        raise BadRequest("Invalid rule pattern.") from ird
 
 
 class Rules(BaseEntityView):
@@ -54,14 +54,17 @@ class Rules(BaseEntityView):
 
     @no_body_allowed
     def get(self, journey_id: UUID) -> Response:
-        """Rule LIST
+        """
+        Rule LIST
         ---
         tags: ["Rule"]
         description: List all rules that attached to a journey.
         operationId: ListRules
         security:
           - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
           - in: path
             name: journey_id
             description: the ID of the journey being queried.
@@ -120,6 +123,7 @@ class Rules(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         _ = self.get_entity_or_fail(Journey, Journey.id == journey_id)
         page: Page = JourneyService.get_rules_with_rules(journey_id, ListRules.from_params(request.args))
@@ -128,14 +132,17 @@ class Rules(BaseEntityView):
         return make_response({"entities": rules, "total": page.total})
 
     def post(self, journey_id: UUID) -> Response:
-        """Rule CREATE
+        """
+        Rule CREATE
         ---
         tags: ["Rule"]
         operationId: PostRule
         description: Creates a new rule associated with a Journey.
         security:
           - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
           - in: path
             name: journey_id
             description: The ID of journey that the rule will be created under.
@@ -182,6 +189,7 @@ class Rules(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         _ = self.get_entity_or_fail(Journey, Journey.id == journey_id)
         rule = self.parse_body(schema=RuleSchema())
@@ -198,9 +206,9 @@ class Rules(BaseEntityView):
         with DB.atomic():
             try:
                 rule.save(force_insert=True)
-            except IntegrityError:
+            except IntegrityError as ie:
                 LOG.exception("Rule CREATE failed.")
-                raise Conflict("Failed to create Rule; one already exists with that information.")
+                raise Conflict("Failed to create Rule; one already exists with that information.") from ie
         return make_response(RuleSchema().dump(rule), HTTPStatus.CREATED)
 
 
@@ -209,7 +217,8 @@ class RuleById(BaseEntityView):
 
     @no_body_allowed
     def get(self, rule_id: UUID) -> Response:
-        """Get Rule by ID
+        """
+        Get Rule by ID
         ---
         tags: ["Rule"]
         description: Retrieves the details of a single rule by its ID.
@@ -256,7 +265,8 @@ class RuleById(BaseEntityView):
         return make_response(RuleSchema().dump(rule))
 
     def patch(self, rule_id: UUID) -> Response:
-        """Update Rule by ID
+        """
+        Update Rule by ID
         ---
         tags: ["Rule"]
         description: Updates attributes for a single rule. Use this request to change a rule name and description
@@ -330,7 +340,8 @@ class RuleById(BaseEntityView):
 
     @no_body_allowed
     def delete(self, rule_id: UUID) -> Response:
-        """Delete a Rule by ID
+        """
+        Delete a Rule by ID
         ---
         tags: ["Rule"]
         operationId: DeleteRuleById

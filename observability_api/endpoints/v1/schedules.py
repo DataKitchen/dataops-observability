@@ -28,7 +28,8 @@ class Schedules(BaseEntityView):
 
     @no_body_allowed
     def get(self, component_id: UUID) -> Response:
-        """Schedule LIST
+        """
+        Schedule LIST
         ---
         tags: ["Schedule"]
         description: "Lists all schedules for the given component. <br>
@@ -36,7 +37,9 @@ class Schedules(BaseEntityView):
         operationId: ListSchedules
         security:
           - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
           - in: path
             name: component_id
             description: the ID of the component being queried.
@@ -72,13 +75,14 @@ class Schedules(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
-        """
 
+        """
         schedules = list(self.get_entity_or_fail(Component, Component.id == component_id).schedules)
         return make_response({"entities": ScheduleSchema().dump(schedules, many=True), "total": len(schedules)})
 
     def post(self, component_id: UUID) -> Response:
-        """Schedule CREATE
+        """
+        Schedule CREATE
         ---
         tags: ["Schedule"]
         operationId: PostSchedule
@@ -86,7 +90,9 @@ class Schedules(BaseEntityView):
         The route observability/batch-pipelines/&lt;pipeline-id&gt;/schedules is deprecated and will be removed in a future release."
         security:
           - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
           - in: path
             name: component_id
             description: The ID of the component that the schedule will be created under.
@@ -125,6 +131,7 @@ class Schedules(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         schedule = self.parse_body(schema=ScheduleSchema())
         schedule.created_by = self.user
@@ -140,14 +147,17 @@ class ScheduleById(BaseEntityView):
 
     @no_body_allowed
     def delete(self, schedule_id: UUID) -> Response:
-        """Delete a Schedule by ID
+        """
+        Delete a Schedule by ID
         ---
         tags: ["Schedule"]
         operationId: DeleteScheduleById
         description: Permanently deletes a single schedule by its ID.
         security:
           - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
           - in: path
             name: schedule_id
             schema:
@@ -166,8 +176,8 @@ class ScheduleById(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
-        """
 
+        """
         try:
             self.get_entity_or_fail(Schedule, Schedule.id == schedule_id).delete_instance()
         except NotFound:

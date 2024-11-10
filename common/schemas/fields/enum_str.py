@@ -1,7 +1,8 @@
 __all__ = ["EnumStr"]
 
 from enum import Enum, EnumMeta
-from typing import Any, Iterable, Optional, Union, cast
+from typing import Any, Optional, Union, cast
+from collections.abc import Iterable
 
 from marshmallow.utils import ensure_text_type
 from marshmallow.validate import OneOf

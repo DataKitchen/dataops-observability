@@ -21,7 +21,8 @@ class Actions(BaseEntityView):
 
     @no_body_allowed
     def get(self, company_id: UUID) -> Response:
-        """Action LIST
+        """
+        Action LIST
         ---
         tags: ["Action"]
         description: List all actions configured for the company.
@@ -107,7 +108,8 @@ class ActionById(BaseEntityView):
     PERMISSION_REQUIREMENTS: tuple[Permission, ...] = ()
 
     def patch(self, action_id: UUID) -> Response:
-        """Update Action by ID
+        """
+        Update Action by ID
         ---
         tags: ["Action"]
         description: Updates attributes for a single action. Use this request to change configuration details for an action.

@@ -1,5 +1,4 @@
 import logging
-from typing import Type
 from uuid import UUID
 
 from flask import Response, make_response, request
@@ -24,18 +23,21 @@ LOG = logging.getLogger(__name__)
 
 class Instances(BaseEntityView, SearchableView):
     PERMISSION_REQUIREMENTS: tuple[Permission, ...] = ()
-    FILTERS_SCHEMA: Type[Schema] = InstanceFiltersSchema
+    FILTERS_SCHEMA: type[Schema] = InstanceFiltersSchema
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:
-        """Instance LIST
+        """
+        Instance LIST
         ---
         tags: ["Instance"]
         description: List all instances of a journey.
         operationId: ListInstances
         security:
           - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
           - in: path
             name: project_id
             description: the ID of the project being queried.
@@ -157,6 +159,7 @@ class Instances(BaseEntityView, SearchableView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         _ = self.get_entity_or_fail(Project, Project.id == project_id)
         page: Page[Instance] = ProjectService.get_instances_with_rules(
@@ -169,18 +172,21 @@ class Instances(BaseEntityView, SearchableView):
 
 class CompanyInstances(BaseEntityView):
     PERMISSION_REQUIREMENTS: tuple[Permission, ...] = (PERM_USER,)
-    FILTERS_SCHEMA: Type[Schema] = CompanyInstanceFiltersSchema
+    FILTERS_SCHEMA: type[Schema] = CompanyInstanceFiltersSchema
 
     @no_body_allowed
     def get(self) -> Response:
-        """Instance LIST at company level
+        """
+        Instance LIST at company level
         ---
         tags: ["Instance"]
         description: List all instances in the company.
         operationId: ListCompanyInstances
         security:
           - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
           - in: query
             name: project_id
             description: Optional. Specifies the project IDs to include. All projects are selected if unset.
@@ -308,6 +314,7 @@ class CompanyInstances(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         if not self.user:
             raise Forbidden()
@@ -327,14 +334,17 @@ class InstanceById(BaseEntityView):
 
     @no_body_allowed
     def get(self, instance_id: UUID) -> Response:
-        """Get instance by ID
+        """
+        Get instance by ID
         ---
         tags: ["Instance"]
         operationId: GetInstanceById
         description: Retrieves a single instance by its ID.
         security:
           - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
           - in: path
             name: instance_id
             schema:
@@ -361,6 +371,7 @@ class InstanceById(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         result: Instance = self.get_entity_from_query_or_fail(
             Instance.select(Instance, Journey, Project).where(Instance.id == instance_id)
@@ -384,14 +395,17 @@ class InstanceDag(BaseEntityView):
 
     @no_body_allowed
     def get(self, instance_id: UUID) -> Response:
-        """Get DAG by instance ID
+        """
+        Get DAG by instance ID
         --
         tags: ["Instance"]
         operationId: GetInstanceDag
         description: Retrieves the DAG of an instance.
         security:
           - SAKey: []
-        parameters:
+
+        Parameters
+        ----------
           - in: path
             name: instance_id
             schema:
@@ -418,6 +432,7 @@ class InstanceDag(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         instance: Instance = self.get_entity_from_query_or_fail(
             Instance.select(Instance, Journey).where(Instance.id == instance_id)

@@ -1,7 +1,8 @@
 __all__ = ["ZoneInfo"]
 
 import zoneinfo
-from typing import Any, Mapping, Optional
+from typing import Any, Optional
+from collections.abc import Mapping
 
 from marshmallow.fields import Str
 
