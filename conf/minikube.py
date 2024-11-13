@@ -28,3 +28,13 @@ KAFKA_CONNECTION_PARAMS: dict[str, object] = {
 
 RULE_REFRESH_SECONDS = 1
 """Number of seconds to cache rules in rules engine"""
+
+
+SMTP: dict[str, object] = {
+    "username": os.environ.get("SMTP_USER"),
+    "password": os.environ.get("SMTP_PASSWORD"),
+    "endpoint": os.environ.get("SMTP_ENDPOINT"),
+    "port": int(os.environ.get("SMTP_PORT", 465)),
+    "from_address": os.environ.get("SMTP_FROM_ADDRESS"),
+}
+"""Settings for connecting to the SMTP email server."""

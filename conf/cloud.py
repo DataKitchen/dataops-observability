@@ -32,5 +32,6 @@ SMTP: dict[str, object] = {
     "password": os.environ.get("SMTP_PASSWORD"),
     "endpoint": os.environ.get("SMTP_ENDPOINT"),
     "port": int(os.environ.get("SMTP_PORT", 465)),
+    "from_address": os.environ.get("SMTP_FROM_ADDRESS"),
 }
 """Settings for connecting to the SMTP email server."""

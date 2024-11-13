@@ -19,7 +19,7 @@ LOG = logging.getLogger(__name__)
 
 
 class SendEmailAction(BaseAction):
-    required_arguments = {"from_address", "recipients", "template"}
+    required_arguments = {"recipients", "template"}
     requires_action_template = True
 
     def _run(self, event: EVENT_TYPE, rule: Rule, journey_id: Optional[UUID]) -> ActionResult:
@@ -29,8 +29,8 @@ class SendEmailAction(BaseAction):
             return ActionResult(False, None, e)
         try:
             response = EmailService.send_email(
-                self.arguments["smtp_config"],
-                self.arguments["from_address"],
+                self.arguments.get("smtp_config", {}),
+                self.arguments.get("from_address"),
                 self.arguments["recipients"],
                 self.arguments["template"],
                 context,
