@@ -4,7 +4,8 @@
     <span *ngIf="summary.TOTAL === 0"
       class="empty"></span>
     <ng-container *ngFor="let status of testStatuses">
-      <span [ngClass]="status"
+      <span *ngIf="summary[status]"
+        [ngClass]="status"
         [style.width]="(summary[status] / summary.TOTAL * 100) + '%'"
         dkTooltip="Filter by {{ 'testStatus.' + status | translate | titlecase }} status"
         (click)="filterByStatus(status)"></span>

@@ -103,11 +103,26 @@
               [createdOn]="component.created_on"></created-by>
           </div>
 
-          <div class="card__chips__container">
-            <div class="card__chip filled">{{ 'componentTypeTag.' + component.type | translate}}</div>
+          <div class="card__bottom">
+            <div class="card__chips__container">
+              <div class="card__chip filled">{{ 'componentTypeTag.' + component.type | translate}}</div>
 
-            <div *ngIf="component.tool"
-              class="card__chip">{{ ((component.tool | getToolClass)?._displayName || component.tool) | lowercase}}</div>
+              <div *ngIf="component.tool"
+                class="card__chip">{{ ((component.tool | getToolClass)?._displayName || component.tool) | lowercase}}</div>
+            </div>
+            <div class="card__links__container"
+              (click)="$event.stopPropagation()">
+              <a [routerLink]="['..', 'events', 'all']"
+                [queryParams]="{ 'component_id': component.id }"
+                class="link">Events</a>
+              <ng-container *ngIf="component.type === ComponentType.BatchPipeline">
+                |
+                <a [routerLink]="['..', 'events', 'runs']"
+                  [queryParams]="{ 'pipeline_key': component.key }"
+                  class="link">Runs</a>
+              </ng-container>
+              <mat-icon inline>arrow_forward</mat-icon>
+            </div>
           </div>
         </div>
       </mat-card>
@@ -119,7 +134,7 @@
   [class.hidden]="(total$ | async) === 0"
   [length]="(total$ | async)"
   [pageSize]="pageSize"
-  [pageSizeOptions]="[5, 10, 25, 50, 100]"
+  [pageSizeOptions]="[25, 50, 100, 200]"
   [showFirstLastButtons]="true"></mat-paginator>
 
 <ng-template #loadingTemplate>
