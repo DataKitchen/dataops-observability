@@ -22,9 +22,7 @@ class RunStatus(EventView):
                      a task has started and ended with a certain status.
         security:
             - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
            - in: header
              name: EVENT-SOURCE
              description: Set the source of the event. If unset, the Event Ingestion API will assume the source of the

@@ -40,9 +40,7 @@ class Journeys(BaseEntityView):
         operationId: ListJourneys
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: project_id
             description: the ID of the project being queried.
@@ -132,9 +130,7 @@ class Journeys(BaseEntityView):
         description: Creates a new journey in a project using the specified name and project ID.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: project_id
             description: The ID of the project that the journey will be created under.
@@ -203,9 +199,7 @@ class JourneyById(BaseEntityView):
         description: Retrieves a single journey by its ID.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: journey_id
             schema:
@@ -249,9 +243,7 @@ class JourneyById(BaseEntityView):
         operationId: PatchJourneyById
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: journey_id
             schema:
@@ -310,9 +302,7 @@ class JourneyById(BaseEntityView):
         description: Permanently deletes a single journey by its ID.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: journey_id
             schema:
@@ -355,9 +345,7 @@ class JourneyDag(BaseEntityView):
         description: Retrieves the DAG by the ID of it's journey.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: journey_id
             schema:
@@ -403,9 +391,7 @@ class JourneyDag(BaseEntityView):
         description: Creates a new DAG edge for a Journey.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: journey_id
             description: The ID of the Journey that the DAG edge will be created under.
@@ -497,9 +483,7 @@ class JourneyDagEdgeById(BaseEntityView):
         operationId: DeleteDagEdgeById
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: edge_id
             schema:

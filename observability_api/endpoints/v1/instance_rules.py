@@ -27,9 +27,7 @@ class InstanceRuleCreate(BaseEntityView):
         description: Creates a new instance rule in a journey.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: journey_id
             description: The ID of the journey that the instance rule will be created under.
@@ -102,9 +100,7 @@ class InstanceRuleById(BaseEntityView):
         description: Permanently deletes a single instance rule by its ID.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: instance_rule_id
             schema:

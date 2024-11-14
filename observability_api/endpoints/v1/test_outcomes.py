@@ -25,9 +25,7 @@ class ProjectTests(BaseEntityView):
         operationId: ListProjectTestOutcomes
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: project_id
             description: the ID of the project being queried.
@@ -188,9 +186,7 @@ class TestOutcomeById(BaseEntityView):
         description: Retrieves a single test outcome by its ID.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: test_outcome_id
             schema:

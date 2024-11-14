@@ -314,6 +314,7 @@ dummy-variable-rgx = "^_$"
 ]
 "common/entities/**/*" = [
     "E711", # Again comparisons here are due to custom operators
+    "N804", # Allow alternate names for class argument (allow calling them `mcs` for Entity metaclasses)
 ]
 "common/decorators.py" = [
     "N801", # Decorator classes use lowercase on purpose

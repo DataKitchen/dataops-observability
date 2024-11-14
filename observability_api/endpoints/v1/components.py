@@ -31,9 +31,7 @@ class Components(BaseEntityView):
         operationId: ListComponents
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: project_id
             description: the ID of the project being queried.
@@ -135,9 +133,7 @@ class ComponentById(BaseEntityView):
         description: Retrieves a single component by its ID.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: component_id
             schema:
@@ -179,9 +175,7 @@ class ComponentById(BaseEntityView):
         description: Permanently deletes a single component by its ID including all the associated runs and stored events.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: component_id
             schema:
@@ -222,9 +216,7 @@ class JourneyComponents(BaseEntityView):
         operationId: ListComponentsByJourney
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: journey_id
             description: the ID of the journey being queried.

@@ -62,9 +62,7 @@ class Rules(BaseEntityView):
         operationId: ListRules
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: journey_id
             description: the ID of the journey being queried.
@@ -140,9 +138,7 @@ class Rules(BaseEntityView):
         description: Creates a new rule associated with a Journey.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: journey_id
             description: The ID of journey that the rule will be created under.

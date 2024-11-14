@@ -31,9 +31,7 @@ class Runs(BaseEntityView):
         operationId: ListRuns
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: project_id
             description: the ID of the project being queried.

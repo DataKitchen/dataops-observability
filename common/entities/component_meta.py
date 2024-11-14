@@ -18,7 +18,7 @@ class SimpleComponentMeta(ModelBase):
     is identified. This value gets stored at the `type` field of the Component entity.
     """
 
-    def __new__(cls, name: str, bases: tuple[type, ...], attrs: dict[str, object]) -> type[BaseModel]:
+    def __new__(mcs, name: str, bases: tuple[type, ...], attrs: dict[str, object]) -> type[BaseModel]:
         try:
             component_type: str = str(attrs["component_type"])
         except KeyError as e:
@@ -45,7 +45,7 @@ class SimpleComponentMeta(ModelBase):
         new_component_type_field.default = component_type
         attrs["type"] = new_component_type_field
 
-        entity_class: type[BaseModel] = super().__new__(cls, name, bases, attrs)
+        entity_class: type[BaseModel] = super().__new__(mcs, name, bases, attrs)
 
         def select(cls: type[BaseModel], *fields: object) -> ModelSelect:
             # The join is useful to allow using the Component entity fields in WHERE clauses, regardless of

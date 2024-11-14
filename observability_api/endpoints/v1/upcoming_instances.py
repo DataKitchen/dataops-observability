@@ -28,9 +28,7 @@ class UpcomingInstances(BaseEntityView):
         operationId: ListUpcomingInstances
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: project_id
             description: the ID of the project being queried.

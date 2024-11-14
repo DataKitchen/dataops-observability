@@ -29,9 +29,7 @@ class RunTasks(BaseEntityView):
         operationId: ListRunTasks
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: run_id
             description: the ID of the run being queried.

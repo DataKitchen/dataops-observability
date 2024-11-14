@@ -29,9 +29,7 @@ class ProjectAlerts(BaseEntityView):
         operationId: ProjectAlerts
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: project_id
             schema:

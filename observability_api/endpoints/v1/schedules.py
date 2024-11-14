@@ -37,9 +37,7 @@ class Schedules(BaseEntityView):
         operationId: ListSchedules
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: component_id
             description: the ID of the component being queried.
@@ -90,9 +88,7 @@ class Schedules(BaseEntityView):
         The route observability/batch-pipelines/&lt;pipeline-id&gt;/schedules is deprecated and will be removed in a future release."
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: component_id
             description: The ID of the component that the schedule will be created under.
@@ -155,9 +151,7 @@ class ScheduleById(BaseEntityView):
         description: Permanently deletes a single schedule by its ID.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: schedule_id
             schema:

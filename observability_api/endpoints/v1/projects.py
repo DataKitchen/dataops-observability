@@ -115,9 +115,7 @@ class ProjectById(BaseEntityView):
         description: Retrieves a single project by its ID.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: project_id
             schema:

@@ -26,9 +26,7 @@ class TestOutcomes(EventView):
                     track and report on runs and outcomes.
         security:
             - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
            - in: header
              name: EVENT-SOURCE
              description: Set the source of the event. If unset, the Event Ingestion API will assume the source of the

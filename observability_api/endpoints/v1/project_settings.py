@@ -38,9 +38,7 @@ class ProjectAlertsSettings(BaseEntityView):
         description: Retrieves the alerts settings of a given project.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: project_id
             schema:
@@ -82,9 +80,7 @@ class ProjectAlertsSettings(BaseEntityView):
         security:
           - APIKey: []
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: project_id
             schema:

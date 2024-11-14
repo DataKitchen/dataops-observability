@@ -35,9 +35,7 @@ class Instances(BaseEntityView, SearchableView):
         operationId: ListInstances
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: project_id
             description: the ID of the project being queried.
@@ -184,9 +182,7 @@ class CompanyInstances(BaseEntityView):
         operationId: ListCompanyInstances
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: query
             name: project_id
             description: Optional. Specifies the project IDs to include. All projects are selected if unset.
@@ -342,9 +338,7 @@ class InstanceById(BaseEntityView):
         description: Retrieves a single instance by its ID.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: instance_id
             schema:
@@ -403,9 +397,7 @@ class InstanceDag(BaseEntityView):
         description: Retrieves the DAG of an instance.
         security:
           - SAKey: []
-
-        Parameters
-        ----------
+        parameters:
           - in: path
             name: instance_id
             schema:
