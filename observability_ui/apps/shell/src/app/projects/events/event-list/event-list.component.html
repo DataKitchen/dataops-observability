@@ -1,4 +1,20 @@
 <div class="toolbar">
+  <mat-form-field>
+    <mat-label>Date range</mat-label>
+    <mat-date-range-input [rangePicker]="picker">
+      <input matStartDate
+             [formControl]="$any(search.controls.date_range_start)"
+             placeholder="Start date">
+      <input matEndDate
+             [formControl]="$any(search.controls.date_range_end)"
+             placeholder="End date">
+    </mat-date-range-input>
+
+    <mat-datepicker-toggle matSuffix
+                           [for]="picker"></mat-datepicker-toggle>
+    <mat-date-range-picker #picker></mat-date-range-picker>
+  </mat-form-field>
+
   <filter-field [label]="'eventTypes' | translate | titlecase"
     [multiple]="true"
     [noneSelectedLabel]="'eventTypes' | translate | titlecase"

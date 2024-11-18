@@ -59,7 +59,7 @@ describe('event-list', () => {
 
   describe('onTableChange()', () => {
     it('should pass the filters to the store', () => {
-      component.onTableChange({ pageIndex: 0, pageSize: 10, search: { event_type: 'A,B', component_id: '1,2' } });
+      component.onTableChange({ pageIndex: 0, pageSize: 10, search: { event_type: 'A,B', component_id: '1,2', date_range_start: '2022-11-15T00:00:00.000-04:00', date_range_end: '2022-11-24T00:00:00.000-04:00' } });
       expect(store.dispatch).toBeCalledWith('getEventsByPage', expect.objectContaining({
         parentId: 'project_id',
         count: 10,
@@ -67,6 +67,8 @@ describe('event-list', () => {
         filters: {
           event_type: [ 'A', 'B' ],
           component_id: [ '1', '2' ],
+          date_range_start: expect.stringMatching(/^2022\-11\-15T00:00:00\.000[\+\-]\d{2}:\d{2}$/),
+          date_range_end: expect.stringMatching(/^2022\-11\-24T23:59:59\.999[\+\-]\d{2}:\d{2}$/),
         }
       }));
     });
