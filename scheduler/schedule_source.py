@@ -3,7 +3,8 @@ __all__ = ["ScheduleSource", "RunTimeExecutor"]
 import logging
 from collections import defaultdict
 from datetime import datetime
-from typing import Any, Callable, Optional, Protocol, Generic, TypeVar
+from typing import Any, Optional, Protocol, Generic, TypeVar
+from collections.abc import Callable
 
 from apscheduler.executors.pool import ThreadPoolExecutor
 from apscheduler.job import Job
@@ -29,7 +30,7 @@ class RunTimeExecutor(ThreadPoolExecutor):
             job.modify(kwargs={**job.kwargs, "run_time": run_time})
             LOG.info("Job 'run_time' arg updated to '%s' for job '%s'", run_time, job.id)
 
-        return super(RunTimeExecutor, self).submit_job(job, run_times)
+        return super().submit_job(job, run_times)
 
 
 class Schedule(Protocol):

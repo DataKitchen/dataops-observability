@@ -117,13 +117,12 @@ def _find_keys(data, key):
 
 def _pre_load_images(ctx):
     """
-    Load non-app images into minikube machine
+    Load non-app images into minikube machine.
 
     Instead of downloading non-app images for every new minikube profile
     they are cached on the host and loaded into minikube. Observability images are
     not download or cached as they are built anew every time.
     """
-
     result = ctx.run(_build_helm_command(HELM_SVC_FOLDER, template=True), hide="stdout")
     images = set()
     # Collect all images from helm output
@@ -151,7 +150,7 @@ def check_required_tools(ctx):
 )
 def minikube(ctx, driver=None, memory=None, cpus=None):
     """
-    Start minikube instance
+    Start minikube instance.
 
     If the driver is not specified, the instance is started with the docker or hyperkit driver, depending on the OS.
     It is started in a separate profile to not interfere with other instances.
@@ -160,22 +159,19 @@ def minikube(ctx, driver=None, memory=None, cpus=None):
         INVOKE_KUBE_VERSION:      Override Kubernetes version
         INVOKE_MINIKUBE_PROFILE:  Override minikube profile
     """
-
     driver = driver or ("hyperkit" if platform.system() == "Darwin" else "docker")
     memory_arg = "" if memory is None else f"--memory {memory}"
     cpus_arg = "" if cpus is None else f"--cpus {cpus}"
 
     ctx.run(
-        (
-            f"minikube start -p {MINIKUBE_PROFILE} "
-            f"{memory_arg} "
-            f"{cpus_arg} "
-            f"--driver={driver} "
-            f"--kubernetes-version={KUBE_VERSION} "
-            "--embed-certs "
-            "--extra-config=apiserver.service-node-port-range=1-65535 "
-            "--extra-config=kubelet.allowed-unsafe-sysctls=net.core.somaxconn "
-        )
+        f"minikube start -p {MINIKUBE_PROFILE} "
+        f"{memory_arg} "
+        f"{cpus_arg} "
+        f"--driver={driver} "
+        f"--kubernetes-version={KUBE_VERSION} "
+        "--embed-certs "
+        "--extra-config=apiserver.service-node-port-range=1-65535 "
+        "--extra-config=kubelet.allowed-unsafe-sysctls=net.core.somaxconn "
     )
     ctx.run(f"minikube profile {MINIKUBE_PROFILE}")
     ctx.run(f"kubectl config set-context {MINIKUBE_PROFILE} --namespace={NAMESPACE}")
@@ -189,14 +185,14 @@ def minikube(ctx, driver=None, memory=None, cpus=None):
     if platform.system() == "Linux" and match and version.parse("1.30.0") > version.parse(match.group("version")):
         # This workaround is taken from https://github.com/kubernetes/minikube/issues/14631#issuecomment-1292420728
         ctx.run(
-            """minikube ssh "sudo iptables-save | sed -e '/--dport 53/! s/\(-A DOCKER_OUTPUT .*\)/\\1 --dport 53/' | sudo iptables-restore" """
+            """minikube ssh "sudo iptables-save | sed -e '/--dport 53/! s/\\(-A DOCKER_OUTPUT .*\\)/\\1 --dport 53/' | sudo iptables-restore" """
         )
 
 
 @task(pre=(check_required_tools,))
 def helm_build(ctx):
     """
-    Update and build external dependencies (e.g. MySQL, Kafka)
+    Update and build external dependencies (e.g. MySQL, Kafka).
 
     This is not required when only updating Observability's charts.
     """
@@ -234,7 +230,7 @@ def _build_helm_command(
 @task(pre=(check_required_tools,))
 def helm_app(ctx, upgrade=False, template=False, atomic=False, timeout=None):
     """
-    Deploy/Update Observability's cluster using helm chart with development values
+    Deploy/Update Observability's cluster using helm chart with development values.
 
     The development values are geared towards a better development experience
     and debugging.  E.g. services are exposed to the host and some have a more
@@ -295,7 +291,6 @@ def build(
 
     Builds all images by default.
     """
-
     # If nothing was chosen, build everything
     if not any((backend, ui)):
         backend = True
@@ -348,7 +343,6 @@ def build_public_images(
 
     Builds all images by default.
     """
-
     # If nothing was chosen, build everything
     targets = []
     if ui:
@@ -387,7 +381,6 @@ def restart(ctx, modules):
 
     Restarts all deployments by default.
     """
-
     if not modules:
         modules = DeployModuleListTask.MODULES[:]
     ctx.run(f"kubectl --context {MINIKUBE_PROFILE} rollout restart deployment {' '.join(m.name for m in modules)}")
@@ -396,7 +389,7 @@ def restart(ctx, modules):
 @task(pre=(check_required_tools, build))
 def update(ctx):
     """
-    Build all docker images and deploy helm charts
+    Build all docker images and deploy helm charts.
 
     This command is useful after switching branch to have an up-to-date
     minikube deployment.
@@ -416,7 +409,7 @@ def update(ctx):
 )
 def local(ctx, values="", driver=None, memory=None, cpus=None, base_image_url=""):
     """
-    Setup local development environment
+    Setup local development environment.
 
     Tasks include
     * Start minikube instance
@@ -436,7 +429,7 @@ def local(ctx, values="", driver=None, memory=None, cpus=None, base_image_url=""
 @task(pre=(check_required_tools,))
 def nuke(ctx):
     """
-    Destroy the local development environment
+    Destroy the local development environment.
 
     N.B. This will delete the minikube machine along with all docker images
     inside it.
@@ -446,9 +439,7 @@ def nuke(ctx):
 
 @task(pre=(check_required_tools,))
 def dump_logs(ctx, directory="logs"):
-    """
-    Dump minikube logs
-    """
+    """Dump minikube logs."""
     print(f"Dumping logs to directory '{directory}'")
     ctx.run(f"mkdir -p {directory}")
     for module in DeployModuleListTask.MODULES:
@@ -469,7 +460,6 @@ def host_env(ctx, shell=None):
       $ inv host-env | source
 
     """
-
     set_cmd_tpl = defaultdict(lambda: "export {var}='{val}'", {"fish": "set -gx {var} '{val}'"})
 
     if shell is None:
@@ -492,9 +482,7 @@ def host_env(ctx, shell=None):
     ),
 )
 def host_run(ctx, modules, restart=False, keep_pod_running=False):
-    """
-    Run a specific module using the host environment. Automatically stops the module running in the cluster.
-    """
+    """Run a specific module using the host environment. Automatically stops the module running in the cluster."""
     if len(modules) != 1:
         raise Exit("Exactly one module should be chosen at a time.", code=1)
 

@@ -16,13 +16,13 @@ class JsonExtendedEncoder(JSONEncoder):
     """
 
     def default(self, o: object) -> object:
-        if isinstance(o, (date, datetime, time)):
+        if isinstance(o, date | datetime | time):
             return o.isoformat()
         elif isinstance(o, tuple):
             return list(o)
-        elif isinstance(o, (set, frozenset)):
+        elif isinstance(o, set | frozenset):
             return sorted(o)  # Sorted returns a list
-        elif isinstance(o, (bytes, bytearray)):
+        elif isinstance(o, bytes | bytearray):
             try:
                 return o.decode("utf-8")
             except UnicodeDecodeError:

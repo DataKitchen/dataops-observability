@@ -2,7 +2,8 @@ __all__ = ["ComponentService"]
 
 from datetime import datetime
 from itertools import cycle
-from typing import Generator, Optional
+from typing import Optional
+from collections.abc import Generator
 
 from peewee import Select
 

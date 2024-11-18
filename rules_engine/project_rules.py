@@ -1,7 +1,8 @@
 __all__ = ("ProjectRule", "get_project_rules")
 
 import logging
-from typing import Callable, cast
+from typing import cast
+from collections.abc import Callable
 from uuid import UUID
 
 from peewee import fn

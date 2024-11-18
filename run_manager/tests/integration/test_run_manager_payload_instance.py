@@ -223,11 +223,9 @@ def test_run_manager_one_payload_key_multiple_journeys(
 
     # Should close only default instance and payload instance of journey1
     inactive_instances = list(
-        (
-            Instance.select()
-            .where(Instance.active == False)
-            .order_by(Instance.journey, Instance.payload_key.asc(nulls="FIRST"))
-        )
+        Instance.select()
+        .where(Instance.active == False)
+        .order_by(Instance.journey, Instance.payload_key.asc(nulls="FIRST"))
     )
     assert len(inactive_instances) == 2
     for actual, expected in zip(inactive_instances, instances[:1]):
@@ -235,11 +233,9 @@ def test_run_manager_one_payload_key_multiple_journeys(
 
     # Default instance and payload instance of journey2 should still be active
     active_instances = list(
-        (
-            Instance.select()
-            .where(Instance.active == True)
-            .order_by(Instance.journey, Instance.payload_key.asc(nulls="FIRST"))
-        )
+        Instance.select()
+        .where(Instance.active == True)
+        .order_by(Instance.journey, Instance.payload_key.asc(nulls="FIRST"))
     )
     assert len(active_instances) == 2
     for actual, expected in zip(active_instances, instances[2:]):

@@ -7,7 +7,8 @@ import re
 import time
 from argparse import Action, ArgumentParser, Namespace
 from datetime import datetime
-from typing import Any, Optional, Sequence, Type, Union
+from typing import Any, Optional, Union
+from collections.abc import Sequence
 
 from requests_extensions import get_session
 
@@ -82,7 +83,7 @@ EVENTS_MAP = {
 }
 
 
-def make_events_action(event_id: str) -> Type[Action]:
+def make_events_action(event_id: str) -> type[Action]:
     class EventsAction(Action):
         def __call__(
             self,

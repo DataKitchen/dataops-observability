@@ -20,6 +20,6 @@ class IsRegexp(Validator):
     def __call__(self, value: str) -> str:
         try:
             re.compile(value)
-        except Exception:
-            raise ValidationError(self.error.format(input=value))
+        except Exception as e:
+            raise ValidationError(self.error.format(input=value)) from e
         return value

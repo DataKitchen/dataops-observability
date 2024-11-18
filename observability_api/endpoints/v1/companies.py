@@ -19,7 +19,8 @@ class CompanyById(BaseEntityView):
 
     @no_body_allowed
     def get(self, company_id: UUID) -> Response:
-        """Get Company by ID
+        """
+        Get Company by ID
         ---
         tags: ["Company"]
         operationId: GetCompanyById

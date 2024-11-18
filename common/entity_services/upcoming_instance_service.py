@@ -4,7 +4,8 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from heapq import merge
 from operator import itemgetter
-from typing import Generator, Optional, cast
+from typing import Optional, cast
+from collections.abc import Generator
 from uuid import UUID
 from zoneinfo import ZoneInfo
 

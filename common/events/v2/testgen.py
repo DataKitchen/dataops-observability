@@ -46,7 +46,7 @@ class TestgenItemTestParameters:
                     value = int(v)
                 else:
                     value = float(v)
-            elif isinstance(v, (str, float, int)):
+            elif isinstance(v, str | float | int):
                 value = v
             else:
                 raise TypeError(f"Got unexpected type {type(v)} for value {v}")

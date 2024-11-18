@@ -5,7 +5,7 @@ import smtplib
 import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from typing import Mapping
+from collections.abc import Mapping
 
 from common.email.email_renderer import HandlebarsEmailRenderer
 from conf import settings

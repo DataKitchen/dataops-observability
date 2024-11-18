@@ -61,7 +61,7 @@ def unit_tests(
     coverage_format="html",
     skip_slow=True,
 ):
-    """Invoke all tests marked `unit`"""
+    """Invoke all tests marked `unit`."""
     mark = "'unit and not slow'" if skip_slow is True else "unit"
     cmd = _generate_cmd(
         processes=processes,
@@ -87,7 +87,7 @@ def integration_tests(
     coverage_format="html",
     skip_slow=True,
 ):
-    """Invoke all tests marked `integration`"""
+    """Invoke all tests marked `integration`."""
     mark = "'integration and not slow'" if skip_slow is True else "integration"
     cmd = _generate_cmd(
         processes=processes,
@@ -113,7 +113,7 @@ def all_tests(
     coverage_format="html",
     skip_slow=True,
 ):
-    """Invoke all tests marked `unit` or `integration` (does not run functional tests)"""
+    """Invoke all tests marked `unit` or `integration` (does not run functional tests)."""
     kwargs = {
         "processes": processes,
         "level": level,

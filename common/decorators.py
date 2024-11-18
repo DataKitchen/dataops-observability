@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Generic, Optional, Type, TypeVar, cast
+from typing import Any, Generic, Optional, TypeVar, cast
+from collections.abc import Callable
 
 PropertyType = TypeVar("PropertyType")
 
@@ -52,7 +53,7 @@ class cached_property(Generic[PropertyType]):
         self.func = f
         self.__doc__ = f.__doc__  # Keep the original docstring
 
-    def __set_name__(self, owner: Type[object], name: str) -> None:
+    def __set_name__(self, owner: type[object], name: str) -> None:
         if self._name is None:
             self._name = name
         elif name != self._name:

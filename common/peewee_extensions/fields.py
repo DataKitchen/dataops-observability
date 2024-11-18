@@ -7,7 +7,8 @@ from datetime import datetime, timezone
 from enum import Enum
 from json import dumps as json_dumps
 from json import loads as json_loads
-from typing import Any, Optional, Pattern, Type, Union, cast
+from typing import Any, Optional, Union, cast
+from re import Pattern
 from unicodedata import normalize
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -59,7 +60,6 @@ class DomainField(CharField):
 
     def _validate_domain(self, value: str) -> None:
         """Ensure the given value is a valid domain name."""
-
         try:
             socket.inet_aton(value)
         except OSError:
@@ -78,8 +78,8 @@ class DomainField(CharField):
         try:
             if value.encode("idna").decode("idna") != value:
                 raise ValueError(f"Domain `{value}` contains invalid characters")
-        except UnicodeEncodeError:
-            raise ValueError(f"Domain `{value}` contains invalid characters")
+        except UnicodeEncodeError as ue:
+            raise ValueError(f"Domain `{value}` contains invalid characters") from ue
 
     def db_value(self, value: str) -> str:
         """Converts a value before sending it to the DB."""
@@ -90,7 +90,7 @@ class DomainField(CharField):
         return db_value
 
 
-def _enum_value_to_db_value(enum_class: Type[Enum], value: Union[str, Enum, None]) -> Optional[str | int]:
+def _enum_value_to_db_value(enum_class: type[Enum], value: Union[str, Enum, None]) -> Optional[str | int]:
     """Converts a value before sending it to the DB."""
     if value is None:
         return None
@@ -108,7 +108,7 @@ def _enum_value_to_db_value(enum_class: Type[Enum], value: Union[str, Enum, None
             return value
 
 
-def _db_value_to_enum_value(enum_class: Type[Enum], value: str | int) -> Optional[Enum]:
+def _db_value_to_enum_value(enum_class: type[Enum], value: str | int) -> Optional[Enum]:
     if value:
         try:
             return enum_class(value)
@@ -121,7 +121,7 @@ def _db_value_to_enum_value(enum_class: Type[Enum], value: str | int) -> Optiona
 class EnumStrField(CharField):
     """Field which accepts enum values and coerces them."""
 
-    def __init__(self, enum_class: Type[Enum], **kwargs: Any) -> None:
+    def __init__(self, enum_class: type[Enum], **kwargs: Any) -> None:
         self.enum_class = enum_class
         super().__init__(**kwargs)
 
@@ -137,7 +137,7 @@ class EnumStrField(CharField):
 class EnumIntField(IntegerField):
     """Field which accepts enum values and coerces them."""
 
-    def __init__(self, enum_class: Type[Enum], **kwargs: Any) -> None:
+    def __init__(self, enum_class: type[Enum], **kwargs: Any) -> None:
         self.enum_class = enum_class
         super().__init__(**kwargs)
 

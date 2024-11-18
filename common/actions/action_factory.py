@@ -1,6 +1,6 @@
 __all__ = ["ACTION_CLASS_MAP", "action_factory"]
 
-from typing import Optional, Type
+from typing import Optional
 
 from common.entities import Action
 
@@ -8,14 +8,14 @@ from common.actions.action import BaseAction, ImplementationNotFound, InvalidAct
 from common.actions.send_email_action import SendEmailAction
 from common.actions.webhook_action import WebhookAction
 
-ACTION_CLASS_MAP: dict[str, Type[BaseAction]] = {"CALL_WEBHOOK": WebhookAction, "SEND_EMAIL": SendEmailAction}
+ACTION_CLASS_MAP: dict[str, type[BaseAction]] = {"CALL_WEBHOOK": WebhookAction, "SEND_EMAIL": SendEmailAction}
 
 
 def action_factory(implementation: str, action_args: dict, template: Optional[Action]) -> BaseAction:
     try:
         action_class = ACTION_CLASS_MAP[implementation]
-    except KeyError:
-        raise ImplementationNotFound(f"Action implementation '{implementation}' is not recognized")
+    except KeyError as ke:
+        raise ImplementationNotFound(f"Action implementation '{implementation}' is not recognized") from ke
 
     if template and template.action_impl.name != implementation:
         raise InvalidActionTemplate(

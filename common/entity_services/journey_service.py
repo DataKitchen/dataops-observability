@@ -30,7 +30,6 @@ class JourneyService:
         :param journey_id: Journey ID
         :param action_impl: The action_impl to find within the company
         """
-
         actions: list[Action] = list(
             Action.select()
             .join(Company)

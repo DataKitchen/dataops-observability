@@ -13,7 +13,8 @@ __all__ = [
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Callable, Optional, Type, TypeVar
+from typing import Optional, TypeVar
+from collections.abc import Callable
 from uuid import UUID
 
 import arrow
@@ -221,11 +222,11 @@ class Filters:
         raise NotImplementedError
 
     @classmethod
-    def from_dict(cls: Type[F], data: dict) -> F:
+    def from_dict(cls: type[F], data: dict) -> F:
         return cls(**data)
 
     @classmethod
-    def _from_params(cls: Type[F], params: MultiDict, param_names: list[str]) -> F:
+    def _from_params(cls: type[F], params: MultiDict, param_names: list[str]) -> F:
         members = {}
         for set_parameter in param_names:
             if (param_config := PARAM_CONFIGS.get(set_parameter, None)) is None:
@@ -316,7 +317,8 @@ class ProjectEventFilters(Filters):
     """
 
     @classmethod
-    def from_params(cls, params: MultiDict, project_ids: list[UUID] = []) -> ProjectEventFilters:
+    def from_params(cls, params: MultiDict, project_ids: list[UUID] | None = None) -> ProjectEventFilters:
+        project_id_list = [] if project_ids is None else project_ids
         filters = cls._from_params(
             params,
             [
@@ -332,7 +334,7 @@ class ProjectEventFilters(Filters):
             ],
         )
 
-        filters.project_ids = [str(u) for u in project_ids]
+        filters.project_ids = [str(u) for u in project_id_list]
 
         cls.validate_event_types(filters.event_types)
         cls.validate_time_range(filters.date_range_start, filters.date_range_end, DATE_RANGE_START_QUERY_NAME)

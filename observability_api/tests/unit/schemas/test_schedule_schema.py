@@ -42,8 +42,10 @@ def test_schedule_schema_load(valid_schedule_data):
     [(ScheduleExpectation.BATCH_PIPELINE_END_TIME.value)],
 )
 def test_schedule_schema_validation_types_without_margin(valid_schedule_data, expectation):
-    """Tests a ValidationError is raised when 'margin' is set for a expectation that forbids it.
-    Also validates sucessful creation with a margin=None"""
+    """
+    Tests a ValidationError is raised when 'margin' is set for a expectation that forbids it.
+    Also validates sucessful creation with a margin=None
+    """
     valid_schedule_data["expectation"] = expectation
 
     with pytest.raises(ValidationError, match="margin"):

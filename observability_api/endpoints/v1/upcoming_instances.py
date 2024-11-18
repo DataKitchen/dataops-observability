@@ -20,7 +20,8 @@ class UpcomingInstances(BaseEntityView):
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:
-        """Upcoming Instance LIST
+        """
+        Upcoming Instance LIST
         ---
         tags: ["UpcomingInstance"]
         description: List upcoming instances of a project.
@@ -96,6 +97,7 @@ class UpcomingInstances(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         self.get_entity_or_fail(Project, Project.id == project_id)
         upcoming_instances = UpcomingInstanceService.get_upcoming_instances_with_rules(
@@ -111,7 +113,8 @@ class CompanyUpcomingInstances(BaseEntityView):
 
     @no_body_allowed
     def get(self) -> Response:
-        """Company Upcoming Instance LIST
+        """
+        Company Upcoming Instance LIST
         ---
         tags: ["UpcomingInstance"]
         description: List upcoming instances of a company.

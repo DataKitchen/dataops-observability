@@ -1,7 +1,8 @@
 __all__ = ["get_bool_param", "no_body_allowed", "str_to_bool", "get_origin_domain"]
 
 from functools import wraps
-from typing import Any, Callable, Iterable, Optional
+from typing import Any, Optional
+from collections.abc import Callable, Iterable
 from urllib.parse import urlparse
 
 from flask import Request, request

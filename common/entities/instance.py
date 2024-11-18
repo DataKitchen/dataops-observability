@@ -2,7 +2,8 @@ __all__ = ["Instance", "InstanceSet", "InstancesInstanceSets", "InstanceStatus",
 
 import json
 from enum import Enum
-from typing import DefaultDict, Iterable, Union, cast
+from typing import Union, cast
+from collections.abc import Iterable
 from uuid import UUID
 
 from peewee import BooleanField, CharField, CompositeKey, Expression, ForeignKeyField, fn
@@ -13,6 +14,7 @@ from common.peewee_extensions.fields import EnumStrField, UTCTimestampField
 from .base_entity import AuditUpdateTimeEntityMixin, BaseEntity, BaseModel
 from .component import Component
 from .journey import Journey, JourneyDagEdge
+from collections import defaultdict
 
 
 class InstanceStatus(Enum):
@@ -60,9 +62,9 @@ class Instance(BaseEntity, AuditUpdateTimeEntityMixin):
             return InstanceStatus.COMPLETED.value
 
     @property
-    def journey_dag(self) -> DefaultDict[Component, set[JourneyDagEdge]]:
+    def journey_dag(self) -> defaultdict[Component, set[JourneyDagEdge]]:
         """Return a graph of Components taken from the Journey."""
-        return cast(DefaultDict[Component, set[JourneyDagEdge]], self.journey.journey_dag)
+        return cast(defaultdict[Component, set[JourneyDagEdge]], self.journey.journey_dag)
 
     @property
     def dag_nodes(self) -> list[Component]:

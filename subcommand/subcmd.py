@@ -1,4 +1,3 @@
-# Standard
 import argparse
 import logging
 
@@ -7,6 +6,8 @@ LOG = logging.getLogger(__name__)
 
 class SubcommandBase(type):
     """
+    Subcommand implementation for argparse.
+
     Subclassing this metaclass gives a simple class that can be used to manage subcommands. Classes get an attribute
     called ``parser`` which is an instance of argparse local to that class.
 

@@ -2,7 +2,8 @@ __all__ = ["InstanceService"]
 
 from collections import Counter, defaultdict
 from datetime import datetime
-from typing import Iterable, Optional
+from typing import Optional
+from collections.abc import Iterable
 from uuid import UUID
 
 from peewee import ModelSelect, Value, fn
@@ -176,7 +177,6 @@ class InstanceService:
         * Runs with status present in parameter exclude_run_statuses are excluded from the count.
         * Exclude parameters include_run_statuses and exclude_run_statuses to disable the status checks
         """
-
         if journey is None:
             journey_in = Journey.select().join(Instance).where(Instance.id == instance)
         else:
