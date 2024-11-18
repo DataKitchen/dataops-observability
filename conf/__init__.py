@@ -92,7 +92,6 @@ settings = ConfigClass()
 
 def init_db() -> None:
     """Initialize the database engine and establish a connection."""
-
     # Importing locally to avoid circular imports
     from common.entities import ALL_MODELS, DB
 

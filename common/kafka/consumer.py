@@ -3,7 +3,8 @@ __all__ = ["KafkaConsumer", "KafkaTransactionalConsumer"]
 import logging
 import signal
 from types import FrameType
-from typing import Any, Iterator, Optional, Type
+from typing import Any, Optional
+from collections.abc import Iterator
 
 from confluent_kafka import Consumer, Message
 
@@ -95,7 +96,7 @@ class KafkaConsumer:
         self,
         config: dict[str, Any],
         topics: list[Topic],
-        killer: Type[GracefulKiller] = GracefulKiller,
+        killer: type[GracefulKiller] = GracefulKiller,
         raise_deserialization_errors: bool = False,
     ) -> None:
         self.consumer: Consumer = DisconnectedConsumer()
@@ -164,12 +165,12 @@ class KafkaConsumer:
             raise MessageError(msg.error())
         try:
             topic = self.topics[msg.topic()]
-        except KeyError:
+        except KeyError as ke:
             raise MessageError(
                 "Unable to find the correct topic for message deserialization",
                 msg.topic(),
                 self.topics.keys(),
-            )
+            ) from ke
         try:
             message = topic.deserialize(msg)
         except Exception as ex:
@@ -202,7 +203,7 @@ class KafkaTransactionalConsumer(KafkaConsumer):
     """
 
     def __init__(
-        self, config: dict[str, Any], topics: list[Topic], killer: Type[GracefulKiller] = GracefulKiller
+        self, config: dict[str, Any], topics: list[Topic], killer: type[GracefulKiller] = GracefulKiller
     ) -> None:
         if CONSUMER_TX_MANDATORY_SETTINGS.keys() & config.keys():
             raise ConsumerConfigurationError(

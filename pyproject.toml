@@ -45,9 +45,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "black~=23.1.0",
+    "ruff~=0.7.3",
     "invoke~=2.1.2",
-    "isort~=5.12.0",
     "lxml~=4.9.1",
     "mypy~=1.5.0",
     "pre-commit~=2.20.0",
@@ -55,7 +54,6 @@ dev = [
     "pytest-xdist~=3.1.0",
     "pytest~=7.2.0",
     "pyyaml~=6.0",
-    "ruff==0.0.275",
     "types-PyYAML~=6.0.8",
     "types-requests==2.28.11.15",
     "types-setuptools==65.3.0",
@@ -224,10 +222,6 @@ module = "PIL.*"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = "wtforms.*"
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
 module = "invoke"
 ignore_missing_imports = true
 
@@ -247,34 +241,87 @@ ignore_missing_imports = true
 module = "pybars"
 ignore_missing_imports = true
 
-[tool.isort]
-profile = "black"
-line_length = 120
-
-[tool.black]
+[tool.ruff]
+target-version = "py310"
 line-length = 120
-target-version = ['py310']
-include = '\.pyi?$'
-exclude = '''
-(
-  /(
-      \.eggs         # exclude a few common directories in the
-    | \.git          # root of the project
-    | \.hg
-    | \.mypy_cache
-    | \.tox
-    | \.venv
-    | env
-    | venv
-    | _build
-    | buck-out
-    | build
-    | dist
-  )/
-  | foo.py           # also separately exclude a file named foo.py in
-                     # the root of the project
-)
-'''
+
+[tool.ruff.lint]
+
+select = [
+    "E",  # Pycodestyle Errors
+    "W",  # Pycodestyle Warnings
+    "F",  # PyFlakes rules
+    "B",  # Bugbear rules (likely bugs & design problems in your code)
+    "N",  # Pep8 naming rules
+    "UP", # Prefer upgraded Python syntax
+]
+ignore = [
+    "N818",  # Don't require exception subclass names to all end with 'Error'
+    "UP007", # While nice, don't force the use of X | Y for type annotations
+    "F403",  # Wildcard imports (import *) aren't great but it would be hard to fix/change now
+    "F405",  # See previous comment
+    "E712",  # Where(attr == True) comparisons are peewee specific stuff
+    "E731",  # Inline lambdas reduce readability but removing them will require extra work
+    "B009",  # The getattr constants are intentional for configurability
+    "N806",  # We use uppercase for constants
+    "B010",  # Multiple places use setattr as a type-check workaround (for now)
+    "E501",  # Lots of long lines would take too long to factor out
+    "N811",  # Renaming an imported constant for clarity is fine imo
+    "N813",  # Same as N811 except involving casing
+]
+fixable = ["E", "F", "W", "N", "UP"]
+
+# Avoid trying to fix flake8-bugbear (`B`) violations.
+unfixable = ["B"]
+
+exclude = [
+    "*.pyi",
+    "_version.py",
+    ".venv/*",
+    "dist/*",
+    ".mypy_cache/*",
+    ".tox/*",
+    "build/*",
+    "benchmark/*",
+]
+
+# Allow unused variables named "_".
+dummy-variable-rgx = "^_$"
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**/*" = [
+    "N802", # Relax function name rules
+    "N806", # Relax class naming rules
+    "N805", # Allow names other than "self" for instances methods
+    "B",    # Tests are places for weird stuff, ignore all bugbears
+    "E",    # See above comment :)
+    "F",
+    "N",
+]
+"testlib/**/*" = [
+    "N802", # Function names aren't lowercase in testlib on purpose
+    "N803", # Argument names aren't lowercase in testlib on purpose as well
+]
+"scripts/**/*" = [
+    "E501", # Long lines are expected in invocations as they may be long commands
+    "N999", # Script files aren't modules and so don't have to follow the same rules
+]
+"common/predicate_engine/**/*" = [
+    "N801", # Weird class names are used here on purposes
+]
+"common/entity_services/instance_dag_service.py" = [
+    "E711", # Comparisons like == None are important for custom operators usage here
+]
+"common/entities/**/*" = [
+    "E711", # Again comparisons here are due to custom operators
+    "N804", # Allow alternate names for class argument (allow calling them `mcs` for Entity metaclasses)
+]
+"common/decorators.py" = [
+    "N801", # Decorator classes use lowercase on purpose
+]
+"cli/entry_points/graph_schema.py" = [
+    "B023", # Possible false positive about binding to a loop variable
+]
 
 # See: https://coverage.readthedocs.io/en/latest/config.html
 [tool.coverage.run]
@@ -296,15 +343,3 @@ source = [
 omit = ["*/*tests/*"]
 # This skips __init__.py and other empty files.
 skip_empty = true
-
-[tool.ruff]
-target-version = "py310"
-select = ["F401"]
-ignore-init-module-imports = true
-respect-gitignore = true
-line-length = 120
-
-[tool.ruff.extend-per-file-ignores]
-"*/tests/*" = [
-    "F811", # Shadow unused imports; pytest fixtures
-]

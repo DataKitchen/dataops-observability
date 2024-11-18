@@ -36,8 +36,9 @@ def required_dev_tools(ctx):
 @task
 def is_venv(ctx):
     """
-    Check if one is an environment. Note: Invoke de-duplicates redundant tasks. Do not worry if this is
-    in multiple consecutive tasks.
+    Check if one is an environment.
+
+    Note: Invoke de-duplicates redundant tasks. Do not worry if this is in multiple consecutive tasks.
     """
     if not (hasattr(sys, "real_prefix") or (hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix)):
         raise RuntimeError("You have not sourced a virtual environment.")
@@ -53,7 +54,7 @@ def dev_install(ctx, quiet_pip=False):
 
 @task
 def pyclean(ctx):
-    """deletes old python files and build artifacts"""
+    """Deletes old python files and build artifacts."""
     ctx.run("find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete")
     if exists("dist"):
         ctx.run("rm -rf dist")
@@ -75,6 +76,17 @@ def precommit(ctx):
 @task(pre=(is_venv,))
 def mypy(ctx):
     ctx.run("mypy . --config-file=./pyproject.toml")
+
+
+@task(pre=(is_venv,))
+def format_code(ctx):
+    ctx.run("ruff check --fix-only .")
+    ctx.run("ruff format .")
+
+
+@task(pre=(is_venv,))
+def lint_code(ctx):
+    ctx.run("ruff check .")
 
 
 @task(name="build-docs", pre=(is_venv, call(dev_install, quiet_pip=True)))

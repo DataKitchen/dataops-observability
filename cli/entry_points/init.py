@@ -23,9 +23,9 @@ def collect_user_input(fields: list[str]) -> dict[str, str]:
             while field not in res:
                 if value := input(f"{field.capitalize()!s: >20}: "):
                     res[field] = value
-    except KeyboardInterrupt:
+    except KeyboardInterrupt as ki:
         print("--\n")  # Moving the cursor back to the start
-        raise OperationAborted("Operation aborted by the user")
+        raise OperationAborted("Operation aborted by the user") from ki
     return res
 
 
@@ -39,10 +39,10 @@ def read_json_input(fields: list[str]) -> dict[str, str]:
         json_input = json.loads(payload)
         for field in fields:
             res[field] = json_input[field]
-    except KeyError as e:
-        raise OperationAborted(f"'{e}' not found in the input data")
-    except Exception:
-        raise OperationAborted("Invalid input data")
+    except KeyError as ke:
+        raise OperationAborted(f"'{ke}' not found in the input data") from ke
+    except Exception as e:
+        raise OperationAborted("Invalid input data") from e
     return res
 
 

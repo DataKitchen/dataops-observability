@@ -20,16 +20,18 @@ def _compile_instance_alert_condition(value: dict[str, list]) -> R:
         raise InvalidRuleData("`level_matches` must be an empty list or list of alert levels.")
     try:
         level_list = [getattr(AlertLevel, x) for x in _level_list]
-    except AttributeError:
-        raise InvalidRuleData("Not all `level_matches` values could not be coerced to an AlertLevel enum.")
+    except AttributeError as ae:
+        raise InvalidRuleData("Not all `level_matches` values could not be coerced to an AlertLevel enum.") from ae
 
     _type_list = value["type_matches"]
     if not isinstance(value["type_matches"], list):
         raise InvalidRuleData("`type_matches` must be an empty list or list of instance alert types.")
     try:
         type_list = [getattr(InstanceAlertType, x) for x in _type_list]
-    except AttributeError:
-        raise InvalidRuleData("Not all `type_matches` values could not be coerced to an InstanceAlertType enum.")
+    except AttributeError as ae:
+        raise InvalidRuleData(
+            "Not all `type_matches` values could not be coerced to an InstanceAlertType enum."
+        ) from ae
 
     r_level = R(event__level__in=level_list) if value["level_matches"] else R()
     r_type = R(event__type__in=type_list) if value["type_matches"] else R()

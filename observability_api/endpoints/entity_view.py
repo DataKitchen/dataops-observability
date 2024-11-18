@@ -1,5 +1,5 @@
 import logging
-from typing import Type, cast
+from typing import cast
 
 from peewee import DoesNotExist, IntegrityError, ModelSelect
 from werkzeug.exceptions import Conflict, Forbidden, NotFound
@@ -12,7 +12,7 @@ LOG = logging.getLogger(__name__)
 
 
 class BaseEntityView(BaseView):
-    root_entity: Type[BaseEntity] = Company
+    root_entity: type[BaseEntity] = Company
 
     def apply_membership(self, query: ModelSelect) -> ModelSelect:
         if self.user:
@@ -34,12 +34,12 @@ class BaseEntityView(BaseView):
         except DoesNotExist:
             try:
                 base_query.get()
-            except DoesNotExist:
-                raise NotFound(f"The requested {base_query.model.__name__} does not exist.")
+            except DoesNotExist as dne:
+                raise NotFound(f"The requested {base_query.model.__name__} does not exist.") from dne
             else:
                 raise Forbidden()
 
-    def get_entity_or_fail(self, entity_class: Type[BaseEntity], *where: object) -> BaseEntity:
+    def get_entity_or_fail(self, entity_class: type[BaseEntity], *where: object) -> BaseEntity:
         return self.get_entity_from_query_or_fail(entity_class.select().where(*where))
 
     @staticmethod

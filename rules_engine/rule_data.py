@@ -58,6 +58,7 @@ class RuleData:
     Examples:
     R(event__status__exact=RunStatus.COMPLETED)
     R(database__runs__exact=ALL(RunStatus.COMPLETED))
+
     """
 
     event: EVENT_TYPE

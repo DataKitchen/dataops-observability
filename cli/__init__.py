@@ -12,7 +12,6 @@ def get_version(name: str = "cli") -> str:
     By default, get_version() always returns the vermin version but the **name** keyword
     argument can be passed to get version info for any installed package.
     """
-
     try:
         return version(name)
     except PackageNotFoundError:

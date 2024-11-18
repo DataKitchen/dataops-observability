@@ -21,7 +21,8 @@ class Organizations(BaseEntityView):
 
     @no_body_allowed
     def get(self, company_id: UUID) -> Response:
-        """Organization LIST
+        """
+        Organization LIST
         ---
         tags: ["Organization"]
         description: Lists all organizations in a company using the specified company ID.
@@ -96,7 +97,8 @@ class OrganizationById(BaseEntityView):
 
     @no_body_allowed
     def get(self, organization_id: UUID) -> Response:
-        """Get Organization by ID
+        """
+        Get Organization by ID
         ---
         tags: ["Organization"]
         operationId: GetOrganizationById

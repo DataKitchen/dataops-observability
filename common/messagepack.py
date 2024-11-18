@@ -9,7 +9,8 @@ from importlib import import_module
 from io import BytesIO
 from pathlib import Path, PurePath, PurePosixPath, PureWindowsPath
 from types import MappingProxyType
-from typing import Any, BinaryIO, Callable, Optional, TextIO, Union, cast
+from typing import Any, BinaryIO, Optional, TextIO, Union, cast
+from collections.abc import Callable
 from uuid import UUID
 
 import msgpack

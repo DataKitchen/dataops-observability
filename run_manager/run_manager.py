@@ -3,7 +3,8 @@ import time
 from collections import namedtuple
 from dataclasses import asdict
 from itertools import chain
-from typing import Callable, Union
+from typing import Union
+from collections.abc import Callable
 
 from peewee import DatabaseError, InterfaceError, OperationalError
 

@@ -1,4 +1,4 @@
-from typing import Any, Optional, Type
+from typing import Any, Optional
 
 from flask import Blueprint, Response, request
 from flask.typing import RouteCallable
@@ -13,7 +13,7 @@ SEARCH_ENDPOINT: str = "search"
 
 class SearchView(BaseView):
     args_from_post: Optional[MultiDict] = None
-    request_body_schema: Type[Schema]
+    request_body_schema: type[Schema]
 
     def post(self, *args: Any, **kwargs: Any) -> Response:
         self.parse_body(schema=self.request_body_schema())
@@ -31,11 +31,11 @@ class SearchView(BaseView):
 def add_route_with_search(bp: Blueprint, rule: str, view_func: RouteCallable, **options: Any) -> RouteCallable:
     bp.add_url_rule(rule, view_func=view_func, **options)
 
-    view_class: Type[SearchableView] = view_func.view_class  # type: ignore [union-attr]
+    view_class: type[SearchableView] = view_func.view_class  # type: ignore [union-attr]
     view_name = f"{view_class.__name__}Search"
     search_schema = type(f"{view_name}FilterSchema", (Schema,), {"params": Nested(view_class.FILTERS_SCHEMA)})
 
-    search_view_class: Type[BaseView] = type(
+    search_view_class: type[BaseView] = type(
         view_name,
         (view_class, SearchView),
         {"request_body_schema": search_schema},

@@ -5,7 +5,8 @@ __all__ = ["get_rules", "JourneyRule"]
 import logging
 import time
 from functools import lru_cache
-from typing import Any, Callable, Optional
+from typing import Any, Optional
+from collections.abc import Callable
 from uuid import UUID
 
 from common.actions.action import ActionResult

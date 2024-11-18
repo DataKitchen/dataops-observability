@@ -32,7 +32,8 @@ class Journeys(BaseEntityView):
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:
-        """Journey LIST
+        """
+        Journey LIST
         ---
         tags: ["Journey"]
         description: Lists all journeys for the project using the specified project ID.
@@ -110,6 +111,7 @@ class Journeys(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         _ = self.get_entity_or_fail(Project, Project.id == project_id)
         component_id: Optional[str] = request.args.get("component_id", None)
@@ -120,7 +122,8 @@ class Journeys(BaseEntityView):
         return make_response({"entities": journeys, "total": page.total})
 
     def post(self, project_id: UUID) -> Response:
-        """Journey CREATE
+        """
+        Journey CREATE
         ---
         tags: ["Journey"]
         operationId: PostJourney
@@ -166,6 +169,7 @@ class Journeys(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         journey = self.parse_body(schema=JourneySchema())
         journey.project = self.get_entity_or_fail(Project, Project.id == project_id)
@@ -187,7 +191,8 @@ class JourneyById(BaseEntityView):
 
     @no_body_allowed
     def get(self, journey_id: UUID) -> Response:
-        """Get journey by ID
+        """
+        Get journey by ID
         ---
         tags: ["Journey"]
         operationId: GetJourneyById
@@ -221,6 +226,7 @@ class JourneyById(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         journey = self.get_entity_or_fail(Journey, Journey.id == journey_id)
         # Marshmallow passes peewee's backref query to the schema instead of the result of the query unless the result
@@ -229,7 +235,8 @@ class JourneyById(BaseEntityView):
         return make_response(JourneySchema().dump(journey))
 
     def patch(self, journey_id: UUID) -> Response:
-        """Update journey by ID
+        """
+        Update journey by ID
         ---
         tags: ["Journey"]
         description: Updates attributes for a single journey. Use this request to change a journey name and description
@@ -269,6 +276,7 @@ class JourneyById(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         self.parse_body(schema=JourneyPatchSchema())
         _ = self.get_entity_or_fail(Journey, Journey.id == journey_id)
@@ -286,7 +294,8 @@ class JourneyById(BaseEntityView):
 
     @no_body_allowed
     def delete(self, journey_id: UUID) -> Response:
-        """Delete a Journey by ID
+        """
+        Delete a Journey by ID
         ---
         tags: ["Journey"]
         operationId: DeleteJourneyById
@@ -312,6 +321,7 @@ class JourneyById(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         try:
             _ = self.get_entity_or_fail(Journey, Journey.id == journey_id)
@@ -327,7 +337,8 @@ class JourneyDag(BaseEntityView):
 
     @no_body_allowed
     def get(self, journey_id: UUID) -> Response:
-        """Get DAG by journey ID
+        """
+        Get DAG by journey ID
         ---
         tags: ["Journey"]
         operationId: JourneyDag
@@ -361,6 +372,7 @@ class JourneyDag(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         journey = self.get_entity_or_fail(Journey, Journey.id == journey_id)
         data: dict[str, list] = {"nodes": []}
@@ -371,7 +383,8 @@ class JourneyDag(BaseEntityView):
         return make_response(JourneyDagSchema().dump(data))
 
     def put(self, journey_id: UUID) -> Response:
-        """Journey DAG edge CREATE
+        """
+        Journey DAG edge CREATE
         ---
         tags: ["JourneyDag"]
         operationId: CreateJourneyDagEdge
@@ -417,6 +430,7 @@ class JourneyDag(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         journey = self.get_entity_or_fail(Journey, Journey.id == journey_id)
         edge_data = self.parse_body(schema=JourneyDagEdgePostSchema())
@@ -425,8 +439,8 @@ class JourneyDag(BaseEntityView):
         if left_id:
             try:
                 left_edge = Component.get_by_id(left_id)
-            except DoesNotExist:
-                raise NotFound(f"No Component exists with the ID '{left_id}'")
+            except DoesNotExist as dne:
+                raise NotFound(f"No Component exists with the ID '{left_id}'") from dne
         else:
             left_edge = None
 
@@ -434,8 +448,8 @@ class JourneyDag(BaseEntityView):
         if right_id:
             try:
                 right_edge = Component.get_by_id(right_id)
-            except DoesNotExist:
-                raise NotFound(f"No Component exists with the ID '{right_id}'")
+            except DoesNotExist as dne:
+                raise NotFound(f"No Component exists with the ID '{right_id}'") from dne
         else:
             right_edge = None
 
@@ -446,13 +460,13 @@ class JourneyDag(BaseEntityView):
         Journey.add_edge_to_graph(graph=graph, edge=dag_edge)
         try:
             Journey.validate_graph(graph)
-        except CycleError:
-            raise Conflict("Graph edge would yield an invalid graph")
+        except CycleError as ce:
+            raise Conflict("Graph edge would yield an invalid graph") from ce
 
         try:
             dag_edge.save(force_insert=True)
-        except IntegrityError:
-            raise Conflict("A Journey DAG edge must be unique")
+        except IntegrityError as ie:
+            raise Conflict("A Journey DAG edge must be unique") from ie
         return make_response(JourneyDagEdgeSchema().dump(dag_edge), HTTPStatus.CREATED)
 
 
@@ -461,7 +475,8 @@ class JourneyDagEdgeById(BaseEntityView):
 
     @no_body_allowed
     def delete(self, edge_id: UUID) -> Response:
-        """Delete a DAG edge by ID
+        """
+        Delete a DAG edge by ID
         ---
         tags: ["JourneyDag"]
         description: Permanently deletes a single user by its ID.
@@ -487,6 +502,7 @@ class JourneyDagEdgeById(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         try:
             dag_edge = self.get_entity_or_fail(JourneyDagEdge, JourneyDagEdge.id == edge_id)
