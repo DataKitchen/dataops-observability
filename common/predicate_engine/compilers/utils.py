@@ -1,5 +1,6 @@
 from functools import partial
-from typing import Callable, Iterable, Type
+from collections.abc import Iterable
+from collections.abc import Callable
 
 from peewee import PREFETCH_TYPE, Model, SelectQuery
 
@@ -11,7 +12,7 @@ def limit_query(limit: int) -> Callable[..., Iterable]:
     return partial(_limit_query, _limit=limit)
 
 
-def prefetch_query(*args: SelectQuery | Type[Model]) -> Callable[..., Iterable]:
+def prefetch_query(*args: SelectQuery | type[Model]) -> Callable[..., Iterable]:
     def _prefetch_query(query: SelectQuery, *, _queries: list) -> list[Model]:
         result: list[Model] = query.prefetch(*_queries, prefetch_type=PREFETCH_TYPE.JOIN)
         return result

@@ -2,7 +2,7 @@ import collections
 import contextlib
 import sys
 from argparse import ArgumentParser
-from typing import Iterator
+from collections.abc import Iterator
 
 from peewee import ColumnMetadata, Database, MySQLDatabase, ProgrammingError
 

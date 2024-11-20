@@ -65,5 +65,6 @@ class TestOutcomes(EventView):
                 content:
                     application/json:
                         schema: HTTPErrorSchema
+
         """
         return super().post()

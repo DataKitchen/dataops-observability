@@ -6,7 +6,8 @@ import logging
 import operator
 import re
 from functools import cache
-from typing import TYPE_CHECKING, Any, Callable, Literal, cast
+from typing import TYPE_CHECKING, Any, Literal, cast
+from collections.abc import Callable
 
 if TYPE_CHECKING:
     from .query import R

@@ -70,7 +70,7 @@ class Migrate(DatabaseScriptBase):
                     else:
                         LOG.info("Migration '%s' SUCCEEDED", migration.id)
                         applied.append(migration)
-            except Exception:
+            except Exception as e:
                 for migration in reversed(applied):
                     LOG.info("  '-- Rolling back '%s'", migration.id)
                     try:
@@ -78,6 +78,6 @@ class Migrate(DatabaseScriptBase):
                     except Exception as rollback_exp:
                         LOG.exception("Error rolling back migration '%s': %s", migration.id, rollback_exp)
 
-                raise OperationAborted("Migration failed. The new migrations have been rolled back")
+                raise OperationAborted("Migration failed. The new migrations have been rolled back") from e
 
             backend.run_post_apply(migrations, force=force)

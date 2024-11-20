@@ -11,7 +11,9 @@ import logging
 import sys
 from itertools import chain
 from pathlib import Path
-from typing import Callable, Collection, Iterable, Union
+from typing import Union
+from collections.abc import Collection, Iterable
+from collections.abc import Callable
 
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin

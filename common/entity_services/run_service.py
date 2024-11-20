@@ -18,7 +18,7 @@ class RunService:
             RunTask.select()
             .join(Run)
             .where(Run.id == run_id)
-            .order_by((RunTask.start_time.asc() if rules.sort == SortOrder.ASC else RunTask.start_time.desc()))
+            .order_by(RunTask.start_time.asc() if rules.sort == SortOrder.ASC else RunTask.start_time.desc())
         )
         fetched_result: list[RunTask] = prefetch(results, Task.select(Task.id, Task.key, Task.name))
         return Page[RunTask](results=fetched_result, total=results.count())

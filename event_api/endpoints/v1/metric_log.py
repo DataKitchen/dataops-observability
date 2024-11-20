@@ -64,5 +64,6 @@ class MetricLog(EventView):
                 content:
                     application/json:
                         schema: HTTPErrorSchema
+
         """
         return super().post()

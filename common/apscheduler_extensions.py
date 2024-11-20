@@ -3,7 +3,8 @@ __all__ = ["DelayedTrigger", "validate_cron_expression", "get_crontab_trigger_ti
 import logging
 import re
 from datetime import datetime, timedelta
-from typing import Generator, Optional, Type
+from typing import Optional
+from collections.abc import Generator
 from zoneinfo import ZoneInfo
 
 from apscheduler.triggers.base import BaseTrigger
@@ -12,7 +13,7 @@ from apscheduler.triggers.cron import BaseField, CronTrigger, DayOfMonthField, D
 LOG = logging.getLogger(__name__)
 
 
-CRON_EXPRESSION_FIELDS: tuple[tuple[str, Type], ...] = (
+CRON_EXPRESSION_FIELDS: tuple[tuple[str, type], ...] = (
     ("minute", BaseField),
     ("hour", BaseField),
     ("day", DayOfMonthField),
@@ -57,7 +58,7 @@ def validate_cron_expression(expression: str) -> list[str]:
     if len(values) != 5:
         errors.append(f"Got {len(values)} fields. Expected 5.")
 
-    for (field_name, field_class), value in zip(CRON_EXPRESSION_FIELDS, values):
+    for (field_name, field_class), value in zip(CRON_EXPRESSION_FIELDS, values, strict=False):
         try:
             field_class(field_name, value)
         except ValueError:

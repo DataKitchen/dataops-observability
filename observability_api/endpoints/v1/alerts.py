@@ -21,7 +21,8 @@ class ProjectAlerts(BaseEntityView):
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:
-        """Get alerts by project ID
+        """
+        Get alerts by project ID
         ---
         tags: ["Project", "Alerts"]
         description: Retrieves alerts by project_id.
@@ -135,6 +136,7 @@ class ProjectAlerts(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         _ = self.get_entity_or_fail(Project, Project.id == project_id)
         rules = ListRules.from_params(request.args)

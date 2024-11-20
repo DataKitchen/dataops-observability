@@ -41,7 +41,7 @@ def walk(module: Optional[ModuleType] = None) -> dict[str, Model]:
     # Snag the package directory for the module
     pkg_dir = os.path.dirname(module_path)
 
-    for module_loader, name, ispkg in pkgutil.iter_modules([pkg_dir]):
+    for _, name, _ in pkgutil.iter_modules([pkg_dir]):
         pkg_name = f"{module.__name__}.{name}"
         try:
             obj = import_module(pkg_name)

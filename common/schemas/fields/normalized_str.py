@@ -1,6 +1,7 @@
 __all__ = ["NormalizedStr", "strip_upper_underscore"]
 
-from typing import Any, Callable, Mapping, Optional
+from typing import Any, Optional
+from collections.abc import Callable, Mapping
 
 from marshmallow.fields import Str
 from marshmallow.utils import ensure_text_type
@@ -29,7 +30,7 @@ class NormalizedStr(Str):
         return self.normalizer_func(str_field)
 
     def _deserialize(self, value: Any, attr: Optional[str], data: Optional[Mapping[str, Any]], **kwargs: object) -> Any:
-        if not isinstance(value, (str, bytes)):
+        if not isinstance(value, str | bytes):
             raise self.make_error("invalid")
         try:
             str_field = ensure_text_type(value)

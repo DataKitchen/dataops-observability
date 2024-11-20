@@ -19,7 +19,8 @@ class InstanceRuleCreate(BaseEntityView):
     PERMISSION_REQUIREMENTS: tuple[Permission, ...] = ()
 
     def post(self, journey_id: UUID) -> Response:
-        """InstanceRule CREATE
+        """
+        InstanceRule CREATE
         ---
         tags: ["InstanceRule"]
         operationId: PostInstanceRule
@@ -65,6 +66,7 @@ class InstanceRuleCreate(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         journey = self.get_entity_or_fail(Journey, Journey.id == journey_id)
         instance_data = self.parse_body(schema=InstanceRulePostSchema())
@@ -90,7 +92,8 @@ class InstanceRuleById(BaseEntityView):
 
     @no_body_allowed
     def delete(self, *, instance_rule_id: UUID) -> Response:
-        """Delete an InstanceRule by ID
+        """
+        Delete an InstanceRule by ID
         ---
         tags: ["InstanceRule"]
         operationId: DeleteInstanceRule
@@ -116,6 +119,7 @@ class InstanceRuleById(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         try:
             rule = self.get_entity_or_fail(InstanceRule, InstanceRule.id == instance_rule_id)

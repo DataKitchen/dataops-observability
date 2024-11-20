@@ -1,7 +1,7 @@
 __all__ = ["not_empty"]
 
 from functools import partial
-from typing import Callable
+from collections.abc import Callable
 
 from marshmallow import validate
 

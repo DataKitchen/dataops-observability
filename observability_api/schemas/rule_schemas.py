@@ -59,7 +59,7 @@ class RuleSchema(BaseEntitySchema):
         try:
             RuleDataSchema().load(data["rule_data"])
         except ValidationError as e:
-            raise ValidationError({"rule_data": str(e)})
+            raise ValidationError({"rule_data": str(e)}) from e
 
 
 class SendEmailRuleSchema(RuleSchema):
@@ -109,7 +109,7 @@ class RulePatchSchema(BaseEntitySchema):
             try:
                 RuleDataSchema().load(data["rule_data"])
             except ValidationError as e:
-                raise ValidationError({"rule_data": str(e)})
+                raise ValidationError({"rule_data": str(e)}) from e
 
 
 class RulePatchSendEmailSchema(RulePatchSchema):

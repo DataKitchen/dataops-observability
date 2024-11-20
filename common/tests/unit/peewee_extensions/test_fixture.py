@@ -23,7 +23,7 @@ def test_jinja_filter_bool():
 def test_jinja_filter_bytes():
     data = {
         "field_instance": BlobField(),
-        "value": "foo\u2014bar\u2013baz".encode("utf-8"),
+        "value": "foo\u2014bar\u2013baz".encode(),
     }
     assert fixtures.toml_value(data) == '"Zm9v4oCUYmFy4oCTYmF6"'
 
@@ -32,7 +32,7 @@ def test_jinja_filter_bytes():
 def test_jinja_filter_memoryview():
     data = {
         "field_instance": BlobField(),
-        "value": memoryview("foo\u2014bar\u2013baz".encode("utf-8")),
+        "value": memoryview("foo\u2014bar\u2013baz".encode()),
     }
     assert fixtures.toml_value(data) == '"Zm9v4oCUYmFy4oCTYmF6"'
 

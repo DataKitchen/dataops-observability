@@ -58,7 +58,7 @@ def mocked_kafka_message_msgpack(metric_log_event, topic_name, partition, offset
     message = MagicMock()
     message.error = MagicMock(return_value=None)
     message.value = MagicMock(return_value=msgpack_dumps(metric_log_event))
-    message.headers = MagicMock(return_value=[("Content-Type".encode("utf-8"), "application/msgpack".encode("utf-8"))])
+    message.headers = MagicMock(return_value=[(b"Content-Type", b"application/msgpack")])
     message.topic = MagicMock(return_value=topic_name)
     message.offset = MagicMock(return_value=offset)
     message.partition = MagicMock(return_value=partition)

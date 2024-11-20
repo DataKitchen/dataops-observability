@@ -47,7 +47,7 @@ class Component(BaseEntity, AuditEntityMixin, AuditUpdateTimeEntityMixin):
     @property
     def display_type(self) -> str:
         """Returns the display value for the component type."""
-        return " ".join((word.capitalize() for word in cast(str, self.type).split("_")))
+        return " ".join(word.capitalize() for word in cast(str, self.type).split("_"))
 
     @property
     def type_instance(self) -> BaseEntity:

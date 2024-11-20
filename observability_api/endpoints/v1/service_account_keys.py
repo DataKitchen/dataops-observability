@@ -29,7 +29,8 @@ class ServiceAccountKeys(BaseEntityView):
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:
-        """Service Account Key LIST
+        """
+        Service Account Key LIST
         ---
         tags: ["ServiceAccountKey"]
         description: Lists service account keys in the project.
@@ -101,7 +102,8 @@ class ServiceAccountKeys(BaseEntityView):
         return make_response({"entities": sa_keys, "total": page.total})
 
     def post(self, project_id: UUID) -> Response:
-        """Service Account Key CREATE
+        """
+        Service Account Key CREATE
         ---
         tags: ["ServiceAccountKey"]
         operationId: PostServiceAccountKey
@@ -153,8 +155,10 @@ class ServiceAccountKeys(BaseEntityView):
                 description=req.get("description"),
                 expiration_days=req["expires_after_days"],
             )
-        except IntegrityError:
-            raise Conflict("Service Account Key with name `{req['name']}` already exists in project `{project.name}`")
+        except IntegrityError as ie:
+            raise Conflict(
+                "Service Account Key with name `{req['name']}` already exists in project `{project.name}`"
+            ) from ie
 
         res = ServiceAccountKeyTokenSchema().dump(sa_key)
         return make_response(res, HTTPStatus.CREATED)
@@ -165,7 +169,8 @@ class ServiceAccountKeyById(BaseEntityView):
 
     @no_body_allowed
     def delete(self, key_id: UUID) -> Response:
-        """Delete a Service Account Key by ID
+        """
+        Delete a Service Account Key by ID
         ---
         tags: ["ServiceAccountKey"]
         operationId: DeleteServiceAccountKeyById

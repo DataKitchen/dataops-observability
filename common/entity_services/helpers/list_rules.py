@@ -4,7 +4,8 @@ __all__ = ["ListRules", "Page", "SortOrder", "DEFAULT_PAGE", "DEFAULT_COUNT", "L
 from dataclasses import dataclass
 from enum import Enum as std_Enum
 from enum import auto
-from typing import Generator, Generic, Optional, TypeVar
+from typing import Generic, Optional, TypeVar
+from collections.abc import Generator
 
 from marshmallow import EXCLUDE, Schema
 from marshmallow.fields import Enum, Int

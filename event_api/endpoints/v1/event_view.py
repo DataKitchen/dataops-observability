@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime, timezone
 from http import HTTPStatus
-from typing import Optional, Type
+from typing import Optional
 
 from flask import Response, current_app, g, make_response, request
 from marshmallow import ValidationError
@@ -31,7 +31,7 @@ class EventView(BaseView):
     """
 
     PERMISSION_REQUIREMENTS = (PERM_PROJECT,)
-    event_type: Type[Event]
+    event_type: type[Event]
     """The class (not instance) that is used to deserialize the incoming request body"""
 
     def make_error(self, msg: str, e: Exception, error_code: Optional[int] = None) -> Response:
@@ -57,21 +57,23 @@ class EventView(BaseView):
         try:
             source = EventSources(request.headers.get("EVENT-SOURCE", EventSources.API.name).upper())
             event.source = source.value
-        except ValueError:
-            raise BadRequest(f"Invalid EVENT-SOURCE. Valid EVENT-SOURCE: {', '.join(e.value for e in EventSources)}.")
+        except ValueError as ve:
+            raise BadRequest(
+                f"Invalid EVENT-SOURCE. Valid EVENT-SOURCE: {', '.join(e.value for e in EventSources)}."
+            ) from ve
 
         # g.project should be set by the ServiceAccountAuth extension or other authentication methods.
         event.project_id = g.project.id
         try:
             with KafkaProducer({}) as producer:
                 producer.produce(TOPIC_UNIDENTIFIED_EVENTS, event)
-        except MessageTooLargeError:
+        except MessageTooLargeError as msg_err:
             LOG.warning(
                 "Attempt to send a large '%s' event",
                 request.path,
                 extra={"request_size": request.content_length, "message_size": len(event.as_bytes())},
             )
-            raise RequestEntityTooLarge("Request Entity Too Large")
+            raise RequestEntityTooLarge("Request Entity Too Large") from msg_err
         except (MessageError, ProducerError) as e:
             LOG.exception("Error producing '%s' event", request.path)
             return self.make_error("An error has occurred; event could not be processed", e)

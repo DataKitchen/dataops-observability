@@ -1,7 +1,8 @@
 import logging
 from collections.abc import Mapping
 from datetime import datetime
-from typing import Any, Callable, Iterator, Optional, cast
+from typing import Any, Optional, cast
+from collections.abc import Callable, Iterator
 from uuid import UUID
 
 from peewee import DoesNotExist

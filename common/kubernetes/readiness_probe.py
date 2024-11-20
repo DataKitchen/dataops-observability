@@ -14,7 +14,9 @@ import tempfile
 import time
 from argparse import ArgumentParser, Namespace
 from contextlib import contextmanager
-from typing import Callable, Generator, NoReturn
+from typing import NoReturn
+from collections.abc import Generator
+from collections.abc import Callable
 
 LOG = logging.getLogger(__name__)
 

@@ -5,7 +5,6 @@ from common.predicate_engine.query import ALL, ANY, R
 
 def assertRuleEqual(a, b, default_op="exact"):
     """A custom assertion that can compare the value of two Rule (R) object intances."""
-
     # False if they aren't Rule objects at all then fail
     if not isinstance(a, R) or not isinstance(b, R):
         raise AssertionError("Cannot compare non-R objects.")
@@ -28,7 +27,7 @@ def assertRuleEqual(a, b, default_op="exact"):
             if "__" not in value[0]:
                 # Add the default query operand if it was omitted
                 return str((f"{value[0]}__{default_op}", value[1]))
-            elif isinstance(value[1], (ANY, ALL)):
+            elif isinstance(value[1], ANY | ALL):
                 return f"{str(value[0])}, {str(value[1])}"
             else:
                 return str(value)

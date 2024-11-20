@@ -1,7 +1,8 @@
 __all__ = ["WebhookAction"]
 
 import logging
-from typing import Any, Optional, Union, Mapping
+from typing import Any, Optional, Union
+from collections.abc import Mapping
 from uuid import UUID
 
 from requests_extensions import get_session

@@ -23,7 +23,8 @@ class Components(BaseEntityView):
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:
-        """Component LIST by project
+        """
+        Component LIST by project
         ---
         tags: ["Component"]
         description: Lists all components for the project using the specified project ID.
@@ -108,6 +109,7 @@ class Components(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         page: Page = ProjectService.get_components_with_rules(
             self.get_entity_or_fail(Project, Project.id == project_id).id,
@@ -123,7 +125,8 @@ class ComponentById(BaseEntityView):
 
     @no_body_allowed
     def get(self, component_id: UUID) -> Response:
-        """Get component by ID
+        """
+        Get component by ID
         ---
         tags: ["Component"]
         operationId: GetComponentById
@@ -157,13 +160,15 @@ class ComponentById(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         component = self.get_entity_or_fail(Component, Component.id == component_id)
         return make_response(ComponentSchema().dump(component))
 
     @no_body_allowed
     def delete(self, component_id: UUID) -> Response:
-        """Delete a Component by ID
+        """
+        Delete a Component by ID
         ---
         tags: ["Component"]
         operationId: DeleteComponentById
@@ -189,6 +194,7 @@ class ComponentById(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         try:
             self.get_entity_or_fail(Component, Component.id == component_id).delete_instance()
@@ -202,7 +208,8 @@ class JourneyComponents(BaseEntityView):
 
     @no_body_allowed
     def get(self, journey_id: UUID) -> Response:
-        """Component LIST by journey
+        """
+        Component LIST by journey
         ---
         tags: ["Component"]
         description: Lists all components for the journey using the specified journey ID.
@@ -287,6 +294,7 @@ class JourneyComponents(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         journey = self.get_entity_or_fail(Journey, Journey.id == journey_id)
         page: Page = JourneyService.get_components_with_rules(

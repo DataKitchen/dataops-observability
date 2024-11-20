@@ -12,8 +12,8 @@ def uuid_type(arg: str) -> UUID:
     """Argument type converter for UUID values."""
     try:
         uuid_arg = UUID(arg)
-    except Exception:
-        raise ArgumentTypeError(f"Invalid UUID value: `{arg}`")
+    except Exception as e:
+        raise ArgumentTypeError(f"Invalid UUID value: `{arg}`") from e
     else:
         return uuid_arg
 
@@ -29,8 +29,8 @@ def slice_type(arg: str) -> slice:
 
     try:
         parts = [_int_or_none(x) for x in arg.split(":")]
-    except (TypeError, ValueError):
-        raise ArgumentTypeError(f"Invalid SLICE value: `{arg}`")
+    except (TypeError, ValueError) as e:
+        raise ArgumentTypeError(f"Invalid SLICE value: `{arg}`") from e
 
     if len(parts) > 3 or len(parts) < 2:
         raise ArgumentTypeError(f"Invalid SLICE value: `{arg}`")

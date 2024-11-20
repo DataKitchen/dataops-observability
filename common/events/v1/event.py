@@ -5,7 +5,7 @@ __all__ = ["Event", "EventInterface", "EVENT_ATTRIBUTES"]
 import logging
 from dataclasses import InitVar, dataclass, field
 from datetime import datetime, timezone
-from typing import Optional, Type
+from typing import Optional
 from uuid import UUID, uuid4
 
 from common.decorators import cached_property
@@ -40,7 +40,7 @@ LOG = logging.getLogger(__name__)
 class EventComponentDetails:
     component_type: ComponentType
     prefix: InitVar[str]
-    component_model: Type[Component]
+    component_model: type[Component]
     component_id: str = field(init=False)
     component_key: str = field(init=False)
     component_name: str = field(init=False)
@@ -119,7 +119,6 @@ class Event(EventInterface):
         its task_id, run_task_id, and other such information. It's place has not been identified. This
         format allows the run manager to handle the incoming unidentified events the same way, as it builds them.
         """
-
         if cls.__api_schema__ is EventApiSchema:
             raise AttributeError("Subclasses of Event must define its own '__api_schema__'")
 
@@ -205,7 +204,7 @@ class Event(EventInterface):
                 .where(Run.id == self.run_id)
             )
             prefetch_queries = [
-                Instance.select().where(Instance.id.in_((iq.select(Instance.id) | iq2))),
+                Instance.select().where(Instance.id.in_(iq.select(Instance.id) | iq2)),
                 InstancesInstanceSets.select().join(InstanceSet).join(Run).where(Run.id == self.run_id),
                 InstanceRule,
             ]
@@ -248,7 +247,7 @@ class Event(EventInterface):
         return self.component_key_details.component_type
 
     @property
-    def component_model(self) -> Type[Component]:
+    def component_model(self) -> type[Component]:
         return self.component_key_details.component_model
 
     @cached_property

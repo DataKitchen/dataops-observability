@@ -31,5 +31,5 @@ class ServiceAccountAuth(BaseAuthPlugin):
         try:
             g.project = Project.get_by_id(key_data.project_id)
             g.allowed_services = key_data.allowed_services
-        except DoesNotExist:
-            raise Unauthorized("Invalid service account key")
+        except DoesNotExist as dne:
+            raise Unauthorized("Invalid service account key") from dne
