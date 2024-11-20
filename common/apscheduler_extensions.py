@@ -58,7 +58,7 @@ def validate_cron_expression(expression: str) -> list[str]:
     if len(values) != 5:
         errors.append(f"Got {len(values)} fields. Expected 5.")
 
-    for (field_name, field_class), value in zip(CRON_EXPRESSION_FIELDS, values, strict=True):
+    for (field_name, field_class), value in zip(CRON_EXPRESSION_FIELDS, values, strict=False):
         try:
             field_class(field_name, value)
         except ValueError:
