@@ -1,13 +1,12 @@
 __all__ = ["join_until"]
 
-from typing import Type
 
 from peewee import ModelSelect
 
 from common import entities as e
 from common.entities import BaseEntity
 
-_JOIN_DICT: dict[Type[BaseEntity], Type[BaseEntity]] = {
+_JOIN_DICT: dict[type[BaseEntity], type[BaseEntity]] = {
     e.Rule: e.Journey,
     e.Component: e.Project,
     e.Dataset: e.Project,
@@ -28,13 +27,13 @@ _JOIN_DICT: dict[Type[BaseEntity], Type[BaseEntity]] = {
 }
 
 
-def join_until(query: ModelSelect, join_root: Type[BaseEntity]) -> ModelSelect:
+def join_until(query: ModelSelect, join_root: type[BaseEntity]) -> ModelSelect:
     """Returns a new query with chained joins added until the `join_root` entity is reached."""
     join_leaf = query.model
     while join_leaf != join_root:
         try:
             join_leaf = _JOIN_DICT[join_leaf]
-        except KeyError:
-            raise ValueError(f"No known path to join '{join_leaf.__name__}' to '{join_root.__name__}'.")
+        except KeyError as ke:
+            raise ValueError(f"No known path to join '{join_leaf.__name__}' to '{join_root.__name__}'.") from ke
         query = query.join(join_leaf)
     return query

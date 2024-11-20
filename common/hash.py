@@ -2,8 +2,8 @@ from collections.abc import Iterable, Mapping
 from decimal import Decimal
 from hashlib import blake2b
 from typing import Any
-from typing import Iterable as IterableType
-from typing import Mapping as MappingType
+from collections.abc import Iterable as IterableType
+from collections.abc import Mapping as MappingType
 from typing import Union
 
 SALT = b"e1e10042"
@@ -41,13 +41,13 @@ def calculate_hash(obj: Any) -> bytes:
     """Generate a hash value from an object."""
     if isinstance(obj, str):
         return obj.encode("utf-8")
-    elif isinstance(obj, (int, float, complex, Decimal)):
+    elif isinstance(obj, int | float | complex | Decimal):
         return hash_number(obj)
     elif isinstance(obj, Mapping):
         return hash_mapping(obj)
     elif isinstance(obj, Iterable):
         return hash_iterable(obj)
-    elif isinstance(obj, (bytes, memoryview)):
+    elif isinstance(obj, bytes | memoryview):
         hash_func = blake2b(salt=SALT, digest_size=32)
         hash_func.update(obj)
         return hash_func.digest()
@@ -71,7 +71,7 @@ def generate_key(*args: Any) -> str:
     hash_func = blake2b(salt=SALT, digest_size=32)
     _update_hash = hash_func.update
     for obj in args:
-        if isinstance(obj, (bytes, memoryview)):
+        if isinstance(obj, bytes | memoryview):
             _update_hash(obj)
         else:
             _update_hash(calculate_hash(obj))

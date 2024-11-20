@@ -7,7 +7,7 @@ arguments and then yields. It will be sent the parsing result instance for proce
 """
 
 import argparse
-from typing import Callable
+from collections.abc import Callable
 
 DEFAULT_ARG_PARSER: argparse.ArgumentParser = argparse.ArgumentParser()
 """Default ArgumentParser instance."""

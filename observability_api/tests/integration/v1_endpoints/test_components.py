@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from typing import Type
 from uuid import UUID, uuid4
 
 import pytest
@@ -432,7 +431,7 @@ def test_post_subcomponent_project_not_found(route, subcomponent, client, projec
 
 @pytest.mark.integration
 @subcomponent_test_params
-def test_post_subcomponent_duplicate_key(route, subcomponent: Type[BaseEntity], client, project, g_user):
+def test_post_subcomponent_duplicate_key(route, subcomponent: type[BaseEntity], client, project, g_user):
     response = client.post(
         f"/observability/v1/projects/{project.id}/{route}",
         headers={"Content-Type": "application/json"},
@@ -502,7 +501,7 @@ def test_post_subcomponent_invalid_tool(client, project, g_user):
 
 @pytest.mark.integration
 @subcomponent_test_params
-def test_get_subcomponent_by_id(route, subcomponent: Type[BaseEntity], client, g_user):
+def test_get_subcomponent_by_id(route, subcomponent: type[BaseEntity], client, g_user):
     response = client.get(f"/observability/v1/{route}/{subcomponent.id}")
     assert response.status_code == HTTPStatus.OK, response.json
     data = response.json
@@ -513,21 +512,21 @@ def test_get_subcomponent_by_id(route, subcomponent: Type[BaseEntity], client, g
 
 @pytest.mark.integration
 @subcomponent_test_params
-def test_get_subcomponent_by_id_forbidden(route, subcomponent: Type[BaseEntity], client, g_user_2):
+def test_get_subcomponent_by_id_forbidden(route, subcomponent: type[BaseEntity], client, g_user_2):
     response = client.get(f"/observability/v1/{route}/{subcomponent.id}")
     assert response.status_code == HTTPStatus.FORBIDDEN, response.json
 
 
 @pytest.mark.integration
 @subcomponent_test_params
-def test_get_subcomponent_by_id_admin(route, subcomponent: Type[BaseEntity], client, g_user_2_admin):
+def test_get_subcomponent_by_id_admin(route, subcomponent: type[BaseEntity], client, g_user_2_admin):
     response = client.get(f"/observability/v1/{route}/{subcomponent.id}")
     assert response.status_code == HTTPStatus.OK, response.json
 
 
 @pytest.mark.integration
 @subcomponent_test_params
-def test_patch_subcomponent_ok(route, subcomponent: Type[BaseEntity], client, g_user):
+def test_patch_subcomponent_ok(route, subcomponent: type[BaseEntity], client, g_user):
     new_data = {
         "key": "this is a new key",
         "name": "some new name",
@@ -551,7 +550,7 @@ def test_patch_subcomponent_ok(route, subcomponent: Type[BaseEntity], client, g_
 
 @pytest.mark.integration
 @subcomponent_test_params
-def test_patch_subcomponent_clear_fields(route, subcomponent: Type[BaseEntity], client, g_user):
+def test_patch_subcomponent_clear_fields(route, subcomponent: type[BaseEntity], client, g_user):
     new_data = {
         "name": None,
         "tool": None,
@@ -583,7 +582,7 @@ def test_patch_subcomponent_not_found(route, subcomponent, client, pipeline, g_u
 
 @pytest.mark.integration
 @subcomponent_test_params
-def test_patch_subcomponent_forbidden(route, subcomponent: Type[BaseEntity], client, pipeline, g_user_2):
+def test_patch_subcomponent_forbidden(route, subcomponent: type[BaseEntity], client, pipeline, g_user_2):
     response = client.patch(
         f"/observability/v1/{route}/{subcomponent.id}",
         headers={"Content-Type": "application/json"},
@@ -594,7 +593,7 @@ def test_patch_subcomponent_forbidden(route, subcomponent: Type[BaseEntity], cli
 
 @pytest.mark.integration
 @subcomponent_test_params
-def test_patch_subcomponent_admin(route, subcomponent: Type[BaseEntity], client, pipeline, g_user_2_admin):
+def test_patch_subcomponent_admin(route, subcomponent: type[BaseEntity], client, pipeline, g_user_2_admin):
     response = client.patch(
         f"/observability/v1/{route}/{subcomponent.id}",
         headers={"Content-Type": "application/json"},
@@ -605,7 +604,7 @@ def test_patch_subcomponent_admin(route, subcomponent: Type[BaseEntity], client,
 
 @pytest.mark.integration
 @subcomponent_test_params
-def test_patch_subcomponent_invalid_field(route, subcomponent: Type[BaseEntity], client, pipeline, g_user):
+def test_patch_subcomponent_invalid_field(route, subcomponent: type[BaseEntity], client, pipeline, g_user):
     response = client.patch(
         f"/observability/v1/{route}/{subcomponent.id}",
         headers={"Content-Type": "application/json"},
@@ -616,7 +615,7 @@ def test_patch_subcomponent_invalid_field(route, subcomponent: Type[BaseEntity],
 
 @pytest.mark.integration
 @subcomponent_test_params
-def test_patch_subcomponent_duplicate_key(route, subcomponent: Type[BaseEntity], client, project, g_user):
+def test_patch_subcomponent_duplicate_key(route, subcomponent: type[BaseEntity], client, project, g_user):
     component2 = Component.create(key="Foo2", project=project, type=subcomponent.type)
     response = client.patch(
         f"/observability/v1/{route}/{component2.id}",

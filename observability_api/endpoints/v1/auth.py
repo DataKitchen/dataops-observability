@@ -21,7 +21,8 @@ class Logout(BaseView):
 
     @no_body_allowed
     def get(self) -> Response:
-        """Logout endpoint
+        """
+        Logout endpoint
         ---
         tags: ["Auth"]
         description: Revokes the access token provided by the SSO Authority when enabled. This endpoint is
@@ -77,7 +78,6 @@ class BasicLogin(BaseView):
               application/json:
                 schema: HTTPErrorSchema
         """
-
         auth = request.authorization
         if auth is None or auth.type != "basic":
             LOG.warning(str(auth))
@@ -90,9 +90,9 @@ class BasicLogin(BaseView):
 
         try:
             user = User.select().where(User.username == auth.username).get()
-        except User.DoesNotExist:
+        except User.DoesNotExist as user_dne:
             LOG.warning("No user found with '%s' username", auth.username)
-            raise Unauthorized("Invalid username or password.")
+            raise Unauthorized("Invalid username or password.") from user_dne
         encoded_pw = base64.b64encode(hash_value(value=cast(str, auth.password), salt=user.salt)).decode()
         if encoded_pw != user.password:
             LOG.warning("The provided password did not match for user '%s'", auth.username)

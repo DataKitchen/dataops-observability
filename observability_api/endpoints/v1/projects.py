@@ -23,7 +23,8 @@ class Projects(BaseEntityView):
 
     @no_body_allowed
     def get(self, organization_id: UUID) -> Response:
-        """Project LIST
+        """
+        Project LIST
         ---
         tags: ["Project"]
         description: Lists all projects in an organization using the specified organization ID.
@@ -106,7 +107,8 @@ class ProjectById(BaseEntityView):
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:
-        """Get Project by ID
+        """
+        Get Project by ID
         ---
         tags: ["Project"]
         operationId: GetProjectById
@@ -140,6 +142,7 @@ class ProjectById(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         project = self.get_entity_or_fail(Project, Project.id == project_id)
         return make_response(ProjectSchema().dump(project))
@@ -150,7 +153,8 @@ class ProjectEvents(BaseEntityView):
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:
-        """Get events by Project ID
+        """
+        Get events by Project ID
         ---
         tags: ["Project", "Events"]
         description: Retrieves events by project_id.
@@ -288,7 +292,6 @@ class ProjectEvents(BaseEntityView):
               application/json:
                 schema: HTTPErrorSchema
         """
-
         self.get_entity_or_fail(Project, Project.id == project_id)
         event_filters = ProjectEventFilters.from_params(request.args, project_ids=[project_id])
         page: Page[EventEntity] = EventService.get_events_with_rules(

@@ -10,7 +10,7 @@ from unicodedata import category, normalize
 from .settings import HASH_ITERATIONS
 
 LOG = logging.getLogger(__name__)
-KEY_MARKER = "|".encode("utf-8")
+KEY_MARKER = b"|"
 """Bytes reserved to divide key data from other data."""
 
 

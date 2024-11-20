@@ -2,7 +2,8 @@ __all__ = ["InstanceHandler"]
 import logging
 from collections import defaultdict
 from itertools import chain
-from typing import Any, Callable, Mapping, Optional, cast
+from typing import Any, Optional, cast
+from collections.abc import Callable, Mapping
 from uuid import UUID
 
 from common.constants.peewee import BATCH_SIZE
@@ -127,11 +128,9 @@ class InstanceHandler(EventHandlerBase):
                 ended_instances = list(
                     Instance.select()
                     .where(
-                        (
-                            Instance.journey.in_([rule.journey_id for rule in end_rules])
-                            & Instance.id.in_(instance_ids)
-                            & Instance.end_time.is_null()
-                        )
+                        Instance.journey.in_([rule.journey_id for rule in end_rules])
+                        & Instance.id.in_(instance_ids)
+                        & Instance.end_time.is_null()
                     )
                     .execute()
                 )

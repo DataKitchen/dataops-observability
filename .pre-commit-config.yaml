@@ -5,29 +5,29 @@ repos:
     rev: v0.4.3
     hooks:
       - id: ruff
-        args: [ --fix, --exit-non-zero-on-fix, --show-fixes ]
+        args: [format, --diff]
       - id: ruff-format
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
-    - id: end-of-file-fixer
-      exclude_types: ["json"]
-    - id: trailing-whitespace
-      exclude_types: ["json"]
+      - id: end-of-file-fixer
+        exclude_types: ["json"]
+      - id: trailing-whitespace
+        exclude_types: ["json"]
 
   - repo: local
     hooks:
-    - id: check-tests-are-marked
-      alias: check-tests-are-marked
-      name: check-tests-are-marked
-      entry: scripts/check-tests-are-marked.py
-      language: python
-      types: ["python"]
-      files: "tests"
-      exclude: "/conftest.py$"
-    - id: check-docker-file-extension
-      alias: docker-filename
-      name: check-docker-file-extension
-      entry: scripts/check-docker-extensions.py
-      language: python
+      - id: check-tests-are-marked
+        alias: check-tests-are-marked
+        name: check-tests-are-marked
+        entry: scripts/check-tests-are-marked.py
+        language: python
+        types: ["python"]
+        files: "tests"
+        exclude: "/conftest.py$"
+      - id: check-docker-file-extension
+        alias: docker-filename
+        name: check-docker-file-extension
+        entry: scripts/check-docker-extensions.py
+        language: python

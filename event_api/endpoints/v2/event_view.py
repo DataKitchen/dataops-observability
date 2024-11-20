@@ -1,6 +1,5 @@
 import logging
 from http import HTTPStatus
-from typing import Type
 
 from flask import Response, g, make_response
 from marshmallow import Schema, ValidationError
@@ -16,13 +15,13 @@ LOG = logging.getLogger(__name__)
 class BaseEventView(BaseView):
     PERMISSION_REQUIREMENTS = (PERM_PROJECT,)
     payload_schema: Schema = NotImplemented
-    event_type: Type[EventV2]
+    event_type: type[EventV2]
 
     def post(self) -> Response:
         try:
             event_payload = self.parse_body(schema=self.payload_schema)
-        except ValidationError:
-            raise BadRequest()
+        except ValidationError as ve:
+            raise BadRequest() from ve
 
         event = self.event_type(
             event_payload=event_payload,
@@ -34,6 +33,6 @@ class BaseEventView(BaseView):
                 producer.produce(TOPIC_UNIDENTIFIED_EVENTS, event)
         except (MessageError, ProducerError) as e:
             LOG.exception(str(e))
-            raise InternalServerError()
+            raise InternalServerError() from e
 
         return make_response(EventResponseSchema().dump(event), HTTPStatus.ACCEPTED)

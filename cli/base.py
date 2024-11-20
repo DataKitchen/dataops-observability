@@ -4,7 +4,8 @@ import sys
 from argparse import ArgumentParser
 from logging.config import dictConfig
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any, Optional
+from collections.abc import Callable
 
 from log_color import ColorFormatter, ColorStripper
 

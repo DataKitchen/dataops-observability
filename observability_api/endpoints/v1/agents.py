@@ -21,7 +21,8 @@ class Agents(BaseEntityView):
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:
-        """Agents LIST
+        """
+        Agents LIST
         ---
         tags: ["Agent"]
         description: Lists all agents for the project using the specified project ID.
@@ -92,6 +93,7 @@ class Agents(BaseEntityView):
             content:
               application/json:
                 schema: HTTPErrorSchema
+
         """
         _ = self.get_entity_or_fail(Project, Project.id == project_id)
         page: Page = agent_service.get_agents_with_rules(str(project_id), ListRules.from_params(request.args))

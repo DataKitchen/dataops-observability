@@ -1,4 +1,4 @@
-from typing import Callable, Mapping
+from collections.abc import Callable, Mapping
 
 from pybars import Compiler
 

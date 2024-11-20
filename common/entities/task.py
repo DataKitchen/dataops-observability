@@ -29,7 +29,7 @@ class RunTaskStatus(IntEnum):
         try:
             enums = [RunTaskStatus[t] for t in (left, right)]
         except KeyError as e:
-            raise ValueError(f"{e} is not a valid RunTaskStatus")
+            raise ValueError(f"{e} is not a valid RunTaskStatus") from e
 
         return max(enums)
 

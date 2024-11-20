@@ -4,7 +4,6 @@ __all__ = ["JourneyDagEdge", "Journey"]
 
 from collections import defaultdict
 from graphlib import CycleError, TopologicalSorter
-from typing import DefaultDict
 
 from peewee import CharField, ForeignKeyField
 
@@ -21,21 +20,21 @@ class Journey(BaseEntity, AuditEntityMixin, AuditUpdateTimeEntityMixin):
     project = ForeignKeyField(Project, backref="journeys", on_delete="CASCADE", null=False, index=True)
 
     @staticmethod
-    def add_edge_to_graph(*, graph: DefaultDict[JourneyDagEdge, set[JourneyDagEdge]], edge: JourneyDagEdge) -> None:
+    def add_edge_to_graph(*, graph: defaultdict[JourneyDagEdge, set[JourneyDagEdge]], edge: JourneyDagEdge) -> None:
         if edge.right:
             graph[edge.right].add(edge)
         else:
             raise ValueError(f"Graph edge must have a right edge; left: {edge.left} - right: {edge.right}")
 
     @staticmethod
-    def validate_graph(graph: DefaultDict[JourneyDagEdge, set[JourneyDagEdge]]) -> None:
+    def validate_graph(graph: defaultdict[JourneyDagEdge, set[JourneyDagEdge]]) -> None:
         ts = TopologicalSorter({n: [o.left for o in m if o.left] for n, m in graph.items()})
         ts.prepare()  # Will raise a CycleError if there are cycles in the graph
 
     @property
-    def journey_dag(self) -> DefaultDict[Component, set[JourneyDagEdge]]:
+    def journey_dag(self) -> defaultdict[Component, set[JourneyDagEdge]]:
         """Return a graph of Components."""
-        graph: DefaultDict[Component, set[JourneyDagEdge]] = defaultdict(set)
+        graph: defaultdict[Component, set[JourneyDagEdge]] = defaultdict(set)
         for edge in self.dag_edges:
             self.add_edge_to_graph(graph=graph, edge=edge)
 

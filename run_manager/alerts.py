@@ -1,5 +1,6 @@
 import logging
-from typing import Iterable, Optional
+from typing import Optional
+from collections.abc import Iterable
 from uuid import UUID
 
 from peewee import chunked
