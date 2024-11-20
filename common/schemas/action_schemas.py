@@ -16,7 +16,7 @@ class SMTPConfigSchema(Schema):
 
 
 class EmailActionArgsSchema(Schema):
-    from_address = Str(validate=not_empty(max=255))
+    from_address = Str(required=False, validate=not_empty(max=255))
     template = Str(validate=not_empty(max=255))
     recipients = List(Email(), required=True, validate=Length(max=50))
     smtp_config = Nested(SMTPConfigSchema(), required=False)

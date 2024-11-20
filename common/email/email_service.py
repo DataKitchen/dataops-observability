@@ -17,12 +17,13 @@ class EmailService:
     @staticmethod
     def send_email(
         smtp_config: dict,
-        from_address: str,
+        from_address: str | None,
         recipients: list[str],
         template_name: str,
         template_context_vars: Mapping,
     ) -> dict:
         try:
+            from_address = from_address or settings.SMTP["from_address"]
             content, subject = HandlebarsEmailRenderer.render(template_name, template_context_vars)
             context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
             message = MIMEMultipart("alternative")

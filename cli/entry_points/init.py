@@ -168,7 +168,7 @@ class Initialize(DatabaseScriptBase):
                         description="This key is utilized by the product demo",
                     )
 
-                    action_args = {"from_address": "notify@example.com", "recipients": [], "template": "NotifyTemplate"}
+                    action_args = {"recipients": [], "template": "NotifyTemplate"}
                     action = Action.create(
                         name="Send Email", action_impl="SEND_EMAIL", company=company, action_args=action_args
                     )

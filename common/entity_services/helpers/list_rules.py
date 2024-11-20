@@ -9,8 +9,10 @@ from collections.abc import Generator
 
 from marshmallow import EXCLUDE, Schema
 from marshmallow.fields import Enum, Int
-from peewee import Field, Ordering, Select
+from peewee import JOIN, Field, Ordering, Select
 from werkzeug.datastructures import MultiDict
+
+from common.entities import BaseEntity
 
 DEFAULT_PAGE = 1
 DEFAULT_COUNT = 10
@@ -51,9 +53,24 @@ class Page(Generic[T]):
 
     @classmethod
     def get_paginated_results(cls, query: Select, order_by: Field, list_rules: ListRules) -> Page[T]:
+        model: BaseEntity = query.model
         ordering = list_rules.order_by_field(order_by)
-        paginated_query = query.order_by(ordering).paginate(list_rules.page, list_rules.count)
-        return cls(results=list(paginated_query), total=query.count())
+
+        paginated_subquery: Select = (
+            model.select(model.id)
+            .where(query._where)
+            .order_by(ordering)
+            .paginate(list_rules.page, list_rules.count)
+            .alias("results")
+        )
+
+        results_query = query.clone()
+        results_query._where = None
+        results_query = results_query.join(
+            paginated_subquery, join_type=JOIN.INNER, on=(model.id == paginated_subquery.c.id)
+        ).order_by(ordering)
+
+        return cls(results=list(results_query), total=paginated_subquery.count(clear_limit=True))
 
 
 @dataclass

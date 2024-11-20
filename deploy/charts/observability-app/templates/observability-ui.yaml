@@ -30,14 +30,20 @@ spec:
       serviceAccountName: {{ include "observability.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.observability_ui.podSecurityContext | nindent 8 }}
-      {{- if .Values.observability_ui.environmentJson }}
+      {{- if or .Values.observability_ui.environmentJson .Values.observability_ui.manifestJson }}
       volumes:
         - name: {{ include "observability.observability_ui.name" . }}-configmap-volume
           configMap:
             name: {{ include "observability.observability_ui.name" . }}-configmap
             items:
+            {{- if .Values.observability_ui.environmentJson }}
               - key: "environment.json"
                 path: "environment.json"
+            {{- end }}
+            {{- if .Values.observability_ui.manifestJson }}
+              - key: "module-federation.manifest.json"
+                path: "module-federation.manifest.json"
+            {{- end }}
       {{- end }}
       containers:
         - name: {{ include "observability.observability_ui.name" . }}
@@ -51,11 +57,29 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml .Values.observability_ui.resources | nindent 12 }}
-          {{- if .Values.observability_ui.environmentJson }}
+          env:
+            {{- if .Values.observability_api.hostname }}
+            - name: OBSERVABILITY_API_HOSTNAME
+              value: {{ tpl .Values.observability_api.hostname . | quote }}
+            {{- end }}
+            {{- if .Values.observability_ui.csp_extra }}
+            - name: OBSERVABILITY_CSP_EXTRA
+              value: {{ tpl .Values.observability_ui.csp_extra . | quote }}
+            {{- end }}
+          {{- if or .Values.observability_ui.environmentJson .Values.observability_ui.manifestJson }}
           volumeMounts:
-            - mountPath: /observability_ui/shell/environments
+            {{- if .Values.observability_ui.environmentJson }}
+            - mountPath: /observability_ui/shell/environments/environment.json
               name: {{ include "observability.observability_ui.name" . }}-configmap-volume
               readOnly: true
+              subPath: environment.json
+            {{- end }}
+            {{- if .Values.observability_ui.manifestJson }}
+            - mountPath: /observability_ui/shell/assets/module-federation.manifest.json
+              name: {{ include "observability.observability_ui.name" . }}-configmap-volume
+              readOnly: true
+              subPath: module-federation.manifest.json
+            {{- end }}
           {{- end }}
       {{- with .Values.observability_ui.nodeSelector }}
       nodeSelector:
@@ -91,7 +115,7 @@ spec:
       {{- end }}
   selector:
     {{- include "observability.observability_ui.selectorLabels" . | nindent 4 }}
-{{- if .Values.observability_ui.environmentJson }}
+{{- if or .Values.observability_ui.environmentJson .Values.observability_ui.manifestJson }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -101,6 +125,11 @@ metadata:
     {{- include "observability.labels" . | nindent 4 }}
     {{- include "observability.observability_ui.selectorLabels" . | nindent 4 }}
 data:
+  {{- if .Values.observability_ui.environmentJson }}
   environment.json: {{ .Values.observability_ui.environmentJson | toPrettyJson | quote }}
+  {{- end }}
+  {{- if .Values.observability_ui.manifestJson }}
+  module-federation.manifest.json: {{ .Values.observability_ui.manifestJson | toPrettyJson | quote }}
+  {{- end }}
 {{- end }}
 {{- end }}

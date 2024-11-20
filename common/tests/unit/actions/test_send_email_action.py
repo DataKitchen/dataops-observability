@@ -58,7 +58,7 @@ def test_send_email_constructor(action):
 
 
 @pytest.mark.unit
-@pytest.mark.parametrize("argument", ("template", "from_address", "recipients"))
+@pytest.mark.parametrize("argument", ("template", "recipients"))
 def test_send_email_constructor_missing_action_argument(argument, action):
     rule_action_args = {"template": "TestTemplateNested", "recipients": ["a@example.com"]}
     action.action_args = {"from_address": "test@domain.com", "recipients": ["success@example.com"]}
