@@ -52,8 +52,9 @@ export class ComponentsListComponent extends CoreComponent implements OnInit, Ha
 
   storageKey!: string;
   parentId: string;
-  pageSize: number = 10;
+  pageSize: number = 50;
   componentTypes = Object.values(ComponentType).sort((a, b) => a > b ? 1 : a < b ? -1 : 0);
+  ComponentType = ComponentType;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 

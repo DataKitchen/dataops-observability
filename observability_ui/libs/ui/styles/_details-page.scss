@@ -9,6 +9,15 @@ details-header {
   padding: variables.$space-sm variables.$space-lg 0 variables.$space-lg;
 
   nav {
+    min-width: calc(100vw - 64px);
     border-bottom: unset !important;
+
+    .mat-drawer-opened ~ mat-sidenav-content & {
+      min-width: calc(100vw - 264px);
+    }
+
+    .mat-tab-link {
+      min-width: 100px;
+    }
   }
 }

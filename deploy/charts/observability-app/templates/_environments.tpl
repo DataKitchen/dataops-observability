@@ -82,5 +82,22 @@ Environment
     secretKeyRef:
       name: {{ .Values.observability.services_secrets_name | quote }}
       key: SMTP_PASSWORD
+- name: SMTP_FROM_ADDRESS
+  valueFrom:
+    secretKeyRef:
+      name: {{ .Values.observability.services_secrets_name | quote }}
+      key: SMTP_FROM_ADDRESS
+      optional: true
+{{- else if .Values.observability.smtp -}}
+- name: SMTP_ENDPOINT
+  value: {{ .Values.observability.smtp.endpoint | quote }}
+- name: SMTP_PORT
+  value: {{ .Values.observability.smtp.port | quote }}
+- name: SMTP_USER
+  value: {{ .Values.observability.smtp.user | quote }}
+- name: SMTP_PASSWORD
+  value: {{ .Values.observability.smtp.password | quote }}
+- name: SMTP_FROM_ADDRESS
+  value: {{ .Values.observability.smtp.from_address | quote }}
 {{- end -}}
 {{- end -}}

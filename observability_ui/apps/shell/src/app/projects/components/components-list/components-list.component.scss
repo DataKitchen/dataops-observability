@@ -84,9 +84,13 @@
   font-style: italic;
 }
 
+.card__bottom {
+  @include mixins.flex-row($justify: space-between);
+  margin-top: 12px;
+}
+
 .card__chips__container {
   @include mixins.flex-row($justify: flex-start);
-  margin-top: 12px;
 
   .card__chip {
     font-size: 12px;
@@ -102,16 +106,10 @@
   }
 }
 
-.card__link {
-  @include mixins.flex-row;
-
-  color: #1976d2;
-  line-height: 32px;
-  padding: 0 8px;
-
-  mat-icon {
-    @include mixins.icon-size(18px);
-  }
+.card__links__container {
+  @include mixins.flex-row($justify: flex-end);
+  @include mixins.font-color(secondary);
+  gap: variables.$space-xxs;
 }
 
 :host ::ng-deep .search-components .mat-form-field-wrapper {

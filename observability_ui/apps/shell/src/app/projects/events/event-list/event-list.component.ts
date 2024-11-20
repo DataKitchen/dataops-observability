@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { EventSearchFields, EventType, EventTypes, ProjectStore } from '@observability-ui/core';
+import { beginningOfDay, endOfDay, EventSearchFields, EventType, EventTypes, ProjectStore, toTimezoneAwareISOString } from '@observability-ui/core';
 import { BindToQueryParams, CoreComponent, HasSearchForm, ParameterService, PersistOnLocalStorage, Prop, StorageService, TypedFormControl, TypedFormGroup } from '@datakitchen/ngx-toolkit';
 import { ComponentStore } from '../../components/components.store';
 import { BehaviorSubject, combineLatest, defer, map, merge, Observable, Subject, takeUntil, tap } from 'rxjs';
@@ -20,11 +20,15 @@ export class EventListComponent extends CoreComponent implements OnInit, HasSear
   search = new TypedFormGroup<EventSearchFields>({
     component_id: new TypedFormControl<string>(),
     event_type: new TypedFormControl<string>(),
+    date_range_start: new TypedFormControl<string>(),
+    date_range_end: new TypedFormControl<string>(),
   });
 
   search$: BehaviorSubject<EventSearchFields> = new BehaviorSubject<EventSearchFields>({
     component_id: '',
-    event_type: ''
+    event_type: '',
+    date_range_start: '',
+    date_range_end: '',
   });
 
   readonly events = EventTypes;
@@ -40,7 +44,7 @@ export class EventListComponent extends CoreComponent implements OnInit, HasSear
   componentsLoading = toSignal(this.componentStore.getLoadingFor('searchPage'));
 
   filtersApplied$ = this.search$.pipe(
-    map(({ component_id, event_type }) => !!component_id || !!event_type),
+    map(({ component_id, event_type, date_range_start, date_range_end }) => !!component_id || !!event_type || !!date_range_start || !!date_range_end),
   );
   antiFlickerLoading$ = new BehaviorSubject(true);
 
@@ -74,20 +78,29 @@ export class EventListComponent extends CoreComponent implements OnInit, HasSear
       this.tableChanged$,
     ]).pipe(
       takeUntil(this.destroyed$)
-    ).subscribe(([ { id }, { search: { event_type, component_id }, ...pagination } ]) => {
+    ).subscribe(([ { id }, { search: { event_type, component_id, date_range_start, date_range_end }, ...pagination } ]) => {
 
-      const eventTypes = event_type?.split(',').filter(e => e) ?? [];
-      const components = component_id?.split(',').filter(e => e) ?? [];
+      const filters: EventSearchFields = {
+        event_type: event_type?.split(',').filter(e => e) ?? [] as any,
+        component_id: component_id?.split(',').filter(e => e) ?? [] as any,
+      }
+
+      if (date_range_start) {
+        const startDate = beginningOfDay(new Date(date_range_start));
+        filters.date_range_start = toTimezoneAwareISOString(startDate);
+      }
+  
+      if (date_range_end) {
+        const endDate = endOfDay(new Date(date_range_end));
+        filters.date_range_end = toTimezoneAwareISOString(endDate);
+      }
 
       this.projectStore.dispatch('getEventsByPage', {
         parentId: id,
         count: pagination.pageSize,
         page: pagination.pageIndex,
         sort: 'desc',
-        filters: {
-          event_type: eventTypes as any,
-          component_id: components as any,
-        },
+        filters,
       });
 
       this.search$.pipe(

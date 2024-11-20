@@ -37,11 +37,12 @@ class EventService:
         filter_list: list[object] = [EventEntity.project << filters.project_ids]
 
         if filters.instance_ids or filters.journey_ids:
-            query = query.join(InstanceSet).join(InstancesInstanceSets).join(Instance).switch(EventEntity)
+            instance_set_subquery = InstanceSet.select(InstanceSet.id).join(InstancesInstanceSets).join(Instance)
             if filters.journey_ids:
-                filter_list.append(Instance.journey << filters.journey_ids)
+                instance_set_subquery = instance_set_subquery.where(Instance.journey << filters.journey_ids)
             if filters.instance_ids:
-                filter_list.append(Instance.id << filters.instance_ids)
+                instance_set_subquery = instance_set_subquery.where(Instance.id << filters.instance_ids)
+            query = query.where(EventEntity.instance_set.in_(instance_set_subquery))
         if filters.event_types:
             filter_list.append(EventEntity.type << filters.event_types)
         if filters.component_ids:
@@ -53,16 +54,12 @@ class EventService:
         if filters.task_ids:
             filter_list.append(EventEntity.task << filters.task_ids)
         if filters.date_range_start:
-            filter_list.append(
-                EventEntity.timestamp_coalesce() >= EventEntity.timestamp.db_value(filters.date_range_start)
-            )
+            filter_list.append(EventEntity.timestamp >= filters.date_range_start)
         if filters.date_range_end:
-            filter_list.append(
-                EventEntity.timestamp_coalesce() < EventEntity.timestamp.db_value(filters.date_range_end)
-            )
+            filter_list.append(EventEntity.timestamp < filters.date_range_end)
 
         query = query.where(*filter_list)
-        page = Page[EventEntity].get_paginated_results(query, EventEntity.timestamp_coalesce(), rules)
+        page = Page[EventEntity].get_paginated_results(query, EventEntity.timestamp, rules)
 
         # Using a single query to fetch the Instance and Journey data
         instance_set_ids = {e.instance_set_id for e in page.results}

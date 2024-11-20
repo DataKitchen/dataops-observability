@@ -10,7 +10,7 @@
 .dates-container {
   @include mixins.flex-row();
 
-  margin-top: variables.$space-sm;
+  margin-top: variables.$space-xs;
 }
 
 .duration {

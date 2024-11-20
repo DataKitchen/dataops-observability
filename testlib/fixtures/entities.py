@@ -621,6 +621,7 @@ def event_entity_2(test_db, dataset):
         version=EventVersion.V2,
         type=ApiEventType.DATASET_OPERATION,
         created_timestamp=datetime(2024, 1, 20, 9, 55, 0, tzinfo=timezone.utc),
+        timestamp=datetime(2024, 1, 20, 9, 55, 0, tzinfo=timezone.utc),
         project=dataset.project_id,
         component=dataset,
         v2_payload={},
