@@ -58,7 +58,7 @@ class ProjectService:
         query = TestOutcome.select(TestOutcome).where(TestOutcome.component.in_(project.components))
         if rules.search is not None:
             query = query.where(
-                ((TestOutcome.name ** f"%{rules.search}%") | (TestOutcome.description ** f"%{rules.search}%"))
+                (TestOutcome.name ** f"%{rules.search}%") | (TestOutcome.description ** f"%{rules.search}%")
             )
         if filters:
             if statuses := filters.statuses:
