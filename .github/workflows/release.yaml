@@ -2,10 +2,10 @@ name: Release New Version
 on:
   push:
     branches:
-      - master
+      - main
   workflow_dispatch:
     branches:
-      - master
+      - main
 jobs:
   publish:
     runs-on: ubuntu-latest

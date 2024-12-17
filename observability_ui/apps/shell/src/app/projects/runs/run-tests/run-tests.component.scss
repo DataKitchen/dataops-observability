@@ -191,6 +191,17 @@ table-wrapper::ng-deep {
     flex: 0 0 106px;
     justify-content: flex-end;
   }
+
+  .mat-header-cell,
+  .mat-cell {
+    .multiline-cell {
+      @include mixins.flex-column($align: flex-start);
+
+      span.caption {
+        @include mixins.font-style($style: caption, $color: disabled);
+      }
+    }
+  }
 }
 
 .description {
