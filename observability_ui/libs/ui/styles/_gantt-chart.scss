@@ -52,6 +52,10 @@ gantt-chart {
     font-weight: 700;
   }
 
+  &--status {
+    margin-bottom: variables.$space-xs;
+  }
+
   &--key,
   &--start,
   &--end,

@@ -145,9 +145,9 @@
                   <span class="gantt-bar-tooltip--line">{{ instance.errorAlertsCount }}
                     errors, {{ instance.warningAlertsCount }} warnings</span>
                   <span class="gantt-bar-tooltip--line gantt-bar-tooltip--runs">Total Runs: {{ instance.runsCount }}</span>
-                  <span class="gantt-bar-tooltip--line gantt-bar-tooltip--start">Start Time: {{ instance.start_time | date:'MMM d, hh:mm a' }}</span>
+                  <span class="gantt-bar-tooltip--line gantt-bar-tooltip--start">Start Time: {{ instance.start_time | date:'MMM d, h:mm a' }}</span>
                   <span *ngIf="!instance.active"
-                    class="gantt-bar-tooltip--line gantt-bar-tooltip--end">End Time: {{ instance.end_time | date:'MMM d, hh:mm a' }}</span>
+                    class="gantt-bar-tooltip--line gantt-bar-tooltip--end">End Time: {{ instance.end_time | date:'MMM d, h:mm a' }}</span>
                   <span class="gantt-bar-tooltip--line gantt-bar-tooltip--duration">Duration: {{ instance.start_time | duration:instance.end_time }}</span>
                 </ng-container>
 
@@ -155,12 +155,12 @@
 
                 <span *ngIf="instance.expected_start_time"
                   class="gantt-bar-tooltip--line gantt-bar-tooltip--start">
-                  Expected Start Time: {{ instance.start_time | date:'MMM d, hh:mm a' }}
+                  Expected Start Time: {{ instance.start_time | date:'MMM d, h:mm a' }}
                 </span>
 
                   <span *ngIf="instance.expected_end_time"
                     class="gantt-bar-tooltip--line gantt-bar-tooltip--end">
-                  Expected End Time: {{ instance.end_time | date:'MMM d, hh:mm a' }}
+                  Expected End Time: {{ instance.end_time | date:'MMM d, h:mm a' }}
                 </span>
 
                 </ng-container>
@@ -246,9 +246,9 @@
                         <span class="gantt-bar-tooltip--line gantt-bar-tooltip--runs">{{ directive.value.active ? 'Active' : 'Ended' }}</span>
                         <span class="gantt-bar-tooltip--line gantt-bar-tooltip--status">{{ directive.value.errorAlertsCount }}
                           errors, {{ directive.value.warningAlertsCount }} warnings</span>
-                        <span class="gantt-bar-tooltip--line gantt-bar-tooltip--start">Start Time: {{ directive.value.start_time | date:'MMM d, hh:mm a' }}</span>
+                        <span class="gantt-bar-tooltip--line gantt-bar-tooltip--start">Start Time: {{ directive.value.start_time | date:'MMM d, h:mm a' }}</span>
                         <span *ngIf="!directive.value.active"
-                          class="gantt-bar-tooltip--line gantt-bar-tooltip--end">End Time: {{ directive.value.end_time | date:'MMM d, hh:mm a' }}</span>
+                          class="gantt-bar-tooltip--line gantt-bar-tooltip--end">End Time: {{ directive.value.end_time | date:'MMM d, h:mm a' }}</span>
                         <span class="gantt-bar-tooltip--line gantt-bar-tooltip--duration">Duration: {{ directive.value.start_time | duration:directive.value.end_time }}</span>
                         <span class="gantt-bar-tooltip--line gantt-bar-tooltip--runs">Total Runs: {{ directive.value.runsCount }}</span>
                       </ng-container>
@@ -256,12 +256,12 @@
                       <ng-container *ngIf="directive.value.status === 'UPCOMING'">
                       <span *ngIf="directive.value.expected_start_time"
                         class="gantt-bar-tooltip--line gantt-bar-tooltip--start mt-2">
-                        Expected Start Time: {{ directive.value.start_time | date:'MMM d, hh:mm a' }}
+                        Expected Start Time: {{ directive.value.start_time | date:'MMM d, h:mm a' }}
                       </span>
 
                         <span *ngIf="directive.value.expected_end_time"
                           class="gantt-bar-tooltip--line gantt-bar-tooltip--end">
-                        Expected End Time: {{ directive.value.end_time | date:'MMM d, hh:mm a' }}
+                        Expected End Time: {{ directive.value.end_time | date:'MMM d, h:mm a' }}
                       </span>
 
                       </ng-container>
@@ -290,9 +290,9 @@
                           <span class="gantt-bar-tooltip--line gantt-bar-tooltip--status">{{ 'runStatus.' + run.status | translate }}</span>
                           <span class="gantt-bar-tooltip--line gantt-bar-tooltip--key">Key: {{ run.key ?? '-' }}</span>
                           <span *ngIf="run.hasTime"
-                            class="gantt-bar-tooltip--line gantt-bar-tooltip--start">Start Time: {{ run.start_time | date: 'MMM d, hh:mm a' }}</span>
+                            class="gantt-bar-tooltip--line gantt-bar-tooltip--start">Start Time: {{ run.start_time | date: 'MMM d, h:mm a' }}</span>
                           <span *ngIf="run.hasTime && run.status !== 'RUNNING'"
-                            class="gantt-bar-tooltip--line gantt-bar-tooltip--end">End Time: {{ run.end_time | date: 'MMM d, hh:mm a' }}</span>
+                            class="gantt-bar-tooltip--line gantt-bar-tooltip--end">End Time: {{ run.end_time | date: 'MMM d, h:mm a' }}</span>
                           <span *ngIf="run.hasTime"
                             class="gantt-bar-tooltip--line gantt-bar-tooltip--duration">Duration: {{ run.start_time | duration: (run.end_time ?? (now$ | async)) }}</span>
                         </div>

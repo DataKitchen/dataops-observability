@@ -60,16 +60,11 @@ export class RunTimelineComponent implements OnInit, OnDestroy {
     map(([ start, end ]) => {
       const timespan = end.getTime() - start.getTime();
       if (timespan <= this.minTimespanInMilliseconds) {
-        return 'hh:mm:ss a';
+        return 'MMM d, h:mm:ss a';
       }
-      return 'hh:mm a';
+      return 'MMM d, h:mm a';
     }),
-    startWith('hh:mm a'),
-  );
-  spansMultipleDays$ = combineLatest([ this.ganttStartDate$, this.ganttEndDate$ ]).pipe(
-    map(([ start, end ]) => {
-      return (end.getTime() - start.getTime()) > 24 * 60 * 60 * 1000;
-    }),
+    startWith('MMM d, h:mm a'),
   );
 
   private subscriptions: Subscription[] = [];

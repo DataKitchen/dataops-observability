@@ -12,8 +12,7 @@
       [start]="ganttStartDate$ | async"
       [end]="ganttEndDate$ | async"
       [nowBar]="(run$ | async)?.active"
-      [timeformat]="timeformat$ | async"
-      [showDays]="spansMultipleDays$ | async">
+      [timeformat]="timeformat$ | async">
 
       <ng-template ganttLabel
         let-taskGroup="group">

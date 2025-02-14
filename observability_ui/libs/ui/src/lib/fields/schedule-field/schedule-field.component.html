@@ -64,7 +64,7 @@
 
         <div class="schedule-field-overlay--form--main--summary">
           <span>Cron Expression: {{ cronExpression$ | async }}</span>
-          <span>Next Time: {{ nextTime$ | async | date: 'MMM d, YYYY hh:mm a' }}</span>
+          <span>Next Time: {{ nextTime$ | async | date: 'MMM d, YYYY h:mm a' }}</span>
         </div>
 
         <help-link href="https://docs.datakitchen.io/article/dataops-observability-help/cron-expressions-in-observability">cron expressions</help-link>
