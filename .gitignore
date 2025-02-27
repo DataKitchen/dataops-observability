@@ -169,3 +169,6 @@ observability_ui/node_modules/
 
 # Terraform
 .terraform*
+
+# Helm
+**/*.tgz

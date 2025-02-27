@@ -1,8 +1,8 @@
-{{- range .Values.cli_hook.enable }}
+{{- range $index, $job := .Values.cli_hook.enable }}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "cli-job"
+  name: cli-job-{{ default $index .name }}
   annotations:
     "helm.sh/hook": {{ join ", " .phases }}
     "helm.sh/hook-weight": {{ default 0 .weight | quote }}
@@ -10,13 +10,14 @@ metadata:
 spec:
   template:
     metadata:
-      name: "cli-job"
+      name: cli-job-{{ default $index .name }}
     spec:
       restartPolicy: Never
       {{- with $.Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      serviceAccountName: {{ include "observability.serviceAccountName" $ }}
       containers:
         - name: cli-hook
           image: {{ include "observability.cli_hook.image" $ | quote }}
@@ -25,9 +26,21 @@ spec:
             {{- include "observability.environment.base" $ | nindent 12 }}
             {{- include "observability.environment.database" $ | nindent 12 }}
             {{- include "observability.environment.pythonpath" $ | nindent 12 }}
+          {{- with $.Values.extraVolumeMounts }}
+          volumeMounts:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
           command:
             {{- range .command }}
             - {{ . | quote -}}
             {{- end }}
+          args:
+            {{- range .args }}
+            - {{ . | quote -}}
+            {{- end }}
+      {{- with $.Values.extraVolumes }}
+      volumes:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
 ---
 {{- end }}
