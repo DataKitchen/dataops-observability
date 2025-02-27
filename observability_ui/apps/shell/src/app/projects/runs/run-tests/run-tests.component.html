@@ -114,6 +114,50 @@
       <div class="description">{{test.description || '-'}}</div>
     </ng-container>
   </ng-container>
+  <ng-container matColumnDef="table"
+    sortDisabled
+    dragDisabled>
+    <ng-container *matHeaderCellDef>
+      <div class="multiline-cell">
+        <span>{{ 'table' | translate }}</span>
+        <span class="caption">{{'columns' | translate}}</span>
+      </div>
+    </ng-container>
+    <ng-container *matCellDef="let test">
+      <ng-container *ngIf="test.integrations | getIntegration: 'TESTGEN' as testgen; else emptyCell">
+        <div *ngIf="testgen?.table || testgen?.columns; else emptyCell"
+          class="multiline-cell">
+          <span>{{ testgen?.table ?? '' }}</span>
+          <span class="caption">{{ testgen?.columns ?? '-' }}</span>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+  <ng-container matColumnDef="dimension"
+    sortDisabled
+    dragDisabled>
+    <ng-container *matHeaderCellDef>
+      <div class="multiline-cell">
+        <span>Dimension</span>
+        <span class="caption">Test Type</span>
+      </div>
+    </ng-container>
+    <ng-container *matCellDef="let test">
+      <div *ngIf="test.dimensions?.length > 0 || test.type; else emptyCell"
+        class="multiline-cell"
+        style="max-width: 100%;">
+        <div truncate
+          [dkTooltip]="test.dimensions.join(', ')">
+          <ng-container *ngIf="test.dimensions?.length > 0; else emptyCell">
+            <ng-container *ngFor="let dimension of test.dimensions; let last = last">
+              <span>{{ 'testgen.testDimension.' + dimension | translate: {}:dimension }}{{ !last ? ', ' : '' }}</span>
+            </ng-container>
+          </ng-container>
+        </div>
+        <span class="caption">{{ test.type ? ('testgen.testType.' + test.type | translate: {}:test.type) : '-' }}</span>
+      </div>
+    </ng-container>
+  </ng-container>
   <ng-container matColumnDef="start_time"
     sortDisabled
     dragDisabled>
@@ -121,7 +165,7 @@
       <span headerLabel="start_time">Start Time</span>
     </ng-container>
     <ng-container *matCellDef="let test">
-      <div dkTooltip="{{test.start_time | date: 'medium'}}">{{test.start_time | date: 'hh:mm:ss a'}}</div>
+      <div dkTooltip="{{test.start_time | date: 'medium'}}">{{test.start_time | date: 'h:mm:ss a'}}</div>
     </ng-container>
   </ng-container>
   <ng-container matColumnDef="end_time"
@@ -131,7 +175,7 @@
       <span headerLabel="end_time">End Time</span>
     </ng-container>
     <ng-container *matCellDef="let test">
-      <div dkTooltip="{{test.end_time | date: 'medium'}}">{{test.end_time | date: 'hh:mm:ss a'}}</div>
+      <div dkTooltip="{{test.end_time | date: 'medium'}}">{{test.end_time | date: 'h:mm:ss a'}}</div>
     </ng-container>
   </ng-container>
   <ng-container matColumnDef="actions"
@@ -167,3 +211,7 @@
     </ng-container>
   </ng-container>
 </table-wrapper>
+
+<ng-template #emptyCell>
+  -
+</ng-template>

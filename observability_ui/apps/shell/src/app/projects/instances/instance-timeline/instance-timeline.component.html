@@ -12,8 +12,7 @@
       [start]="ganttStartDate$ | async"
       [end]="ganttEndDate$ | async"
       [nowBar]="instanceIsActive$ | async"
-      [timeformat]="timeformat$ | async"
-      [showDays]="spansMultipleDays$ | async">
+      [timeformat]="timeformat$ | async">
 
       <ng-template ganttLabel
         let-taskGroup="group">
@@ -49,8 +48,10 @@
         <ng-template #barTooltip>
           <div class="gantt-bar-tooltip">
             <span class="gantt-bar-tooltip--line gantt-bar-tooltip--name">{{ run.pipeline.display_name }}</span>
+            <span *ngIf="run.pipeline.key !== run.pipeline.display_name"
+              class="gantt-bar-tooltip--line gantt-bar-tooltip--key">Key: {{ run.pipeline.key ?? '-' }}</span>
             <span class="gantt-bar-tooltip--line gantt-bar-tooltip--status">{{ 'runStatus.' + run.status | translate }}</span>
-            <span class="gantt-bar-tooltip--line gantt-bar-tooltip--key">Key: {{ run.key ?? '-' }}</span>
+            <span class="gantt-bar-tooltip--line gantt-bar-tooltip--key">Run Key: {{ run.key ?? '-' }}</span>
             <span *ngIf="run.hasTime"
               class="gantt-bar-tooltip--line gantt-bar-tooltip--start">Start Time: {{ run.start_time | date: (timeformat$ | async) }}</span>
             <span *ngIf="run.hasTime && run.status !== 'RUNNING'"

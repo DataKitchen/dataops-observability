@@ -31,12 +31,8 @@ export class GanttChartComponent implements AfterContentInit {
 
   @Input() nowBar: boolean = false;
 
-  @Input() set showDays(value: boolean) {
-    this._showDays.set(value);
-  }
-
   @Input() set timeformat(value: string) {
-    this._timeformat.set(value ?? 'hh:mm a');
+    this._timeformat.set(value ?? 'h:mm a');
   }
 
   ticks: Signal<Array<{ format: string, time: Date }>> = computed(() => {
@@ -46,17 +42,11 @@ export class GanttChartComponent implements AfterContentInit {
     }
 
     const format = this._timeformat();
-    const showDays = this._showDays();
 
     const span = end.getTime() - start.getTime();
     const tickSpan = Math.floor(span / this.ticksCount);
     const extraTicks = Array(this.ticksCount).fill(0).map((_, idx) => new Date(start.getTime() + (idx * tickSpan)));
     const ticks = [ start, ...extraTicks.slice(1), end ].map(time => ({ format, time }));
-
-    if (showDays) {
-      ticks[0].format = `MMM d ${format}`;
-      ticks[ticks.length - 1].format = `MMM d ${format}`;
-    }
 
     return ticks;
   });
@@ -139,8 +129,7 @@ export class GanttChartComponent implements AfterContentInit {
 
   private _regroup: WritableSignal<number> = signal(0);
   private _resized: WritableSignal<number> = signal(0);
-  private _showDays: WritableSignal<boolean> = signal(false);
-  private _timeformat: WritableSignal<string> = signal('hh:mm a');
+  private _timeformat: WritableSignal<string> = signal('h:mm a');
   private _dateRange: WritableSignal<{ start?: Date, end?: Date }> = signal({
     start: undefined,
     end: undefined

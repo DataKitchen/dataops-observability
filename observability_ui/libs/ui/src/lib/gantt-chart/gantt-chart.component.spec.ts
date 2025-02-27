@@ -116,7 +116,7 @@ describe('GanttChartComponent', () => {
   });
 
   it('should render the ticks', () => {
-    const format = 'hh:mm a';
+    const format = 'h:mm a';
     const start = testComponent.start;
     const end = testComponent.end;
 

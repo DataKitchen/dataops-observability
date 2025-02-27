@@ -183,7 +183,7 @@
       <span headerLabel="start_time">Start Time</span>
     </ng-container>
     <ng-container *matCellDef="let test">
-      <div dkTooltip="{{test.start_time | date: 'medium'}}">{{test.start_time | date: 'hh:mm:ss a'}}</div>
+      <div dkTooltip="{{test.start_time | date: 'medium'}}">{{test.start_time | date: 'h:mm:ss a'}}</div>
     </ng-container>
   </ng-container>
   <ng-container matColumnDef="end_time"
@@ -193,7 +193,7 @@
       <span headerLabel="end_time">End Time</span>
     </ng-container>
     <ng-container *matCellDef="let test">
-      <div dkTooltip="{{test.end_time | date: 'medium'}}">{{test.end_time | date: 'hh:mm:ss a'}}</div>
+      <div dkTooltip="{{test.end_time | date: 'medium'}}">{{test.end_time | date: 'h:mm:ss a'}}</div>
     </ng-container>
   </ng-container>
   <ng-container matColumnDef="actions"

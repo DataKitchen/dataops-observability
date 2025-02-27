@@ -45,8 +45,16 @@ spec:
             {{- include "observability.environment.database" . | nindent 12 }}
             {{- include "observability.environment.kafka" . | nindent 12 }}
             {{- include "observability.environment.smtp" . | nindent 12 }}
+          {{- with .Values.extraVolumeMounts }}
+          volumeMounts:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
           command: [ "/dk/bin/rules-engine" ]
           {{- include "observability.probes.readiness_cmd" "rules-engine" | nindent 10 -}}
+      {{- with .Values.extraVolumes }}
+      volumes:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.rules_engine.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

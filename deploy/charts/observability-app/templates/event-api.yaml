@@ -62,6 +62,10 @@ spec:
                   name: {{ .Values.observability.keys_secrets_name | quote }}
                   key: EVENTS_KEY_FLASK_SECRET
             {{- end }}
+          {{- with .Values.extraVolumeMounts }}
+          volumeMounts:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
           command: [ "/dk/bin/gunicorn" ]
           args: [ "-c", "/dk/gunicorn.conf.py", "event_api.app:app" ]
           readinessProbe:
@@ -75,7 +79,10 @@ spec:
                 - name: Host
                   value: {{ tpl .Values.event_api.hostname . | quote }}
                 {{- end }}
-
+      {{- with .Values.extraVolumes }}
+      volumes:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.event_api.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
