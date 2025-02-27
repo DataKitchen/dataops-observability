@@ -44,8 +44,16 @@ spec:
             {{- include "observability.environment.base" . | nindent 12 }}
             {{- include "observability.environment.database" . | nindent 12 }}
             {{- include "observability.environment.kafka" . | nindent 12 }}
+          {{- with .Values.extraVolumeMounts }}
+          volumeMounts:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
           command: [ "/dk/bin/scheduler" ]
           {{- include "observability.probes.readiness_cmd" "scheduler" | nindent 10 -}}
+      {{- with .Values.extraVolumes }}
+      volumes:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.scheduler.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
