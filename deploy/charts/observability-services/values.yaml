@@ -28,6 +28,7 @@ mysql:
     tag: 8.0.36-debian-12-r9
   fullnameOverride: mysql
   serviceAccount:
+    create: false
     name: datakitchen-observability
   auth:
     username: observability
