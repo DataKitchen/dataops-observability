@@ -66,7 +66,7 @@ spec:
             - name: OBSERVABILITY_CSP_EXTRA
               value: {{ tpl .Values.observability_ui.csp_extra . | quote }}
             {{- end }}
-          {{- if or .Values.observability_ui.environmentJson .Values.observability_ui.manifestJson }}
+          {{- if or .Values.observability_ui.environmentJson .Values.observability_ui.manifestJson .Values.extraVolumeMounts }}
           volumeMounts:
             {{- if .Values.observability_ui.environmentJson }}
             - mountPath: /observability_ui/shell/environments/environment.json
@@ -80,7 +80,14 @@ spec:
               readOnly: true
               subPath: module-federation.manifest.json
             {{- end }}
+            {{- with .Values.extraVolumeMounts }}
+            {{ toYaml . | nindent 12 }}
+            {{- end }}
           {{- end }}
+      {{- with .Values.extraVolumes }}
+      volumes:
+        {{ toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.observability_ui.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

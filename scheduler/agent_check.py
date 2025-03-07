@@ -90,5 +90,4 @@ class AgentCheckScheduleSource(ScheduleSource[AgentCheckSchedule]):
             latest_event_timestamp=agent.latest_event_timestamp,
         )
 
-        with self.event_producer as producer:
-            producer.produce(self.kafka_topic, event)
+        self.event_producer.produce(self.kafka_topic, event)
