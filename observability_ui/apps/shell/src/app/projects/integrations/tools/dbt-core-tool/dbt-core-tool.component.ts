@@ -43,7 +43,7 @@ export class DBTCoreToolComponent extends AbstractTool {
   static override _image = 'docker.io/datakitchen/dbt-core-connector';
 
   override readonly envList = [
-    { name: 'EVENTS_API_HOST', placeholder: '', required: true },
+    { name: 'EVENTS_API_HOST', placeholder: '# the base API URL for Observability', required: true },
     { name: 'EVENTS_API_KEY', placeholder: '# an API key for the Observability project', required: true },
     { name: 'PIPELINE_NAME', placeholder: '# a unique name for this dbt job', required: true },
     { name: 'PIPELINE_KEY', placeholder: '# a unique key for this dbt job', required: true },
@@ -61,8 +61,4 @@ export class DBTCoreToolComponent extends AbstractTool {
     DOCKER_TAG: new FormControl('', [ Validators.required ]),
     DEFAULT_DEPLOYMENT_MODE: new FormControl('docker', [ Validators.required, CustomValidators.oneOf([ 'docker', 'kubernetes' ]) ]),
   });
-
-  protected override disableOnStart: FormControl<any>[] = [
-    this.envListForm.controls['EVENTS_API_HOST'],
-  ];
 }
