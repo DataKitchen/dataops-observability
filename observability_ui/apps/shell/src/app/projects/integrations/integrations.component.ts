@@ -26,7 +26,7 @@ export class IntegrationsComponent extends CoreComponent implements OnInit, HasP
 
   agents$ = this.agentStore.list$;
   total$ = this.agentStore.total$;
-  pageSize = 10;
+  pageSize = 25;
 
   @BindToQueryParams()
   @PersistOnLocalStorage({ namespace: Prop('storageKey') })

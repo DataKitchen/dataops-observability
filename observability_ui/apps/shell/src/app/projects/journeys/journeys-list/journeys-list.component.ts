@@ -36,7 +36,7 @@ export class JourneysListComponent extends CoreComponent implements OnInit, HasP
   search$: BehaviorSubject<SearchFields> = new BehaviorSubject<SearchFields>({ search: '', labels: '' });
 
   parentId: string;
-  pageSize: number = 10;
+  pageSize: number = 25;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
