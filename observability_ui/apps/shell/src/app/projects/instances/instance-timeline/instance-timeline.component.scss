@@ -31,6 +31,10 @@ mat-card-content {
   }
 }
 
+gantt-chart {
+  max-height: 100%;
+}
+
 .run-label {
   @include mixins.flex-row($justify: flex-start);
 
