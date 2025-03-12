@@ -79,7 +79,7 @@ export class AlertsDialogComponent {
     instance: Instance
   }, private store: InstancesStore, private router: Router) {
     let urlTree = this.router.parseUrl(this.router.url);
-    urlTree.queryParams['_pageSize'] = '5';
+    urlTree.queryParams['_pageSize'] = '25';
     urlTree.queryParams['_pageIndex'] = 0;
 
     void this.router.navigateByUrl(urlTree);
