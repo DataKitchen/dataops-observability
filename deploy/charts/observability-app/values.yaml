@@ -9,7 +9,7 @@ observability:
   flask_debug: "false"
   services_secrets_name: external-service-keys
   keys_secrets_name: internal-keys
-  pythonpath: /dk/lib/python3.10/site-packages
+  pythonpath: /dk/lib/python3.12/site-packages
   image:
     repository: docker.io/datakitchen
     tag: "v2"
