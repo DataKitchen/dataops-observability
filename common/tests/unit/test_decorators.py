@@ -136,11 +136,11 @@ def test_class_mangled_auto_name():
 @pytest.mark.unit
 def test_no_duplicate_names():
     """The same decorator function cannot be applied to two names on the same class."""
-    with pytest.raises(RuntimeError):
+    with pytest.raises(TypeError):
 
         class DuplicateCheck:
             @cached_property
-            def x() -> int:
+            def x(self) -> int:
                 return 3
 
             y = x
