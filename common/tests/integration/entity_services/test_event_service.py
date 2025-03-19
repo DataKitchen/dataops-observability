@@ -2,6 +2,7 @@ import contextlib
 from unittest.mock import patch
 
 import pytest
+from werkzeug.datastructures import MultiDict
 
 from common.entities import DB
 from common.entity_services import EventService
@@ -22,14 +23,14 @@ def test_get_events_with_rules_filters(
 ):
     filter_cases = (
         ({}, (event_entity, event_entity_2)),
-        ({"component_id": [str(pipeline.id)]}, (event_entity,)),
-        ({"instance_id": [str(instance_instance_set.instance_id)]}, (event_entity,)),
-        ({"journey_id": [str(instance_instance_set.instance.journey_id)]}, (event_entity,)),
-        ({"event_type": ["BATCH_PIPELINE_STATUS"]}, (event_entity,)),
-        ({"event_type": ["DATASET_OPERATION"]}, (event_entity_2,)),
-        ({"event_id": [str(event_entity_2.id)]}, (event_entity_2,)),
-        ({"run_id": [str(run.id)]}, (event_entity,)),
-        ({"task_id": [str(task.id)]}, (event_entity,)),
+        ({"component_id": str(pipeline.id)}, (event_entity,)),
+        ({"instance_id": str(instance_instance_set.instance_id)}, (event_entity,)),
+        ({"journey_id": str(instance_instance_set.instance.journey_id)}, (event_entity,)),
+        ({"event_type": "BATCH_PIPELINE_STATUS"}, (event_entity,)),
+        ({"event_type": "DATASET_OPERATION"}, (event_entity_2,)),
+        ({"event_id": str(event_entity_2.id)}, (event_entity_2,)),
+        ({"run_id": str(run.id)}, (event_entity,)),
+        ({"task_id": str(task.id)}, (event_entity,)),
         ({"date_range_start": "2024-01-20T09:56:00"}, (event_entity,)),
         ({"date_range_end": "2024-01-20T09:59:10"}, (event_entity, event_entity_2)),
         (
@@ -42,7 +43,7 @@ def test_get_events_with_rules_filters(
 
     rules = ListRules()
     for filter_params, expected_result in filter_cases:
-        filters = ProjectEventFilters.from_params(params=filter_params, project_ids=[project.id])
+        filters = ProjectEventFilters.from_params(params=MultiDict(filter_params.items()), project_ids=[project.id])
         page = EventService.get_events_with_rules(rules=rules, filters=filters)
         assert set(page.results) == set(expected_result), filter_params
 
@@ -51,7 +52,7 @@ def test_get_events_with_rules_filters(
 @pytest.mark.parametrize("sort_order,reverse", ((SortOrder.ASC, False), (SortOrder.DESC, True)))
 def test_get_events_with_rules_sort(sort_order, reverse, event_entity, event_entity_2, project):
     rules = ListRules(sort=sort_order)
-    filters = ProjectEventFilters.from_params(params={}, project_ids=[project.id])
+    filters = ProjectEventFilters.from_params(params=MultiDict({}), project_ids=[project.id])
 
     page = EventService.get_events_with_rules(rules=rules, filters=filters)
 
@@ -62,7 +63,7 @@ def test_get_events_with_rules_sort(sort_order, reverse, event_entity, event_ent
 @pytest.mark.integration
 def test_get_events_with_rules_prefetch(event_entity, project, instance):
     rules = ListRules()
-    filters = ProjectEventFilters.from_params(params={}, project_ids=[project.id])
+    filters = ProjectEventFilters.from_params(params=MultiDict({}), project_ids=[project.id])
 
     with assert_num_queries(3):
         (result_event,) = EventService.get_events_with_rules(rules=rules, filters=filters)
