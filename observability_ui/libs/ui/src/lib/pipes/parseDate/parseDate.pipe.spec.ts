@@ -2,6 +2,13 @@ import { TestBed } from '@angular/core/testing';
 import { ParseDatePipe } from './parseDate.pipe';
 import * as parseDate from '@observability-ui/core';
 
+jest.mock('@observability-ui/core', () => {
+  return {
+    __esModule: true,
+    ...jest.requireActual('@observability-ui/core')
+  };
+});
+
 describe('parseDate.pipe', () => {
   let pipe: ParseDatePipe;
 
