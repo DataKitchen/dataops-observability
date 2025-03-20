@@ -4,7 +4,8 @@ import { MockModule } from 'ng-mocks';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 import { MetadataViewerComponent, TableWrapperModule } from '@observability-ui/ui';
 import { Mocked, MockProvider } from '@datakitchen/ngx-toolkit';
-import { EventType, EventTypes, TestStatus } from '@observability-ui/core';
+import { EventType, EventTypes, ProjectStore, TestStatus } from '@observability-ui/core';
+import { of } from 'rxjs';
 
 describe('EventsTableComponent', () => {
   let component: EventsTableComponent;
@@ -29,7 +30,12 @@ describe('EventsTableComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ EventsTableComponent ],
-      providers: [ MockProvider(MatDialog) ],
+      providers: [
+        MockProvider(MatDialog),
+        MockProvider(ProjectStore, class {
+          current$ = of({});
+        }),
+      ],
       imports: [ MockModule(MatDialogModule), MockModule(TableWrapperModule) ]
     }).compileComponents();
 

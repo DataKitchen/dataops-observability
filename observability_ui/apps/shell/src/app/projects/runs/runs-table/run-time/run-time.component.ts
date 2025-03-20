@@ -23,7 +23,7 @@ export class RunTimeComponent {
     return this._actual();
   }
 
-  currentTime = new Date()
+  currentTime = new Date();
 
   time = computed(() => {
     return this._actual() || this.expected;
