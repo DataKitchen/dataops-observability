@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { DatasetOperationEventData, EventType, EventTypes, MessageLogEventData, RunProcessedStatus, RunStatusEventData, TestOutcomesEventData, TestStatus } from '@observability-ui/core';
+import { DatasetOperationEventData, EventType, EventTypes, MessageLogEventData, ProjectStore, RunProcessedStatus, RunStatusEventData, TestOutcomesEventData, TestStatus } from '@observability-ui/core';
 import { MetadataViewerComponent, MetadataViewerData, TableChangeEvent } from '@observability-ui/ui';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { FormGroup } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { CoreComponent, omit } from '@datakitchen/ngx-toolkit';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'shell-events-table',
@@ -15,6 +16,7 @@ export class EventsTableComponent extends CoreComponent implements OnInit {
   protected readonly RunProcessedStatus = RunProcessedStatus;
   protected readonly EventTypes = EventTypes;
 
+  projectId = toSignal(this.projectStore.current$.pipe(map(({ id }) => id)));
 
   @Input() set items(events: EventType[]) {
     this.items$.next(this.getEventsWithTestSummary(this.addComponentKeys(events)));
@@ -38,7 +40,10 @@ export class EventsTableComponent extends CoreComponent implements OnInit {
   public items$: BehaviorSubject<EventType[]> = new BehaviorSubject<EventType[]>([]);
 
 
-  constructor(private matDialog: MatDialog) {
+  constructor(
+    private matDialog: MatDialog,
+    private projectStore: ProjectStore,
+  ) {
     super();
   }
 

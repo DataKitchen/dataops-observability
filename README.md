@@ -28,7 +28,7 @@ it for you.
 
 Example install
 ```bash
-python -m virtualenv -p /usr/bin/python3.12 venv
+python3.12 -m venv venv
 source venv/bin/activate
 # Install platform and developer extra packages
 pip install --editable '.[dev]'

@@ -54,7 +54,7 @@ $task-name-width: 250px;
 
   flex: 1;
   top: 32px;
-  height: 100%;
+  height: calc(100% - 32px);
   position: absolute;
   pointer-events: none;
   margin-left: $task-name-width;
@@ -63,6 +63,7 @@ $task-name-width: 250px;
     @include mixins.flex-column($justify: flex-start, $align: normal);
     @include mixins.font-style($style: caption);
 
+    flex: auto;
     height: 100%;
     margin-top: -20px;
     margin-left: -26px;

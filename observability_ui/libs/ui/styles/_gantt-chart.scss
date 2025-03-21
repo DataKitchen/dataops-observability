@@ -16,6 +16,18 @@ $color-by-status: (
   'hasStartAndEndTime': variables.$gray-400,
 );
 
+$border-color-by-status: (
+  'PENDING': variables.$gray-500,
+  'MISSING': variables.$gray-500,
+  'RUNNING': variables.$blue-800,
+  'COMPLETED': variables.$green-800,
+  'COMPLETED_WITH_WARNINGS': variables.$orange-800,
+  'FAILED': variables.$red-800,
+  'ACTIVE': variables.$blue-800,
+  'WARNING': variables.$orange-800,
+  'ERROR': variables.$red-800,
+);
+
 
 gantt-chart {
   gantt-task {
@@ -25,6 +37,12 @@ gantt-chart {
     @each $status, $color in $color-by-status {
       &.#{$status} {
         background: $color;
+      }
+    }
+
+    @each $status, $color in $border-color-by-status {
+      &.#{$status} {
+        border: 1px solid $color;
       }
     }
 
