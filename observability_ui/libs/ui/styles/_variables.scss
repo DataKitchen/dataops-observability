@@ -50,10 +50,12 @@ $blue-200: mat.get-color-from-palette(mat.$blue-palette, 200);
 $blue-300: mat.get-color-from-palette(mat.$blue-palette, 300);
 $blue-500: mat.get-color-from-palette(mat.$blue-palette, 500);
 $blue-700: mat.get-color-from-palette(mat.$blue-palette, 700);
+$blue-800: mat.get-color-from-palette(mat.$blue-palette, 800);
 
 $orange-50: mat.get-color-from-palette(mat.$orange-palette, 50);
 $orange-300: mat.get-color-from-palette(mat.$orange-palette, 300);
 $orange-500: mat.get-color-from-palette(mat.$orange-palette, 500);
+$orange-800: mat.get-color-from-palette(mat.$orange-palette, 800);
 
 $light-green-400: mat.get-color-from-palette(mat.$light-green-palette, 400);
 
@@ -63,6 +65,7 @@ $amber-500: mat.get-color-from-palette(mat.$amber-palette, 500);
 $green-50: mat.get-color-from-palette(mat.$green-palette, 50);
 $green-300: mat.get-color-from-palette(mat.$green-palette, 300);
 $green-500: mat.get-color-from-palette(mat.$green-palette, 500);
+$green-800: mat.get-color-from-palette(mat.$green-palette, 800);
 
 $light-green-400: mat.get-color-from-palette(mat.$light-green-palette, 400);
 
@@ -71,6 +74,7 @@ $indigo-300: mat.get-color-from-palette(mat.$indigo-palette, 300);
 $red-50: mat.get-color-from-palette(mat.$red-palette, 50);
 $red-300: mat.get-color-from-palette(mat.$red-palette, 300);
 $red-500: mat.get-color-from-palette(mat.$red-palette, 500);
+$red-800: mat.get-color-from-palette(mat.$red-palette, 800);
 
 $deep-purple-500: mat.get-color-from-palette(mat.$deep-purple-palette, 500);
 $deep-purple-50: mat.get-color-from-palette(mat.$deep-purple-palette, 50);

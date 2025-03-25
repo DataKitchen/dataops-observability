@@ -83,7 +83,7 @@ export class EventListComponent extends CoreComponent implements OnInit, HasSear
       const filters: EventSearchFields = {
         event_type: event_type?.split(',').filter(e => e) ?? [] as any,
         component_id: component_id?.split(',').filter(e => e) ?? [] as any,
-      }
+      };
 
       if (date_range_start) {
         const startDate = beginningOfDay(new Date(date_range_start));

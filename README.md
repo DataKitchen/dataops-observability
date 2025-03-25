@@ -9,7 +9,7 @@
 
 ## Developer Setup
 
-**This repository requires `Python 3.10` at minimum -- prefer the latest `3.10.X`.**
+**This repository requires `Python 3.12` at minimum -- prefer the latest `3.12.X`.**
 
 A local Kubernetes cluster requires
 
@@ -28,7 +28,7 @@ it for you.
 
 Example install
 ```bash
-python -m virtualenv -p /usr/bin/python3.10 venv
+python3.12 -m venv venv
 source venv/bin/activate
 # Install platform and developer extra packages
 pip install --editable '.[dev]'

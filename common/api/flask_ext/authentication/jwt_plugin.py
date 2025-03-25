@@ -44,7 +44,7 @@ class JWTAuth(BaseAuthPlugin):
     logout_callbacks: dict[str, Callable] = {}
     """Callback functions to be called when the user logs out."""
 
-    secret_key: str = NotImplemented
+    secret_key: bytes | str = NotImplemented
     """
     Secret key utilized to encode/decode the JTW tokens.
     It is automatically set after flask's namesake setting upon initialization.

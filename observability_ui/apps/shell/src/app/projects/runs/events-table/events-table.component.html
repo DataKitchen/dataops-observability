@@ -190,6 +190,14 @@
             class="text--link-with-icon fx-row">
             <mat-icon class="icon-size-16 mr-1">data_object</mat-icon>
           </a>
+
+          <a dkTooltip="Go to batch run"
+            *ngIf="event.run?.id"
+            [routerLink]="[ '/projects', projectId(), 'events', 'runs', 'details', event.run.id ]"
+            class="text--link-with-icon"
+            target="_blank">
+            <mat-icon class="icon-size-16 mr-1">share</mat-icon>
+          </a>
         </div>
       </div>
 
