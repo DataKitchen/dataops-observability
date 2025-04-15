@@ -1,0 +1,63 @@
+{{- range $index, $job := (.Values.cronjob).enable }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cronjob-{{ default $index .name }}
+spec:
+  schedule: "{{ .schedule }}"
+  jobTemplate:
+    spec:
+      backoffLimit: {{ default 0 .backoffLimit }}
+      template:
+        metadata:
+          name: cronjob-{{ default $index .name }}
+        spec:
+          restartPolicy: Never
+          {{- with $.Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+          serviceAccountName: {{ include "observability.serviceAccountName" $ }}
+          containers:
+            - name: cronjob-{{ default $index .name }}
+              image: {{ .image | quote }}
+              imagePullPolicy: {{ .imagePullPolicy }}
+              env:
+                {{- include "observability.environment.base" $ | nindent 16 }}
+                {{- include "observability.environment.database" $ | nindent 16 }}
+                {{- include "observability.environment.smtp" $ | nindent 16 }}
+              command:
+                {{- range .command }}
+                - {{ . | quote -}}
+                {{- end }}
+              args:
+                {{- range .args }}
+                - {{ . | quote -}}
+                {{- end }}
+              volumeMounts:
+              {{- range .configFiles }}
+                - mountPath: {{ .mountPath }}
+                  name: cronjob-{{ default $index $job.name }}-configmap-volume
+                  readOnly: true
+                  subPath: {{ .name }}
+              {{- end }}
+          volumes:
+            - name: cronjob-{{ default $index .name }}-configmap-volume
+              configMap:
+                name: cronjob-{{ default $index .name }}-configmap
+                items:
+                {{- range .configFiles }}
+                  - key: {{ .name }}
+                    path: {{ .name }}
+                {{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cronjob-{{ default $index .name }}-configmap
+data:
+  {{- range .configFiles }}
+  {{ .name }}: {{ .jsonData | toPrettyJson | quote }}
+  {{- end }}
+---
+{{- end }}
