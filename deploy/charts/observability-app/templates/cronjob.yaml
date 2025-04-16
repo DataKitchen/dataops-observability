@@ -1,0 +1,63 @@
+{{- range $job := (.Values.cronjob).enable }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "observability.cronjob.name" . }}
+spec:
+  schedule: "{{ .schedule }}"
+  jobTemplate:
+    spec:
+      backoffLimit: {{ default 0 .backoffLimit }}
+      template:
+        metadata:
+          name: {{ include "observability.cronjob.name" . }}
+        spec:
+          restartPolicy: Never
+          {{- with $.Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{ toYaml . | nindent 12 }}
+          {{- end }}
+          serviceAccountName: {{ include "observability.serviceAccountName" $ }}
+          containers:
+            - name: {{ include "observability.cronjob.name" . }}
+              image: {{ .image | quote }}
+              imagePullPolicy: {{ .imagePullPolicy }}
+              env:
+                {{- include "observability.environment.base" $ | nindent 16 }}
+                {{- include "observability.environment.database" $ | nindent 16 }}
+                {{- include "observability.environment.smtp" $ | nindent 16 }}
+              command:
+                {{- range .command }}
+                - {{ . | quote -}}
+                {{- end }}
+              args:
+                {{- range .args }}
+                - {{ . | quote -}}
+                {{- end }}
+              volumeMounts:
+              {{- range .configFiles }}
+                - mountPath: {{ .mountPath }}
+                  name: {{ include "observability.cronjob.name" $job }}-configmap-volume
+                  readOnly: true
+                  subPath: {{ .name }}
+              {{- end }}
+          volumes:
+            - name: {{ include "observability.cronjob.name" . }}-configmap-volume
+              configMap:
+                name: {{ include "observability.cronjob.name" . }}-configmap
+                items:
+                {{- range .configFiles }}
+                  - key: {{ .name }}
+                    path: {{ .name }}
+                {{- end }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "observability.cronjob.name" . }}-configmap
+data:
+  {{- range .configFiles }}
+  {{ .name }}: {{ .jsonData | toPrettyJson | quote }}
+  {{- end }}
+---
+{{- end }}

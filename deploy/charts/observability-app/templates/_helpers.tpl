@@ -187,3 +187,10 @@ CLI Hook
 {{- define "observability.cli_hook.image" }}
 {{- include "observability.image" (list . .Values.cli_hook) }}
 {{- end }}
+
+{{/*
+Cronjob
+*/}}
+{{- define "observability.cronjob.name" -}}
+cronjob-{{ .name }}
+{{- end -}}
