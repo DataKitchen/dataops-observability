@@ -1,8 +1,8 @@
-{{- range $index, $job := (.Values.cronjob).enable }}
+{{- range $job := (.Values.cronjob).enable }}
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: cronjob-{{ default $index .name }}
+  name: {{ include "observability.cronjob.name" . }}
 spec:
   schedule: "{{ .schedule }}"
   jobTemplate:
@@ -10,7 +10,7 @@ spec:
       backoffLimit: {{ default 0 .backoffLimit }}
       template:
         metadata:
-          name: cronjob-{{ default $index .name }}
+          name: {{ include "observability.cronjob.name" . }}
         spec:
           restartPolicy: Never
           {{- with $.Values.imagePullSecrets }}
@@ -19,7 +19,7 @@ spec:
           {{- end }}
           serviceAccountName: {{ include "observability.serviceAccountName" $ }}
           containers:
-            - name: cronjob-{{ default $index .name }}
+            - name: {{ include "observability.cronjob.name" . }}
               image: {{ .image | quote }}
               imagePullPolicy: {{ .imagePullPolicy }}
               env:
@@ -37,14 +37,14 @@ spec:
               volumeMounts:
               {{- range .configFiles }}
                 - mountPath: {{ .mountPath }}
-                  name: cronjob-{{ default $index $job.name }}-configmap-volume
+                  name: {{ include "observability.cronjob.name" $job }}-configmap-volume
                   readOnly: true
                   subPath: {{ .name }}
               {{- end }}
           volumes:
-            - name: cronjob-{{ default $index .name }}-configmap-volume
+            - name: {{ include "observability.cronjob.name" . }}-configmap-volume
               configMap:
-                name: cronjob-{{ default $index .name }}-configmap
+                name: {{ include "observability.cronjob.name" . }}-configmap
                 items:
                 {{- range .configFiles }}
                   - key: {{ .name }}
@@ -54,7 +54,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cronjob-{{ default $index .name }}-configmap
+  name: {{ include "observability.cronjob.name" . }}-configmap
 data:
   {{- range .configFiles }}
   {{ .name }}: {{ .jsonData | toPrettyJson | quote }}
