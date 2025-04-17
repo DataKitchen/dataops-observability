@@ -1,6 +1,6 @@
 # DEV NOTE:  YOU MUST RUN `docker build` FROM THE TOP-LEVEL OF `observability-be` AND POINT TO THIS FILE.
 ARG BASE_IMAGE_URL
-FROM ${BASE_IMAGE_URL}python:3.12.7-alpine3.20 AS build-image
+FROM ${BASE_IMAGE_URL}python:3.12.10-alpine3.20 AS build-image
 LABEL maintainer="DataKitchen"
 
 RUN apk update && apk upgrade && apk add --no-cache \
@@ -30,7 +30,7 @@ ENV PYTHONPATH ${PYTHONPATH}:/dk/lib/python3.12/site-packages
 # --prefix=/dk: The destination installation environment folder
 RUN python3 -O -m pip install --no-deps /tmp/dk --prefix=/dk
 
-FROM ${BASE_IMAGE_URL}python:3.12.7-alpine3.20 AS runtime-image
+FROM ${BASE_IMAGE_URL}python:3.12.10-alpine3.20 AS runtime-image
 
 RUN apk update && apk upgrade && apk add --no-cache librdkafka=2.4.0-r0
 
@@ -43,3 +43,11 @@ COPY --from=build-image /tmp/dk/deploy/migrations/ /dk/lib/migrations/
 
 ENV PYTHONPATH ${PYTHONPATH}:/dk/lib/python3.12/site-packages
 ENV PATH ${PATH}:/dk/bin
+
+RUN addgroup -S observability && adduser -S observability -G observability
+
+# gunicorn needs access to this folder
+RUN mkdir /dk/var
+RUN chown -R observability:observability /dk/var
+
+USER observability
