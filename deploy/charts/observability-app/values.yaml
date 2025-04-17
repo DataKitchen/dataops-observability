@@ -7,6 +7,7 @@ observability:
   mysql_secrets_name: mysql
   mysql_user: observability
   flask_debug: "false"
+  cors_domains: "localhost:*"
   services_secrets_name: external-service-keys
   keys_secrets_name: internal-keys
   pythonpath: /dk/lib/python3.12/site-packages
