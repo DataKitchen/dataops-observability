@@ -1,5 +1,7 @@
 from peewee import SqliteDatabase
 
+CORS_DOMAINS: list[str] = ["*.mydomain.com", "xyz.com", "localhost:*"]
+
 DATABASE: dict[str, object] = {
     "name": "file:cachedb?mode=memory&cache=shared",
     "engine": SqliteDatabase,

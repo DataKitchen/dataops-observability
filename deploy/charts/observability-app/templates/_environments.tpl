@@ -15,6 +15,8 @@ Environment
 {{- define "observability.environment.flask" -}}
 - name: FLASK_DEBUG
   value: {{ .Values.observability.flask_debug | quote }}
+- name: CORS_DOMAINS
+  value: {{ .Values.observability.cors_domains | quote }}
 {{- end -}}
 
 {{- define "observability.environment.database" -}}

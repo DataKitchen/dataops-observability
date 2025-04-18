@@ -2,7 +2,7 @@ apiVersion: v2
 name: dataops-observability-app
 type: application
 appVersion: "2.x.x"
-version: "2.2.3"
+version: "2.3.0"
 
 description: DataOps Observability
 home: https://datakitchen.io
