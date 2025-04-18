@@ -12,7 +12,7 @@ from common.api.flask_ext.base_extension import BaseExtension
 
 CORS_HEADERS: dict[str, str] = {
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Headers
-    "Access-Control-Allow-Headers": "Origin, Host, Authorization, X-Forwarded-For",
+    "Access-Control-Allow-Headers": "Accept, Content-Type, Origin, Host, Authorization, X-Forwarded-For",
     # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Expose-Headers
     # Add this only if we want to expose custom response headers
     # "Access-Control-Expose-Headers": "*",
