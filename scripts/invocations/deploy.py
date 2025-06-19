@@ -315,7 +315,7 @@ def build(
 
     if ui:
         ctx.run(
-            f"docker build . {args_str} " f"-t 'observability-ui:{tag}' -f ./deploy/docker/observability-ui.dockerfile",
+            f"docker build . {args_str} -t 'observability-ui:{tag}' -f ./deploy/docker/observability-ui.dockerfile",
             env=env,
         )
 

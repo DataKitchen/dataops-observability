@@ -8,7 +8,7 @@ __all__ = [
 ]
 
 import logging
-from typing import Any, NamedTuple, Optional
+from typing import Any, NamedTuple
 from uuid import UUID
 
 from common.entities import Action, Rule
@@ -35,15 +35,15 @@ class InvalidActionTemplate(ActionException):
 
 class ActionResult(NamedTuple):
     result: bool
-    response: Optional[dict]
-    exception: Optional[Exception]
+    response: dict | None
+    exception: Exception | None
 
 
 class BaseAction:
     required_arguments: set = set()
     requires_action_template: bool = False
 
-    def __init__(self, action_template: Optional[Action], override_arguments: dict) -> None:
+    def __init__(self, action_template: Action | None, override_arguments: dict) -> None:
         if self.requires_action_template and not action_template:
             raise ActionTemplateRequired(f"'{self.__class__.__name__}' requires an action template to be set")
 
@@ -70,7 +70,7 @@ class BaseAction:
         if missing_args:
             raise ValueError(f"Required arguments {missing_args} missing for {self.__class__.__name__}")
 
-    def _run(self, event: EVENT_TYPE, rule: Rule, journey_id: Optional[UUID]) -> ActionResult:
+    def _run(self, event: EVENT_TYPE, rule: Rule, journey_id: UUID | None) -> ActionResult:
         raise NotImplementedError("Base Action cannot be executed")
 
     def _store_action_result(self, action_result: ActionResult) -> None:
@@ -88,7 +88,7 @@ class BaseAction:
                 exc_info=action_result.exception,
             )
 
-    def execute(self, event: EVENT_TYPE, rule: Rule, journey_id: Optional[UUID]) -> bool:
+    def execute(self, event: EVENT_TYPE, rule: Rule, journey_id: UUID | None) -> bool:
         action_result = self._run(event, rule, journey_id)
         self._store_action_result(action_result)
         return action_result.result

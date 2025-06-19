@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from http import HTTPStatus
 
 import pytest
@@ -24,7 +24,7 @@ def sa_key(client, project):
 
 @pytest.mark.integration
 def test_create_sa_key_success(client, g_user, project, sa_key_data):
-    today = datetime.now(timezone.utc)
+    today = datetime.now(UTC)
     response = client.post(
         f"/observability/v1/projects/{project.id}/service-account-key",
         headers={"Content-Type": "application/json"},
@@ -46,7 +46,7 @@ def test_create_sa_key_success(client, g_user, project, sa_key_data):
 @pytest.mark.integration
 def test_create_sa_key_with_name_and_description(client, g_user, project, sa_key_data):
     sa_key_data["description"] = "Whoa man, I'm just using this for auth"
-    today = datetime.now(timezone.utc)
+    today = datetime.now(UTC)
     response = client.post(
         f"/observability/v1/projects/{project.id}/service-account-key",
         headers={"Content-Type": "application/json"},

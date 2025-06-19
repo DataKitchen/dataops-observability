@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from http import HTTPStatus
 from typing import Optional
 from uuid import UUID, uuid4
@@ -51,8 +51,8 @@ def test_outcome(client, instance_runs, pipeline):
         description="Abc_Description",
         status=TestStatuses.WARNING.name,
         run=instance_runs[0].id,
-        start_time=datetime.now(tz=timezone.utc) - timedelta(minutes=15),
-        end_time=datetime.now(tz=timezone.utc) - timedelta(minutes=5),
+        start_time=datetime.now(tz=UTC) - timedelta(minutes=15),
+        end_time=datetime.now(tz=UTC) - timedelta(minutes=5),
         component=pipeline,
     )
     yield test_outcome
@@ -66,8 +66,8 @@ def test_outcomes(client, instance_instance_set, pipeline):
             name=f"DKTest{i}",
             description=f"Description{i}",
             status=f"{TestStatuses.PASSED.name if i % 2 == 0 else TestStatuses.FAILED.name}",
-            start_time=datetime.now(tz=timezone.utc) + timedelta(minutes=5 * i),
-            end_time=datetime.now(tz=timezone.utc) + timedelta(minutes=15 * i),
+            start_time=datetime.now(tz=UTC) + timedelta(minutes=5 * i),
+            end_time=datetime.now(tz=UTC) + timedelta(minutes=15 * i),
             component=pipeline,
             instance_set=instance_instance_set.instance_set,
         )
@@ -230,8 +230,8 @@ class TestProjectContext:
                     name=f"DKTest{i}",
                     description=f"Description{i}",
                     status=f"{TestStatuses.PASSED.name if i % 2 == 0 else TestStatuses.FAILED.name}",
-                    start_time=datetime.now(tz=timezone.utc) + timedelta(minutes=5 * i),
-                    end_time=datetime.now(tz=timezone.utc) + timedelta(minutes=15 * i),
+                    start_time=datetime.now(tz=UTC) + timedelta(minutes=5 * i),
+                    end_time=datetime.now(tz=UTC) + timedelta(minutes=15 * i),
                     component=component,
                     instance_set=instance_set,
                 )
@@ -244,7 +244,7 @@ class TestProjectContext:
                 DatasetOperation.create(
                     dataset=dataset,
                     instance_set=instance_set,
-                    operation_time=datetime.now(tz=timezone.utc),
+                    operation_time=datetime.now(tz=UTC),
                     operation=f"{DatasetOperationType.READ.name if i % 2 == 0 else DatasetOperationType.WRITE.name}",
                     path="/path/to/file",
                 )
@@ -252,7 +252,7 @@ class TestProjectContext:
 
 @pytest.fixture
 def run_status_event(pipeline, project, journey, instances):
-    ts = datetime.now(timezone.utc)
+    ts = datetime.now(UTC)
     yield RunStatusEvent(
         project_id=project.id,
         event_id=uuid4(),
@@ -360,7 +360,7 @@ def test_search_instances(client, journey, instances, g_user):
 
     response = client.post(
         f"/observability/v1/projects/{journey.project.id}/instances/search",
-        json={"params": {"start_range_end": datetime.now(timezone.utc).isoformat()}},
+        json={"params": {"start_range_end": datetime.now(UTC).isoformat()}},
     )
     assert response.status_code == HTTPStatus.OK, response.json
     assert response.json["total"] == 6
@@ -472,7 +472,7 @@ class InstanceData:
     instances: list[Instance] = field(default_factory=list)
 
 
-def create_instance_data(number: int, proj: Optional[Project] = None) -> InstanceData:
+def create_instance_data(number: int, proj: Project | None = None) -> InstanceData:
     c = Company.create(name=f"TestCompany{number}")
     org = Organization.create(name=f"Internal Org{number}", company=c)
     if proj:
@@ -519,8 +519,8 @@ def test_list_instances_with_filters_param_results(client, journey, g_user, proj
         instance.save()
 
     args = [("journey_name", name) for name in ("Test_Journey1", "Test_Journey2")] + [
-        ("start_range_begin", (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()),
-        ("start_range_end", datetime.now(timezone.utc).isoformat()),
+        ("start_range_begin", (datetime.now(UTC) - timedelta(hours=1)).isoformat()),
+        ("start_range_end", datetime.now(UTC).isoformat()),
     ]
     query_string = MultiDict(args)
 
@@ -540,7 +540,7 @@ def test_list_instances_with_filters_param_results(client, journey, g_user, proj
     assert r1.json["total"] == 3
     r1 = client.get(
         f"/observability/v1/projects/{instance_data1.project.id}/instances",
-        query_string=MultiDict([("start_range_begin", datetime.now(timezone.utc).isoformat())]),
+        query_string=MultiDict([("start_range_begin", datetime.now(UTC).isoformat())]),
     )
     assert r1.status_code == HTTPStatus.OK, r1.json
     assert r1.json["total"] == 0

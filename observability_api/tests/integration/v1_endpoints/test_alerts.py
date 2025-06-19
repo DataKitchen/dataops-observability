@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from http import HTTPStatus
 from uuid import uuid4
 
@@ -107,7 +107,7 @@ def test_list_project_alerts_search(client, g_user, project, instance_alert, ins
 
 @pytest.mark.integration
 def test_list_project_alerts_filters(client, g_user, project, instance_alert, instance_alert_components, run_alerts):
-    yesterday = datetime.now(tz=timezone.utc) - timedelta(days=1)
+    yesterday = datetime.now(tz=UTC) - timedelta(days=1)
     past_instance = Instance.create(journey=instance_alert.instance.journey, start_time=yesterday)
     past_instance_alert = InstanceAlert.create(
         id=uuid4(),

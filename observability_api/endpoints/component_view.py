@@ -2,7 +2,7 @@ __all__ = ["ComponentByIdAbstractView", "ComponentListAbstractView"]
 
 import logging
 from http import HTTPStatus
-from typing import Any, Optional
+from typing import Any
 from uuid import UUID
 
 from flask import Blueprint, Response, make_response
@@ -21,7 +21,7 @@ class ComponentByIdAbstractView(BaseEntityView):
     route: str
     entity: type[BaseEntity]
     schema: type[ModelSchema]
-    patch_schema: Optional[type[ModelSchema]] = None
+    patch_schema: type[ModelSchema] | None = None
 
     def get(self, component_id: UUID) -> Response:
         component = self.get_entity_or_fail(self.entity, self.entity.id == component_id)

@@ -6,13 +6,12 @@ Settings here may be overridden by settings in development, test, production, et
 
 import os
 from datetime import timedelta
-from typing import Optional
 
 # Flask specific settings: https://flask.palletsprojects.com/en/latest/config/#builtin-configuration-values
 from common.entities import Service
 
-PROPAGATE_EXCEPTIONS: Optional[bool] = None
-SERVER_NAME: Optional[str] = os.environ.get("OBSERVABILITY_API_HOSTNAME")  # Use flask defaults if none set
+PROPAGATE_EXCEPTIONS: bool | None = None
+SERVER_NAME: str | None = os.environ.get("OBSERVABILITY_API_HOSTNAME")  # Use flask defaults if none set
 USE_X_SENDFILE: bool = False  # If we serve files enable this in production settings when webserver support configured
 
 # Application settings

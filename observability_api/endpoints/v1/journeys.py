@@ -3,7 +3,6 @@ __all__ = ["Journeys", "JourneyById", "JourneyDag", "JourneyDagEdgeById"]
 import logging
 from graphlib import CycleError
 from http import HTTPStatus
-from typing import Optional
 from uuid import UUID
 
 from flask import Response, make_response, request
@@ -114,7 +113,7 @@ class Journeys(BaseEntityView):
 
         """
         _ = self.get_entity_or_fail(Project, Project.id == project_id)
-        component_id: Optional[str] = request.args.get("component_id", None)
+        component_id: str | None = request.args.get("component_id", None)
         page: Page = ProjectService.get_journeys_with_rules(
             str(project_id), ListRules.from_params(request.args), component_id=component_id
         )

@@ -32,7 +32,7 @@ __all__ = [
 ]
 
 
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from decimal import Decimal
 from uuid import UUID
 
@@ -220,7 +220,7 @@ def FAILED_run_status_event_data(FAILED_run_status_event):
 
 @pytest.fixture
 def test_outcome_item_data(metadata_model) -> dict:
-    timestamp = datetime.now(timezone.utc).isoformat()
+    timestamp = datetime.now(UTC).isoformat()
     yield {
         "name": "My_test_name",
         "status": TestStatuses.PASSED.name,

@@ -42,7 +42,7 @@ def assertRuleEqual(a, b, default_op="exact"):
         raise AssertionError(f"Rules differ: \n\t{str_a}\n\t!=\n\t{str_b}")
 
 
-def assertRuleMatches(a: R, b: Any, msg: Optional[str] = None):
+def assertRuleMatches(a: R, b: Any, msg: str | None = None):
     """Assert that an R object matches a given value."""
     try:
         result = a.matches(b)
@@ -65,7 +65,7 @@ def assertRuleMatches(a: R, b: Any, msg: Optional[str] = None):
             )
 
 
-def assertRuleNotMatches(a: R, b: Any, msg: Optional[str] = None):
+def assertRuleNotMatches(a: R, b: Any, msg: str | None = None):
     try:
         result = a.matches(b)
     except Exception:

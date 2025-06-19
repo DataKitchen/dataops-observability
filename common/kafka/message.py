@@ -1,12 +1,12 @@
 __all__ = ["KafkaMessage"]
 from dataclasses import dataclass
-from typing import Generic, Optional, TypeVar
+from typing import TypeVar
 
 T = TypeVar("T")
 
 
 @dataclass(frozen=True, kw_only=True)
-class KafkaMessage(Generic[T]):
+class KafkaMessage[T]:
     """
     A generic Kafka message
 
@@ -19,4 +19,4 @@ class KafkaMessage(Generic[T]):
     partition: int
     offset: int
     headers: dict
-    key: Optional[str] = None
+    key: str | None = None

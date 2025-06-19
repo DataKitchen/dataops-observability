@@ -1,7 +1,7 @@
 import os
 import shutil
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from decimal import Decimal
 
 import pytest
@@ -275,8 +275,8 @@ def test_outcome(client, instance_instance_set, instance_runs, pipeline):
         dimensions=["a", "b", "c"],
         status=TestStatuses.WARNING.name,
         run=instance_runs[0].id,
-        start_time=datetime.now(tz=timezone.utc) - timedelta(minutes=15),
-        end_time=datetime.now(tz=timezone.utc) - timedelta(minutes=5),
+        start_time=datetime.now(tz=UTC) - timedelta(minutes=15),
+        end_time=datetime.now(tz=UTC) - timedelta(minutes=5),
         component=pipeline,
         instance_set=instance_instance_set.instance_set,
         external_url="https://example.com",
@@ -299,8 +299,8 @@ def test_outcomes(client, instance_instance_set, pipeline):
             dimension=[f"a-{i}", f"b-{i}", f"c-{i}"],
             description=f"Description{i}",
             status=f"{TestStatuses.PASSED.name if i % 2 == 0 else TestStatuses.FAILED.name}",
-            start_time=datetime.now(tz=timezone.utc) + timedelta(minutes=5 * i),
-            end_time=datetime.now(tz=timezone.utc) + timedelta(minutes=15 * i),
+            start_time=datetime.now(tz=UTC) + timedelta(minutes=5 * i),
+            end_time=datetime.now(tz=UTC) + timedelta(minutes=15 * i),
             component=pipeline,
             instance_set=instance_instance_set.instance_set,
             external_url="https://example.com",

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, UTC
 from unittest.mock import patch
 
 import pytest
@@ -19,7 +19,7 @@ def agents(project):
             tool="tool",
             version="vTest",
             status=AgentStatus.ONLINE,
-            latest_heartbeat=datetime.now(tz=timezone.utc) - timedelta(seconds=elapsed_time),
+            latest_heartbeat=datetime.now(tz=UTC) - timedelta(seconds=elapsed_time),
         )
         for elapsed_time in (
             25,  # Below the checking threshold

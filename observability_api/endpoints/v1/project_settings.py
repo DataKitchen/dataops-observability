@@ -1,6 +1,6 @@
 __all__ = ["ProjectAlertsSettings"]
 
-from typing import Optional, cast, Any
+from typing import cast, Any
 from uuid import UUID
 
 from flask import Response, make_response
@@ -23,7 +23,7 @@ from observability_api.endpoints.entity_view import BaseEntityView
 class ProjectAlertsSettings(BaseEntityView):
     PERMISSION_REQUIREMENTS: tuple[Permission, ...] = (PERM_USER, PERM_PROJECT)
 
-    _project: Optional[Project]
+    _project: Project | None
 
     def get_request_schema(self) -> Schema:
         return cast(Schema, Schema.from_dict(self.get_fields(), name=f"{self.__class__.__name__}Schema")())

@@ -13,7 +13,7 @@ __all__ = [
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional, TypeVar
+from typing import TypeVar
 from collections.abc import Callable
 from uuid import UUID
 
@@ -72,7 +72,7 @@ class ParamConfig:
     func: Callable
 
 
-def _date_or_none(params: MultiDict, field_name: str) -> Optional[datetime]:
+def _date_or_none(params: MultiDict, field_name: str) -> datetime | None:
     if date := params.get(field_name):
         try:
             return arrow.get(date).datetime
@@ -81,7 +81,7 @@ def _date_or_none(params: MultiDict, field_name: str) -> Optional[datetime]:
     return None
 
 
-def _str_to_bool(params: MultiDict, field_name: str) -> Optional[bool]:
+def _str_to_bool(params: MultiDict, field_name: str) -> bool | None:
     if (value := params.get(field_name)) is None:
         return None
     return str_to_bool(value, field_name)
@@ -130,28 +130,28 @@ class Filters:
     Extend by specifying the wanted attributes and how to unpack them in from_params.
     """
 
-    active: Optional[bool] = None
+    active: bool | None = None
     component_ids: list[str] = field(default_factory=list)
     component_types: list[str] = field(default_factory=list)
-    date_range_end: Optional[datetime] = None
-    date_range_start: Optional[datetime] = None
-    end_range: Optional[datetime] = None
-    end_range_begin: Optional[datetime] = None
-    end_range_end: Optional[datetime] = None
+    date_range_end: datetime | None = None
+    date_range_start: datetime | None = None
+    end_range: datetime | None = None
+    end_range_begin: datetime | None = None
+    end_range_end: datetime | None = None
     event_ids: list[str] = field(default_factory=list)
     event_types: list[str] = field(default_factory=list)
     instance_ids: list[str] = field(default_factory=list)
     journey_ids: list[str] = field(default_factory=list)
     journey_names: list[str] = field(default_factory=list)
-    key: Optional[str] = None
+    key: str | None = None
     levels: list[str] = field(default_factory=list)
     pipeline_keys: list[str] = field(default_factory=list)
     project_ids: list[str] = field(default_factory=list)
     run_ids: list[str] = field(default_factory=list)
     run_keys: list[str] = field(default_factory=list)
-    start_range: Optional[datetime] = None
-    start_range_begin: Optional[datetime] = None
-    start_range_end: Optional[datetime] = None
+    start_range: datetime | None = None
+    start_range_begin: datetime | None = None
+    start_range_end: datetime | None = None
     statuses: list[str] = field(default_factory=list)
     task_ids: list[str] = field(default_factory=list)
     tools: list[str] = field(default_factory=list)
@@ -166,9 +166,7 @@ class Filters:
         return False
 
     @staticmethod
-    def validate_time_range(
-        range_begin: Optional[datetime], range_end: Optional[datetime], range_begin_name: str
-    ) -> None:
+    def validate_time_range(range_begin: datetime | None, range_end: datetime | None, range_begin_name: str) -> None:
         if range_begin is None or range_end is None:
             return None
         if range_begin >= range_end:

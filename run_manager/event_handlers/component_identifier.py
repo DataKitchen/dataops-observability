@@ -1,7 +1,7 @@
 __all__ = ["ComponentIdentifier"]
 
 import logging
-from typing import Optional, cast
+from typing import cast
 
 from peewee import DoesNotExist
 
@@ -25,7 +25,7 @@ COMPONENT_TYPES = {class_.component_type: class_ for class_ in ALL_COMPONENTS}
 """Map event component type to db model"""
 
 
-def _get_component(event: Event) -> Optional[Component]:
+def _get_component(event: Event) -> Component | None:
     # v1 event can only have one (component type)_id
     if component_id := event.component_id:
         try:
@@ -56,7 +56,7 @@ def _get_component(event: Event) -> Optional[Component]:
     return component
 
 
-def _create_component(event: Event) -> Optional[Component]:
+def _create_component(event: Event) -> Component | None:
     component: Component = event.component_model.create(
         key=event.component_key, name=event.component_name, tool=event.component_tool, project_id=event.project_id
     )

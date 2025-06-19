@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from uuid import uuid4
 
 import pytest
@@ -58,8 +58,8 @@ def test_from_params_start():
 
     # We want to see that arrow is giving us the kind of timestamp we think; i.e., a UTC aware
     # timestamp.
-    assert filters.start_range_begin == datetime(year=2022, month=8, day=16, tzinfo=timezone.utc)
-    assert filters.start_range_end == datetime(year=2022, month=8, day=17, tzinfo=timezone.utc)
+    assert filters.start_range_begin == datetime(year=2022, month=8, day=16, tzinfo=UTC)
+    assert filters.start_range_end == datetime(year=2022, month=8, day=17, tzinfo=UTC)
     assert filters.end_range_begin is None
     assert filters.end_range_end is None
     assert bool(filters)
@@ -102,8 +102,8 @@ def test_run_filters_from_parameters_end():
         [("page", "5"), ("count", "25"), ("end_range_begin", "2022-08-16"), ("end_range_end", "2022-08-17")]
     )
     filters = RunFilters.from_params(end)
-    assert filters.end_range_begin == datetime(year=2022, month=8, day=16, tzinfo=timezone.utc)
-    assert filters.end_range_end == datetime(year=2022, month=8, day=17, tzinfo=timezone.utc)
+    assert filters.end_range_begin == datetime(year=2022, month=8, day=16, tzinfo=UTC)
+    assert filters.end_range_end == datetime(year=2022, month=8, day=17, tzinfo=UTC)
     assert filters.start_range_begin is None
     assert filters.start_range_end is None
     assert filters.pipeline_keys == []

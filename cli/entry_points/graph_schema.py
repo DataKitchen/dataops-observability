@@ -2,6 +2,7 @@ import logging
 import sys
 from argparse import ArgumentParser
 from pathlib import Path
+from typing import Any
 
 from jinja2 import Environment, FileSystemLoader
 from peewee import Field, ForeignKeyField, ManyToManyField, Model
@@ -54,7 +55,7 @@ class GraphSchema(ScriptBase):
         dot_parts = [head.render({})]
 
         # Initial context/config
-        model_context = []
+        model_context: list[dict[str, Any]] = []
 
         LOG.info("#m<Graphing models...>")
         for name, model in model_map.items():

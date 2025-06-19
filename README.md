@@ -5,7 +5,7 @@
 
 *<p style="text-align: center;">DataOps Observability is part of DataKitchen's Open Source Data Observability. DataOps Observability monitors every data journey from data source to customer value, from any team development environment into production, across every tool, team, environment, and customer so that problems are detected, localized, and understood immediately.</p>*
 
-[![DatKitchen Open Source Data Observability](https://datakitchen.io/wp-content/uploads/2024/04/both-products.png)](https://datakitchen.storylane.io/share/g01ss0plyamz)
+[![DataKitchen Open Source Data Observability](https://datakitchen.io/wp-content/uploads/2024/04/both-products.png)](https://datakitchen.storylane.io/share/g01ss0plyamz)
 [Interactive Product Tour](https://datakitchen.storylane.io/share/g01ss0plyamz)
 
 ## Developer Setup
@@ -100,9 +100,7 @@ We enforce the use of certain linting tools. To not get caught by the build-syst
 
 The following hooks are enabled in pre-commit:
 
-- `black`: The black formatter is enforced on the project. We use a basic configuration. Ideally this should solve any and all
-formatting questions we might encounter.
-- `isort`: the isort import-sorter is enforced on the project. We use it with the `black` profile.
+- `ruff`: Handles code formatting, import sorting, and linting
 
 To enable pre-commit from within your virtual environment, simply run:
 

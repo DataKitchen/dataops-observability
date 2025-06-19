@@ -7,7 +7,7 @@ import re
 import time
 from argparse import Action, ArgumentParser, Namespace
 from datetime import datetime
-from typing import Any, Optional, Union
+from typing import Any, Union
 from collections.abc import Sequence
 
 from requests_extensions import get_session
@@ -90,7 +90,7 @@ def make_events_action(event_id: str) -> type[Action]:
             parser: ArgumentParser,
             namespace: Namespace,
             values: Union[str, Sequence[Any], None],
-            option_string: Optional[str] = None,
+            option_string: str | None = None,
         ) -> None:
             event_data = {}
             remove_fields = []

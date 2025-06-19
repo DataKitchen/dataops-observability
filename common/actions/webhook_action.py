@@ -1,7 +1,7 @@
 __all__ = ["WebhookAction"]
 
 import logging
-from typing import Any, Optional, Union
+from typing import Any, Union
 from collections.abc import Mapping
 from uuid import UUID
 
@@ -44,7 +44,7 @@ def format_data(data: Union[None, list, dict, str], data_points: Mapping) -> Any
 class WebhookAction(BaseAction):
     required_arguments = {"url", "method"}
 
-    def _run(self, event: EVENT_TYPE, rule: Rule, _: Optional[UUID]) -> ActionResult:
+    def _run(self, event: EVENT_TYPE, rule: Rule, _: UUID | None) -> ActionResult:
         data_points: Mapping
         match event:
             case RunAlert() | InstanceAlert():
@@ -67,7 +67,7 @@ class WebhookAction(BaseAction):
             return ActionResult(False, None, e)
         return ActionResult(True, {"status_code": response.status_code}, None)
 
-    def _parse_headers(self, data_points: Mapping) -> Optional[dict[str, str]]:
+    def _parse_headers(self, data_points: Mapping) -> dict[str, str] | None:
         if headers := self.arguments.get("headers"):
             return {h["key"]: format_data(h["value"], data_points) for h in headers}
         else:

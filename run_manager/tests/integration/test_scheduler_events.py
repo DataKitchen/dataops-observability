@@ -1,5 +1,5 @@
 from collections import Counter
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from uuid import uuid4
 
 import pytest
@@ -159,7 +159,7 @@ def test_scheduler_run_should_start_with_pending(
 ):
     """Check that pending runs are marked missing when start schedule occurs"""
     instance = Instance.create(journey=journey)
-    expected_start_time = datetime(2005, 3, 2, 2, 2, 2, tzinfo=timezone.utc)
+    expected_start_time = datetime(2005, 3, 2, 2, 2, 2, tzinfo=UTC)
     run = Run.create(
         status=RunStatus.PENDING.name,
         start_time=None,
