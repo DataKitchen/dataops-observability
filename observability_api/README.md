@@ -21,4 +21,3 @@ You can also use the PyCharm built-in Flask Run Configuration.  The settings to 
 
 Once you set that run configuration up, you can just click the "Debug" button for the config and it will run the app in debug mode.
 This supports breakpoints, and the app will also hot-reload on detected file changes!  The app will be running at `http://localhost:5000/...`.
-

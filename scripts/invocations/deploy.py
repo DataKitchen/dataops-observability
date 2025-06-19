@@ -303,7 +303,7 @@ def build(
     if ui:
         ui_tag = f"observability-ui:{tag}"
         ctx.run(
-            f"docker build . {args_str} " f"-t '{ui_tag}' -f ./deploy/docker/observability-ui.dockerfile",
+            f"docker build . {args_str} -t '{ui_tag}' -f ./deploy/docker/observability-ui.dockerfile",
         )
         if load:
             ctx.run(f"minikube image load --daemon {ui_tag}", echo=True)

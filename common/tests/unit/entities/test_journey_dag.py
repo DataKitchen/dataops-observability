@@ -1,7 +1,6 @@
 from collections import defaultdict
 from dataclasses import dataclass
 from graphlib import CycleError
-from typing import Optional
 
 import pytest
 
@@ -10,7 +9,7 @@ from common.entities import Journey
 
 @dataclass
 class FakeEdge:
-    left: Optional[str]
+    left: str | None
     right: str
 
     def __hash__(self):

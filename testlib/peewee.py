@@ -1,9 +1,10 @@
 import contextlib
 from unittest.mock import Mock, patch
+from typing import Any
 
 
 @contextlib.contextmanager
-def patch_select(target: str, **kwargs):
+def patch_select(target: str, **kwargs: Any) -> Any:
     with patch(target=f"{target}.select") as select_mock:
         select_mock.return_value = select_mock
         for attr in ("join", "left_outer_join", "switch", "order_by", "where"):

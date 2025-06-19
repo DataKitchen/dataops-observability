@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from http import HTTPStatus
 from unittest.mock import patch
 from uuid import uuid4
@@ -61,7 +61,7 @@ def valid_token(token_user):
         "company_id": str(token_user.primary_company_id),
         "domain": "fakedomain.fake",
     }
-    dt = datetime.now(timezone.utc) + timedelta(days=2)
+    dt = datetime.now(UTC) + timedelta(days=2)
     data["exp"] = int(dt.replace(microsecond=0).timestamp())
     return JWTAuth.encode_token(data)
 
@@ -69,7 +69,7 @@ def valid_token(token_user):
 @pytest.fixture
 def invalid_token_bad_user(token_user):
     data = {"user_id": str(uuid4()), "company_id": str(token_user.primary_company_id)}
-    dt = datetime.now(timezone.utc) + timedelta(days=2)
+    dt = datetime.now(UTC) + timedelta(days=2)
     data["exp"] = int(dt.replace(microsecond=0).timestamp())
     return JWTAuth.encode_token(data)
 
@@ -140,15 +140,13 @@ def test_jwt_token_expiration(jwt_client, token_user):
         token = JWTAuth.log_user_in(token_user)
 
     claims = JWTAuth.decode_token(token)
-    assert get_token_expiration(claims) < datetime.now(timezone.utc) + timedelta(seconds=20)
+    assert get_token_expiration(claims) < datetime.now(UTC) + timedelta(seconds=20)
 
 
 @pytest.mark.integration
 def test_jwt_token_expiration_explicit(jwt_client, token_user):
     with patch("common.api.flask_ext.authentication.jwt_plugin.get_domain", return_value="fakedomain.fake"):
-        token = JWTAuth.log_user_in(
-            token_user, claims={"exp": (datetime.now(timezone.utc) + timedelta(seconds=10)).timestamp()}
-        )
+        token = JWTAuth.log_user_in(token_user, claims={"exp": (datetime.now(UTC) + timedelta(seconds=10)).timestamp()})
 
     claims = JWTAuth.decode_token(token)
-    assert get_token_expiration(claims) < datetime.now(timezone.utc) + timedelta(seconds=10)
+    assert get_token_expiration(claims) < datetime.now(UTC) + timedelta(seconds=10)

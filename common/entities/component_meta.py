@@ -1,4 +1,4 @@
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 from peewee import Field, ForeignKeyField, ModelBase, ModelSelect, ModelUpdate
 
@@ -144,7 +144,7 @@ class ComplexComponentMeta(ModelBase):
             component.save(force_insert=True)
             return component
 
-        def save(self: BaseModel, force_insert: bool = False, only: Optional[object] = None) -> Union[bool, int]:
+        def save(self: BaseModel, force_insert: bool = False, only: object | None = None) -> Union[bool, int]:
             ret = 0
             if not force_insert and self.component:
                 ret += self.component.save(only=only) or 0

@@ -1,5 +1,5 @@
 import threading
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from unittest.mock import Mock, patch
 
 import pytest
@@ -29,7 +29,7 @@ class TestTrigger(BaseTrigger):
         if previous_fire_time:
             return None
         else:
-            return datetime.now(tz=timezone.utc)
+            return datetime.now(tz=UTC)
 
 
 class TestScheduleSource(ScheduleSource):

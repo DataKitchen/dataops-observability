@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime, timedelta
-from typing import Optional
 from uuid import UUID
 
 from apscheduler.triggers.cron import CronTrigger
@@ -29,7 +28,7 @@ class ComponentScheduleSource(ScheduleSource[Schedule]):
         component_id: UUID,
         schedule_type: ScheduleType,
         is_margin: bool,
-        margin: Optional[int] = None,
+        margin: int | None = None,
     ) -> None:
         """Create and forward corresponding scheduler event(s) to the run manager"""
         if is_margin:

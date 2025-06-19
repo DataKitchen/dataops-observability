@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from uuid import UUID
 
 import pytest
@@ -26,12 +26,12 @@ def test_run_handler_new_pending_metadata(run_status_event_pending, pipeline):
 
     # Retrieve the run and make sure the expected_start_time has been updated
     run = Run.get_by_id(handler.context.run.id)
-    assert run.expected_start_time == datetime(2005, 3, 1, 1, 1, 1, tzinfo=timezone.utc)
+    assert run.expected_start_time == datetime(2005, 3, 1, 1, 1, 1, tzinfo=UTC)
 
 
 @pytest.mark.integration
 def test_run_handler_no_overwrite_expected_start_time(run_status_event_missing, pipeline):
-    expected_start_time = datetime(2005, 3, 2, 2, 2, 2, tzinfo=timezone.utc)
+    expected_start_time = datetime(2005, 3, 2, 2, 2, 2, tzinfo=UTC)
     run = Run.create(
         id=UUID("dbed19e1-d0bb-4860-bbdf-9d768cb90764"),
         pipeline=pipeline,

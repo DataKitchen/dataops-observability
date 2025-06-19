@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from unittest.mock import Mock, patch
 from uuid import uuid4
 
@@ -42,7 +42,7 @@ def agent_source(scheduler, event_producer_mock):
 @pytest.fixture
 def job_kwargs():
     return {
-        "run_time": datetime.now(tz=timezone.utc),
+        "run_time": datetime.now(tz=UTC),
         "schedule_type": ScheduleType.BATCH_END_TIME,
         "schedule_id": str(uuid4()),
         "component_id": str(uuid4()),
@@ -64,4 +64,4 @@ def schedule_data():
 
 @pytest.fixture
 def run_time():
-    return datetime.now(tz=timezone.utc)
+    return datetime.now(tz=UTC)

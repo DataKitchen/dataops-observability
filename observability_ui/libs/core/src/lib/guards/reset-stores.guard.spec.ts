@@ -11,7 +11,7 @@ describe('Reset Stores Guard Fn', () => {
     constructor(protected service: ProjectService) {
       super({ list: [] });
     }
-  
+
     override dispatch = jest.fn();
   }
 

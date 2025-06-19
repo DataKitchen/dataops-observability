@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
@@ -15,7 +15,7 @@ from common.apscheduler_extensions import (
 
 @pytest.mark.unit
 def test_delayed_trigger_negative():
-    cron_trigger = CronTrigger.from_crontab("*/2 * * * *", timezone=timezone.utc)
+    cron_trigger = CronTrigger.from_crontab("*/2 * * * *", timezone=UTC)
     delay = timedelta(hours=-1)
     with pytest.raises(ValueError, match="positive"):
         DelayedTrigger(cron_trigger, delay)
@@ -102,8 +102,8 @@ def test_fix_weekdays(weekday_expression, expected):
 
 @pytest.mark.unit
 def test_get_crontab_trigger_times_finite_range():
-    start = datetime(2000, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
-    end = datetime(2000, 1, 10, 0, 0, 0, tzinfo=timezone.utc)
+    start = datetime(2000, 1, 1, 0, 0, 0, tzinfo=UTC)
+    end = datetime(2000, 1, 10, 0, 0, 0, tzinfo=UTC)
     for i, time in enumerate(get_crontab_trigger_times("0 10 * * *", ZoneInfo("UTC"), start, end)):
         assert time == start + timedelta(days=i, hours=10)
     assert i == 8
@@ -111,7 +111,7 @@ def test_get_crontab_trigger_times_finite_range():
 
 @pytest.mark.unit
 def test_get_crontab_trigger_times_infinite_range():
-    start = datetime(2000, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+    start = datetime(2000, 1, 1, 0, 0, 0, tzinfo=UTC)
     gen = get_crontab_trigger_times("0 10 * * *", ZoneInfo("UTC"), start)
     for i in range(5000):
         assert next(gen) == start + timedelta(days=i, hours=10)
@@ -122,7 +122,7 @@ def test_get_crontab_trigger_times_infinite_range():
     "start,end",
     (
         (datetime(2000, 1, 1, 0, 0, 0), None),
-        (datetime(2000, 1, 1, 0, 0, 0, tzinfo=timezone.utc), datetime(2000, 1, 2, 0, 0, 0)),
+        (datetime(2000, 1, 1, 0, 0, 0, tzinfo=UTC), datetime(2000, 1, 2, 0, 0, 0)),
     ),
 )
 def test_get_crontab_trigger_times_invalid_range(start, end):

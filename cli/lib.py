@@ -2,7 +2,6 @@ import os
 import re
 import textwrap
 from argparse import ArgumentParser, ArgumentTypeError
-from typing import Optional
 from uuid import UUID
 
 from log_color.colors import ColorStr
@@ -21,7 +20,7 @@ def uuid_type(arg: str) -> UUID:
 def slice_type(arg: str) -> slice:
     """Convert an argument to a slice; for simplicity, disallow negative slice values and steps."""
 
-    def _int_or_none(val: str) -> Optional[int]:
+    def _int_or_none(val: str) -> int | None:
         if not val:
             return None
         else:

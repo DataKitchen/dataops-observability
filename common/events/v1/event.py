@@ -4,8 +4,7 @@ __all__ = ["Event", "EventInterface", "EVENT_ATTRIBUTES"]
 
 import logging
 from dataclasses import InitVar, dataclass, field
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import datetime, UTC
 from uuid import UUID, uuid4
 
 from common.decorators import cached_property
@@ -72,35 +71,35 @@ class Event(EventInterface):
     this to define your own Event to ensure your events have all the expected fields.
     """
 
-    pipeline_key: Optional[str]
+    pipeline_key: str | None
     source: str
     event_id: UUID
     event_timestamp: datetime
     received_timestamp: datetime
     metadata: dict[str, object]
     event_type: str
-    run_name: Optional[str]
-    run_key: Optional[str]
-    component_tool: Optional[str]
-    project_id: Optional[UUID]
-    run_id: Optional[UUID]
-    pipeline_id: Optional[UUID]
-    task_id: Optional[UUID]
-    task_name: Optional[str]
-    task_key: Optional[str]
-    run_task_id: Optional[UUID]
-    external_url: Optional[str]
-    pipeline_name: Optional[str]
+    run_name: str | None
+    run_key: str | None
+    component_tool: str | None
+    project_id: UUID | None
+    run_id: UUID | None
+    pipeline_id: UUID | None
+    task_id: UUID | None
+    task_name: str | None
+    task_key: str | None
+    run_task_id: UUID | None
+    external_url: str | None
+    pipeline_name: str | None
     instances: list[InstanceRef]
-    dataset_id: Optional[UUID]
-    dataset_key: Optional[str]
-    dataset_name: Optional[str]
-    server_id: Optional[UUID]
-    server_key: Optional[str]
-    server_name: Optional[str]
-    stream_id: Optional[UUID]
-    stream_key: Optional[str]
-    stream_name: Optional[str]
+    dataset_id: UUID | None
+    dataset_key: str | None
+    dataset_name: str | None
+    server_id: UUID | None
+    server_key: str | None
+    server_name: str | None
+    stream_id: UUID | None
+    stream_key: str | None
+    stream_name: str | None
     payload_keys: list[str]
     version: EventVersion
 
@@ -131,7 +130,7 @@ class Event(EventInterface):
         # At a glance, we could have these defaulted by the schema. However, the spec says that if timestamp is not
         # defined, it _must_ be matched to the received time. Setting it in the schema would generate very tiny
         # differences in time.
-        current_time = str(datetime.now(timezone.utc))
+        current_time = str(datetime.now(UTC))
         if "event_timestamp" not in event_body:
             event_body["event_timestamp"] = current_time
         event_body["received_timestamp"] = current_time
@@ -215,7 +214,7 @@ class Event(EventInterface):
     @cached_property
     def component_key_details(self) -> EventComponentDetails:
         if not (key := next((attr for attr in EVENT_ATTRIBUTES.keys() if getattr(self, attr, None) is not None), None)):
-            LOG.error(f"Event component key details cannot be parsed from the event information provided: " f"{self}")
+            LOG.error(f"Event component key details cannot be parsed from the event information provided: {self}")
             raise ValueError("Event component key details cannot be parsed.")
         return EVENT_ATTRIBUTES[key]
 
@@ -227,7 +226,7 @@ class Event(EventInterface):
         return key
 
     @property
-    def component_id(self) -> Optional[UUID]:
+    def component_id(self) -> UUID | None:
         return getattr(self, self.component_key_details.component_id, None)
 
     @component_id.setter
@@ -239,7 +238,7 @@ class Event(EventInterface):
         setattr(self, self.component_key_details.component_id, value)
 
     @property
-    def component_name(self) -> Optional[str]:
+    def component_name(self) -> str | None:
         return getattr(self, self.component_key_details.component_name, None)
 
     @property

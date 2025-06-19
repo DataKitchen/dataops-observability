@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from unittest.mock import MagicMock, Mock, patch
 from uuid import uuid4
 
@@ -31,8 +31,8 @@ def base_event_data():
         "pipeline_name": None,
         "project_id": str(uuid4()),
         "source": EventSources.API.name,
-        "event_timestamp": str(datetime.now(timezone.utc)),
-        "received_timestamp": str(datetime.now(timezone.utc)),
+        "event_timestamp": str(datetime.now(UTC)),
+        "received_timestamp": str(datetime.now(UTC)),
         "external_url": "https://example.com",
         "metadata": {},
         "run_id": None,

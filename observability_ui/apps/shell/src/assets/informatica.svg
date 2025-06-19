@@ -53,10 +53,10 @@
   <style
      id="style12">
 		tspan { white-space:pre }
-		.shp0 { fill: #ff4d00 } 
-		.shp1 { fill: #ff7d00 } 
-		.shp2 { fill: #001aff } 
-		.shp3 { fill: #e23400 } 
+		.shp0 { fill: #ff4d00 }
+		.shp1 { fill: #ff7d00 }
+		.shp2 { fill: #001aff }
+		.shp3 { fill: #e23400 }
 	</style>
   <g
      transform="matrix(0.01982868,0,0,0.01982868,0.19937753,-0.01229363)"

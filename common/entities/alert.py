@@ -2,7 +2,6 @@ __all__ = ["RunAlert", "InstanceAlert", "AlertLevel", "InstanceAlertsComponents"
 
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 
 from peewee import CharField, CompositeKey, ForeignKeyField
 from playhouse.mysql_ext import JSONField
@@ -63,7 +62,7 @@ class AlertBase(BaseEntity, AuditUpdateTimeEntityMixin):
     level = EnumStrField(AlertLevel, null=False, max_length=50)
 
     @property
-    def expected_start_time(self) -> Optional[datetime]:
+    def expected_start_time(self) -> datetime | None:
         """If the alert has expected_start_time in it's details dict, return it as a datetime object."""
         timestamp = self.details.get("expected_start_time", None)
         if timestamp:
@@ -76,7 +75,7 @@ class AlertBase(BaseEntity, AuditUpdateTimeEntityMixin):
             return None
 
     @expected_start_time.setter
-    def expected_start_time(self, dt_obj: Optional[datetime]) -> None:
+    def expected_start_time(self, dt_obj: datetime | None) -> None:
         """Set the expected_start_time value (converts to timestamp in details dict)."""
         if dt_obj is None:
             self.details.pop("expected_start_time", None)
@@ -85,7 +84,7 @@ class AlertBase(BaseEntity, AuditUpdateTimeEntityMixin):
             self.details["expected_start_time"] = timestamp
 
     @property
-    def expected_end_time(self) -> Optional[datetime]:
+    def expected_end_time(self) -> datetime | None:
         """If the alert has expected_end_time in it's details dict, return it as a datetime object."""
         timestamp = self.details.get("expected_end_time", None)
         if timestamp:
@@ -98,7 +97,7 @@ class AlertBase(BaseEntity, AuditUpdateTimeEntityMixin):
             return None
 
     @expected_end_time.setter
-    def expected_end_time(self, dt_obj: Optional[datetime]) -> None:
+    def expected_end_time(self, dt_obj: datetime | None) -> None:
         """Set the expected_end_time value (converts to timestamp in details dict)."""
         if dt_obj is None:
             self.details.pop("expected_end_time", None)

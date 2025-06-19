@@ -115,4 +115,3 @@ export class EntitiesResolver extends Store<EntitiesResolverState, EntitiesResol
   }
 
 }
-

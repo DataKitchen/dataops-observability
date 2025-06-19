@@ -62,7 +62,7 @@ export interface MetricLogEventData extends EventData {
   metric_entries: Array<{
     key: string;
     value: string;
-  }>; 
+  }>;
 }
 
 export interface RunStatusEventData extends EventData {

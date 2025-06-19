@@ -1,6 +1,6 @@
 __all__ = ["CronExpressionStr"]
 
-from typing import Any, Optional
+from typing import Any
 from collections.abc import Mapping
 
 from marshmallow import ValidationError
@@ -16,7 +16,7 @@ class CronExpressionStr(Str):
     It validates against what ApScheduler's CronTrigger expects.
     """
 
-    def _deserialize(self, value: Any, attr: Optional[str], data: Optional[Mapping[str, Any]], **kwargs: object) -> Any:
+    def _deserialize(self, value: Any, attr: str | None, data: Mapping[str, Any] | None, **kwargs: object) -> Any:
         str_value = super(Str, self)._deserialize(value, attr, data, **kwargs)
         if errors := validate_cron_expression(str_value):
             raise ValidationError(" ".join(errors))

@@ -4,7 +4,6 @@ __all__ = [
 ]
 
 from dataclasses import dataclass
-from typing import Optional
 from uuid import UUID
 
 from common.decorators import cached_property
@@ -20,7 +19,7 @@ from common.events.base import BatchPipelineMixin, EventBaseMixin, JourneyMixin,
 class AlertBase:
     alert_id: UUID
     level: AlertLevel
-    description: Optional[str]
+    description: str | None
 
 
 @dataclass(kw_only=True)

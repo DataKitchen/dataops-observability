@@ -26,4 +26,4 @@ def create_topics(topics: list[Topic], num_partitions: int = 1, replication_fact
             failed_topics.append(topic_name)
 
     if failed_topics:
-        raise Exception(f"Creating the topics {", ".join(failed_topics)} failed.")
+        raise Exception(f"Creating the topics {', '.join(failed_topics)} failed.")

@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from heapq import merge
 from operator import itemgetter
-from typing import Optional, cast
+from typing import cast
 from collections.abc import Generator
 from uuid import UUID
 from zoneinfo import ZoneInfo
@@ -65,8 +65,8 @@ def _collect_journey_schedules(
 def _get_instance_times(
     schedules: JourneySchedules,
     start_time: datetime,
-    end_time: Optional[datetime],
-) -> Generator[tuple[datetime, bool], None, None]:
+    end_time: datetime | None,
+) -> Generator[tuple[datetime, bool]]:
     """
     Generate a sequence of expected instance start and end times from the given schedules
 
@@ -96,8 +96,8 @@ class UpcomingInstanceService:
     def get_upcoming_instances_with_rules(
         rules: ListRules,
         filters: UpcomingInstanceFilters,
-        project_id: Optional[UUID] = None,
-        company_id: Optional[UUID] = None,
+        project_id: UUID | None = None,
+        company_id: UUID | None = None,
     ) -> list[UpcomingInstance]:
         assert filters.start_range is not None
         memberships = []
@@ -159,9 +159,9 @@ class UpcomingInstanceService:
     def get_upcoming_instances(
         journey: Journey,
         start_time: datetime,
-        end_time: Optional[datetime] = None,
-        schedules: Optional[JourneySchedules] = None,
-    ) -> Generator[UpcomingInstance, None, None]:
+        end_time: datetime | None = None,
+        schedules: JourneySchedules | None = None,
+    ) -> Generator[UpcomingInstance]:
         """
         Get upcoming instances for the given journey
 

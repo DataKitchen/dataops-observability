@@ -1,6 +1,5 @@
 __all__ = ["Company"]
 
-from typing import Optional
 
 from peewee import CharField, ForeignKeyField
 
@@ -13,5 +12,5 @@ class Company(BaseEntity, AuditEntityMixin):
     name = CharField(unique=True, null=False)
 
     @property
-    def parent(self) -> Optional[ForeignKeyField]:
+    def parent(self) -> ForeignKeyField | None:
         return None
