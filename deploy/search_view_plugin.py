@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Optional
+from typing import Any
 
 from apispec import BasePlugin
 from apispec.yaml_utils import load_yaml_from_docstring
@@ -16,8 +16,8 @@ class SearchViewPlugin(BasePlugin):
 
     def operation_helper(
         self,
-        path: Optional[str] = None,
-        operations: Optional[dict] = None,
+        path: str | None = None,
+        operations: dict | None = None,
         **kwargs: Any,
     ) -> None:
         view_class = getattr(kwargs.get("view", None), "view_class", None)

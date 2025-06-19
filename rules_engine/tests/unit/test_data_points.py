@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 
 import pytest
 
@@ -206,7 +206,7 @@ def test_run_data_points(run_status_event, run, rule):
     # DataPoints is using the correct source
     assert run.status != run_status_event.status
     assert dps.run.status == run.status
-    assert dps.run.start_time == run.start_time.replace(tzinfo=timezone.utc).isoformat()
+    assert dps.run.start_time == run.start_time.replace(tzinfo=UTC).isoformat()
     assert dps.run.start_time_formatted == datetime_formatted(run.start_time)
     assert dps.run.end_time == "N/A"
     assert dps.run.end_time_formatted == "N/A"
@@ -221,7 +221,7 @@ def test_run_data_points_with_end_time(run_status_event, run, rule):
     run.save()
     dps = DataPoints(run_status_event, rule)
     # These are tested in a separate function because the run is cached in Event
-    assert dps.run.end_time == run.end_time.replace(tzinfo=timezone.utc).isoformat()
+    assert dps.run.end_time == run.end_time.replace(tzinfo=UTC).isoformat()
     assert dps.run.end_time_formatted == datetime_formatted(run.end_time)
 
 
@@ -260,9 +260,9 @@ def test_run_task_data_points_with_times(run_status_event, run_task, rule):
     run_task.save()
     dps = DataPoints(run_status_event, rule)
     # These are tested in a separate function because the run task is cached in Event
-    assert dps.run_task.start_time == run_task.start_time.replace(tzinfo=timezone.utc).isoformat()
+    assert dps.run_task.start_time == run_task.start_time.replace(tzinfo=UTC).isoformat()
     assert dps.run_task.start_time_formatted == datetime_formatted(run_task.start_time)
-    assert dps.run_task.end_time == run_task.end_time.replace(tzinfo=timezone.utc).isoformat()
+    assert dps.run_task.end_time == run_task.end_time.replace(tzinfo=UTC).isoformat()
     assert dps.run_task.end_time_formatted == datetime_formatted(run_task.end_time)
 
 

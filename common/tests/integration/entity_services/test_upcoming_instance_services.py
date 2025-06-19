@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from uuid import uuid4
 
 import pytest
@@ -282,7 +282,7 @@ def test_get_upcoming_instances_with_rules_discard_matching_existing_instance(
     instance_rule_end,
     current_time,
 ):
-    base_time = datetime(2023, 8, 21, 10, 0, 0, tzinfo=timezone.utc)
+    base_time = datetime(2023, 8, 21, 10, 0, 0, tzinfo=UTC)
     instance.start_time = base_time
     instance.save()
     instance_rule_end.expression = "30 * * * *"
@@ -307,7 +307,7 @@ def test_get_upcoming_instances_with_rules_do_not_discard_upcoming_instance(
     instance_rule_end,
     current_time,
 ):
-    base_time = datetime(2023, 8, 21, 10, 0, 0, tzinfo=timezone.utc)
+    base_time = datetime(2023, 8, 21, 10, 0, 0, tzinfo=UTC)
     instance.start_time = base_time
     instance.save()
     instance_rule_start.expression = "5 * * * *"

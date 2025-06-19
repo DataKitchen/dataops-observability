@@ -4,7 +4,7 @@ import json
 import logging
 from dataclasses import dataclass
 from functools import cached_property
-from typing import Any, Optional
+from typing import Any
 
 from flask import g, request
 from flask.typing import ResponseReturnValue
@@ -22,7 +22,7 @@ LOG = logging.getLogger(__name__)
 @dataclass
 class Permission:
     entity_attribute: str
-    role: Optional[str] = None
+    role: str | None = None
     methods: tuple[str, ...] = ("GET", "PUT", "POST", "PATCH", "DELETE")
 
     def __call__(self, *methods: str) -> Permission:
@@ -48,7 +48,7 @@ class BaseView(MethodView):
     """
 
     @property
-    def user(self) -> Optional[User]:
+    def user(self) -> User | None:
         """Return the currently authenticated user."""
         return getattr(g, "user", None)
 
@@ -61,12 +61,12 @@ class BaseView(MethodView):
             return []
 
     @property
-    def claims(self) -> Optional[User]:
+    def claims(self) -> User | None:
         """Return the currently authenticated token."""
         return getattr(g, "claims", None)
 
     @property
-    def project(self) -> Optional[Project]:
+    def project(self) -> Project | None:
         return getattr(g, "project", None)
 
     @property

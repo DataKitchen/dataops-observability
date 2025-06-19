@@ -1,7 +1,7 @@
 import logging
 from collections.abc import Mapping
 from datetime import datetime
-from typing import Any, Optional, cast
+from typing import Any, cast
 from collections.abc import Callable, Iterator
 from uuid import UUID
 
@@ -102,7 +102,7 @@ class ProjectDataPoints(NamespacedDataPointsBase):
             "name": self._name,
         }
 
-    def _id(self) -> Optional[UUID]:
+    def _id(self) -> UUID | None:
         return self.event.project_id
 
     def _name(self) -> str:
@@ -120,16 +120,16 @@ class ComponentDataPoints(NamespacedDataPointsBase):
             "type": self._type,
         }
 
-    def _id(self) -> Optional[UUID]:
+    def _id(self) -> UUID | None:
         return self.event.component_id
 
-    def _key(self) -> Optional[str]:
+    def _key(self) -> str | None:
         return self.event.component_key
 
-    def _name(self) -> Optional[str]:
+    def _name(self) -> str | None:
         return self.event.component.display_name
 
-    def _type(self) -> Optional[str]:
+    def _type(self) -> str | None:
         return self.event.component_type.name
 
 
@@ -142,13 +142,13 @@ class PipelineDataPoints(NamespacedDataPointsBase):
             "name": self._name,
         }
 
-    def _id(self) -> Optional[UUID]:
+    def _id(self) -> UUID | None:
         return self.event.pipeline_id
 
-    def _key(self) -> Optional[str]:
+    def _key(self) -> str | None:
         return self.event.pipeline_key
 
-    def _name(self) -> Optional[str]:
+    def _name(self) -> str | None:
         return cast(str, self.event.pipeline.display_name)
 
 
@@ -170,13 +170,13 @@ class RunDataPoints(NamespacedDataPointsBase):
             "expected_end_time_formatted": self._expected_end_time_formatted,
         }
 
-    def _id(self) -> Optional[UUID]:
+    def _id(self) -> UUID | None:
         return self.event.run_id
 
-    def _key(self) -> Optional[str]:
+    def _key(self) -> str | None:
         return self.event.run_key
 
-    def _name(self) -> Optional[str]:
+    def _name(self) -> str | None:
         return self.event.run_name
 
     def _status(self) -> str:
@@ -195,7 +195,7 @@ class RunDataPoints(NamespacedDataPointsBase):
                 return datetime_formatted(start_time)
         return "N/A"
 
-    def _expected_start_dt(self) -> Optional[datetime]:
+    def _expected_start_dt(self) -> datetime | None:
         try:
             run = getattr(self.event, "run", None)
         except DoesNotExist:
@@ -206,11 +206,11 @@ class RunDataPoints(NamespacedDataPointsBase):
                     return cast(datetime, expected_start_time)
         return None
 
-    def _expected_start_time(self) -> Optional[str]:
+    def _expected_start_time(self) -> str | None:
         val = self._expected_start_dt()
         return datetime_iso8601(val) if val else None
 
-    def _expected_start_time_formatted(self) -> Optional[str]:
+    def _expected_start_time_formatted(self) -> str | None:
         val = self._expected_start_dt()
         return datetime_formatted(val) if val else None
 
@@ -226,7 +226,7 @@ class RunDataPoints(NamespacedDataPointsBase):
                 return datetime_formatted(end_time)
         return "N/A"
 
-    def _expected_end_dt(self) -> Optional[datetime]:
+    def _expected_end_dt(self) -> datetime | None:
         try:
             run = getattr(self.event, "run", None)
         except DoesNotExist:
@@ -237,11 +237,11 @@ class RunDataPoints(NamespacedDataPointsBase):
                     return cast(datetime, expected_end_time)
         return None
 
-    def _expected_end_time(self) -> Optional[str]:
+    def _expected_end_time(self) -> str | None:
         val = self._expected_end_dt()
         return datetime_iso8601(val) if val else None
 
-    def _expected_end_time_formatted(self) -> Optional[str]:
+    def _expected_end_time_formatted(self) -> str | None:
         val = self._expected_end_dt()
         return datetime_formatted(val) if val else None
 
@@ -255,10 +255,10 @@ class TaskDataPoints(NamespacedDataPointsBase):
             "name": self._name,
         }
 
-    def _id(self) -> Optional[UUID]:
+    def _id(self) -> UUID | None:
         return self.event.task_id
 
-    def _key(self) -> Optional[str]:
+    def _key(self) -> str | None:
         ret: str = getattr(self.event, "task_key")
         return ret
 
@@ -278,7 +278,7 @@ class RunTaskDataPoints(NamespacedDataPointsBase):
             "end_time_formatted": self._end_time_formatted,
         }
 
-    def _id(self) -> Optional[UUID]:
+    def _id(self) -> UUID | None:
         return self.event.run_task_id
 
     def _status(self) -> str:
@@ -408,7 +408,7 @@ class AlertEventDataPoints(NamespacedDataPointsBase):
         _type: str = self.event.type.value
         return _type
 
-    def _expected_start_dt(self) -> Optional[datetime]:
+    def _expected_start_dt(self) -> datetime | None:
         try:
             alert = getattr(self.event, "alert", None)
         except DoesNotExist:
@@ -419,7 +419,7 @@ class AlertEventDataPoints(NamespacedDataPointsBase):
                     return cast(datetime, expected_start_time)
         return None
 
-    def _expected_end_dt(self) -> Optional[datetime]:
+    def _expected_end_dt(self) -> datetime | None:
         try:
             alert = getattr(self.event, "alert", None)
         except DoesNotExist:
@@ -430,11 +430,11 @@ class AlertEventDataPoints(NamespacedDataPointsBase):
                     return cast(datetime, expected_end_time)
         return None
 
-    def _expected_start_time_formatted(self) -> Optional[str]:
+    def _expected_start_time_formatted(self) -> str | None:
         val = self._expected_start_dt()
         return datetime_formatted(val) if val else None
 
-    def _expected_end_time_formatted(self) -> Optional[str]:
+    def _expected_end_time_formatted(self) -> str | None:
         val = self._expected_end_dt()
         return datetime_formatted(val) if val else None
 
@@ -448,16 +448,16 @@ class InternalComponentDataPoints(NamespacedDataPointsBase):
             "name": self._name,
         }
 
-    def _id(self) -> Optional[UUID]:
-        id: Optional[UUID] = self.event.batch_pipeline_id
+    def _id(self) -> UUID | None:
+        id: UUID | None = self.event.batch_pipeline_id
         return id
 
-    def _key(self) -> Optional[str]:
-        key: Optional[str] = self.event.batch_pipeline.key
+    def _key(self) -> str | None:
+        key: str | None = self.event.batch_pipeline.key
         return key
 
-    def _name(self) -> Optional[str]:
-        name: Optional[str] = self.event.batch_pipeline.display_name
+    def _name(self) -> str | None:
+        name: str | None = self.event.batch_pipeline.display_name
         return name
 
 
@@ -470,16 +470,16 @@ class RunAlertDatapoints(NamespacedDataPointsBase):
             "name": self._name,
         }
 
-    def _id(self) -> Optional[UUID]:
-        id: Optional[UUID] = self.event.run.id
+    def _id(self) -> UUID | None:
+        id: UUID | None = self.event.run.id
         return id
 
-    def _key(self) -> Optional[str]:
-        key: Optional[str] = self.event.run.key
+    def _key(self) -> str | None:
+        key: str | None = self.event.run.key
         return key
 
-    def _name(self) -> Optional[str]:
-        name: Optional[str] = self.event.run.name
+    def _name(self) -> str | None:
+        name: str | None = self.event.run.name
         return name
 
 
@@ -493,26 +493,26 @@ class RuleDataPoints(NamespacedDataPointsBase):
             "run_state_trigger_successive": self._run_state_trigger_successive,
         }
 
-    def _run_state_matches(self) -> Optional[str]:
+    def _run_state_matches(self) -> str | None:
         try:
-            matches: Optional[str] = self.rule.rule_data["conditions"][0]["run_state"]["matches"]
+            matches: str | None = self.rule.rule_data["conditions"][0]["run_state"]["matches"]
             return matches
         except Exception:
             return None
 
-    def _run_state_count(self) -> Optional[str]:
+    def _run_state_count(self) -> str | None:
         try:
             return str(self.rule.rule_data["conditions"][0]["run_state"]["count"])
         except Exception:
             return None
 
-    def _run_state_group_run_name(self) -> Optional[str]:
+    def _run_state_group_run_name(self) -> str | None:
         try:
             return str(self.rule.rule_data["conditions"][0]["run_state"]["group_run_name"])
         except Exception:
             return None
 
-    def _run_state_trigger_successive(self) -> Optional[str]:
+    def _run_state_trigger_successive(self) -> str | None:
         try:
             return str(self.rule.rule_data["conditions"][0]["run_state"]["trigger_successive"])
         except Exception:

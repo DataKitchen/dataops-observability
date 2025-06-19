@@ -1,8 +1,8 @@
 import logging
 from base64 import b64encode
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
-from typing import NamedTuple, Optional
+from datetime import datetime, timedelta, UTC
+from typing import NamedTuple
 from uuid import uuid4
 
 from peewee import DoesNotExist
@@ -31,15 +31,15 @@ def generate_key(
     *,
     project: Project,
     allowed_services: list[str],
-    name: Optional[str] = None,
-    description: Optional[str] = None,
+    name: str | None = None,
+    description: str | None = None,
     expiration_days: int = DEFAULT_EXPIRY_DAYS,
 ) -> KeyPair:
     """Generate a new Service Account key for the given service name."""
     passphrase = generate_passphrase()
     salt = str(uuid4())
     passphrase_hash = hash_value(value=passphrase, salt=salt)
-    expiry = datetime.now(timezone.utc) + timedelta(days=expiration_days)
+    expiry = datetime.now(UTC) + timedelta(days=expiration_days)
     digest = create_digest(iterations=HASH_ITERATIONS, salt=salt, passphrase_hash=passphrase_hash)
 
     # Give the key a pretty unique name if none provided (Name only has to be unique per-project so this should safe)

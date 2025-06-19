@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 
 import pytest
 
@@ -26,7 +26,7 @@ def pipeline_4(test_db, project):
 
 @pytest.fixture
 def current_time() -> datetime:
-    yield datetime.now(timezone.utc)
+    yield datetime.now(UTC)
 
 
 @pytest.fixture()
@@ -61,7 +61,7 @@ def test_outcomes_instance(test_db, run, pipeline, instance_instance_set):
 
 @pytest.fixture
 def test_outcomes_event(project, pipeline, run, event_data):
-    timestamp = datetime.now(timezone.utc).isoformat()
+    timestamp = datetime.now(UTC).isoformat()
     data = {
         "event_type": TestOutcomesEvent.__name__,
         "test_outcomes": [

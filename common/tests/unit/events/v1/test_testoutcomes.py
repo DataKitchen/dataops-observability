@@ -38,9 +38,9 @@ def test_testoutcomes_schema_with_testgen_integration(test_outcomes_testgen_even
     assert item_integration_event.test_suite == item_integration_data["test_suite"]
     assert item_integration_event.version == item_integration_data["version"]
     assert len(item_integration_event.test_parameters) == len(item_integration_data["test_parameters"])
-    assert (
-        type(item_integration_event.test_parameters[0].value) == Decimal
-    ), "expected dataclass's value to be Decimal type"
+    assert type(item_integration_event.test_parameters[0].value) == Decimal, (
+        "expected dataclass's value to be Decimal type"
+    )
     assert str(item_integration_event.test_parameters[0].value) == item_integration_data["test_parameters"][0]["value"]
     assert item_integration_event.test_parameters[0].name == item_integration_data["test_parameters"][0]["name"]
     assert item_integration_event.columns == item_integration_data["columns"]

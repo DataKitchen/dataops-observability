@@ -1,5 +1,5 @@
 import copy
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from uuid import uuid4
 
 import pytest
@@ -257,7 +257,7 @@ def test_run_manager_dont_modify_previously_closed_instance(
 ):
     p1 = Pipeline.create(key="pipe1", project=project)
     j1 = Journey.create(name="journey1", project=project)
-    instance_time = datetime.utcnow().replace(tzinfo=timezone.utc)
+    instance_time = datetime.utcnow().replace(tzinfo=UTC)
     i1 = Instance.create(journey=j1, start_time=instance_time, end_time=instance_time)
     InstanceRule.create(journey=j1, action=InstanceRuleAction.START, batch_pipeline=p1)
     InstanceRule.create(journey=j1, action=InstanceRuleAction.END, batch_pipeline=p1)

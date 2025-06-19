@@ -1,7 +1,7 @@
 __all__ = ["RunHandler"]
 
 import logging
-from typing import Optional, cast
+from typing import cast
 
 from peewee import DoesNotExist
 
@@ -102,7 +102,7 @@ class RunHandler(EventHandlerBase):
                     f"for batch-pipeline {self.context.pipeline.id}"
                 )
 
-    def _get_run(self, event: Event, pipeline: Pipeline) -> Optional[Run]:
+    def _get_run(self, event: Event, pipeline: Pipeline) -> Run | None:
         """
         Get an existing run instance
 

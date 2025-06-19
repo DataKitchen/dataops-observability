@@ -1,7 +1,6 @@
 __all__ = ["IsRegexp"]
 
 import re
-from typing import Optional
 
 from marshmallow import ValidationError
 from marshmallow.validate import Validator
@@ -14,7 +13,7 @@ class IsRegexp(Validator):
 
     message_invalid = "Invalid regular expression"
 
-    def __init__(self, *, error: Optional[str] = None) -> None:
+    def __init__(self, *, error: str | None = None) -> None:
         self.error: str = error or self.message_invalid
 
     def __call__(self, value: str) -> str:

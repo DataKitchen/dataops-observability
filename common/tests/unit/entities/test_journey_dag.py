@@ -10,7 +10,7 @@ from common.entities import Journey
 
 @dataclass
 class FakeEdge:
-    left: Optional[str]
+    left: str | None
     right: str
 
     def __hash__(self):

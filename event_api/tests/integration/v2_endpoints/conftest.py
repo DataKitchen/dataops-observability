@@ -1,6 +1,6 @@
 import os
 import shutil
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -18,7 +18,7 @@ from event_api.routes import build_v2_routes
 
 @pytest.fixture
 def event_time():
-    return datetime(2022, 5, 25, 19, 56, 52, 759419, tzinfo=timezone.utc)
+    return datetime(2022, 5, 25, 19, 56, 52, 759419, tzinfo=UTC)
 
 
 @pytest.fixture

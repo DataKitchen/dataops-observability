@@ -2,7 +2,6 @@ __all__ = ["ScheduledEvent", "BatchPipelineStatusPlatformEvent"]
 
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from common.events.base import ComponentMixin
@@ -19,7 +18,7 @@ class ScheduledEvent(ComponentMixin):
     schedule_id: UUID
     schedule_type: ScheduleType
     schedule_timestamp: datetime
-    schedule_margin: Optional[datetime] = None
+    schedule_margin: datetime | None = None
 
     @property
     def partition_identifier(self) -> str:

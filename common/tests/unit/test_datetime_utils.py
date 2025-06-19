@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from zoneinfo import ZoneInfo, available_timezones
 
 import pytest
@@ -26,10 +26,10 @@ def test_datetime_iso8601():
 @pytest.mark.parametrize(
     "ts, dt",
     (
-        (1685701704.039912, datetime(2023, 6, 2, 10, 28, 24, 39912, tzinfo=timezone.utc)),
-        (1123905724.000002, datetime(2005, 8, 13, 4, 2, 4, 2, tzinfo=timezone.utc)),
-        (435489642.424242, datetime(1983, 10, 20, 9, 20, 42, 424242, tzinfo=timezone.utc)),
-        (1162815179.06429, datetime(2006, 11, 6, 12, 12, 59, 64290, tzinfo=timezone.utc)),
+        (1685701704.039912, datetime(2023, 6, 2, 10, 28, 24, 39912, tzinfo=UTC)),
+        (1123905724.000002, datetime(2005, 8, 13, 4, 2, 4, 2, tzinfo=UTC)),
+        (435489642.424242, datetime(1983, 10, 20, 9, 20, 42, 424242, tzinfo=UTC)),
+        (1162815179.06429, datetime(2006, 11, 6, 12, 12, 59, 64290, tzinfo=UTC)),
     ),
 )
 def test_timestamp_and_datetime(ts, dt):
@@ -47,7 +47,7 @@ def test_tzinfo_added():
     naive_dt = datetime(2006, 11, 6, 12, 12)
     timestamp = datetime_to_timestamp(naive_dt)
 
-    expected_dt = datetime(2006, 11, 6, 12, 12, tzinfo=timezone.utc)
+    expected_dt = datetime(2006, 11, 6, 12, 12, tzinfo=UTC)
     actual_dt = timestamp_to_datetime(timestamp)
 
     assert actual_dt != naive_dt
@@ -65,7 +65,7 @@ def test_tzinfo_coerced_to_utc():
     tz_dt = datetime(2001, 1, 1, 0, 0, 0, tzinfo=tzinfo)
     timestamp = datetime_to_timestamp(tz_dt)
 
-    expected_dt = tz_dt.astimezone(timezone.utc)
+    expected_dt = tz_dt.astimezone(UTC)
     actual_dt = timestamp_to_datetime(timestamp)
 
     assert expected_dt == actual_dt

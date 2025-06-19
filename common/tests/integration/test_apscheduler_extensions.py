@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from itertools import count
 
 import pytest
@@ -12,7 +12,7 @@ from common.apscheduler_extensions import DelayedTrigger
 
 def calculate_fire_time_sequence(trigger, n=10):
     prev_fire_time = None
-    now = datetime.now(tz=getattr(trigger, "timezone", timezone.utc))
+    now = datetime.now(tz=getattr(trigger, "timezone", UTC))
     for _ in range(n):
         next_fire_time = trigger.get_next_fire_time(prev_fire_time, now)
         yield next_fire_time
@@ -24,21 +24,21 @@ def calculate_fire_time_sequence(trigger, n=10):
 @pytest.mark.parametrize(
     "trigger",
     (
-        CronTrigger.from_crontab("*/2 * * * *", timezone=timezone.utc),
-        CronTrigger.from_crontab("*/4 * * * *", timezone=timezone.utc),
+        CronTrigger.from_crontab("*/2 * * * *", timezone=UTC),
+        CronTrigger.from_crontab("*/4 * * * *", timezone=UTC),
         CronTrigger(
             year="*",
             month="*",
             day="*",
             hour="*",
             minute="*/4",
-            timezone=timezone.utc,
-            start_date=datetime.now(tz=timezone.utc) + timedelta(days=5),
+            timezone=UTC,
+            start_date=datetime.now(tz=UTC) + timedelta(days=5),
         ),
         CronTrigger.from_crontab("*/4 * * * *", timezone=astimezone("Asia/Tokyo")),
-        IntervalTrigger(minutes=1, timezone=timezone.utc),
-        IntervalTrigger(minutes=6, timezone=timezone.utc),
-        DateTrigger(timezone=timezone.utc),
+        IntervalTrigger(minutes=1, timezone=UTC),
+        IntervalTrigger(minutes=6, timezone=UTC),
+        DateTrigger(timezone=UTC),
     ),
     ids=(
         "cron_smaller_interval",
@@ -73,7 +73,7 @@ def test_delayed_trigger_3_min_delay(trigger):
     ),
 )
 def test_delayed_trigger(delay):
-    cron_trigger = CronTrigger.from_crontab("*/2 * * * *", timezone=timezone.utc)
+    cron_trigger = CronTrigger.from_crontab("*/2 * * * *", timezone=UTC)
     delayed_trigger = DelayedTrigger(cron_trigger, delay)
 
     for idx, original, delayed in zip(

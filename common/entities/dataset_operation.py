@@ -13,8 +13,8 @@ from .instance import InstanceSet
 
 
 class DatasetOperationType(Enum):
-    READ: str = "READ"
-    WRITE: str = "WRITE"
+    READ = "READ"
+    WRITE = "WRITE"
 
 
 class DatasetOperation(BaseEntity):
