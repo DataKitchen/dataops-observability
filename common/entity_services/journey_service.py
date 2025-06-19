@@ -1,7 +1,6 @@
 __all__ = ["JourneyService"]
 
 import logging
-from typing import Optional
 from uuid import UUID
 
 from common.entities import Action, Company, Component, Journey, JourneyDagEdge, Organization, Project, Rule
@@ -19,7 +18,7 @@ class JourneyService:
         return Page[Rule].get_paginated_results(query, Rule.created_on, list_rules)
 
     @staticmethod
-    def get_action_by_implementation(journey_id: UUID, action_impl: str) -> Optional[Action]:
+    def get_action_by_implementation(journey_id: UUID, action_impl: str) -> Action | None:
         """
         Fetches an Action entity given a Journey ID and the action implementation.
 

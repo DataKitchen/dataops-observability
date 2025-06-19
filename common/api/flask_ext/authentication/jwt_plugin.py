@@ -1,7 +1,7 @@
 __all__ = ["JWTAuth"]
 import logging
-from datetime import datetime, timedelta, timezone
-from typing import Optional, cast
+from datetime import datetime, timedelta, UTC
+from typing import cast
 from collections.abc import Callable
 
 from flask import current_app, g, request
@@ -24,7 +24,7 @@ def get_token_expiration(claims: JWT_CLAIMS) -> datetime:
     except KeyError as ke:
         raise ValueError("Token claims missing 'exp' key") from ke
     try:
-        return datetime.fromtimestamp(cast(float | int, exp_timestamp), tz=timezone.utc)
+        return datetime.fromtimestamp(cast(float | int, exp_timestamp), tz=UTC)
     except Exception as e:
         raise ValueError(f"Unable to parse expiration from '{claims['exp']}'") from e
 
@@ -63,7 +63,7 @@ class JWTAuth(BaseAuthPlugin):
         except Exception as e:
             raise Unauthorized("Invalid authentication token") from e
 
-        if get_token_expiration(claims) < datetime.now(timezone.utc):
+        if get_token_expiration(claims) < datetime.now(UTC):
             LOG.error("JWT token expired")
             raise Unauthorized("Invalid authentication token")
 
@@ -95,7 +95,7 @@ class JWTAuth(BaseAuthPlugin):
         return decoded_token
 
     @classmethod
-    def log_user_in(cls, user: User, logout_callback: Optional[str] = None, claims: Optional[JWT_CLAIMS] = None) -> str:
+    def log_user_in(cls, user: User, logout_callback: str | None = None, claims: JWT_CLAIMS | None = None) -> str:
         claims = claims or {}
 
         if logout_callback:
@@ -105,7 +105,7 @@ class JWTAuth(BaseAuthPlugin):
                 raise ValueError(f"Logout callback '{logout_callback}' is not registered.")
 
         if "exp" not in claims:
-            claims["exp"] = (datetime.now(timezone.utc) + cls.default_jwt_expiration).timestamp()
+            claims["exp"] = (datetime.now(UTC) + cls.default_jwt_expiration).timestamp()
 
         claims["user_id"] = str(user.id)
         claims["company_id"] = str(user.primary_company_id)

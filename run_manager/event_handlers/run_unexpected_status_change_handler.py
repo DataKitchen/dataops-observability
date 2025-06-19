@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from common.entities import RunAlertType, RunStatus
 from common.events import EventHandlerBase
@@ -19,7 +18,7 @@ ALERT_TYPES = {
 """Map new run status to alert type"""
 
 
-def _get_alert_type(context: RunManagerContext) -> Optional[RunAlertType]:
+def _get_alert_type(context: RunManagerContext) -> RunAlertType | None:
     if context.run is None:
         raise ValueError("The `run` attribute for the context object must be populated with a valid Run instance")
 
@@ -52,7 +51,7 @@ class RunUnexpectedStatusChangeHandler(EventHandlerBase):
     def handle_run_status(self, event: RunStatusEvent) -> bool:
         if (pipeline := self.context.pipeline) is None or (run := self.context.run) is None:
             raise ValueError(
-                "The context object must be populated with a valid Pipeline and Run instance " "for RunStatusEvent"
+                "The context object must be populated with a valid Pipeline and Run instance for RunStatusEvent"
             )
 
         if (alert_type := _get_alert_type(self.context)) is not None:

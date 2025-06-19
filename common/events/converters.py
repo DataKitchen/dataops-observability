@@ -1,5 +1,5 @@
 from dataclasses import asdict, fields
-from typing import Optional, cast
+from typing import cast
 
 from common.entities import ComponentType, RunStatus
 from common.entities.event import ApiEventType
@@ -29,7 +29,7 @@ class ConvertToV1(EventHandlerBase):
             "payload_keys": event.event_payload.payload_keys,
         }
 
-    def _extract_batch_attributes(self, batch: Optional[v2.BatchPipelineData]) -> dict:
+    def _extract_batch_attributes(self, batch: v2.BatchPipelineData | None) -> dict:
         data = {
             "run_name": batch.run_name if batch else None,
             "run_key": batch.run_key if batch else None,
@@ -40,7 +40,7 @@ class ConvertToV1(EventHandlerBase):
             data["component_tool"] = batch.details.tool
         return data
 
-    def _extract_dataset_attributes(self, dataset: Optional[v2.DatasetData]) -> dict:
+    def _extract_dataset_attributes(self, dataset: v2.DatasetData | None) -> dict:
         data = {
             "dataset_key": dataset.dataset_key if dataset else None,
             "dataset_name": dataset.details.name if dataset and dataset.details else None,
@@ -49,7 +49,7 @@ class ConvertToV1(EventHandlerBase):
             data["component_tool"] = dataset.details.tool
         return data
 
-    def _extract_server_attributes(self, server: Optional[v2.ServerData]) -> dict:
+    def _extract_server_attributes(self, server: v2.ServerData | None) -> dict:
         data = {
             "server_key": server.server_key if server else None,
             "server_name": server.details.name if server and server.details else None,
@@ -58,7 +58,7 @@ class ConvertToV1(EventHandlerBase):
             data["component_tool"] = server.details.tool
         return data
 
-    def _extract_stream_attributes(self, stream: Optional[v2.StreamData]) -> dict:
+    def _extract_stream_attributes(self, stream: v2.StreamData | None) -> dict:
         data = {
             "stream_key": stream.stream_key if stream else None,
             "stream_name": stream.details.name if stream and stream.details else None,
@@ -69,10 +69,10 @@ class ConvertToV1(EventHandlerBase):
 
     def _extract_component_data(
         self,
-        batch: Optional[v2.BatchPipelineData],
-        dataset: Optional[v2.DatasetData],
-        server: Optional[v2.ServerData],
-        stream: Optional[v2.StreamData],
+        batch: v2.BatchPipelineData | None,
+        dataset: v2.DatasetData | None,
+        server: v2.ServerData | None,
+        stream: v2.StreamData | None,
     ) -> dict:
         data = {
             **self._extract_batch_attributes(batch),
@@ -84,7 +84,7 @@ class ConvertToV1(EventHandlerBase):
             data["component_tool"] = None
         return data
 
-    def _extract_task_attributes(self, event: EventV2, batch: Optional[v2.BatchPipelineData]) -> dict:
+    def _extract_task_attributes(self, event: EventV2, batch: v2.BatchPipelineData | None) -> dict:
         return {
             "task_key": batch.task_key if batch else None,
             "task_name": batch.task_name if batch else None,
@@ -116,8 +116,8 @@ class ConvertToV1(EventHandlerBase):
         )
 
     def _extract_test_outcome_item_integrations(
-        self, integrations: Optional[dict]
-    ) -> Optional[v1.TestOutcomeItemIntegrations]:
+        self, integrations: dict | None
+    ) -> v1.TestOutcomeItemIntegrations | None:
         if integrations is None:
             return None
         return v1.TestOutcomeItemIntegrations(testgen=self._extract_testgen_item(integrations["testgen"]))
@@ -142,8 +142,8 @@ class ConvertToV1(EventHandlerBase):
         )
 
     def _extract_testgen_table_group_config(
-        self, table_group_configuration: Optional[dict]
-    ) -> Optional[v1.TestgenTableGroupV1]:
+        self, table_group_configuration: dict | None
+    ) -> v1.TestgenTableGroupV1 | None:
         if table_group_configuration is None:
             return None
         return v1.TestgenTableGroupV1(
@@ -167,7 +167,7 @@ class ConvertToV1(EventHandlerBase):
 
     def _extract_component_integrations(
         self, component: v2.TestGenComponentData
-    ) -> Optional[v1.TestGenTestOutcomeIntegrationComponent]:
+    ) -> v1.TestGenTestOutcomeIntegrationComponent | None:
         integrations = next(c for f in fields(component) if (c := getattr(component, f.name, None))).integrations
         if integrations is None:
             return None
@@ -300,7 +300,7 @@ class ConvertToV2(EventHandlerBase):
             "version": event.version,
         }
 
-    def _extract_batch_pipeline_data(self, event: Event) -> Optional[v2.BatchPipelineData]:
+    def _extract_batch_pipeline_data(self, event: Event) -> v2.BatchPipelineData | None:
         new_component_data = (
             v2.NewComponentData(name=event.pipeline_name, tool=event.component_tool)
             if event.pipeline_name or event.component_tool
@@ -318,9 +318,7 @@ class ConvertToV2(EventHandlerBase):
         else:
             return None
 
-    def _extract_testgen_batch_pipeline_data(
-        self, event: v1.TestOutcomesEvent
-    ) -> Optional[v2.TestGenBatchPipelineData]:
+    def _extract_testgen_batch_pipeline_data(self, event: v1.TestOutcomesEvent) -> v2.TestGenBatchPipelineData | None:
         if data := self._extract_batch_pipeline_data(event):
             return v2.TestGenBatchPipelineData(
                 batch_key=data.batch_key,
@@ -333,7 +331,7 @@ class ConvertToV2(EventHandlerBase):
             )
         return None
 
-    def _extract_testgen_dataset_data(self, event: v1.TestOutcomesEvent) -> Optional[v2.TestGenDatasetData]:
+    def _extract_testgen_dataset_data(self, event: v1.TestOutcomesEvent) -> v2.TestGenDatasetData | None:
         if data := self._extract_dataset_data(event):
             return v2.TestGenDatasetData(
                 dataset_key=data.dataset_key,
@@ -342,7 +340,7 @@ class ConvertToV2(EventHandlerBase):
             )
         return None
 
-    def _extract_testgen_stream_data(self, event: v1.TestOutcomesEvent) -> Optional[v2.TestGenStreamData]:
+    def _extract_testgen_stream_data(self, event: v1.TestOutcomesEvent) -> v2.TestGenStreamData | None:
         if data := self._extract_stream_data(event):
             return v2.TestGenStreamData(
                 stream_key=data.stream_key,
@@ -351,7 +349,7 @@ class ConvertToV2(EventHandlerBase):
             )
         return None
 
-    def _extract_testgen_server_data(self, event: v1.TestOutcomesEvent) -> Optional[v2.TestGenServerData]:
+    def _extract_testgen_server_data(self, event: v1.TestOutcomesEvent) -> v2.TestGenServerData | None:
         if data := self._extract_server_data(event):
             return v2.TestGenServerData(
                 server_key=data.server_key,
@@ -360,7 +358,7 @@ class ConvertToV2(EventHandlerBase):
             )
         return None
 
-    def _extract_dataset_data(self, event: Event) -> Optional[v2.DatasetData]:
+    def _extract_dataset_data(self, event: Event) -> v2.DatasetData | None:
         new_component_data = (
             v2.NewComponentData(name=event.dataset_name, tool=event.component_tool)
             if event.dataset_name or event.component_tool
@@ -371,7 +369,7 @@ class ConvertToV2(EventHandlerBase):
         else:
             return None
 
-    def _extract_stream_data(self, event: Event) -> Optional[v2.StreamData]:
+    def _extract_stream_data(self, event: Event) -> v2.StreamData | None:
         new_component_data = (
             v2.NewComponentData(name=event.stream_name, tool=event.component_tool)
             if event.stream_name or event.component_tool
@@ -385,7 +383,7 @@ class ConvertToV2(EventHandlerBase):
         else:
             return None
 
-    def _extract_server_data(self, event: Event) -> Optional[v2.ServerData]:
+    def _extract_server_data(self, event: Event) -> v2.ServerData | None:
         new_component_data = (
             v2.NewComponentData(name=event.server_name, tool=event.component_tool)
             if event.server_name or event.component_tool
@@ -438,8 +436,8 @@ class ConvertToV2(EventHandlerBase):
         )
 
     def _extract_test_outcome_item_integrations(
-        self, integrations: Optional[dict]
-    ) -> Optional[v2.TestOutcomeItemIntegrations]:
+        self, integrations: dict | None
+    ) -> v2.TestOutcomeItemIntegrations | None:
         if integrations is None:
             return None
         return v2.TestOutcomeItemIntegrations(testgen=self._extract_testgen_item(integrations["testgen"]))
@@ -464,8 +462,8 @@ class ConvertToV2(EventHandlerBase):
         )
 
     def _extract_testgen_table_group_config(
-        self, table_group_configuration: Optional[dict]
-    ) -> Optional[v2.TestgenTableGroupV1]:
+        self, table_group_configuration: dict | None
+    ) -> v2.TestgenTableGroupV1 | None:
         if table_group_configuration is None:
             return None
         return v2.TestgenTableGroupV1(
@@ -484,7 +482,7 @@ class ConvertToV2(EventHandlerBase):
 
     def _extract_testgen_integration_componenet(
         self, event: v1.TestOutcomesEvent
-    ) -> Optional[v2.TestGenTestOutcomeIntegrations]:
+    ) -> v2.TestGenTestOutcomeIntegrations | None:
         if i := event.component_integrations:
             return v2.TestGenTestOutcomeIntegrations(
                 testgen=self._extract_testgen_integrations(asdict(i.integrations.testgen)),

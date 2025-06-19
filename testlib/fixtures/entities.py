@@ -61,7 +61,7 @@ __all__ = [
 
 import base64
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, UTC
 from decimal import Decimal
 from unittest.mock import patch
 from uuid import UUID
@@ -445,11 +445,11 @@ def batch_end_schedule(pipeline):
     )
 
 
-ALERT_EXPECTED_START_DT: datetime = datetime(2005, 8, 13, 4, 2, 4, 2, tzinfo=timezone.utc)
+ALERT_EXPECTED_START_DT: datetime = datetime(2005, 8, 13, 4, 2, 4, 2, tzinfo=UTC)
 """The datetime of the expected_start_time for alert fixtures."""
 
 
-ALERT_EXPECTED_END_DT: datetime = datetime(2005, 8, 13, 8, 4, 8, 1, tzinfo=timezone.utc)
+ALERT_EXPECTED_END_DT: datetime = datetime(2005, 8, 13, 8, 4, 8, 1, tzinfo=UTC)
 """The datetime of the expected_end_time for alert fixtures."""
 
 
@@ -496,8 +496,8 @@ def test_outcome(component, run, task):
         component=component,
         description="Testy McTestface",
         dimensions=["a", "b", "c"],
-        start_time=datetime(2000, 3, 9, 12, 11, 10, tzinfo=timezone.utc),
-        end_time=datetime(2000, 3, 9, 13, 12, 11, tzinfo=timezone.utc),
+        start_time=datetime(2000, 3, 9, 12, 11, 10, tzinfo=UTC),
+        end_time=datetime(2000, 3, 9, 13, 12, 11, tzinfo=UTC),
         name="test-outcome-1",
         external_url="https://fake.testy/do-not-go-here",
         key="test-outcome-key-1",
@@ -563,10 +563,10 @@ def testgen_dataset_component(test_db, dataset):
     yield dataset_component
 
 
-AGENT_LATEST_EVENT = datetime(2023, 10, 17, 12, 33, 19, 154295, tzinfo=timezone.utc)
+AGENT_LATEST_EVENT = datetime(2023, 10, 17, 12, 33, 19, 154295, tzinfo=UTC)
 """Default timestamp for latest event received by an agent."""
 
-AGENT_LATEST_HEARTBEAT = datetime(2023, 10, 17, 12, 42, 42, 424242, tzinfo=timezone.utc)
+AGENT_LATEST_HEARTBEAT = datetime(2023, 10, 17, 12, 42, 42, 424242, tzinfo=UTC)
 """Default timestamp for the lasttime an agent checked-in."""
 
 
@@ -585,7 +585,7 @@ def agent_1(test_db, project):
 
 @pytest.fixture()
 def agent_2(test_db, project):
-    dt_1 = datetime.now(timezone.utc)
+    dt_1 = datetime.now(UTC)
     dt_2 = dt_1 + timedelta(seconds=42)
     return Agent.create(
         project=project,
@@ -603,8 +603,8 @@ def event_entity(test_db, pipeline, task, run, run_task, instance_instance_set):
     return EventEntity.create(
         version=EventVersion.V2,
         type=ApiEventType.BATCH_PIPELINE_STATUS,
-        created_timestamp=datetime(2024, 1, 20, 10, 0, 0, tzinfo=timezone.utc),
-        timestamp=datetime(2024, 1, 20, 9, 59, 0, tzinfo=timezone.utc),
+        created_timestamp=datetime(2024, 1, 20, 10, 0, 0, tzinfo=UTC),
+        timestamp=datetime(2024, 1, 20, 9, 59, 0, tzinfo=UTC),
         project=pipeline.project_id,
         component=pipeline,
         task=task,
@@ -620,8 +620,8 @@ def event_entity_2(test_db, dataset):
     return EventEntity.create(
         version=EventVersion.V2,
         type=ApiEventType.DATASET_OPERATION,
-        created_timestamp=datetime(2024, 1, 20, 9, 55, 0, tzinfo=timezone.utc),
-        timestamp=datetime(2024, 1, 20, 9, 55, 0, tzinfo=timezone.utc),
+        created_timestamp=datetime(2024, 1, 20, 9, 55, 0, tzinfo=UTC),
+        timestamp=datetime(2024, 1, 20, 9, 55, 0, tzinfo=UTC),
         project=dataset.project_id,
         component=dataset,
         v2_payload={},

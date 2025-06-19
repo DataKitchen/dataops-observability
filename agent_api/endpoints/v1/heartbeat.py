@@ -1,7 +1,7 @@
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from http import HTTPStatus
-from typing import Optional, Union, cast
+from typing import Union, cast
 from uuid import UUID
 
 from flask import Response, g, make_response
@@ -23,7 +23,7 @@ def _update_or_create(
     version: str,
     project_id: Union[str, UUID],
     latest_heartbeat: datetime,
-    latest_event_timestamp: Optional[datetime],
+    latest_event_timestamp: datetime | None,
 ) -> None:
     try:
         agent = Agent.select().where(Agent.key == key, Agent.tool == tool, Agent.project_id == project_id).get()
@@ -57,7 +57,7 @@ class Heartbeat(BaseView):
 
     def post(self) -> Response:
         data = self.parse_body(schema=HeartbeatSchema())
-        data["latest_heartbeat"] = datetime.now(tz=timezone.utc)
+        data["latest_heartbeat"] = datetime.now(tz=UTC)
         data["project_id"] = g.project.id
         _update_or_create(**data)
         return make_response("", HTTPStatus.NO_CONTENT)

@@ -1,7 +1,7 @@
 from array import array
 from collections import OrderedDict
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from decimal import Decimal
 from io import BytesIO
 from pathlib import Path, PurePath, PurePosixPath, PureWindowsPath
@@ -159,7 +159,7 @@ def test_dump_load_datetime():
 @pytest.mark.unit
 def test_dump_load_datetime_tzinfo():
     """Messagepack can dump/load datetime.datetime values and preserve tzinfo."""
-    data = datetime.now(timezone.utc)
+    data = datetime.now(UTC)
     out_value = loads(dumps(data))
     assert data == out_value
 

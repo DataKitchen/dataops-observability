@@ -3,7 +3,6 @@ from __future__ import annotations
 __all__ = ["DatasetOperationSchema", "DatasetOperationApiSchema", "DatasetOperationEvent", "DatasetOperationType"]
 
 from dataclasses import dataclass
-from typing import Optional
 
 from marshmallow import Schema, ValidationError, validates_schema
 from marshmallow.fields import Str
@@ -55,7 +54,7 @@ class DatasetOperationEvent(Event):
     __api_schema__ = DatasetOperationApiSchema
 
     operation: str
-    path: Optional[str] = None
+    path: str | None = None
 
     def accept(self, handler: EventHandlerBase) -> bool:
         return handler.handle_dataset_operation(self)

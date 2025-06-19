@@ -7,7 +7,6 @@ import pkgutil
 from contextlib import suppress
 from importlib import import_module
 from types import ModuleType
-from typing import Optional
 
 from peewee import Database, Model, SchemaManager
 
@@ -17,7 +16,7 @@ from common.entities import Component
 LOG = logging.getLogger(__name__)
 
 
-def walk(module: Optional[ModuleType] = None) -> dict[str, Model]:
+def walk(module: ModuleType | None = None) -> dict[str, Model]:
     """
     Recursively scans a module for all PeeWee model classes. Defaults to `common.entities` but can scan any module.
 

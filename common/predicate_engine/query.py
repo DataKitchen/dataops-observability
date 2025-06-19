@@ -6,10 +6,10 @@ import logging
 from abc import ABC, abstractmethod
 from collections.abc import Mapping
 from copy import copy, deepcopy
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from enum import Enum
 from functools import partial, reduce
-from typing import Any, Final, Optional, Union
+from typing import Any, Final, Union
 from collections.abc import Callable, Iterable
 
 from ._operators import QueryOperator, get_operator, get_operators, split_operators
@@ -33,10 +33,10 @@ def _ensure_utc(dt: datetime) -> datetime:
         '2006-11-06T10:10:10+00:00'
     """
     if (tzinfo := dt.tzinfo) is None:
-        return dt.replace(tzinfo=timezone.utc)
+        return dt.replace(tzinfo=UTC)
     if tzinfo.utcoffset(dt) is None:
-        return dt.replace(tzinfo=timezone.utc)
-    return dt.astimezone(timezone.utc)
+        return dt.replace(tzinfo=UTC)
+    return dt.astimezone(UTC)
 
 
 def getattr_recursive(lookup_obj: Any, attr_name: str, *args: Any) -> Any:
@@ -58,8 +58,8 @@ def getattr_recursive(lookup_obj: Any, attr_name: str, *args: Any) -> Any:
 
 
 class ConnectorType(Enum):
-    OR: str = "OR"
-    AND: str = "AND"
+    OR = "OR"
+    AND = "AND"
 
 
 class _Encapsulate(ABC):
@@ -76,8 +76,8 @@ class _Encapsulate(ABC):
         self,
         value: object,
         *,
-        attr_name: Optional[str] = None,
-        transform_funcs: Optional[Iterable[Callable[..., Iterable]]] = None,
+        attr_name: str | None = None,
+        transform_funcs: Iterable[Callable[..., Iterable]] | None = None,
     ) -> None:
         self.wrapped_value = value
         self.attr_name = attr_name
@@ -175,8 +175,8 @@ class EXACT_N(_Encapsulate):
         value: object,
         *,
         n: int,
-        attr_name: Optional[str] = None,
-        transform_funcs: Optional[Iterable[Callable[..., Iterable]]] = None,
+        attr_name: str | None = None,
+        transform_funcs: Iterable[Callable[..., Iterable]] | None = None,
     ) -> None:
         self.count = n
         super().__init__(value, attr_name=attr_name, transform_funcs=transform_funcs)
@@ -201,7 +201,7 @@ class ATLEAST(_Encapsulate):
     """
     Encapsulate a value to indicate an ATLEAST predicate operation on an iterable.
 
-    The match should be successful if ATLEAST the N first valures are matching.
+    The match should be successful if ATLEAST the N first values are matching.
     """
 
     __slots__ = ("count",)
@@ -214,8 +214,8 @@ class ATLEAST(_Encapsulate):
         value: object,
         *,
         n: int,
-        attr_name: Optional[str] = None,
-        transform_funcs: Optional[Iterable[Callable[..., Iterable]]] = None,
+        attr_name: str | None = None,
+        transform_funcs: Iterable[Callable[..., Iterable]] | None = None,
     ) -> None:
         self.count = n
         super().__init__(value, attr_name=attr_name, transform_funcs=transform_funcs)
@@ -311,7 +311,7 @@ class R:
     Encapsulate rules as objects that can then be combined using & and |
 
     This is an implementation of a tree node for making expressions which can be used to construct rules of arbitrary
-    complexity. It is loosely inspired by the Qobject implementation in Django but is object agnostic and not meant for
+    complexity. It is loosely inspired by the Q-object implementation in Django but is object agnostic and not meant for
     an ORM.
     """
 
@@ -329,7 +329,7 @@ class R:
 
     @classmethod
     def _new_instance(
-        cls, children: Optional[list] = None, conn_type: ConnectorType = ConnectorType.AND, negated: bool = False
+        cls, children: list | None = None, conn_type: ConnectorType = ConnectorType.AND, negated: bool = False
     ) -> R:
         """
         Creates a new instance of this class.

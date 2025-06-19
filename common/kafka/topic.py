@@ -9,7 +9,7 @@ __all__ = [
 
 import json
 from dataclasses import dataclass
-from typing import Any, NamedTuple, Optional, Protocol
+from typing import Any, NamedTuple, Protocol
 
 from confluent_kafka import Message
 
@@ -29,7 +29,7 @@ class ProduceMessageArgs(NamedTuple):
     value: bytes
     topic: str
     headers: dict[str, str]
-    key: Optional[str] = None
+    key: str | None = None
 
     def as_dict(self) -> dict[str, Any]:
         d = {
@@ -44,7 +44,7 @@ class ProduceMessageArgs(NamedTuple):
         return d
 
 
-def _get_headers_as_dict(headers: Optional[list[tuple[str, bytes]]]) -> dict[str, str]:
+def _get_headers_as_dict(headers: list[tuple[str, bytes]] | None) -> dict[str, str]:
     return {k: v.decode("utf-8") for k, v in headers or {}}
 
 

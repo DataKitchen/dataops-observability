@@ -1,7 +1,7 @@
 import json
 from base64 import b64decode, b64encode
 from binascii import Error as B64DecodeError
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from unittest.mock import Mock, patch
 from uuid import uuid4
 
@@ -50,7 +50,7 @@ def expired_token():
 @pytest.fixture
 def current_token():
     data = TOKEN_DATA.copy()
-    dt = datetime.now(timezone.utc) + timedelta(days=2)
+    dt = datetime.now(UTC) + timedelta(days=2)
     data["exp"] = int(dt.replace(microsecond=0).timestamp())
     return encode(data, key=JWT_KEY)
 
@@ -64,8 +64,8 @@ def user():
 @pytest.mark.parametrize(
     ("ts_value", "dt_value"),
     [
-        (40, datetime(1970, 1, 1, 0, 0, 40, tzinfo=timezone.utc)),
-        (435474000, datetime(1983, 10, 20, 5, 0, tzinfo=timezone.utc)),
+        (40, datetime(1970, 1, 1, 0, 0, 40, tzinfo=UTC)),
+        (435474000, datetime(1983, 10, 20, 5, 0, tzinfo=UTC)),
     ],
 )
 def test_get_expiration_int(ts_value, dt_value):

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from enum import Enum, IntEnum
 from zoneinfo import ZoneInfo
 
@@ -82,7 +82,7 @@ def test_domain_field_lowercase():
 @pytest.mark.unit
 def test_timestamp_to_utc():
     """UTCTimestampField.python_value returns timezone aware values."""
-    expected_dt = datetime.now(timezone.utc)
+    expected_dt = datetime.now(UTC)
     f_inst = UTCTimestampField()
     db_value = f_inst.db_value(expected_dt)
     result = f_inst.python_value(db_value)

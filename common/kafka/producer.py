@@ -6,7 +6,7 @@ import logging
 import uuid
 from contextlib import contextmanager
 from types import TracebackType
-from typing import Any, Optional
+from typing import Any
 from collections.abc import Callable, Generator
 
 from confluent_kafka import KafkaError, KafkaException, Message, Producer
@@ -88,7 +88,7 @@ class KafkaProducer:
         return self
 
     def __exit__(
-        self, exc_type: Optional[type[BaseException]], exc_value: Optional[BaseException], tb: Optional[TracebackType]
+        self, exc_type: type[BaseException] | None, exc_value: BaseException | None, tb: TracebackType | None
     ) -> None:
         self.disconnect()
 
@@ -105,7 +105,7 @@ class KafkaProducer:
         metadata = self.producer.list_topics(topic=topic.name, timeout=timeout)
         return len(metadata.topics[topic.name].partitions) > 0
 
-    def produce(self, topic: Topic, event: Any, callback: Optional[Callable] = None) -> None:
+    def produce(self, topic: Topic, event: Any, callback: Callable | None = None) -> None:
         def delivery_report(err: KafkaError, message: Message) -> None:
             """Called once for each message produced to indicate delivery result. Triggered by poll() or flush()."""
             if err is not None:
@@ -149,7 +149,7 @@ class KafkaTransactionalProducer(KafkaProducer):
 
     """
 
-    def __init__(self, config: dict, tx_consumer: Optional[KafkaTransactionalConsumer] = None) -> None:
+    def __init__(self, config: dict, tx_consumer: KafkaTransactionalConsumer | None = None) -> None:
         if PRODUCER_TX_MANDATORY_SETTINGS.keys() & config.keys():
             raise ProducerConfigurationError(
                 f"Local configuration cannot override any of {PRODUCER_TX_MANDATORY_SETTINGS.keys()}"

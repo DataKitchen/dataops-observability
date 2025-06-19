@@ -1,5 +1,5 @@
 import copy
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from uuid import uuid4
 
 import pytest
@@ -15,7 +15,7 @@ def test_keep_run_end_state_and_update_start_state(pipeline, kafka_consumer, kaf
     Keep the run end state (end time, status) when an old message is processed.
     Update the start time when older message is received.
     """
-    new_time = datetime.now(tz=timezone.utc)
+    new_time = datetime.now(tz=UTC)
     old_time = new_time - timedelta(minutes=5)
 
     old_start_status_message = run_status_message
@@ -60,7 +60,7 @@ def test_reopen_run_on_newer_status(
     assert run.end_time is not None
 
     # Re-open existing run
-    run_status_message.payload.event_timestamp = datetime.utcnow().replace(tzinfo=timezone.utc)
+    run_status_message.payload.event_timestamp = datetime.utcnow().replace(tzinfo=UTC)
     run_status_message.payload.event_id = uuid4()
     kafka_consumer.__iter__.return_value = iter((run_status_message,))
     run_manager.process_events()
@@ -77,7 +77,7 @@ def test_keep_task_end_state_and_update_start_state(kafka_consumer, kafka_produc
     Keep the task end state (end time, status) when an old message is processed.
     Update the start time when older message is received.
     """
-    new_time = datetime.now(tz=timezone.utc)
+    new_time = datetime.now(tz=UTC)
     old_time = new_time - timedelta(minutes=5)
     old_status_message = task_status_message
     old_status_message.payload.event_timestamp = old_time
@@ -122,7 +122,7 @@ def test_reopen_task_on_newer_status(pipeline, kafka_consumer, kafka_producer, r
     assert run.end_time is not None
 
     # Re-open existing run
-    run_status_message.payload.event_timestamp = datetime.utcnow().replace(tzinfo=timezone.utc)
+    run_status_message.payload.event_timestamp = datetime.utcnow().replace(tzinfo=UTC)
     run_status_message.payload.event_id = uuid4()
     kafka_consumer.__iter__.return_value = iter((run_status_message,))
     run_manager.process_events()

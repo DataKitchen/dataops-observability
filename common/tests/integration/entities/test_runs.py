@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 
 import pytest
 from peewee import IntegrityError
@@ -29,7 +29,7 @@ def test_add_pipeline_run_listening(pipeline):
     run.save()
 
     # After adding non-RUNNING status, listening should be False
-    run.end_time = datetime.utcnow().replace(tzinfo=timezone.utc) + timedelta(days=3)
+    run.end_time = datetime.utcnow().replace(tzinfo=UTC) + timedelta(days=3)
     run.status = "COMPLETED"
     run.save()
 

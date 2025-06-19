@@ -17,4 +17,4 @@ def prefetch_query(*args: SelectQuery | type[Model]) -> Callable[..., Iterable]:
         result: list[Model] = query.prefetch(*_queries, prefetch_type=PREFETCH_TYPE.JOIN)
         return result
 
-    return partial(_prefetch_query, _queries=args)
+    return partial(_prefetch_query, _queries=list(args))
