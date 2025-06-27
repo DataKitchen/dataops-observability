@@ -49,7 +49,7 @@ export class SessionService {
   }
 
   setToken(token: string): void {
-    this.cookieService.set(cookieKeys.token, token, { path: cookiePath });
+    this.cookieService.set(cookieKeys.token, token, { path: cookiePath, secure: true });
   }
 
   removeToken(): void {

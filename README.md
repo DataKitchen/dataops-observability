@@ -5,7 +5,8 @@
 
 *<p style="text-align: center;">DataOps Observability is part of DataKitchen's Open Source Data Observability. DataOps Observability monitors every data journey from data source to customer value, from any team development environment into production, across every tool, team, environment, and customer so that problems are detected, localized, and understood immediately.</p>*
 
-![DatKitchen Open Source Data Observability](https://datakitchen.io/wp-content/uploads/2024/04/both-products.png)
+[![DatKitchen Open Source Data Observability](https://datakitchen.io/wp-content/uploads/2024/04/both-products.png)](https://datakitchen.storylane.io/share/g01ss0plyamz)
+[Interactive Product Tour](https://datakitchen.storylane.io/share/g01ss0plyamz)
 
 ## Developer Setup
 
