@@ -80,7 +80,7 @@ describe('Session Service', () => {
     it('should set the token into the cookies', () => {
       const token = 'my-test-token';
       sessionService.setToken(token);
-      expect(cookieService.set).toBeCalledWith(cookieKeys.token, token, { path: cookiePath });
+      expect(cookieService.set).toBeCalledWith(cookieKeys.token, token, { path: cookiePath, secure: true });
     });
   });
 
