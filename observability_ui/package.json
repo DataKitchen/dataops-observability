@@ -18,7 +18,7 @@
   },
   "private": true,
   "engines": {
-    "node": "v23.10.0"
+    "node": "v23.11.1"
   },
   "dependencies": {
     "@angular-architects/module-federation": "^16.0.4",
