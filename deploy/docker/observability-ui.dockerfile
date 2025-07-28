@@ -1,6 +1,6 @@
 ARG BASE_IMAGE_URL
 
-FROM --platform=${BUILDPLATFORM} ${BASE_IMAGE_URL}node:23.10-alpine3.21 AS build-image
+FROM --platform=${BUILDPLATFORM} ${BASE_IMAGE_URL}node:23.11.1-alpine3.22 AS build-image
 
 WORKDIR /observability_ui
 COPY observability_ui/ /observability_ui
@@ -8,7 +8,7 @@ COPY observability_ui/ /observability_ui
 RUN yarn
 RUN yarn build:ci
 
-FROM ${BASE_IMAGE_URL}nginxinc/nginx-unprivileged:alpine3.21
+FROM ${BASE_IMAGE_URL}nginxinc/nginx-unprivileged:alpine3.22
 
 WORKDIR /observability_ui
 

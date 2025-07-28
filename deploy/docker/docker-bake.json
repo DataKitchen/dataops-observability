@@ -11,7 +11,11 @@
                 "datakitchen/dataops-observability-be:v${index(regex(\"([0-9]+)\\\\.[0-9]+\\\\.[0-9]+\", OBSERVABILITY_VERSION), 0)}"
             ],
             "context": ".",
-            "platforms": ["linux/amd64", "linux/arm64"]
+            "platforms": ["linux/amd64", "linux/arm64"],
+            "attest": [
+                { "type": "provenance", "mode": "max" },
+                { "type": "sbom" }
+            ]
         },
         "ui": {
             "dockerfile": "deploy/docker/observability-ui.dockerfile",
@@ -21,7 +25,11 @@
                 "datakitchen/dataops-observability-ui:v${index(regex(\"([0-9]+)\\\\.[0-9]+\\\\.[0-9]+\", OBSERVABILITY_VERSION), 0)}"
             ],
             "context": ".",
-            "platforms": ["linux/amd64", "linux/arm64"]
+            "platforms": ["linux/amd64", "linux/arm64"],
+            "attest": [
+                { "type": "provenance", "mode": "max" },
+                { "type": "sbom" }
+            ]
         }
     }
 }

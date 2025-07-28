@@ -8,6 +8,8 @@ class ReconnectingPooledMySQLDatabase(ReconnectMixin, PooledMySQLDatabase):
     pass
 
 
+CORS_DOMAINS: list[str] = os.environ.get("CORS_DOMAINS", "*").split(",")
+
 DATABASE: dict[str, object] = {
     "name": "datakitchen",
     "engine": ReconnectingPooledMySQLDatabase,
