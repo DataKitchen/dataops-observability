@@ -62,7 +62,7 @@ spec:
             - name: OBSERVABILITY_API_HOSTNAME
               value: {{ tpl .Values.observability_api.hostname . | quote }}
             {{- end }}
-            {{- if .Values.observability_ui.csp_extra }}
+            {{- if not (quote .Values.observability_ui.csp_extra | empty) }}
             - name: OBSERVABILITY_CSP_EXTRA
               value: {{ tpl .Values.observability_ui.csp_extra . | quote }}
             {{- end }}
