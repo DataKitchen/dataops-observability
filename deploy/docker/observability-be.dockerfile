@@ -38,7 +38,12 @@ RUN apk update && apk upgrade && apk add --no-cache librdkafka=2.10.0-r0
 # excess laying around in the final image.
 COPY --from=build-image /dk /dk
 
-COPY --from=build-image /tmp/dk/deploy/conf/gunicorn.conf.py /tmp/dk/deploy/conf/yoyo.ini /dk/
+COPY --from=build-image \
+    /tmp/dk/deploy/conf/gunicorn.conf.py \
+    /tmp/dk/deploy/conf/yoyo.ini \
+    /tmp/dk/deploy/conf/supervisord.conf \
+    /dk/
+
 COPY --from=build-image /tmp/dk/deploy/migrations/ /dk/lib/migrations/
 
 ENV PYTHONPATH ${PYTHONPATH}:/dk/lib/python3.12/site-packages
@@ -46,8 +51,9 @@ ENV PATH ${PATH}:/dk/bin
 
 RUN addgroup -S observability && adduser -S observability -G observability
 
-# gunicorn needs access to this folder
-RUN mkdir /dk/var
+RUN mkdir -p /dk/var/logs
 RUN chown -R observability:observability /dk/var
 
 USER observability
+
+ENTRYPOINT ["/dk/bin/supervisord", "-c", "/dk/supervisord.conf"]

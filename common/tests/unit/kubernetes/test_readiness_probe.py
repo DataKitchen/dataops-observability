@@ -1,4 +1,6 @@
+import os
 from itertools import count
+from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -18,8 +20,16 @@ def set_ready_mock():
 
 @pytest.mark.unit
 @patch.object(readiness_probe.tempfile, "gettempdir", return_value="/xpto")
-def test_get_filename(temp_dir_mock):
-    assert readiness_probe._get_mark_file_path() == "/xpto/observability_readyz"
+@pytest.mark.parametrize(
+    "env, expected",
+    (
+        ({}, Path("/xpto/observability_readyz")),
+        ({"SUPERVISOR_PROCESS_NAME": "a_service"}, Path("/xpto/a_service_readyz")),
+    ),
+)
+def test_get_filename(temp_dir_mock, env, expected):
+    with patch.dict(os.environ, env):
+        assert readiness_probe._get_mark_file_path() == expected
     temp_dir_mock.assert_called_once()
 
 

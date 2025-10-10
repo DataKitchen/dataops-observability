@@ -1,0 +1,114 @@
+
+x-database-config: &database_config
+  MYSQL_USER: ${MYSQL_USER:-observability}
+  MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+x-database-client-config: &database_client_config
+  MYSQL_SERVICE_HOST: ${MYSQL_HOST:-database}
+  MYSQL_SERVICE_PORT: ${MYSQL_PORT:-3306}
+
+services:
+  broker:
+    container_name: kafka
+    image: apache/kafka:3.9.1
+    restart: always
+    expose: ["9092", "9093"]
+    environment:
+      # Core KRaft mode
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@broker:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      # Networking
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_LOG4J_LOGGER_kafka_server_DefaultAutoTopicCreationManager: WARN
+      # Transactions
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      # Other
+      KAFKA_LOG4J_LOGGERS: "kafka=WARN,org.apache.kafka=WARN"
+    volumes:
+      - /var/lib/kafka/data
+    healthcheck:
+      test: [ "CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  database:
+    container_name: mysql
+    image: mysql:8.4
+    restart: always
+    expose: ["3306"]
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: datakitchen
+      <<: *database_config
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      retries: 5
+
+  observability_data_init:
+    container_name: data-init
+    image: datakitchen/dataops-observability-be
+    pull_policy: never
+    restart: on-failure
+    depends_on:
+      database:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+    environment:
+      OBSERVABILITY_CONFIG: minikube
+      <<: [*database_config, *database_client_config]
+    entrypoint: /bin/sh -c '/dk/bin/cli migrate'
+
+  observability_backend:
+    container_name: back-end
+    image: datakitchen/dataops-observability-be
+    pull_policy: never
+    restart: always
+    depends_on:
+      observability_data_init:
+        condition: service_completed_successfully
+    expose: ["5000", "5001", "5002"]
+    environment:
+      OBSERVABILITY_CONFIG: minikube
+      KAFKA_SERVICE_HOST: ${KAFKA_HOST:-broker}
+      KAFKA_SERVICE_PORT: ${KAFKA_PORT:-9092}
+      <<: [*database_config, *database_client_config]
+    healthcheck:
+      test: [ "CMD", "/bin/sh", "-c", "supervisorctl -c /dk/supervisord.conf status | grep -q RUNNING" ]
+      interval: 5s
+      retries: 10
+    volumes:
+      - type: bind
+        source: ../conf/supervisord.conf
+        target: /dk/supervisord.conf
+
+  observability_ui:
+    container_name: user-interface
+    image: datakitchen/dataops-observability-ui
+    pull_policy: never
+    restart: always
+    depends_on:
+      observability_backend:
+        condition: service_healthy
+    environment:
+      OBSERVABILITY_API_HOSTNAME: ${OBSERVABILITY_API_HOSTNAME}
+      OBSERVABILITY_CSP_EXTRA: ${observability_csp_extra}
+    links:
+      - "observability_backend:observability-api"
+      - "observability_backend:event-api"
+      - "observability_backend:agent-api"
+    ports:
+      - "8080:8082"
+
+networks:
+  datakitchen:
+    name: datakitchen-network
+    external: true
