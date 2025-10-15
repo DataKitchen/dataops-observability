@@ -14,13 +14,14 @@ import tempfile
 import time
 from argparse import ArgumentParser, Namespace
 from contextlib import contextmanager
+from pathlib import Path
 from typing import NoReturn
 from collections.abc import Generator
 from collections.abc import Callable
 
 LOG = logging.getLogger(__name__)
 
-FILE_NAME = "observability_readyz"
+FILE_NAME = "{service}_readyz"
 """Name of the file that will be created into the temp dir to mark the service as ready."""
 
 POLLING_SLEEP_SECONDS = 0.1
@@ -34,19 +35,26 @@ class NotReadyException(Exception):
     """Raised when the service shouldn't be marked as ready."""
 
 
-def _get_mark_file_path() -> str:
-    return os.path.join(tempfile.gettempdir(), FILE_NAME)
+def _get_mark_file_path() -> Path:
+    file_name = FILE_NAME.format(service=os.getenv("SUPERVISOR_PROCESS_NAME", "observability"))
+    return Path(tempfile.gettempdir()) / file_name
 
 
 def set_ready() -> None:
     """Mark the service as ready by adding a PID file to the temp dir."""
-    with open(_get_mark_file_path(), "w") as mark_file:
-        mark_file.write(str(os.getpid()))
+    mark_file_path = _get_mark_file_path()
+    mark_file_path.parent.mkdir(parents=True, exist_ok=True)
+    mark_file_path.write_text(str(os.getpid()))
 
 
 def is_ready() -> bool:
     """Checks the existence of the readiness mark file."""
-    return os.path.exists(_get_mark_file_path())
+    try:
+        os.kill(int(_get_mark_file_path().read_text().strip()), 0)
+    except (FileNotFoundError, ProcessLookupError, ValueError):
+        return False
+    else:
+        return True
 
 
 @contextmanager
