@@ -21,7 +21,7 @@ RUN python3 -O -m pip install /tmp/dk --prefix=/dk
 
 # Copy and build the actual application
 COPY . /tmp/dk/
-ENV PYTHONPATH ${PYTHONPATH}:/dk/lib/python3.12/site-packages
+ENV PYTHONPATH=/dk/lib/python3.12/site-packages
 #    --no-deps: The previous pip layer will have already installed the dependencies. This
 #               will disable doing a second dependency resolution check.
 #           -O: Strips asserts from the code which removes some unnecessary codepaths resulting in a small
@@ -46,8 +46,8 @@ COPY --from=build-image \
 
 COPY --from=build-image /tmp/dk/deploy/migrations/ /dk/lib/migrations/
 
-ENV PYTHONPATH ${PYTHONPATH}:/dk/lib/python3.12/site-packages
-ENV PATH ${PATH}:/dk/bin
+ENV PYTHONPATH=/dk/lib/python3.12/site-packages
+ENV PATH=${PATH}:/dk/bin
 
 RUN addgroup -S observability && adduser -S observability -G observability
 
