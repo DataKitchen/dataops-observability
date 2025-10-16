@@ -24,6 +24,8 @@ observability_ui:
     type: NodePort
     port: 8082
     nodePort: 8082
+  api_base_url: "/api"
+  auth_method: "sso"
   podSecurityContext:
     sysctls:
       - name: net.core.somaxconn
@@ -32,7 +34,6 @@ observability_ui:
   nodeSelector: { }
   tolerations: [ ]
   affinity: { }
-  environmentJson: {"apiBaseUrl": "/api"}
 
 observability_api:
   enable: true

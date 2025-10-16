@@ -30,7 +30,7 @@ from packaging import version
 
 from scripts.invocations.common import MINIKUBE_PROFILE, check_env_tools, get_docker_env, get_host_env
 
-KUBE_VERSION = os.environ.get("INVOKE_KUBE_VERSION", "v1.29")
+KUBE_VERSION = os.environ.get("INVOKE_KUBE_VERSION", "v1.33.5")
 NAMESPACE = "datakitchen"
 HELM_SVC_FOLDER = os.path.join("deploy", "charts", "observability-services")
 HELM_APP_FOLDER = os.path.join("deploy", "charts", "observability-app")
