@@ -1,7 +1,8 @@
+name: dataops-observability
 
 x-database-config: &database_config
   MYSQL_USER: ${MYSQL_USER:-observability}
-  MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+  MYSQL_PASSWORD: ${MYSQL_PASSWORD:-193d036391fa7f14e3c48cabca7e47d0}
 
 x-database-client-config: &database_client_config
   MYSQL_SERVICE_HOST: ${MYSQL_HOST:-database}
@@ -28,10 +29,12 @@ services:
       # Transactions
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      # Topics
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       # Other
       KAFKA_LOG4J_LOGGERS: "kafka=WARN,org.apache.kafka=WARN"
     volumes:
-      - /var/lib/kafka/data
+      - kafka_data:/var/lib/kafka/data
     healthcheck:
       test: [ "CMD", "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list" ]
       interval: 10s
@@ -44,9 +47,12 @@ services:
     restart: always
     expose: ["3306"]
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-1824f41cee3033a881e1888a8fea24a3}
       MYSQL_DATABASE: datakitchen
       <<: *database_config
+    volumes:
+      - mysql_data:/var/lib/mysql
+
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 5s
@@ -54,8 +60,7 @@ services:
 
   observability_data_init:
     container_name: data-init
-    image: datakitchen/dataops-observability-be
-    pull_policy: never
+    image: ${DK_OBSERVABILITY_BE_IMAGE:-datakitchen/dataops-observability-be:v2}
     restart: on-failure
     depends_on:
       database:
@@ -65,12 +70,12 @@ services:
     environment:
       OBSERVABILITY_CONFIG: minikube
       <<: [*database_config, *database_client_config]
-    entrypoint: /bin/sh -c '/dk/bin/cli migrate'
+    entrypoint: /dk/bin/cli
+    command:  migrate
 
   observability_backend:
     container_name: back-end
-    image: datakitchen/dataops-observability-be
-    pull_policy: never
+    image: ${DK_OBSERVABILITY_BE_IMAGE:-datakitchen/dataops-observability-be:v2}
     restart: always
     depends_on:
       observability_data_init:
@@ -85,30 +90,31 @@ services:
       test: [ "CMD", "/bin/sh", "-c", "supervisorctl -c /dk/supervisord.conf status | grep -q RUNNING" ]
       interval: 5s
       retries: 10
-    volumes:
-      - type: bind
-        source: ../conf/supervisord.conf
-        target: /dk/supervisord.conf
 
   observability_ui:
     container_name: user-interface
-    image: datakitchen/dataops-observability-ui
-    pull_policy: never
+    image: ${DK_OBSERVABILITY_UI_IMAGE:-datakitchen/dataops-observability-ui:v2}
     restart: always
     depends_on:
       observability_backend:
         condition: service_healthy
     environment:
-      OBSERVABILITY_API_HOSTNAME: ${OBSERVABILITY_API_HOSTNAME}
-      OBSERVABILITY_CSP_EXTRA: ${observability_csp_extra}
+      OBSERVABILITY_API_HOSTNAME: ${DK_OBSERVABILITY_API_HOSTNAME:-}
+      OBSERVABILITY_CSP_EXTRA: ${DK_OBSERVABILITY_CSP_EXTRA:-}
+      OBSERVABILITY_API_BASE_URL: ${DK_OBSERVABILITY_API_BASE_URL:-}
+      OBSERVABILITY_AUTH_METHOD: ${DK_OBSERVABILITY_AUTH_METHOD:-basic}
     links:
       - "observability_backend:observability-api"
       - "observability_backend:event-api"
       - "observability_backend:agent-api"
     ports:
-      - "8080:8082"
+      - "${DK_OBSERVABILITY_HTTP_PORT:-8082}:8082"
 
 networks:
   datakitchen:
     name: datakitchen-network
     external: true
+
+volumes:
+  mysql_data:
+  kafka_data:
