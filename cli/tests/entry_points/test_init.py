@@ -16,6 +16,12 @@ def create_tables_mock():
 
 
 @pytest.fixture
+def create_topics_mock():
+    with patch("cli.entry_points.init.create_topics") as mock:
+        yield mock
+
+
+@pytest.fixture
 def init_entry_point(test_db, create_tables_mock):
     yield Initialize(default=True)
 
@@ -122,6 +128,16 @@ def test_init_not_empty(arg, init_entry_point, create_tables_mock, mock_user_inp
     demo_data_count = 1 if arg == "demo" else 0
     assert Action.select().count() == demo_data_count
     assert ServiceAccountKey.select().count() == demo_data_count
+
+
+@pytest.mark.integration
+def test_init_topics(init_entry_point, create_topics_mock):
+    with (
+        patch.dict(init_entry_point.kwargs, {"topics": True}),
+    ):
+        init_entry_point.subcmd_entry_point()
+
+    create_topics_mock.assert_called_once()
 
 
 @pytest.mark.integration
