@@ -80,7 +80,7 @@ services:
     depends_on:
       observability_data_init:
         condition: service_completed_successfully
-    expose: ["5000", "5001", "5002"]
+    expose: ["5000", "5001", "5003"]
     environment:
       OBSERVABILITY_CONFIG: minikube
       KAFKA_SERVICE_HOST: ${KAFKA_HOST:-broker}
