@@ -3,6 +3,24 @@ entries:
   dataops-observability-app:
   - apiVersion: v2
     appVersion: 2.x.x
+    created: "2025-11-05T20:46:56.48783253Z"
+    description: DataOps Observability
+    digest: 9eb3fab59034daada470808eb7689c90b64c6e45eefdce604b30bda1fa17ccba
+    home: https://datakitchen.io
+    icon: https://cloud.datakitchen.io/assets/image/dk-logo.svg
+    keywords:
+    - datakitchen
+    - dataops
+    maintainers:
+    - name: DataKitchen
+      url: https://datakitchen.io
+    name: dataops-observability-app
+    type: application
+    urls:
+    - dataops-observability-app-2.4.0.tgz
+    version: 2.4.0
+  - apiVersion: v2
+    appVersion: 2.x.x
     created: "2025-07-29T02:53:27.107800977Z"
     description: DataOps Observability
     digest: 742d54e8063fb78fa02a754ca89429ff53926687edbf3f2857363a002ffabbea
@@ -272,4 +290,4 @@ entries:
     urls:
     - dataops-observability-services-2.0.0.tgz
     version: 2.0.0
-generated: "2025-10-01T16:45:27.871143472Z"
+generated: "2025-11-05T20:46:56.48788067Z"
