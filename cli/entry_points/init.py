@@ -9,6 +9,13 @@ from cli.base import DatabaseScriptBase
 from common.auth.keys.lib import hash_value
 from common.auth.keys.service_key import generate_key
 from common.entities import DB, Action, AuthProvider, Company, Organization, Project, User
+from common.kafka import (
+    TOPIC_IDENTIFIED_EVENTS,
+    TOPIC_UNIDENTIFIED_EVENTS,
+    TOPIC_SCHEDULED_EVENTS,
+    TOPIC_DEAD_LETTER_OFFICE,
+)
+from common.kafka.admin import create_topics
 from common.model import create_all_tables
 
 USER_FIELDS = ["name", "email", "username", "password"]
@@ -89,10 +96,19 @@ class Initialize(DatabaseScriptBase):
             action="store_true",
             help="Outputs the generated IDs in JSON format when successful",
         )
+        parser.add_argument(
+            "-k",
+            "--topics",
+            action="store_true",
+            help="Create the Kafka Topics",
+        )
 
     def subcmd_entry_point(self) -> None:
         try:
+            if not any([self.kwargs.get(arg) for arg in ("data", "demo", "tables", "topics")]):
+                raise OperationAborted("Either --data or --demo or --tables or --topics has to be set.")
             self.initialize_database()
+            self.create_kafka_topics()
         except OperationAborted as e:
             LOG.info("Operation #y<ABORTED>: %s", e)
             sys.exit(1)
@@ -102,10 +118,14 @@ class Initialize(DatabaseScriptBase):
         else:
             LOG.info("Operation #g<SUCCEEDED>")
 
-    def initialize_database(self) -> None:
-        if not (self.kwargs.get("tables") or self.kwargs.get("data") or self.kwargs.get("demo")):
-            raise OperationAborted("Either --data or --demo or --tables has to be set.")
+    def create_kafka_topics(self) -> None:
+        if self.kwargs.get("topics"):
+            LOG.info("#c<Creating Kafka topics...>")
+            create_topics(
+                [TOPIC_IDENTIFIED_EVENTS, TOPIC_UNIDENTIFIED_EVENTS, TOPIC_SCHEDULED_EVENTS, TOPIC_DEAD_LETTER_OFFICE]
+            )
 
+    def initialize_database(self) -> None:
         if self.kwargs.get("tables"):
             if self.kwargs.get("force"):
                 raise OperationAborted("The --force option can not be used when creating the tables.")

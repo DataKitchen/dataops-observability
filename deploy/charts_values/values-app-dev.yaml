@@ -5,16 +5,18 @@
 observability:
   flask_debug: "true"
   image:
-    repository: "datakitchen"
+    repository: ""
     tag: "latest"
 
 observability_ui:
   enable: true
   image:
+    name: "observability-ui"
     pullPolicy: Never
 
 observability_api:
   image:
+    name: "observability-be"
     pullPolicy: Never
   service:
     type: NodePort
@@ -22,6 +24,7 @@ observability_api:
 
 event_api:
   image:
+    name: "observability-be"
     pullPolicy: Never
   service:
     type: NodePort
@@ -29,6 +32,7 @@ event_api:
 
 agent_api:
   image:
+    name: "observability-be"
     pullPolicy: Never
   service:
     type: NodePort
@@ -36,20 +40,25 @@ agent_api:
 
 event_store:
   image:
+    name: "observability-be"
     pullPolicy: Never
 
 run_manager:
   image:
+    name: "observability-be"
     pullPolicy: Never
 
 rules_engine:
   image:
+    name: "observability-be"
     pullPolicy: Never
 
 scheduler:
   image:
+    name: "observability-be"
     pullPolicy: Never
 
 cli_hook:
   image:
+    name: "observability-be"
     pullPolicy: Never

@@ -1,9 +1,0 @@
-{
-  "basic-auth": {
-    "routePath": "authentication",
-    "remoteEntry": "/auth/remoteEntry.js",
-    "remoteName": "basic-auth",
-    "exposedModule": "./Authentication",
-    "exposedModuleName": "AuthenticationModule"
-  }
-}

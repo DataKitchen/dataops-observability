@@ -43,6 +43,7 @@ dependencies = [
     "tomli==2.0.1",
     "WTForms==3.0.1",
     "yoyo-migrations==9.0.0",
+    "supervisor==4.3.0",
 ]
 
 [project.optional-dependencies]
@@ -209,6 +210,10 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = "confluent_kafka"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "confluent_kafka.admin"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

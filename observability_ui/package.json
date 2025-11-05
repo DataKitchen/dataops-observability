@@ -5,7 +5,6 @@
   "scripts": {
     "start": "nx serve-mfe",
     "build": "yarn lerna run make:linkable && yarn link @observability/ui && yarn nx build-mfe",
-    "postbuild": "cp apps/shell/src/module-federation.manifest.prod.json dist/shell/assets/module-federation.manifest.json",
     "build:ci": "nx reset && yarn build",
     "test": "jest",
     "postinstall": "lerna run make:linkable && yarn link @observability/ui",

@@ -30,7 +30,7 @@ from packaging import version
 
 from scripts.invocations.common import MINIKUBE_PROFILE, check_env_tools, get_docker_env, get_host_env
 
-KUBE_VERSION = os.environ.get("INVOKE_KUBE_VERSION", "v1.25.7")
+KUBE_VERSION = os.environ.get("INVOKE_KUBE_VERSION", "v1.33.5")
 NAMESPACE = "datakitchen"
 HELM_SVC_FOLDER = os.path.join("deploy", "charts", "observability-services")
 HELM_APP_FOLDER = os.path.join("deploy", "charts", "observability-app")
@@ -273,7 +273,7 @@ def helm_services(ctx, upgrade=False, template=False, atomic=False, timeout=None
             ("backend", "Builds only the Observability backend image"),
             ("ui", "Builds only the Observability UI image"),
             ("base-image-url", "Base image prefix. Useful to enable a dependency proxy"),
-            ("local", "Use the local docker instead of minikube's."),
+            ("load", "Loads the image into the current minikube profile."),
         )
     ),
 )
@@ -284,7 +284,7 @@ def build(
     tag="latest",
     no_cache=False,
     base_image_url=None,
-    local=False,
+    load=False,
 ):
     """
     Build Observability's images inside the minikube instance.
@@ -296,9 +296,6 @@ def build(
         backend = True
         ui = True
 
-    # "minikube image build" support for build-arg is clunky, using the docker CLI instead
-    env = {} if local else get_docker_env(ctx)
-
     args_str = ""
     if no_cache:
         args_str += "--no-cache "
@@ -307,17 +304,21 @@ def build(
         args_str += f"--build-arg BASE_IMAGE_URL={base_image_url} "
 
     if backend:
+        be_tag = f"observability-be:{tag}"
         ctx.run(
             f"docker build . {args_str} --build-arg tag={tag} "
-            f"-t 'observability-be:{tag}' -f ./deploy/docker/observability-be.dockerfile",
-            env=env,
+            f"-t '{be_tag}' -f ./deploy/docker/observability-be.dockerfile",
         )
+        if load:
+            ctx.run(f"minikube image load --daemon {be_tag}", echo=True)
 
     if ui:
+        ui_tag = f"observability-ui:{tag}"
         ctx.run(
-            f"docker build . {args_str} " f"-t 'observability-ui:{tag}' -f ./deploy/docker/observability-ui.dockerfile",
-            env=env,
+            f"docker build . {args_str} " f"-t '{ui_tag}' -f ./deploy/docker/observability-ui.dockerfile",
         )
+        if load:
+            ctx.run(f"minikube image load --daemon {ui_tag}", echo=True)
 
 
 @task(
@@ -419,7 +420,7 @@ def local(ctx, values="", driver=None, memory=None, cpus=None, base_image_url=""
     Required tools: docker, helm, minikube
     """
     minikube(ctx, driver=driver, memory=memory, cpus=cpus)
-    build(ctx, base_image_url=base_image_url)
+    build(ctx, base_image_url=base_image_url, load=True)
     helm_build(ctx)
     helm_services(ctx, timeout="10m")
     helm_app(ctx, timeout="10m")
