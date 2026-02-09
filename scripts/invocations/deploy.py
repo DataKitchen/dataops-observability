@@ -4,7 +4,6 @@ __all__ = [
     "build",
     "helm_app",
     "helm_services",
-    "helm_build",
     "local",
     "minikube",
     "nuke",
@@ -28,7 +27,7 @@ import yaml
 from invoke import Exit, Task, task
 from packaging import version
 
-from scripts.invocations.common import MINIKUBE_PROFILE, check_env_tools, get_docker_env, get_host_env
+from scripts.invocations.common import MINIKUBE_PROFILE, check_env_tools, get_host_env
 
 KUBE_VERSION = os.environ.get("INVOKE_KUBE_VERSION", "v1.33.5")
 NAMESPACE = "datakitchen"
@@ -187,17 +186,6 @@ def minikube(ctx, driver=None, memory=None, cpus=None):
         ctx.run(
             """minikube ssh "sudo iptables-save | sed -e '/--dport 53/! s/\\(-A DOCKER_OUTPUT .*\\)/\\1 --dport 53/' | sudo iptables-restore" """
         )
-
-
-@task(pre=(check_required_tools,))
-def helm_build(ctx):
-    """
-    Update and build external dependencies (e.g. MySQL, Kafka).
-
-    This is not required when only updating Observability's charts.
-    """
-    ctx.run("helm repo add bitnami https://charts.bitnami.com/bitnami")
-    ctx.run("helm dependency build deploy/charts/observability-services")
 
 
 def _build_helm_command(
@@ -421,7 +409,6 @@ def local(ctx, values="", driver=None, memory=None, cpus=None, base_image_url=""
     """
     minikube(ctx, driver=driver, memory=memory, cpus=cpus)
     build(ctx, base_image_url=base_image_url, load=True)
-    helm_build(ctx)
     helm_services(ctx, timeout="10m")
     helm_app(ctx, timeout="10m")
     ctx.run(f"minikube -p {MINIKUBE_PROFILE} service --namespace {NAMESPACE} list")

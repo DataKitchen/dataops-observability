@@ -16,11 +16,6 @@ runs:
     - name: Install Helm
       uses: azure/setup-helm@v4.2.0
 
-    - name: Add Helm Repos for Dependencies
-      shell: bash
-      run: |
-        helm repo add bitnami https://charts.bitnami.com/bitnami
-
     - name: Run chart-releaser
       uses: helm/chart-releaser-action@v1.6.0
       with:

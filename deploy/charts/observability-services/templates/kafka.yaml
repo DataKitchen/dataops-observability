@@ -1,0 +1,159 @@
+{{- if .Values.kafka.enabled }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kafka-init-topics
+  labels:
+    {{- include "observability-services.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "0"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: kafka-init
+          image: "{{ .Values.kafka.image.repository }}:{{ .Values.kafka.image.tag }}"
+          command:
+            - /bin/bash
+            - -c
+            - |
+              echo "Waiting for Kafka to be ready..."
+              until /opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server kafka:9092 > /dev/null 2>&1; do
+                sleep 2
+              done
+              echo "Kafka is ready. Creating topics..."
+              {{- range .Values.kafka.topics }}
+              /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic {{ . }} --partitions 16 --replication-factor 1
+              {{- end }}
+              echo "Topics created."
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  labels:
+    {{- include "observability-services.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: kafka
+      port: 9092
+      targetPort: kafka
+    - name: controller
+      port: 9093
+      targetPort: controller
+  selector:
+    {{- include "observability-services.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: kafka
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka
+  labels:
+    {{- include "observability-services.labels" . | nindent 4 }}
+spec:
+  serviceName: kafka
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "observability-services.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: kafka
+  template:
+    metadata:
+      labels:
+        {{- include "observability-services.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: kafka
+    spec:
+      containers:
+        - name: kafka
+          image: "{{ .Values.kafka.image.repository }}:{{ .Values.kafka.image.tag }}"
+          imagePullPolicy: {{ .Values.kafka.image.pullPolicy }}
+
+          ports:
+            - name: kafka
+              containerPort: 9092
+            - name: controller
+              containerPort: 9093
+
+          env:
+            # ---- KRaft basics ----
+            - name: KAFKA_NODE_ID
+              value: "1"
+
+            - name: KAFKA_PROCESS_ROLES
+              value: broker,controller
+
+            - name: KAFKA_CONTROLLER_LISTENER_NAMES
+              value: CONTROLLER
+
+            # ---- Networking ----
+            - name: KAFKA_LISTENERS
+              value: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+
+            - name: KAFKA_ADVERTISED_LISTENERS
+              value: PLAINTEXT://kafka:9092
+
+            - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+              value: 1@localhost:9093
+
+            # Single node
+            - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+              value: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+
+            - name: KAFKA_INTER_BROKER_LISTENER_NAME
+              value: PLAINTEXT
+
+            - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+              value: "1"
+
+            - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
+              value: "1"
+
+            - name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR
+              value: "1"
+
+            # ---- Topics ----
+            - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
+              value: "true"
+
+            # ---- Logs ----
+            - name: KAFKA_LOG_DIRS
+              value: /var/lib/kafka/data
+
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/kafka/data
+
+          readinessProbe:
+            tcpSocket:
+              port: kafka
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+          livenessProbe:
+            tcpSocket:
+              port: kafka
+            initialDelaySeconds: 30
+            periodSeconds: 20
+
+          resources:
+            {{- toYaml .Values.kafka.resources | nindent 12 }}
+
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.kafka.storage.size }}
+        {{- if .Values.kafka.storage.storageClass }}
+        storageClassName: {{ .Values.kafka.storage.storageClass | quote }}
+        {{- end }}
+{{- end }}
