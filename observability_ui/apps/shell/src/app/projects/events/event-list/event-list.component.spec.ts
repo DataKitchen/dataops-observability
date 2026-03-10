@@ -6,7 +6,7 @@ import { ProjectStore } from '@observability-ui/core';
 import { ParameterService, StorageService } from '@datakitchen/ngx-toolkit';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MockComponent } from 'ng-mocks';
-import { FilterFieldModule } from '@observability-ui/ui';
+import { FilterFieldModule, TextFieldComponent } from '@observability-ui/ui';
 import { TranslatePipeMock } from '@observability-ui/translate';
 import { EventsTableComponent } from '../../runs/events-table/events-table.component';
 import { of } from 'rxjs';
@@ -30,6 +30,7 @@ describe('event-list', () => {
         EventListComponent,
         TranslatePipeMock,
         MockComponent(EventsTableComponent),
+        MockComponent(TextFieldComponent),
       ],
       providers: [
         MockProvider(ComponentStore, class {

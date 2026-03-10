@@ -168,6 +168,18 @@ def test_filters_invalid_instance_status():
 
 
 @pytest.mark.unit
+def test_project_event_filters_search():
+    filters = ProjectEventFilters.from_params(MultiDict([("search", "some query")]))
+    assert filters.search == "some query"
+
+
+@pytest.mark.unit
+def test_project_event_filters_search_empty():
+    filters = ProjectEventFilters.from_params(MultiDict([]))
+    assert filters.search is None
+
+
+@pytest.mark.unit
 def test_upcoming_instances_filters_valid():
     params = MultiDict(
         [

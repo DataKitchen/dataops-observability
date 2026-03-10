@@ -40,6 +40,7 @@ RUN_KEY_QUERY_NAME: str = "run_key"
 KEY_QUERY_NAME: str = "key"
 
 # List events endpoints
+SEARCH_QUERY_NAME: str = "search"
 EVENT_TYPE_QUERY_NAME: str = "event_type"
 EVENT_ID_QUERY_NAME: str = "event_id"
 JOURNEY_ID_QUERY_NAME: str = "journey_id"
@@ -111,6 +112,7 @@ PARAM_CONFIGS = {
     PROJECT_ID_QUERY_NAME: ParamConfig("project_ids", MultiDict.getlist),
     RUN_ID_QUERY_NAME: ParamConfig("run_ids", MultiDict.getlist),
     RUN_KEY_QUERY_NAME: ParamConfig("run_keys", MultiDict.getlist),
+    SEARCH_QUERY_NAME: ParamConfig("search", MultiDict.get),
     START_RANGE_QUERY_NAME: ParamConfig("start_range", _date_or_none),
     START_RANGE_BEGIN_QUERY_NAME: ParamConfig("start_range_begin", _date_or_none),
     START_RANGE_END_QUERY_NAME: ParamConfig("start_range_end", _date_or_none),
@@ -149,6 +151,7 @@ class Filters:
     project_ids: list[str] = field(default_factory=list)
     run_ids: list[str] = field(default_factory=list)
     run_keys: list[str] = field(default_factory=list)
+    search: Optional[str] = None
     start_range: Optional[datetime] = None
     start_range_begin: Optional[datetime] = None
     start_range_end: Optional[datetime] = None
@@ -331,6 +334,7 @@ class ProjectEventFilters(Filters):
                 TASK_ID_QUERY_NAME,
                 DATE_RANGE_START_QUERY_NAME,
                 DATE_RANGE_END_QUERY_NAME,
+                SEARCH_QUERY_NAME,
             ],
         )
 

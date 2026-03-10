@@ -49,6 +49,20 @@ def test_log_entries(default_base_payload_dict, message_log_data, log_entry, def
 
 
 @pytest.mark.unit
+def test_log_entry_with_message_details():
+    data = {"level": "WARNING", "message": "Something happened", "message_details": "Extra detail here"}
+    entry = LogEntrySchema().load(data)
+    assert entry == LogEntry(level=LogLevel.WARNING, message="Something happened", message_details="Extra detail here")
+
+
+@pytest.mark.unit
+def test_log_entry_without_message_details():
+    data = {"level": "INFO", "message": "No details"}
+    entry = LogEntrySchema().load(data)
+    assert entry.message_details is None
+
+
+@pytest.mark.unit
 def test_message_log_empty(message_log_data):
     del message_log_data["log_entries"]
     with pytest.raises(ValidationError, match="log_entries"):

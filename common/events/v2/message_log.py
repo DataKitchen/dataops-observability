@@ -31,6 +31,7 @@ class LogLevel(std_Enum):
 class LogEntry:
     level: LogLevel
     message: str
+    message_details: str | None = None
 
 
 @dataclass
@@ -49,6 +50,10 @@ class LogEntrySchema(Schema):
         required=True,
         validate=not_empty(),
         metadata={"description": "Required. The body of the message to log.", "example": "The job has completed."},
+    )
+    message_details = Str(
+        load_default=None,
+        metadata={"description": "Optional. Additional details about the message."},
     )
 
     @post_load

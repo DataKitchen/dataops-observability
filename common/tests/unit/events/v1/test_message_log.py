@@ -81,6 +81,24 @@ def test_message_log_min_length_message(message_log_event_data):
 
 
 @pytest.mark.unit
+def test_message_log_with_message_details(unidentified_message_log_data):
+    unidentified_message_log_data["message_details"] = "Some extra details"
+    event = MessageLogEvent.as_event_from_request(unidentified_message_log_data)
+    assert event.message_details == "Some extra details"
+    data = event.as_dict()
+    assert data["message_details"] == "Some extra details"
+    restored = MessageLogEvent.from_dict(data)
+    assert restored.message_details == "Some extra details"
+
+
+@pytest.mark.unit
+def test_message_log_without_message_details(unidentified_message_log_data):
+    assert "message_details" not in unidentified_message_log_data
+    event = MessageLogEvent.as_event_from_request(unidentified_message_log_data)
+    assert event.message_details is None
+
+
+@pytest.mark.unit
 def test_message_log_validate_default_values(message_log_event_data):
     message_log_event_data.pop("task_key", None)
     # Schema-validating an arbitrary dict is not the same thing as validating a
