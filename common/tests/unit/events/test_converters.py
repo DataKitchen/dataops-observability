@@ -124,6 +124,47 @@ def test_convert_message_log_events(base_fields, id_fields, component_fields):
 
 
 @pytest.mark.unit
+def test_convert_message_log_with_message_details(base_fields, id_fields, component_fields):
+    """Test that message_details round-trips through v1 -> v2 -> v1 conversion."""
+    data = {
+        **{k: v[0] for k, v in base_fields.items()},
+        **{k: v[0] for k, v in id_fields.items()},
+        **{k: v[0] for k, v in component_fields["batch"].items()},
+        "log_level": MessageEventLogLevel.ERROR.name,
+        "message": "test message",
+        "message_details": "some extra details about the error",
+        "event_type": MessageLogEvent.__name__,
+    }
+    event = instantiate_event_from_data(data)
+    assert event.message_details == "some extra details about the error"
+    v2_event = to_v2(event)
+    assert v2_event.event_payload.log_entries[0].message_details == "some extra details about the error"
+    roundtrip = to_v1(v2_event)
+    assert roundtrip == event
+    assert roundtrip.message_details == "some extra details about the error"
+
+
+@pytest.mark.unit
+def test_convert_message_log_without_message_details(base_fields, id_fields, component_fields):
+    """Test that None message_details round-trips correctly."""
+    data = {
+        **{k: v[0] for k, v in base_fields.items()},
+        **{k: v[0] for k, v in id_fields.items()},
+        **{k: v[0] for k, v in component_fields["batch"].items()},
+        "log_level": MessageEventLogLevel.INFO.name,
+        "message": "test message",
+        "event_type": MessageLogEvent.__name__,
+    }
+    event = instantiate_event_from_data(data)
+    assert event.message_details is None
+    v2_event = to_v2(event)
+    assert v2_event.event_payload.log_entries[0].message_details is None
+    roundtrip = to_v1(v2_event)
+    assert roundtrip == event
+    assert roundtrip.message_details is None
+
+
+@pytest.mark.unit
 @pytest.mark.converters_slow
 def test_convert_metric_log_events(base_fields, id_fields, component_fields):
     metric_log_fields = {

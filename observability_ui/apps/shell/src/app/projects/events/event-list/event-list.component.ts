@@ -22,6 +22,7 @@ export class EventListComponent extends CoreComponent implements OnInit, HasSear
     event_type: new TypedFormControl<string>(),
     date_range_start: new TypedFormControl<string>(),
     date_range_end: new TypedFormControl<string>(),
+    search: new TypedFormControl<string>(),
   });
 
   search$: BehaviorSubject<EventSearchFields> = new BehaviorSubject<EventSearchFields>({
@@ -29,6 +30,7 @@ export class EventListComponent extends CoreComponent implements OnInit, HasSear
     event_type: '',
     date_range_start: '',
     date_range_end: '',
+    search: '',
   });
 
   readonly events = EventTypes;
@@ -44,7 +46,7 @@ export class EventListComponent extends CoreComponent implements OnInit, HasSear
   componentsLoading = toSignal(this.componentStore.getLoadingFor('searchPage'));
 
   filtersApplied$ = this.search$.pipe(
-    map(({ component_id, event_type, date_range_start, date_range_end }) => !!component_id || !!event_type || !!date_range_start || !!date_range_end),
+    map(({ component_id, event_type, date_range_start, date_range_end, search }) => !!component_id || !!event_type || !!date_range_start || !!date_range_end || !!search),
   );
   antiFlickerLoading$ = new BehaviorSubject(true);
 
@@ -78,11 +80,12 @@ export class EventListComponent extends CoreComponent implements OnInit, HasSear
       this.tableChanged$,
     ]).pipe(
       takeUntil(this.destroyed$)
-    ).subscribe(([ { id }, { search: { event_type, component_id, date_range_start, date_range_end }, ...pagination } ]) => {
+    ).subscribe(([ { id }, { search: { event_type, component_id, date_range_start, date_range_end, search: searchText }, ...pagination } ]) => {
 
       const filters: EventSearchFields = {
         event_type: event_type?.split(',').filter(e => e) ?? [] as any,
         component_id: component_id?.split(',').filter(e => e) ?? [] as any,
+        search: searchText || undefined,
       };
 
       if (date_range_start) {

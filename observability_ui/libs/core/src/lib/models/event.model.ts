@@ -47,6 +47,7 @@ export interface MessageLogEventData extends EventData {
   log_entries: Array<{
     level: MessageLogLevel;
     message: string;
+    message_details?: string;
   }>;
 }
 
@@ -155,4 +156,5 @@ export interface EventSearchFields {
   date_range_end?: string;
   event_type?: string;
   component_name?: string;
+  search?: string;
 }

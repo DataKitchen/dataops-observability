@@ -249,6 +249,13 @@ class ProjectEvents(BaseEntityView):
               format: date
             required: false
           - in: query
+            name: search
+            schema:
+              type: string
+            required: false
+            description: Optional. A case-insensitive search query. Matches MESSAGE_LOG events by message and
+                         message_details, and METRIC_LOG events by metric key and value.
+          - in: query
             name: event_type
             description: Optional. If specified, the results will be limited to events with one of the specified event
                          types.
