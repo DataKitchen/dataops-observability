@@ -2,7 +2,7 @@ __all__ = ["EventService"]
 
 from collections import defaultdict
 
-from peewee import JOIN
+from peewee import JOIN, fn
 
 from common.entities import (
     Component,
@@ -15,6 +15,7 @@ from common.entities import (
     RunTask,
     Task,
 )
+from common.entities.event import ApiEventType
 
 from .helpers import ListRules, Page, ProjectEventFilters
 
@@ -57,6 +58,20 @@ class EventService:
             filter_list.append(EventEntity.timestamp >= filters.date_range_start)
         if filters.date_range_end:
             filter_list.append(EventEntity.timestamp < filters.date_range_end)
+        if filters.search:
+            lowered_payload = fn.LOWER(EventEntity.v2_payload.cast("CHAR"))
+            search_term = f"%{filters.search.lower()}%"
+            json_search = lambda path: fn.JSON_SEARCH(lowered_payload, "one", search_term, None, path).is_null(False)
+            filter_list.append(
+                (
+                    (EventEntity.type == ApiEventType.MESSAGE_LOG)
+                    & (json_search("$.log_entries[*].message") | json_search("$.log_entries[*].message_details"))
+                )
+                | (
+                    (EventEntity.type == ApiEventType.METRIC_LOG)
+                    & (json_search("$.metric_entries[*].key") | json_search("$.metric_entries[*].value"))
+                )
+            )
 
         query = query.where(*filter_list)
         page = Page[EventEntity].get_paginated_results(query, EventEntity.timestamp, rules)

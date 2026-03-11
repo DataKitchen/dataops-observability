@@ -231,6 +231,7 @@ class ConvertToV1(EventHandlerBase):
         self.v1_event = v1.MessageLogEvent(
             log_level=message.level.name,
             message=message.message,
+            message_details=message.message_details,
             event_type=v1.MessageLogEvent.__name__,
             **self._extract_common_attributes(event),
             **self._extract_component_data(
@@ -509,7 +510,11 @@ class ConvertToV2(EventHandlerBase):
     def handle_message_log(self, event: v1.MessageLogEvent) -> bool:
         self.v2_event = v2.MessageLogUserEvent(
             event_payload=v2.MessageLog(
-                log_entries=[v2.LogEntry(level=v2.LogLevel[event.log_level], message=event.message)],
+                log_entries=[
+                    v2.LogEntry(
+                        level=v2.LogLevel[event.log_level], message=event.message, message_details=event.message_details
+                    )
+                ],
                 component=self._extract_component_data(event),
                 **self._extract_common_payload_attributes(event),
             ),

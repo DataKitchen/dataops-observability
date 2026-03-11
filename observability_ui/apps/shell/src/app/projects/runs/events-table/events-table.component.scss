@@ -99,6 +99,11 @@ $level-colors: (
       background-color: map-get($color, bg);
     }
   }
+
+  .message-details {
+    @include mixins.font-style($style: caption, $color: secondary);
+    margin-top: variables.$space-xxs;
+  }
 }
 
 .summary {

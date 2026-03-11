@@ -30,6 +30,10 @@ class MessageLogEventBaseSchema(Schema):
         validate=not_empty(),
         metadata={"description": "Required. The body of the message to log.", "example": "The job has completed."},
     )
+    message_details = Str(
+        load_default=None,
+        metadata={"description": "Optional. Additional details about the message."},
+    )
 
 
 class MessageLogEventSchema(MessageLogEventBaseSchema, EventSchema):
@@ -46,6 +50,7 @@ class MessageLogEvent(Event):
 
     log_level: str
     message: str
+    message_details: str | None = None
 
     __schema__ = MessageLogEventSchema
     __api_schema__ = MessageLogEventApiSchema

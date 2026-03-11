@@ -1,4 +1,11 @@
-<div class="toolbar">
+<div class="toolbar" [formGroup]="search">
+  <div>
+    <text-field label="Search logs"
+      placeholder="Search logs"
+      formControlName="search"
+      type="search"></text-field>
+  </div>
+
   <mat-form-field>
     <mat-label>Date range</mat-label>
     <mat-date-range-input [rangePicker]="picker">

@@ -123,6 +123,9 @@
               [ngClass]="[ event.raw_data?.log_entries?.[0]?.level ]">
               <span class="log-level mr-2">{{ 'events.logLevels.' + event.raw_data?.log_entries?.[0]?.level | translate }}</span>
               <span class="message">{{ event.raw_data?.log_entries?.[0]?.message }}</span>
+              <div class="message-details" *ngIf="event.raw_data?.log_entries?.[0]?.message_details">
+                {{ event.raw_data?.log_entries?.[0]?.message_details }}
+              </div>
             </div>
           </ng-container>
 

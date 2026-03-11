@@ -47,7 +47,7 @@ spec:
               value: {{ .Values.observability_ui.api_base_url | quote }}
             - name: OBSERVABILITY_AUTH_METHOD
               value: {{ .Values.observability_ui.auth_method | quote }}
-            {{- if .Values.observability_ui.hostname }}
+            {{- if .Values.observability_api.hostname }}
             - name: OBSERVABILITY_API_HOSTNAME
               value: {{ tpl .Values.observability_api.hostname . | quote }}
             {{- end }}
