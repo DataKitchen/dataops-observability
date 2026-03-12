@@ -8,7 +8,11 @@ COPY observability_ui/ /observability_ui
 RUN yarn
 RUN yarn build:ci
 
-FROM ${BASE_IMAGE_URL}nginxinc/nginx-unprivileged:alpine3.22
+FROM ${BASE_IMAGE_URL}nginxinc/nginx-unprivileged:alpine3.23
+
+USER root
+RUN apk upgrade --no-cache
+USER nginx
 
 WORKDIR /observability_ui
 
