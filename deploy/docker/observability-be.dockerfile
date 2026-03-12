@@ -32,7 +32,8 @@ RUN python3 -O -m pip install --no-deps /tmp/dk --prefix=/dk
 
 FROM ${BASE_IMAGE_URL}python:3.12.11-alpine3.22 AS runtime-image
 
-RUN apk update && apk upgrade && apk add --no-cache librdkafka=2.10.0-r0
+RUN apk update && apk upgrade && apk add --no-cache librdkafka=2.10.0-r0 \
+    && pip install --no-cache-dir --upgrade pip
 
 # Grab the pre-built app from the build-image. This way we don't have
 # excess laying around in the final image.

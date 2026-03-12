@@ -28,7 +28,7 @@ export const instancesTranslation = {
     learnMore: 'Data Journeys'
   },
   testgen: {
-    title: 'Test Results from DataOps TestGen',
+    title: 'Test Results from TestGen',
     testData: {
       title: 'Test Data',
       metricValue: 'Metric Value',

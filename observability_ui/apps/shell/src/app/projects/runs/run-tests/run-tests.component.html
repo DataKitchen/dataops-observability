@@ -202,7 +202,7 @@
       </a>
 
       <a *ngIf="test.integrations | getIntegration: 'TESTGEN'"
-        dkTooltip="View test results from DataOps TestGen"
+        dkTooltip="View test results from TestGen"
         [dkTooltipShowArrow]="false"
         [routerLink]="['../..', { outlets: { rightPanel: [runId, 'tests', test.id, 'testgen'] } }]"
         class="action-link testgen-link">
