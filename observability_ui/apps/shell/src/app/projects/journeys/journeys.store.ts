@@ -9,12 +9,16 @@ interface JourneyUpdateRequest {
   id: string;
   name: string;
   description: string;
+  component_include_patterns?: string | null;
+  component_exclude_patterns?: string | null;
   instance_rules: JourneyInstanceRule[];
 }
 
 interface JourneyCreateRequest {
   name: string,
   description: string,
+  component_include_patterns?: string | null,
+  component_exclude_patterns?: string | null,
   instance_rules: JourneyInstanceRule[],
   project_id: string
   components?: string[]

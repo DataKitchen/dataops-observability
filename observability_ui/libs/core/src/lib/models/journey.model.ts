@@ -4,6 +4,8 @@ import { BaseComponent } from "./component.model";
 export interface Journey extends Entity {
   project: string;
   instance_rules?: JourneyInstanceRule[];
+  component_include_patterns?: string | null;
+  component_exclude_patterns?: string | null;
 }
 
 export interface JourneyDag<Node = JourneyDagNode> {

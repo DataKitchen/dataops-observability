@@ -6,6 +6,7 @@ from typing import Optional, cast
 from peewee import DoesNotExist
 
 from common.entities import Component, ComponentType, Dataset, Pipeline, Project, Server, StreamingPipeline
+from common.entity_services import JourneyService
 from common.events import EventHandlerBase
 from common.events.v1 import (
     DatasetOperationEvent,
@@ -61,6 +62,7 @@ def _create_component(event: Event) -> Optional[Component]:
         key=event.component_key, name=event.component_name, tool=event.component_tool, project_id=event.project_id
     )
     LOG.info(f"Created new {event.component_type} component with id `{component.id}`")
+    JourneyService.add_component_to_matching_journeys(component)
     return component
 
 

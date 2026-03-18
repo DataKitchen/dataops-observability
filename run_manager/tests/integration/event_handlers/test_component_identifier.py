@@ -1,6 +1,6 @@
 import pytest
 
-from common.entities import Component, Pipeline
+from common.entities import Component, JourneyDagEdge, Pipeline
 from run_manager.context import RunManagerContext
 from run_manager.event_handlers.component_identifier import ComponentIdentifier
 from testlib.fixtures.v1_events import *
@@ -47,3 +47,15 @@ def test_component_identifier_update_attributes(run_status_event, pipeline):
     assert Component.select().count() == 1
     assert Pipeline.get().tool == run_status_event.component_tool
     assert Pipeline.get().name == run_status_event.pipeline_name
+
+
+@pytest.mark.integration
+def test_component_identifier_create_adds_to_matching_journey(run_status_event, journey):
+    journey.component_include_patterns = "*"
+    journey.save()
+
+    identifier = ComponentIdentifier(RunManagerContext())
+    run_status_event.accept(identifier)
+
+    assert Component.select().count() == 1
+    assert JourneyDagEdge.select().where(JourneyDagEdge.journey == journey).count() == 1

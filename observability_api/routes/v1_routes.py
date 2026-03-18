@@ -14,7 +14,13 @@ from observability_api.endpoints.v1.components import ComponentById, Components,
 from observability_api.endpoints.v1.datasets import DatasetComponentById, DatasetComponents
 from observability_api.endpoints.v1.instance_rules import InstanceRuleById, InstanceRuleCreate
 from observability_api.endpoints.v1.instances import CompanyInstances, InstanceById, InstanceDag, Instances
-from observability_api.endpoints.v1.journeys import JourneyById, JourneyDag, JourneyDagEdgeById, Journeys
+from observability_api.endpoints.v1.journeys import (
+    JourneyById,
+    JourneyComponentPreview,
+    JourneyDag,
+    JourneyDagEdgeById,
+    Journeys,
+)
 from observability_api.endpoints.v1.organizations import OrganizationById, Organizations
 from observability_api.endpoints.v1.project_settings import ProjectAlertsSettings
 from observability_api.endpoints.v1.projects import ProjectById, ProjectEvents, Projects
@@ -110,9 +116,15 @@ def build_instance_rule_routes(bp: Blueprint) -> Views:
 def build_journey_routes(bp: Blueprint) -> Views:
     journeys_view = Journeys.as_view("journeys")
     journey_by_id_view = JourneyById.as_view("journey_by_id")
+    journey_component_preview_view = JourneyComponentPreview.as_view("journey_component_preview")
     bp.add_url_rule("/projects/<uuid:project_id>/journeys", view_func=journeys_view, methods=["GET", "POST"])
     bp.add_url_rule("/journeys/<uuid:journey_id>", view_func=journey_by_id_view, methods=["DELETE", "GET", "PATCH"])
-    return [journeys_view, journey_by_id_view]
+    bp.add_url_rule(
+        "/projects/<uuid:project_id>/journeys/component-preview",
+        view_func=journey_component_preview_view,
+        methods=["GET"],
+    )
+    return [journeys_view, journey_by_id_view, journey_component_preview_view]
 
 
 def build_journey_dag_routes(bp: Blueprint) -> Views:

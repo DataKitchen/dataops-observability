@@ -562,3 +562,98 @@ def test_dag_edge_delete_forbidden(client, g_user_2, dag_edges):
     response = client.delete(f"/observability/v1/journey-dag-edge/{e1.id}")
     assert response.status_code == HTTPStatus.FORBIDDEN, response.json
     assert JourneyDagEdge.select().count() == edge_count
+
+
+# --- component pattern preview ---
+
+
+@pytest.mark.integration
+def test_journey_component_preview_ok(client, g_user, project, pipeline, pipeline_2):
+    response = client.get(
+        f"/observability/v1/projects/{project.id}/journeys/component-preview",
+        query_string={"component_include_patterns": "*", "component_exclude_patterns": "P2"},
+    )
+    assert response.status_code == HTTPStatus.OK, response.json
+    data = response.json
+    assert "entities" in data
+    assert len(data["entities"]) == 1
+    assert data["entities"][0]["key"] == pipeline.key
+
+
+@pytest.mark.integration
+def test_journey_component_preview_no_include_returns_empty(client, g_user, project, pipeline):
+    response = client.get(f"/observability/v1/projects/{project.id}/journeys/component-preview")
+    assert response.status_code == HTTPStatus.OK, response.json
+    assert response.json["entities"] == []
+
+
+@pytest.mark.integration
+def test_journey_component_preview_project_not_found(client, g_user):
+    response = client.get(
+        f"/observability/v1/projects/{uuid4()}/journeys/component-preview",
+        query_string={"component_include_patterns": "*"},
+    )
+    assert response.status_code == HTTPStatus.NOT_FOUND, response.json
+
+
+@pytest.mark.integration
+def test_journey_component_preview_forbidden(client, g_user_2, project, pipeline):
+    response = client.get(
+        f"/observability/v1/projects/{project.id}/journeys/component-preview",
+        query_string={"component_include_patterns": "*"},
+    )
+    assert response.status_code == HTTPStatus.FORBIDDEN, response.json
+
+
+# --- component patterns on POST / PATCH ---
+
+
+@pytest.mark.integration
+def test_post_journey_with_patterns_creates_dag_edges(client, project, g_user, pipeline, pipeline_2):
+    response = client.post(
+        f"/observability/v1/projects/{project.id}/journeys",
+        headers={"Content-Type": "application/json"},
+        json={"name": "Pattern Journey", "component_include_patterns": "*", "component_exclude_patterns": "P2"},
+    )
+    assert response.status_code == HTTPStatus.CREATED, response.json
+    created = Journey.get_by_id(response.json["id"])
+    edges = list(JourneyDagEdge.select().where(JourneyDagEdge.journey == created))
+    assert len(edges) == 1
+    assert edges[0].right_id == pipeline.id
+
+
+@pytest.mark.integration
+def test_post_journey_patterns_stored_in_response(client, project, g_user):
+    response = client.post(
+        f"/observability/v1/projects/{project.id}/journeys",
+        headers={"Content-Type": "application/json"},
+        json={"name": "Pattern Journey", "component_include_patterns": "p*", "component_exclude_patterns": "prod*"},
+    )
+    assert response.status_code == HTTPStatus.CREATED, response.json
+    assert response.json["component_include_patterns"] == "p*"
+    assert response.json["component_exclude_patterns"] == "prod*"
+
+
+@pytest.mark.integration
+def test_patch_journey_patterns_updates_dag_edges(client, g_user, journey, pipeline, pipeline_2):
+    response = client.patch(
+        f"/observability/v1/journeys/{journey.id}",
+        headers={"Content-Type": "application/json"},
+        json={"component_include_patterns": "P1"},
+    )
+    assert response.status_code == HTTPStatus.OK, response.json
+    edges = list(JourneyDagEdge.select().where(JourneyDagEdge.journey == journey))
+    assert len(edges) == 1
+    assert edges[0].right_id == pipeline.id
+
+
+@pytest.mark.integration
+def test_patch_journey_clears_dag_edges_when_patterns_removed(client, g_user, journey, pipeline):
+    JourneyDagEdge.create(journey=journey, left=None, right=pipeline)
+    response = client.patch(
+        f"/observability/v1/journeys/{journey.id}",
+        headers={"Content-Type": "application/json"},
+        json={"component_include_patterns": None},
+    )
+    assert response.status_code == HTTPStatus.OK, response.json
+    assert JourneyDagEdge.select().where(JourneyDagEdge.journey == journey).count() == 0

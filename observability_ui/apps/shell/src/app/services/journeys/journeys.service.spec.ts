@@ -155,4 +155,46 @@ describe('Journeys Service', () => {
       });
     });
   });
+
+  describe('previewComponentPatterns()', () => {
+    const projectId = 'project-1';
+    const mockEntities = [ { key: 'pipeline-1', name: 'Pipeline 1' } ];
+
+    it('should call the preview endpoint and return entities', (done) => {
+      service.previewComponentPatterns(projectId, 'p*', 'prod*').subscribe((result) => {
+        expect(result).toEqual(mockEntities);
+        done();
+      });
+
+      const request = httpClient.expectOne((req) =>
+        req.url === `base/observability/v1/projects/${projectId}/journeys/component-preview`
+        && req.method === 'GET'
+        && req.params.get('component_include_patterns') === 'p*'
+        && req.params.get('component_exclude_patterns') === 'prod*'
+      );
+      request.flush({ entities: mockEntities });
+    });
+
+    it('should omit null include pattern from query params', () => {
+      service.previewComponentPatterns(projectId, null, 'prod*').subscribe();
+
+      const request = httpClient.expectOne((req) =>
+        req.url === `base/observability/v1/projects/${projectId}/journeys/component-preview`
+        && !req.params.has('component_include_patterns')
+        && req.params.get('component_exclude_patterns') === 'prod*'
+      );
+      request.flush({ entities: [] });
+    });
+
+    it('should omit null exclude pattern from query params', () => {
+      service.previewComponentPatterns(projectId, 'p*', null).subscribe();
+
+      const request = httpClient.expectOne((req) =>
+        req.url === `base/observability/v1/projects/${projectId}/journeys/component-preview`
+        && req.params.get('component_include_patterns') === 'p*'
+        && !req.params.has('component_exclude_patterns')
+      );
+      request.flush({ entities: [] });
+    });
+  });
 });
