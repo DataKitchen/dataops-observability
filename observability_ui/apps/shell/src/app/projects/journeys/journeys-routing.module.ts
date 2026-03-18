@@ -13,14 +13,14 @@ import { JourneyRulesComponent } from './journey-rules/journey-rules.component';
         path: '',
         component: JourneysListComponent,
         data: {
-          helpLink: 'article/dataops-observability-help/journeys'
+          helpLink: 'journeys/'
         },
       },
       {
         path: ':id',
         component: JourneyDetailsComponent,
         data: {
-          helpLink: 'article/dataops-observability-help/view-journey-details'
+          helpLink: 'journeys/journey-details/'
         },
         children: [
           {
@@ -40,7 +40,7 @@ import { JourneyRulesComponent } from './journey-rules/journey-rules.component';
             path: 'rules',
             component: JourneyRulesComponent,
             data: {
-              helpLink: 'article/dataops-observability-help/define-rules'
+              helpLink: 'rules/'
             },
           },
         ]

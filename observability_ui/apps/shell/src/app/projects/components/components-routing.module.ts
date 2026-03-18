@@ -9,7 +9,7 @@ import { ComponentsListComponent } from './components-list/components-list.compo
         path: '',
         component: ComponentsListComponent,
         data: {
-          helpLink: 'article/dataops-observability-help/components'
+          helpLink: 'components/'
         },
       },
     ]),

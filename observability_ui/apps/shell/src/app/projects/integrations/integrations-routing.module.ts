@@ -11,7 +11,7 @@ import { IntegrationsPanelComponent } from './integrations-panel/integrations-pa
         path: '',
         component: IntegrationsComponent,
         data: {
-          helpLink: 'article/dataops-observability-help/integrations'
+          helpLink: 'integrations/'
         },
       },
       {

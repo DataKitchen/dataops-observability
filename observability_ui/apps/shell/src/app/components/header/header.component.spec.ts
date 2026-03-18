@@ -72,7 +72,7 @@ describe('HeaderComponent', () => {
     it('should call window open with url and features', () => {
       window.open = jest.fn();
       component.openSmallHelpWindow('test');
-      expect(window.open).toHaveBeenCalledWith('https://docs.datakitchen.io/test', '_blank', "toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=800,height=600,top=700,left=700");
+      expect(window.open).toHaveBeenCalledWith('https://docs.datakitchen.io/observability/test', '_blank', "toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=1,width=800,height=600,top=700,left=700");
     });
   });
 });
