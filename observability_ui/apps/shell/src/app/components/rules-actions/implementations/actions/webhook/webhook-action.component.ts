@@ -33,7 +33,7 @@ import { NgForOf, NgIf } from '@angular/common';
       <div class="flex-column controls">
         <div class="help-link text-caption--secondary">
           Learn more about
-          <a href="https://docs.datakitchen.io/article/dataops-observability-help/web-request" target="_blank">
+          <a href="https://docs.datakitchen.io/observability/rules/actions/web-request/" target="_blank">
             configuring webhooks.
             <mat-icon inline>open_in_new</mat-icon>
           </a>

@@ -38,7 +38,7 @@ export class HeaderComponent extends CoreComponent {
   }
 
   openSmallHelpWindow(url: string) {
-    window.open(`https://docs.datakitchen.io/${url}`, '_blank', this.helpWindowFeatures);
+    window.open(`https://docs.datakitchen.io/observability/${url}`, '_blank', this.helpWindowFeatures);
   }
 
   private isActivationEnd(event: Event): event is ActivationEnd {

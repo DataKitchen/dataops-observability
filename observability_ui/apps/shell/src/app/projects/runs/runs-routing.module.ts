@@ -14,7 +14,7 @@ import { TestgenIntegrationComponent } from '../testgen-integration/testgen-inte
         path: ':runId',
         component: RunDetailsComponent,
         data: {
-          helpLink: 'article/dataops-observability-help/view-run-details'
+          helpLink: 'instances/run-details/'
         },
         children: [
           {

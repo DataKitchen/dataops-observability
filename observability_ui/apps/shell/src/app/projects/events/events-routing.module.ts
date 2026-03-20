@@ -11,7 +11,7 @@ import { BatchRunsComponent } from './batch-runs/batch-runs.component';
         path: '',
         component: EventsComponent,
         data: {
-          helpLink: 'article/dataops-observability-help/view-events-and-runs '
+          helpLink: 'events/'
         },
         children: [
           {
