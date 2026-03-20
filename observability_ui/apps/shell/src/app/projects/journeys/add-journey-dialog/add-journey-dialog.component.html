@@ -22,34 +22,47 @@
       rows="2"></textarea>
   </mat-form-field>
 
-  <text-field formControlName="component_include_patterns"
-    label="Component include patterns"
-    placeholder="Component include patterns">
-  </text-field>
+  <mat-expansion-panel class="mat-elevation-z0">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Component Autodiscovery
+      </mat-panel-title>
+    </mat-expansion-panel-header>
 
-  <text-field formControlName="component_exclude_patterns"
-    label="Component exclude patterns"
-    placeholder="Component exclude patterns">
-  </text-field>
-
-  <div class="pattern-preview">
-    <button mat-stroked-button
-      type="button"
-      (click)="previewComponents()"
-      [disabled]="previewing">
-      {{ previewing ? 'Previewing...' : 'Preview matching components' }}
-    </button>
-
-    <div *ngIf="previewResults !== null"
-      class="preview-results">
-      <span *ngIf="previewResults.length === 0"
-        class="text--secondary">No components match the current patterns.</span>
-      <ul *ngIf="previewResults.length > 0"
-        class="preview-list">
-        <li *ngFor="let c of previewResults">{{ c.key }}</li>
-      </ul>
+    <mat-form-field>
+      <mat-label>Include patterns</mat-label>
+      <textarea formControlName="component_include_patterns"
+        placeholder="e.g. prod_*, staging_*"
+        rows="2"
+        matInput></textarea>
+      <mat-hint>Matched against component keys. Comma or newline-separated. Wildcards: * ? [abc]</mat-hint>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Exclude patterns</mat-label>
+      <textarea formControlName="component_exclude_patterns"
+        placeholder="e.g. test_*, dev_*"
+        rows="2"
+        matInput></textarea>
+      <mat-hint>Components matching these are excluded even if they match an include pattern.</mat-hint>
+    </mat-form-field>
+    <div class="pattern-preview">
+      <button mat-stroked-button
+        type="button"
+        (click)="previewComponents()"
+        [disabled]="previewing">
+        {{ previewing ? 'Previewing...' : 'Preview' }}
+      </button>
+      <div *ngIf="previewResults !== null"
+        class="preview-results">
+        <span *ngIf="previewResults.length === 0"
+          class="text--secondary">No components found matching patterns.</span>
+        <ul *ngIf="previewResults.length > 0"
+          class="preview-list">
+          <li *ngFor="let c of previewResults">{{ c.key }}</li>
+        </ul>
+      </div>
     </div>
-  </div>
+  </mat-expansion-panel>
 
   <mat-expansion-panel class="mat-elevation-z0">
     <mat-expansion-panel-header>
