@@ -1,4 +1,4 @@
-__all__ = ["Journeys", "JourneyById", "JourneyDag", "JourneyDagEdgeById"]
+__all__ = ["Journeys", "JourneyById", "JourneyDag", "JourneyDagEdgeById", "JourneyComponentPreview"]
 
 import logging
 from graphlib import CycleError
@@ -15,6 +15,7 @@ from common.api.request_parsing import no_body_allowed
 from common.entities import DB, Component, Journey, JourneyDagEdge, Project
 from common.entity_services import ProjectService
 from common.entity_services.helpers import ListRules, Page
+from common.entity_services.journey_service import JourneyService
 from observability_api.endpoints.entity_view import BaseEntityView
 from observability_api.schemas import (
     JourneyDagEdgePostSchema,
@@ -180,6 +181,8 @@ class Journeys(BaseEntityView):
             except IntegrityError as e:
                 LOG.exception("Journey CREATE failed")
                 raise Conflict("Failed to create Journey; one already exists with that information") from e
+            if journey.component_include_patterns or journey.component_exclude_patterns:
+                JourneyService.apply_component_patterns(journey)
         # Marshmallow passes peewee's backref query to the schema instead of the result of the query unless the result
         # is prefetched. The journey has just been created so that result would be empty
         journey.instance_rules = []
@@ -280,9 +283,14 @@ class JourneyById(BaseEntityView):
         """
         self.parse_body(schema=JourneyPatchSchema())
         _ = self.get_entity_or_fail(Journey, Journey.id == journey_id)
+        pattern_fields = {"component_include_patterns", "component_exclude_patterns"}
+        patterns_updated = bool(pattern_fields & self.request_body.keys())
         try:
             with DB.atomic():
                 Journey.update(**self.request_body).where(Journey.id == journey_id).execute()
+                if patterns_updated:
+                    journey = Journey.get_by_id(journey_id)
+                    JourneyService.apply_component_patterns(journey)
         except IntegrityError as e:
             LOG.exception("Journey UPDATE failed")
             raise Conflict("Failed to update Journey; one already exists with that information") from e
@@ -468,6 +476,57 @@ class JourneyDag(BaseEntityView):
         except IntegrityError as ie:
             raise Conflict("A Journey DAG edge must be unique") from ie
         return make_response(JourneyDagEdgeSchema().dump(dag_edge), HTTPStatus.CREATED)
+
+
+class JourneyComponentPreview(BaseEntityView):
+    PERMISSION_REQUIREMENTS: tuple[Permission, ...] = ()
+
+    @no_body_allowed
+    def get(self, project_id: UUID) -> Response:
+        """
+        Journey component pattern preview
+        ---
+        tags: ["Journey"]
+        operationId: PreviewJourneyComponentPatterns
+        description: Returns the list of components that would match the given include/exclude patterns.
+        security:
+          - SAKey: []
+        parameters:
+          - in: path
+            name: project_id
+            schema:
+              type: string
+            required: true
+          - in: query
+            name: component_include_patterns
+            schema:
+              type: string
+            required: false
+          - in: query
+            name: component_exclude_patterns
+            schema:
+              type: string
+            required: false
+        responses:
+          200:
+            description: Request successful - matching components returned.
+          400:
+            description: Request bodies are not supported by this endpoint.
+            content:
+              application/json:
+                schema: HTTPErrorSchema
+          404:
+            description: Project not found.
+            content:
+              application/json:
+                schema: HTTPErrorSchema
+
+        """
+        _ = self.get_entity_or_fail(Project, Project.id == project_id)
+        include_patterns = JourneyService.parse_patterns(request.args.get("component_include_patterns"))
+        exclude_patterns = JourneyService.parse_patterns(request.args.get("component_exclude_patterns"))
+        matching = JourneyService.get_components_matching_patterns(str(project_id), include_patterns, exclude_patterns)
+        return make_response({"entities": [{"key": c.key, "name": c.name} for c in matching]})
 
 
 class JourneyDagEdgeById(BaseEntityView):

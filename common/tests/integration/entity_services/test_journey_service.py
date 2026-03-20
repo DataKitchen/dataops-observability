@@ -8,6 +8,218 @@ from common.entity_services.helpers import ComponentFilters, ListRules
 from common.exceptions.service import MultipleActionsFound
 
 
+# --- parse_patterns ---
+
+
+@pytest.mark.unit
+def test_parse_patterns_none():
+    assert JourneyService.parse_patterns(None) == []
+
+
+@pytest.mark.unit
+def test_parse_patterns_empty_string():
+    assert JourneyService.parse_patterns("") == []
+
+
+@pytest.mark.unit
+def test_parse_patterns_comma_separated():
+    assert JourneyService.parse_patterns("a,b,c") == ["a", "b", "c"]
+
+
+@pytest.mark.unit
+def test_parse_patterns_newline_separated():
+    assert JourneyService.parse_patterns("a\nb\nc") == ["a", "b", "c"]
+
+
+@pytest.mark.unit
+def test_parse_patterns_trims_whitespace():
+    assert JourneyService.parse_patterns("  a  ,  b  ") == ["a", "b"]
+
+
+@pytest.mark.unit
+def test_parse_patterns_skips_empty_entries():
+    assert JourneyService.parse_patterns("a,,b") == ["a", "b"]
+
+
+# --- get_components_matching_patterns ---
+
+
+@pytest.mark.integration
+def test_get_components_matching_patterns_no_include_returns_empty(test_db, project, pipeline, pipeline_2):
+    result = JourneyService.get_components_matching_patterns(str(project.id), [], [])
+    assert result == []
+
+
+@pytest.mark.integration
+def test_get_components_matching_patterns_wildcard_matches_all(test_db, project, pipeline, pipeline_2):
+    result = JourneyService.get_components_matching_patterns(str(project.id), ["*"], [])
+    assert {c.id for c in result} == {pipeline.id, pipeline_2.id}
+
+
+@pytest.mark.integration
+def test_get_components_matching_patterns_exact_key(test_db, project, pipeline, pipeline_2):
+    result = JourneyService.get_components_matching_patterns(str(project.id), ["P1"], [])
+    assert len(result) == 1
+    assert result[0].id == pipeline.id
+
+
+@pytest.mark.integration
+def test_get_components_matching_patterns_exclude_applied(test_db, project, pipeline, pipeline_2):
+    result = JourneyService.get_components_matching_patterns(str(project.id), ["*"], ["P2"])
+    assert len(result) == 1
+    assert result[0].id == pipeline.id
+
+
+@pytest.mark.integration
+def test_get_components_matching_patterns_character_class_matches(test_db, project, pipeline, pipeline_2):
+    # [pP]* matches both P1 and P2 regardless of case
+    result = JourneyService.get_components_matching_patterns(str(project.id), ["[pP]*"], [])
+    assert {c.id for c in result} == {pipeline.id, pipeline_2.id}
+
+
+@pytest.mark.integration
+def test_get_components_matching_patterns_character_class_negation(test_db, project, pipeline, pipeline_2):
+    # [!pP]* excludes keys starting with p or P — neither P1 nor P2 should match
+    result = JourneyService.get_components_matching_patterns(str(project.id), ["[!pP]*"], [])
+    assert result == []
+
+
+@pytest.mark.integration
+def test_get_components_matching_patterns_character_class_exclude(test_db, project, pipeline, pipeline_2):
+    # include all, but exclude keys starting with p or P
+    result = JourneyService.get_components_matching_patterns(str(project.id), ["*"], ["[pP]*"])
+    assert result == []
+
+
+@pytest.mark.integration
+def test_get_components_matching_patterns_character_class_exclude_negation(test_db, project, pipeline, pipeline_2):
+    # exclude *[!1] matches keys not ending in '1' — P2 is excluded, P1 remains
+    result = JourneyService.get_components_matching_patterns(str(project.id), ["*"], ["*[!1]"])
+    assert len(result) == 1
+    assert result[0].id == pipeline.id
+
+
+@pytest.mark.integration
+def test_get_components_matching_patterns_question_mark_matches_any_single_char(test_db, project, pipeline, pipeline_2):
+    # P? matches any key of exactly two chars starting with P — both P1 and P2 match
+    result = JourneyService.get_components_matching_patterns(str(project.id), ["P?"], [])
+    assert {c.id for c in result} == {pipeline.id, pipeline_2.id}
+
+
+@pytest.mark.integration
+def test_get_components_matching_patterns_question_mark_matches_specific(test_db, project, pipeline, pipeline_2):
+    # ?1 matches any two-char key ending in '1' — only P1 matches
+    result = JourneyService.get_components_matching_patterns(str(project.id), ["?1"], [])
+    assert len(result) == 1
+    assert result[0].id == pipeline.id
+
+
+@pytest.mark.integration
+def test_get_components_matching_patterns_question_mark_exclude(test_db, project, pipeline, pipeline_2):
+    # exclude ?1 removes P1, leaving P2
+    result = JourneyService.get_components_matching_patterns(str(project.id), ["*"], ["?1"])
+    assert len(result) == 1
+    assert result[0].id == pipeline_2.id
+
+
+@pytest.mark.integration
+def test_get_components_matching_patterns_only_own_project(test_db, project, pipeline, organization, user):
+    from common.entities import Pipeline, Project
+
+    other_project = Project.create(name="Other", organization=organization, created_by=user)
+    Pipeline.create(name="Other P1", key="P1", project=other_project, created_by=user)
+    result = JourneyService.get_components_matching_patterns(str(project.id), ["P1"], [])
+    assert len(result) == 1
+    assert result[0].id == pipeline.id
+
+
+# --- apply_component_patterns ---
+
+
+@pytest.mark.integration
+def test_apply_component_patterns_no_include_clears_edges(test_db, journey, pipeline):
+    JourneyDagEdge.create(journey=journey, left=None, right=pipeline)
+    journey.component_include_patterns = None
+    journey.component_exclude_patterns = None
+    JourneyService.apply_component_patterns(journey)
+    assert JourneyDagEdge.select().where(JourneyDagEdge.journey == journey).count() == 0
+
+
+@pytest.mark.integration
+def test_apply_component_patterns_adds_matching_as_root_nodes(test_db, journey, pipeline, pipeline_2):
+    journey.component_include_patterns = "*"
+    journey.component_exclude_patterns = None
+    JourneyService.apply_component_patterns(journey)
+    edges = list(JourneyDagEdge.select().where(JourneyDagEdge.journey == journey))
+    assert len(edges) == 2
+    assert all(e.left_id is None for e in edges)
+
+
+@pytest.mark.integration
+def test_apply_component_patterns_preserves_existing_edges(test_db, journey, pipeline, pipeline_2):
+    JourneyDagEdge.create(journey=journey, left=pipeline, right=pipeline_2)
+    journey.component_include_patterns = "*"
+    journey.component_exclude_patterns = None
+    JourneyService.apply_component_patterns(journey)
+    edges = list(JourneyDagEdge.select().where(JourneyDagEdge.journey == journey))
+    # pipeline is root (no predecessor); pipeline->pipeline_2 edge is restored; pipeline_2 gets no root entry
+    assert len(edges) == 2
+    root_edges = [e for e in edges if e.left_id is None]
+    assert len(root_edges) == 1
+    assert root_edges[0].right_id == pipeline.id
+
+
+@pytest.mark.integration
+def test_apply_component_patterns_drops_edge_when_component_excluded(test_db, journey, pipeline, pipeline_2):
+    JourneyDagEdge.create(journey=journey, left=pipeline, right=pipeline_2)
+    journey.component_include_patterns = "*"
+    journey.component_exclude_patterns = "P2"
+    JourneyService.apply_component_patterns(journey)
+    edges = list(JourneyDagEdge.select().where(JourneyDagEdge.journey == journey))
+    assert len(edges) == 1
+    assert edges[0].right_id == pipeline.id
+
+
+# --- add_component_to_matching_journeys ---
+
+
+@pytest.mark.integration
+def test_add_component_to_matching_journeys_matches(test_db, journey, project, pipeline):
+    journey.component_include_patterns = "*"
+    journey.save()
+    JourneyService.add_component_to_matching_journeys(pipeline)
+    edges = list(JourneyDagEdge.select().where(JourneyDagEdge.journey == journey))
+    assert len(edges) == 1
+    assert edges[0].left_id is None
+    assert edges[0].right_id == pipeline.id
+
+
+@pytest.mark.integration
+def test_add_component_to_matching_journeys_no_include_skips(test_db, journey, pipeline):
+    JourneyService.add_component_to_matching_journeys(pipeline)
+    assert JourneyDagEdge.select().where(JourneyDagEdge.journey == journey).count() == 0
+
+
+@pytest.mark.integration
+def test_add_component_to_matching_journeys_excluded(test_db, journey, pipeline):
+    journey.component_include_patterns = "*"
+    journey.component_exclude_patterns = "P1"
+    journey.save()
+    JourneyService.add_component_to_matching_journeys(pipeline)
+    assert JourneyDagEdge.select().where(JourneyDagEdge.journey == journey).count() == 0
+
+
+@pytest.mark.integration
+def test_add_component_to_matching_journeys_only_matching_journey(test_db, journey, journey_2, pipeline):
+    journey.component_include_patterns = "P1"
+    journey.save()
+    journey_2.component_include_patterns = "other-*"
+    journey_2.save()
+    JourneyService.add_component_to_matching_journeys(pipeline)
+    assert JourneyDagEdge.select().where(JourneyDagEdge.journey == journey).count() == 1
+    assert JourneyDagEdge.select().where(JourneyDagEdge.journey == journey_2).count() == 0
+
+
 @pytest.mark.integration
 def test_get_rules_with_rules_journey_exists(test_db, journey, rule):
     rules_page = JourneyService.get_rules_with_rules(journey.id, ListRules())

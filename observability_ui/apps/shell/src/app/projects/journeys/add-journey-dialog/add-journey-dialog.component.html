@@ -22,6 +22,34 @@
       rows="2"></textarea>
   </mat-form-field>
 
+  <text-field formControlName="component_include_patterns"
+    label="Component include patterns"
+    placeholder="Component include patterns">
+  </text-field>
+
+  <text-field formControlName="component_exclude_patterns"
+    label="Component exclude patterns"
+    placeholder="Component exclude patterns">
+  </text-field>
+
+  <div class="pattern-preview">
+    <button mat-stroked-button
+      type="button"
+      (click)="previewComponents()"
+      [disabled]="previewing">
+      {{ previewing ? 'Previewing...' : 'Preview matching components' }}
+    </button>
+
+    <div *ngIf="previewResults !== null"
+      class="preview-results">
+      <span *ngIf="previewResults.length === 0"
+        class="text--secondary">No components match the current patterns.</span>
+      <ul *ngIf="previewResults.length > 0"
+        class="preview-list">
+        <li *ngFor="let c of previewResults">{{ c.key }}</li>
+      </ul>
+    </div>
+  </div>
 
   <mat-expansion-panel class="mat-elevation-z0">
     <mat-expansion-panel-header>

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { ComponentType, Project, ProjectStore } from '@observability-ui/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AddJourneyDialogComponent } from './add-journey-dialog.component';
@@ -24,6 +24,7 @@ describe('AddJourneyDialogComponent', () => {
   let fixture: ComponentFixture<AddJourneyDialogComponent>;
 
   let store: Mocked<JourneysStore>;
+  let service: Mocked<JourneysService>;
   let componentsService: Mocked<ComponentsService>;
   let dialog: Mocked<MatDialogRef<any>>;
   let router: Router;
@@ -56,6 +57,7 @@ describe('AddJourneyDialogComponent', () => {
         MockProvider(MatDialogRef),
         MockProvider(JourneysService, class {
           createJourneyDagEdge = jest.fn().mockImplementation(() => of({}));
+          previewComponentPatterns = jest.fn().mockReturnValue(of([]));
         }),
         MockProvider(ComponentsService),
         MockProvider(ProjectStore, class {
@@ -65,6 +67,7 @@ describe('AddJourneyDialogComponent', () => {
     }).compileComponents();
 
     store = TestBed.inject(JourneysStore) as Mocked<JourneysStore>;
+    service = TestBed.inject(JourneysService) as Mocked<JourneysService>;
     componentsService = TestBed.inject(ComponentsService) as Mocked<ComponentsService>;
     dialog = TestBed.inject(MatDialogRef) as Mocked<MatDialogRef<any>>;
     router = TestBed.inject(Router);
@@ -87,8 +90,8 @@ describe('AddJourneyDialogComponent', () => {
   describe('addJourney()', () => {
 
     it('should dispatch the event', () => {
-      component.addJourney({ name: 'New Journey', description: 'description', instance_rules: mockRules });
-      expect(store.dispatch).toBeCalledWith('createOne', { name: 'New Journey', description: 'description', instance_rules: mockRules, project_id: mockProject.id });
+      component.addJourney({ name: 'New Journey', description: 'description', component_include_patterns: 'p*', component_exclude_patterns: null, instance_rules: mockRules });
+      expect(store.dispatch).toBeCalledWith('createOne', { name: 'New Journey', description: 'description', component_include_patterns: 'p*', component_exclude_patterns: null, instance_rules: mockRules, project_id: mockProject.id });
     });
 
 
@@ -130,6 +133,41 @@ describe('AddJourneyDialogComponent', () => {
     });
 
 
+  });
+
+  describe('previewComponents()', () => {
+    const mockResults = [ { key: 'pipeline-1', name: 'Pipeline 1' } ];
+
+    it('should call previewComponentPatterns with current form values', () => {
+      component.formGroup.patchValue({ component_include_patterns: 'p*', component_exclude_patterns: 'prod*' });
+      component.previewComponents();
+      expect(service.previewComponentPatterns).toHaveBeenCalledWith(mockProject.id, 'p*', 'prod*');
+    });
+
+    it('should set previewResults and clear previewing on success', () => {
+      service.previewComponentPatterns = jest.fn().mockReturnValue(of(mockResults));
+      component.previewComponents();
+      expect(component.previewResults).toEqual(mockResults);
+      expect(component.previewing).toBe(false);
+    });
+
+    it('should clear previewing on error', () => {
+      service.previewComponentPatterns = jest.fn().mockReturnValue(throwError(() => new Error('network error')));
+      component.previewComponents();
+      expect(component.previewing).toBe(false);
+    });
+
+    it('should reset previewResults when include patterns change', () => {
+      component.previewResults = mockResults;
+      component.formGroup.controls.component_include_patterns.setValue('changed');
+      expect(component.previewResults).toBeNull();
+    });
+
+    it('should reset previewResults when exclude patterns change', () => {
+      component.previewResults = mockResults;
+      component.formGroup.controls.component_exclude_patterns.setValue('changed');
+      expect(component.previewResults).toBeNull();
+    });
   });
 
 });

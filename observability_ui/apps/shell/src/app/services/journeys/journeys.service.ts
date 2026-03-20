@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BaseComponent, ComponentType, EntityListResponse, EntityService, EntityType, Journey, JourneyDag, JourneyInstanceRule, withId } from '@observability-ui/core';
-import { catchError, mapTo, Observable, of, switchMap } from 'rxjs';
+import { catchError, map, mapTo, Observable, of, switchMap } from 'rxjs';
 import { omit } from '@datakitchen/ngx-toolkit';
 
 @Injectable({
@@ -76,5 +76,21 @@ export class JourneysService extends EntityService<Journey> {
 
   deleteJourneyDagEdge(edgeId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiBaseUrl}/${this.prefix}/v1/journey-dag-edge/${edgeId}`);
+  }
+
+  previewComponentPatterns(
+    projectId: string,
+    includePatterns: string | null,
+    excludePatterns: string | null,
+  ): Observable<Pick<BaseComponent, 'key' | 'name'>[]> {
+    const params: Record<string, string> = {};
+    if (includePatterns) params['component_include_patterns'] = includePatterns;
+    if (excludePatterns) params['component_exclude_patterns'] = excludePatterns;
+    return this.http
+      .get<{ entities: Pick<BaseComponent, 'key' | 'name'>[] }>(
+        `${this.apiBaseUrl}/observability/v1/projects/${projectId}/journeys/component-preview`,
+        { params },
+      )
+      .pipe(map((response) => response.entities));
   }
 }
