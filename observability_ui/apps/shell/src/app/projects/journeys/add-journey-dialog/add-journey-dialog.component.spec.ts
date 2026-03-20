@@ -10,13 +10,14 @@ import { MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Mocked, MockProvider } from '@datakitchen/ngx-toolkit';
-import { MockComponents, MockModule } from 'ng-mocks';
+import { MockComponents } from 'ng-mocks';
 import { LoadingState } from '@microphi/store';
 import { Router } from '@angular/router';
 import { JourneysService } from '../../../services/journeys/journeys.service';
 import { ComponentsService } from '../../../services/components/components.service';
 import { JourneyInstanceRulesComponent } from '../journey-instance-rules/journey-instance-rules.component';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Journey, JourneyInstanceRule } from '@observability-ui/core';
 
 describe('AddJourneyDialogComponent', () => {
@@ -43,7 +44,8 @@ describe('AddJourneyDialogComponent', () => {
       imports: [
         ReactiveFormsModule,
         RouterTestingModule,
-        MockModule(MatExpansionModule),
+        MatExpansionModule,
+        NoopAnimationsModule,
       ],
       declarations: [
         AddJourneyDialogComponent,
