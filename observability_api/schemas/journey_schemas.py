@@ -28,3 +28,5 @@ class JourneySchema(BaseEntitySchema, AuditEntitySchemaMixin):
 class JourneyPatchSchema(ModelSchema):
     name = Str(required=False, allow_none=True)
     description = Str(required=False, allow_none=True)
+    component_include_patterns = Str(required=False, allow_none=True)
+    component_exclude_patterns = Str(required=False, allow_none=True)

@@ -10,6 +10,7 @@ from marshmallow_peewee import ModelSchema
 
 from common.api.base_view import Permission
 from common.entities import BaseEntity, Project
+from common.entity_services import JourneyService
 from observability_api.endpoints.entity_view import BaseEntityView
 from observability_api.schemas.component_schemas import ComponentPatchSchema
 
@@ -55,6 +56,7 @@ class ComponentListAbstractView(BaseEntityView):
         component.created_by = self.user
         component.project = self.get_entity_or_fail(Project, Project.id == project_id)
         self.save_entity_or_fail(component, force_insert=True)
+        JourneyService.add_component_to_matching_journeys(component)
         return make_response(self.schema().dump(component), HTTPStatus.CREATED)
 
     @classmethod

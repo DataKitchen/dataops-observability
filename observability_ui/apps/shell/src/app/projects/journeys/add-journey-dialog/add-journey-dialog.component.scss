@@ -24,6 +24,24 @@ textarea {
   margin-top: 8px
 }
 
+.pattern-preview {
+  margin-top: 8px;
+  margin-bottom: 8px;
+
+  .preview-results {
+    margin-top: 8px;
+  }
+
+  .preview-list {
+    max-height: 150px;
+    overflow-y: auto;
+    margin: 4px 0 0;
+    padding-left: 0;
+    list-style: none;
+    font-size: 13px;
+  }
+}
+
 mat-expansion-panel {
   border: variables.$border;
 
@@ -35,5 +53,9 @@ mat-expansion-panel {
     .mat-expansion-indicator::after {
       @include mixins.font-color(primary);
     }
+  }
+
+  & + mat-expansion-panel {
+    margin-top: 12px;
   }
 }

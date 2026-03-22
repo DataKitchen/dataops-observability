@@ -4,7 +4,7 @@ from uuid import uuid4
 
 import pytest
 
-from common.entities import Organization, Pipeline, Project, User
+from common.entities import Journey, JourneyDagEdge, Organization, Pipeline, Project, User
 
 
 @dataclass
@@ -151,3 +151,18 @@ def test_patch_pipeline_duplicate_key(client, pipeline_ctx):
         json={"key": pipeline_ctx.pipeline.key},
     )
     assert response.status_code == HTTPStatus.CONFLICT, response.json
+
+
+@pytest.mark.integration
+def test_post_pipeline_adds_to_matching_journey(client, pipeline_ctx):
+    journey = Journey.create(name="J1", project=pipeline_ctx.project, component_include_patterns="new-*")
+    response = client.post(
+        f"/observability/v1/projects/{pipeline_ctx.project.id}/batch-pipelines",
+        headers={"Content-Type": "application/json"},
+        json={"key": "new-pipeline"},
+    )
+    assert response.status_code == HTTPStatus.CREATED, response.json
+    created = Pipeline.get(Pipeline.key == "new-pipeline")
+    assert (
+        JourneyDagEdge.select().where(JourneyDagEdge.journey == journey, JourneyDagEdge.right == created).count() == 1
+    )

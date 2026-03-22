@@ -9,12 +9,16 @@ interface JourneyUpdateRequest {
   id: string;
   name: string;
   description: string;
+  component_include_patterns?: string | null;
+  component_exclude_patterns?: string | null;
   instance_rules: JourneyInstanceRule[];
 }
 
 interface JourneyCreateRequest {
   name: string,
   description: string,
+  component_include_patterns?: string | null,
+  component_exclude_patterns?: string | null,
   instance_rules: JourneyInstanceRule[],
   project_id: string
   components?: string[]
@@ -47,8 +51,8 @@ export class JourneysStore extends EntityStore<JourneyState, JourneysActions> im
   }
 
   @Effect()
-  createOne({ name, description, instance_rules, project_id, components }: JourneyCreateRequest): Observable<Journey> {
-    return this.service.create({ name, description }, project_id).pipe(
+  createOne({ name, description, component_include_patterns, component_exclude_patterns, instance_rules, project_id, components }: JourneyCreateRequest): Observable<Journey> {
+    return this.service.create({ name, description, component_include_patterns, component_exclude_patterns }, project_id).pipe(
       switchMap((journey) => {
         if (instance_rules && instance_rules.length > 0) {
           return forkJoin(

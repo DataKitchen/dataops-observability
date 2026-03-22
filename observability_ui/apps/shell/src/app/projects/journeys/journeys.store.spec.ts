@@ -105,6 +105,24 @@ describe('journeys.store', () => {
       });
     });
 
+    it('should forward component pattern fields to service.create', (done) => {
+      jest.spyOn(service, 'create');
+      store.createOne({
+        name: 'test',
+        description: 'test',
+        component_include_patterns: 'p*',
+        component_exclude_patterns: 'prod*',
+        instance_rules: [],
+        project_id: 'testProject',
+      }).subscribe(() => {
+        expect(service.create).toHaveBeenCalledWith(
+          expect.objectContaining({ component_include_patterns: 'p*', component_exclude_patterns: 'prod*' }),
+          'testProject',
+        );
+        done();
+      });
+    });
+
     it('should add components if there are components', (done) => {
       store.createOne({
         components: [ 'test1', 'test2' ],

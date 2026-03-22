@@ -24,7 +24,7 @@ import { RouterModule } from '@angular/router';
       </button>
 
       <help-link class="learn-more"
-        href="https://docs.datakitchen.io/article/dataops-observability-help/data-estate">
+        href="https://docs.datakitchen.io/observability/core-concepts/data-estate/">
         components
       </help-link>
     </empty-state-setup>

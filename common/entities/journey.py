@@ -17,6 +17,8 @@ class Journey(BaseEntity, AuditEntityMixin, AuditUpdateTimeEntityMixin):
 
     name = CharField(unique=False, null=True)
     description = CharField(null=True)
+    component_include_patterns = CharField(null=True)
+    component_exclude_patterns = CharField(null=True)
     project = ForeignKeyField(Project, backref="journeys", on_delete="CASCADE", null=False, index=True)
 
     @staticmethod

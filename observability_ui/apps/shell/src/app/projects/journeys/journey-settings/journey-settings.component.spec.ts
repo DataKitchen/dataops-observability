@@ -11,6 +11,7 @@ import { JourneyInstanceRulesComponent } from '../journey-instance-rules/journey
 import { CreatedByComponent, HelpLinkComponent, MatCardEditComponent } from '@observability-ui/ui';
 import { MockProvider } from '@datakitchen/ngx-toolkit';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { JourneysService } from '../../../services/journeys/journeys.service';
 
 describe('JourneySettingsComponent', () => {
   const journey = {
@@ -49,6 +50,7 @@ describe('JourneySettingsComponent', () => {
           selected$ = of(journey);
         }),
         MockProvider(MatDialog),
+        MockProvider(JourneysService),
       ]
     }).compileComponents();
 
@@ -72,7 +74,7 @@ describe('JourneySettingsComponent', () => {
   });
 
   it('should re-fetch the journey components', () => {
-    expect(component.form.value).toEqual({ ...journey, payload_instance_conditions: [] });
+    expect(component.form.value).toEqual({ ...journey, component_include_patterns: null, component_exclude_patterns: null, payload_instance_conditions: [] });
   });
 
   describe('saveInfo()', () => {
@@ -81,6 +83,8 @@ describe('JourneySettingsComponent', () => {
         id: '1',
         name: 'my name',
         description: 'my description',
+        component_include_patterns: null,
+        component_exclude_patterns: null,
         instance_rules: [],
         payload_instance_conditions: []
       });
@@ -98,6 +102,8 @@ describe('JourneySettingsComponent', () => {
         id: '1',
         name: 'my name',
         description: 'my description',
+        component_include_patterns: null,
+        component_exclude_patterns: null,
         instance_rules: [],
         payload_instance_conditions: []
       });
@@ -107,6 +113,8 @@ describe('JourneySettingsComponent', () => {
         id: '1',
         name: 'my name',
         description: 'my description',
+        component_include_patterns: null,
+        component_exclude_patterns: null,
         instance_rules: [ { id: '1', action: 'START', batch_pipeline: '25' } ],
       });
     });

@@ -16,14 +16,14 @@ import { TestgenIntegrationComponent } from '../testgen-integration/testgen-inte
         path: '',
         component: InstancesListComponent,
         data: {
-          helpLink: 'article/dataops-observability-help/instances'
+          helpLink: 'instances/'
         },
       },
       {
         path: ':id',
         component: InstanceDetailsComponent,
         data: {
-          helpLink: 'article/dataops-observability-help/view-instance-details'
+          helpLink: 'instances/instance-details/'
         },
         children: [
           {

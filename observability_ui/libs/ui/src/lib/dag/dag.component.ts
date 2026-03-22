@@ -566,23 +566,33 @@ export class DagComponent implements AfterViewInit {
 
     const isHorizontal = orientation === DagOrientation.Horizontal;
 
+    // Phase 1: Restore stored positions and find the furthest extent
+    const newNodes: DagNodeDirective[] = [];
     for (const node of looseNodes) {
       if (!node) continue;
 
-      // check if node has stored position
       const storedPosition = this.getStoredPosition(node);
       if (storedPosition) {
         node.x = storedPosition.x;
         node.y = storedPosition.y;
+        if (isHorizontal) {
+          previuoPosition.y = Math.max(previuoPosition.y, node.y);
+        } else {
+          previuoPosition.x = Math.max(previuoPosition.x, node.x);
+        }
       } else {
-        node.x = isHorizontal ? startingX : previuoPosition.x + node.width + 50;
-        node.y = isHorizontal ? previuoPosition.y + node.height + 50 : startingY;
-
-        previuoPosition.y = node.y;
-        previuoPosition.x = node.x;
-        this.storeNodePosition(node);
+        newNodes.push(node);
       }
+    }
 
+    // Phase 2: Position new nodes after all existing ones
+    for (const node of newNodes) {
+      node.x = isHorizontal ? startingX : previuoPosition.x + node.width + 50;
+      node.y = isHorizontal ? previuoPosition.y + node.height + 50 : startingY;
+
+      previuoPosition.y = node.y;
+      previuoPosition.x = node.x;
+      this.storeNodePosition(node);
     }
 
   }
