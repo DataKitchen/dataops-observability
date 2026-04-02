@@ -86,7 +86,7 @@ class BaseView(MethodView):
                 request_body = json.loads(request.data)
             except json.JSONDecodeError as je:
                 raise BadRequest("The request does not contain a valid JSON body") from je
-        return request_body
+        return request_body  # type: ignore[no-any-return]
 
     def parse_body(self, *, schema: Schema) -> Any:
         """Parse the response body using the given schema."""
