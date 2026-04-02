@@ -26,7 +26,7 @@ class ProjectAlertsSettings(BaseEntityView):
     _project: Optional[Project]
 
     def get_request_schema(self) -> Schema:
-        return cast(Schema, Schema.from_dict(self.get_fields(), name=f"{self.__class__.__name__}Schema")())
+        return Schema.from_dict(self.get_fields(), name=f"{self.__class__.__name__}Schema")()  # type: ignore[arg-type]
 
     @no_body_allowed
     def get(self, project_id: UUID) -> Response:
