@@ -33,7 +33,9 @@ RUN python3 -O -m pip install --no-deps /tmp/dk --prefix=/dk
 FROM ${BASE_IMAGE_URL}python:3.13-alpine3.23 AS runtime-image
 
 RUN apk update && apk upgrade && apk add --no-cache librdkafka=2.12.1-r0 \
-    && apk del curl libcurl \
+    && apk del curl \
+    && apk upgrade --no-cache libcurl busybox busybox-binsh ssl_client \
+        --repository=https://dl-cdn.alpinelinux.org/alpine/edge/main \
     && pip install --no-cache-dir --upgrade pip
 
 # Grab the pre-built app from the build-image. This way we don't have
