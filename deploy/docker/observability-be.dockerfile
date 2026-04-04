@@ -1,6 +1,6 @@
 # DEV NOTE:  YOU MUST RUN `docker build` FROM THE TOP-LEVEL OF `observability-be` AND POINT TO THIS FILE.
 ARG BASE_IMAGE_URL
-FROM ${BASE_IMAGE_URL}python:3.12.11-alpine3.22 AS build-image
+FROM ${BASE_IMAGE_URL}python:3.13-alpine3.23 AS build-image
 LABEL maintainer="DataKitchen"
 
 RUN apk update && apk upgrade && apk add --no-cache \
@@ -10,7 +10,7 @@ RUN apk update && apk upgrade && apk add --no-cache \
     make \
     cmake \
     musl-dev \
-    librdkafka-dev=2.10.0-r0
+    librdkafka-dev=2.12.1-r0
 
 COPY pyproject.toml /tmp/dk/
 #           -O: Strips asserts from the code which removes some unnecessary codepaths resulting in a small
@@ -21,7 +21,7 @@ RUN python3 -O -m pip install /tmp/dk --prefix=/dk
 
 # Copy and build the actual application
 COPY . /tmp/dk/
-ENV PYTHONPATH=/dk/lib/python3.12/site-packages
+ENV PYTHONPATH=/dk/lib/python3.13/site-packages
 #    --no-deps: The previous pip layer will have already installed the dependencies. This
 #               will disable doing a second dependency resolution check.
 #           -O: Strips asserts from the code which removes some unnecessary codepaths resulting in a small
@@ -30,9 +30,12 @@ ENV PYTHONPATH=/dk/lib/python3.12/site-packages
 # --prefix=/dk: The destination installation environment folder
 RUN python3 -O -m pip install --no-deps /tmp/dk --prefix=/dk
 
-FROM ${BASE_IMAGE_URL}python:3.12.11-alpine3.22 AS runtime-image
+FROM ${BASE_IMAGE_URL}python:3.13-alpine3.23 AS runtime-image
 
-RUN apk update && apk upgrade && apk add --no-cache librdkafka=2.10.0-r0 \
+RUN apk update && apk upgrade && apk add --no-cache librdkafka=2.12.1-r0 \
+    && apk del curl \
+    && apk upgrade --no-cache libcurl busybox busybox-binsh ssl_client \
+        --repository=https://dl-cdn.alpinelinux.org/alpine/edge/main \
     && pip install --no-cache-dir --upgrade pip
 
 # Grab the pre-built app from the build-image. This way we don't have
@@ -47,7 +50,7 @@ COPY --from=build-image \
 
 COPY --from=build-image /tmp/dk/deploy/migrations/ /dk/lib/migrations/
 
-ENV PYTHONPATH=/dk/lib/python3.12/site-packages
+ENV PYTHONPATH=/dk/lib/python3.13/site-packages
 ENV PATH=${PATH}:/dk/bin
 
 RUN addgroup -S observability && adduser -S observability -G observability

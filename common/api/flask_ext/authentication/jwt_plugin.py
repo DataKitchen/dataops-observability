@@ -6,6 +6,7 @@ from collections.abc import Callable
 
 from flask import current_app, g, request
 from jwt import decode, encode
+from jwt.types import Options
 from peewee import DoesNotExist
 from werkzeug.exceptions import Unauthorized
 
@@ -33,7 +34,7 @@ class JWTAuth(BaseAuthPlugin):
     header_name = "Authorization"
     header_prefix = "Bearer"
 
-    default_jwt_options: dict[str, object] = {"verify_signature": True, "verify_aud": False, "verify_exp": False}
+    default_jwt_options: Options = {"verify_signature": True, "verify_aud": False, "verify_exp": False}
     """Default options for decoding JWT values."""
 
     default_jwt_expiration: timedelta = NotImplemented
