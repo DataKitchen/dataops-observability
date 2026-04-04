@@ -10,7 +10,7 @@ observability:
   cors_domains: "localhost:*"
   services_secrets_name: external-service-keys
   keys_secrets_name: internal-keys
-  pythonpath: /dk/lib/python3.12/site-packages
+  pythonpath: /dk/lib/python3.13/site-packages
   image:
     repository: docker.io/datakitchen
     tag: "v2"
