@@ -1,12 +1,11 @@
 __all__ = ["BaseExtension"]
-from typing import Optional
 
 from flask import Flask
 from flask.typing import AfterRequestCallable, AppOrBlueprintKey, BeforeRequestCallable
 
 
 class BaseExtension:
-    def __init__(self, app: Optional[Flask] = None) -> None:
+    def __init__(self, app: Flask | None = None) -> None:
         if app is not None:
             self.app = app
             self.init_app()

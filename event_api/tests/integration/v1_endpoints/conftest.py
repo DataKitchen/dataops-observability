@@ -1,7 +1,7 @@
 import os
 import shutil
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from unittest.mock import MagicMock, patch
 from uuid import UUID
 
@@ -29,7 +29,7 @@ class DatabaseCtx:
 
 @pytest.fixture
 def predictable_datetime():
-    return datetime(2022, 5, 25, 19, 56, 52, 759419, tzinfo=timezone.utc)
+    return datetime(2022, 5, 25, 19, 56, 52, 759419, tzinfo=UTC)
 
 
 @pytest.fixture

@@ -3,11 +3,11 @@ __all__ = ["DomainField", "EnumStrField", "JSONStrListField", "UTCTimestampField
 import logging
 import re
 import socket
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from enum import Enum
 from json import dumps as json_dumps
 from json import loads as json_loads
-from typing import Any, Optional, Union, cast
+from typing import Any, Union, cast
 from re import Pattern
 from unicodedata import normalize
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -28,7 +28,7 @@ class UTCTimestampField(TimestampField):
         if defaults_to_now:
             # This is a convenient method to ensure newly created objects will have a timezone-aware value. It doesn't
             # affect what is stored in the database.
-            kwargs["default"] = lambda: datetime.utcnow().replace(tzinfo=timezone.utc)
+            kwargs["default"] = lambda: datetime.utcnow().replace(tzinfo=UTC)
         else:
             kwargs["default"] = None
 
@@ -36,9 +36,9 @@ class UTCTimestampField(TimestampField):
         # we put in.
         super().__init__(null=null, utc=True, resolution=1_000_000, **kwargs)
 
-    def python_value(self, value: Union[int, float]) -> Optional[datetime]:
+    def python_value(self, value: Union[int, float]) -> datetime | None:
         if isinstance(ret_val := super().python_value(value), datetime):
-            return ret_val.replace(tzinfo=timezone.utc)
+            return ret_val.replace(tzinfo=UTC)
         else:
             return None
 
@@ -90,7 +90,7 @@ class DomainField(CharField):
         return db_value
 
 
-def _enum_value_to_db_value(enum_class: type[Enum], value: Union[str, Enum, None]) -> Optional[str | int]:
+def _enum_value_to_db_value(enum_class: type[Enum], value: Union[str, Enum, None]) -> str | int | None:
     """Converts a value before sending it to the DB."""
     if value is None:
         return None
@@ -108,7 +108,7 @@ def _enum_value_to_db_value(enum_class: type[Enum], value: Union[str, Enum, None
             return value
 
 
-def _db_value_to_enum_value(enum_class: type[Enum], value: str | int) -> Optional[Enum]:
+def _db_value_to_enum_value(enum_class: type[Enum], value: str | int) -> Enum | None:
     if value:
         try:
             return enum_class(value)
@@ -125,12 +125,12 @@ class EnumStrField(CharField):
         self.enum_class = enum_class
         super().__init__(**kwargs)
 
-    def db_value(self, value: Union[str, Enum, None]) -> Optional[str]:
+    def db_value(self, value: Union[str, Enum, None]) -> str | None:
         """Converts a value before sending it to the DB."""
         db_value: str = super().db_value(_enum_value_to_db_value(self.enum_class, value))
         return db_value
 
-    def python_value(self, value: str) -> Optional[Enum]:
+    def python_value(self, value: str) -> Enum | None:
         return _db_value_to_enum_value(self.enum_class, super().python_value(value))
 
 
@@ -141,12 +141,12 @@ class EnumIntField(IntegerField):
         self.enum_class = enum_class
         super().__init__(**kwargs)
 
-    def db_value(self, value: Union[str, Enum, None]) -> Optional[str]:
+    def db_value(self, value: Union[str, Enum, None]) -> str | None:
         """Converts a value before sending it to the DB."""
         db_value: str = super().db_value(_enum_value_to_db_value(self.enum_class, value))
         return db_value
 
-    def python_value(self, value: str) -> Optional[Enum]:
+    def python_value(self, value: str) -> Enum | None:
         return _db_value_to_enum_value(self.enum_class, super().python_value(value))
 
 
@@ -174,7 +174,7 @@ class JSONStrListField(TextField):
 
     def __init__(self, **kwargs: Any) -> None:
         """Ensure that `default` is always the list function or a function that returns a list."""
-        if (default_func := kwargs.get("default", None)) not in (None, list):
+        if (default_func := kwargs.get("default", None)) and callable(default_func):
             try:
                 _result = default_func()
             except Exception as e:
@@ -187,7 +187,7 @@ class JSONStrListField(TextField):
             kwargs["default"] = list
         super().__init__(**kwargs)
 
-    def db_value(self, value: Optional[list[str]]) -> Optional[str]:
+    def db_value(self, value: list[str] | None) -> str | None:
         """Dump a list of strings as a JSON string. Keeps key order consistent."""
         if value is not None:
             if not isinstance(value, list):
@@ -199,7 +199,7 @@ class JSONStrListField(TextField):
         else:
             return None
 
-    def python_value(self, value: Optional[str]) -> Optional[list[str]]:
+    def python_value(self, value: str | None) -> list[str] | None:
         """Load the text retrieved from the JSON field into a list."""
         if value is not None:
             try:
@@ -223,7 +223,7 @@ class JSONDictListField(TextField):
 
     def __init__(self, **kwargs: Any) -> None:
         """Ensure that `default` is always the list function or a function that returns a list."""
-        if (default_func := kwargs.get("default", None)) not in (None, list):
+        if (default_func := kwargs.get("default", None)) and callable(default_func):
             try:
                 _result = default_func()
             except Exception as e:
@@ -236,7 +236,7 @@ class JSONDictListField(TextField):
             kwargs["default"] = list
         super().__init__(**kwargs)
 
-    def db_value(self, value: Optional[list[dict]]) -> Optional[str]:
+    def db_value(self, value: list[dict] | None) -> str | None:
         """Dump a list of strings as a JSON string. Keeps key order consistent."""
         if value is not None:
             if not isinstance(value, list):
@@ -248,7 +248,7 @@ class JSONDictListField(TextField):
         else:
             return None
 
-    def python_value(self, value: Optional[str]) -> Optional[list[dict]]:
+    def python_value(self, value: str | None) -> list[dict] | None:
         """Load the text retrieved from the JSON field into a list."""
         if value is not None:
             try:
@@ -272,7 +272,7 @@ class JSONSchemaField(JSONField):
         self.schema = schema
         super().__init__(**kwargs)
 
-    def db_value(self, value: Any) -> Optional[str]:
+    def db_value(self, value: Any) -> str | None:
         if value is None:
             json_data = "null"
         else:
@@ -282,7 +282,7 @@ class JSONSchemaField(JSONField):
                 raise ValueError(f"The value in '{self.name}' can not be dumped by {self.schema}.") from e
         return cast(str, super().db_value(json_data))
 
-    def python_value(self, value: Optional[str]) -> Optional[Any]:
+    def python_value(self, value: str | None) -> Any | None:
         if value is None or value == "null":
             return None
         else:

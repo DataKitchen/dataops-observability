@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, UTC
 from unittest.mock import patch
 
 import pytest
@@ -43,5 +43,5 @@ def test_add_job(agent_source):
     ],
 )
 def test_get_agent_status(elapsed_time, expected_status):
-    latest_heartbeat = datetime.now(tz=timezone.utc) - timedelta(seconds=elapsed_time)
+    latest_heartbeat = datetime.now(tz=UTC) - timedelta(seconds=elapsed_time)
     assert _get_agent_status(CHECK_INTERVAL, latest_heartbeat) == expected_status

@@ -2,7 +2,6 @@ __all__ = ["CORS"]
 from conf import settings
 from http import HTTPStatus
 from fnmatch import fnmatch
-from typing import Optional
 from urllib.parse import urlparse
 
 from flask import Flask, Response, make_response, request
@@ -24,13 +23,13 @@ CORS_HEADERS: dict[str, str] = {
 
 
 class CORS(BaseExtension):
-    def __init__(self, app: Optional[Flask] = None, allowed_methods: Optional[list[str]] = None):
+    def __init__(self, app: Flask | None = None, allowed_methods: list[str] | None = None):
         allowed_methods = allowed_methods or []
         self.allowed_methods = ", ".join(allowed_methods + ["OPTIONS"]).upper()
         super().__init__(app)
 
     @staticmethod
-    def make_preflight_response() -> Optional[Response]:
+    def make_preflight_response() -> Response | None:
         if request.method == "OPTIONS":
             # When request.endpoint isn't populated it means that the URL didn't match any registered view. For this
             # case we abort and issue a 404

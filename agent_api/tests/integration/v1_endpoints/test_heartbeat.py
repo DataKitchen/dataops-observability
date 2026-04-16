@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from http import HTTPStatus
 
 import pytest
@@ -9,7 +9,7 @@ from common.entities.agent import AgentStatus
 
 @pytest.mark.integration
 def test_agent_heartbeat(client, database_ctx, headers):
-    last_event_timestamp = datetime(2023, 10, 20, 4, 42, 42, tzinfo=timezone.utc)
+    last_event_timestamp = datetime(2023, 10, 20, 4, 42, 42, tzinfo=UTC)
     data = {
         "key": "test-key",
         "tool": "test-tool",
@@ -35,7 +35,7 @@ def test_agent_heartbeat_no_event_timestamp(client, database_ctx, headers):
 
 @pytest.mark.integration
 def test_agent_heartbeat_update(client, database_ctx, headers):
-    last_event_timestamp = datetime(2023, 10, 20, 4, 42, 42, tzinfo=timezone.utc)
+    last_event_timestamp = datetime(2023, 10, 20, 4, 42, 42, tzinfo=UTC)
     data = {
         "key": "test-key",
         "tool": "test-tool",
@@ -47,7 +47,7 @@ def test_agent_heartbeat_update(client, database_ctx, headers):
     assert HTTPStatus.NO_CONTENT == response_1.status_code, response_1.json
 
     # The latest_event_timestamp should be older than "now"
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     agent_1 = Agent.select().get()
     assert agent_1.latest_heartbeat < now
     assert agent_1.status == AgentStatus.ONLINE
@@ -62,7 +62,7 @@ def test_agent_heartbeat_update(client, database_ctx, headers):
 
 @pytest.mark.integration
 def test_agent_heartbeat_existing_update(client, database_ctx, headers):
-    last_event_timestamp = datetime(2023, 10, 20, 4, 42, 42, tzinfo=timezone.utc)
+    last_event_timestamp = datetime(2023, 10, 20, 4, 42, 42, tzinfo=UTC)
     data_1 = {
         "key": "test-key",
         "tool": "test-tool",
@@ -79,7 +79,7 @@ def test_agent_heartbeat_existing_update(client, database_ctx, headers):
 
     data_2 = data_1.copy()
     data_2["version"] = "12.0.3"
-    data_2["latest_event_timestamp"] = datetime(2023, 10, 20, 4, 44, 44, tzinfo=timezone.utc).isoformat()
+    data_2["latest_event_timestamp"] = datetime(2023, 10, 20, 4, 44, 44, tzinfo=UTC).isoformat()
 
     response_2 = client.post("/agent/v1/heartbeat", json=data_2, headers=headers)
     assert HTTPStatus.NO_CONTENT == response_2.status_code, response_2.json

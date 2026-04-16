@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from decimal import Decimal
 
 import pytest
@@ -172,8 +172,8 @@ def test_test_outcomes(
     for actual, expected in zip(res.test_outcomes, test_outcome_items):
         assert actual.name == expected.name
         assert actual.description == expected.description
-        assert actual.start_time == datetime.fromisoformat(expected.start_time).replace(tzinfo=timezone.utc)
-        assert actual.end_time == datetime.fromisoformat(expected.end_time).replace(tzinfo=timezone.utc)
+        assert actual.start_time == datetime.fromisoformat(expected.start_time).replace(tzinfo=UTC)
+        assert actual.end_time == datetime.fromisoformat(expected.end_time).replace(tzinfo=UTC)
         assert actual.metric_value == expected.metric_value
         assert actual.metric_name == expected.metric_name
         assert actual.metric_description == expected.metric_description
@@ -201,9 +201,9 @@ def test_testoutcomes_schema_with_testgen_integration(test_outcomes_testgen_data
     assert item_integration_event.test_suite == item_integration_data["test_suite"]
     assert item_integration_event.version == item_integration_data["version"]
     assert len(item_integration_event.test_parameters) == len(item_integration_data["test_parameters"])
-    assert (
-        type(item_integration_event.test_parameters[0].value) == Decimal
-    ), "expected dataclass's value to be Decimal type"
+    assert type(item_integration_event.test_parameters[0].value) == Decimal, (
+        "expected dataclass's value to be Decimal type"
+    )
     assert str(item_integration_event.test_parameters[0].value) == item_integration_data["test_parameters"][0]["value"]
     assert item_integration_event.test_parameters[0].name == item_integration_data["test_parameters"][0]["name"]
     assert item_integration_event.columns == item_integration_data["columns"]

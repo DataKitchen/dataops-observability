@@ -1,12 +1,12 @@
 __all__ = ["datetime_formatted", "datetime_iso8601", "to_utc_aware"]
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 
 
 # Although datetimes in Events are tz aware they only contains the raw offset
 # after being marshmallow serialized. Since the tz name is desired astimezone
 # is used for strftime to return the name.
 def to_utc_aware(dt: datetime) -> datetime:
-    return dt.replace(tzinfo=timezone.utc) if dt.tzinfo is None else dt.astimezone(timezone.utc)
+    return dt.replace(tzinfo=UTC) if dt.tzinfo is None else dt.astimezone(UTC)
 
 
 def datetime_formatted(dt: datetime) -> str:
@@ -28,5 +28,5 @@ def datetime_to_timestamp(dt: datetime) -> float:
 
 def timestamp_to_datetime(timestamp: float) -> datetime:
     """Convert a timestamp to a datetime object in UTC time."""
-    dt = datetime.fromtimestamp(timestamp, tz=timezone.utc)
+    dt = datetime.fromtimestamp(timestamp, tz=UTC)
     return dt

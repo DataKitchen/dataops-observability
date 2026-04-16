@@ -1,7 +1,7 @@
 __all__ = ["EventSchemaInterface", "EventApiSchema", "EventSchema"]
 
 import json
-from datetime import timezone
+from datetime import UTC
 from typing import Any, Union
 
 from marshmallow import Schema, ValidationError, post_dump, post_load, pre_load, validates_schema
@@ -176,7 +176,7 @@ class EventApiSchema(EventSchemaInterface):
     )
     event_timestamp = AwareDateTime(
         format="iso",
-        default_timezone=timezone.utc,
+        default_timezone=UTC,
         metadata={
             "description": (
                 "Optional. An ISO8601 timestamp that describes when the event occurred. If no timezone "
@@ -251,7 +251,7 @@ class EventSchema(EventApiSchema):
     received_timestamp = AwareDateTime(
         format="iso",
         required=True,
-        default_timezone=timezone.utc,
+        default_timezone=UTC,
         metadata={"description": "An ISO timestamp that the Event Ingestion API applies when it receives the event."},
     )
     # This is the source of the message.

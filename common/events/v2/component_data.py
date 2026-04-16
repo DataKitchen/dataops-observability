@@ -15,7 +15,7 @@ __all__ = [
 ]
 
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 from marshmallow import Schema, ValidationError, post_load, validates_schema
 from marshmallow.fields import Nested, Str
@@ -28,44 +28,44 @@ from common.schemas.validators import not_empty
 
 @dataclass
 class NewComponentData:
-    name: Optional[str]
-    tool: Optional[str]
+    name: str | None
+    tool: str | None
 
 
 @dataclass
 class BatchPipelineData:
     batch_key: str
     run_key: str
-    run_name: Optional[str]
-    task_key: Optional[str]
-    task_name: Optional[str]
-    details: Optional[NewComponentData]
+    run_name: str | None
+    task_key: str | None
+    task_name: str | None
+    details: NewComponentData | None
 
 
 @dataclass
 class DatasetData:
     dataset_key: str
-    details: Optional[NewComponentData]
+    details: NewComponentData | None
 
 
 @dataclass
 class ServerData:
     server_key: str
-    details: Optional[NewComponentData]
+    details: NewComponentData | None
 
 
 @dataclass
 class StreamData:
     stream_key: str
-    details: Optional[NewComponentData]
+    details: NewComponentData | None
 
 
 @dataclass
 class ComponentData:
-    batch_pipeline: Optional[BatchPipelineData]
-    stream: Optional[StreamData]
-    dataset: Optional[DatasetData]
-    server: Optional[ServerData]
+    batch_pipeline: BatchPipelineData | None
+    stream: StreamData | None
+    dataset: DatasetData | None
+    server: ServerData | None
 
 
 class NewComponentDataSchema(Schema):

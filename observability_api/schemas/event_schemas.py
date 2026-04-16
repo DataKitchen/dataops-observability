@@ -52,8 +52,7 @@ class EventResponseSchema(Schema):
         required=True,
         metadata={
             "description": (
-                "The IDs of the components related to the event. The first item in the list is the primary "
-                "component. "
+                "The IDs of the components related to the event. The first item in the list is the primary component. "
             )
         },
     )

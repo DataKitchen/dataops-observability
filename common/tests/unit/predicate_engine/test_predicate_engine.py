@@ -2,7 +2,7 @@ import random
 import sys
 from collections.abc import MutableMapping
 from copy import copy
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from unicodedata import category
 
 import pytest
@@ -193,7 +193,7 @@ def test_matching_invalid_data_types(rule, simple_entity):
 @pytest.mark.parametrize(
     "rule",
     (
-        R(timestamp__gte=datetime.now(timezone.utc)),
+        R(timestamp__gte=datetime.now(UTC)),
         R(timestamp_dt__gte=datetime.now()),
     ),
 )

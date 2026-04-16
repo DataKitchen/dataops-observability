@@ -1,6 +1,6 @@
 __all__ = ["ActivableEntityMixin", "AuditEntityMixin", "AuditUpdateTimeEntityMixin", "BaseEntity", "BaseModel", "DB"]
 
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from typing import Any
 from uuid import uuid4
 
@@ -53,5 +53,5 @@ class AuditUpdateTimeEntityMixin(Model):
 
     @classmethod
     def update(cls, *args: Any, **kwargs: Any) -> Any:
-        kwargs["updated_on"] = datetime.utcnow().replace(tzinfo=timezone.utc)
+        kwargs["updated_on"] = datetime.utcnow().replace(tzinfo=UTC)
         return super().update(*args, **kwargs)

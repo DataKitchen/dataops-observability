@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from http import HTTPStatus
 
 import pytest
@@ -14,7 +14,7 @@ def test_list_project_upcoming_instances_instance_schedule(client, journey, jour
     InstanceRule.create(journey=journey, action=InstanceRuleAction.END, expression="30,40 * * * *")
     InstanceRule.create(journey=journey_2, action=InstanceRuleAction.START, expression="10,50 * * * *")
 
-    start_time = datetime(1991, 2, 20, 10, 00, 00, tzinfo=timezone.utc)
+    start_time = datetime(1991, 2, 20, 10, 00, 00, tzinfo=UTC)
     query = MultiDict(
         [
             ("start_range", start_time.isoformat()),
@@ -70,7 +70,7 @@ def test_list_project_upcoming_instances_batch_schedule(
     batch_end_schedule.schedule = "30 * * * *"
     batch_end_schedule.save()
 
-    start_time = datetime(1991, 2, 20, 10, 59, 00, tzinfo=timezone.utc)
+    start_time = datetime(1991, 2, 20, 10, 59, 00, tzinfo=UTC)
     query = MultiDict(
         [
             ("start_range", start_time.isoformat()),
@@ -94,7 +94,7 @@ def test_list_project_upcoming_instances_filters(client, journey, journey_2, ins
     InstanceRule.create(journey=journey, action=InstanceRuleAction.START, expression="10 * * * *")
     InstanceRule.create(journey=journey_2, action=InstanceRuleAction.START, expression="30 * * * *")
 
-    start_time = datetime(1991, 2, 20, 10, 00, 00, tzinfo=timezone.utc)
+    start_time = datetime(1991, 2, 20, 10, 00, 00, tzinfo=UTC)
     query = MultiDict(
         [
             ("start_range", start_time.isoformat()),
@@ -148,7 +148,7 @@ def test_list_company_upcoming_instances_instance_schedule(client, organization,
     InstanceRule.create(journey=journey, action=InstanceRuleAction.START, expression="10 * * * *")
     InstanceRule.create(journey=journey_2, action=InstanceRuleAction.START, expression="30 * * * *")
 
-    start_time = datetime(1991, 2, 20, 10, 00, 00, tzinfo=timezone.utc)
+    start_time = datetime(1991, 2, 20, 10, 00, 00, tzinfo=UTC)
     query = MultiDict(
         [
             ("start_range", start_time.isoformat()),
@@ -173,7 +173,7 @@ def test_list_company_upcoming_instances_filters(client, project, organization, 
     InstanceRule.create(journey=journey, action=InstanceRuleAction.START, expression="10 * * * *")
     InstanceRule.create(journey=journey_2, action=InstanceRuleAction.START, expression="30 * * * *")
 
-    start_time = datetime(1991, 2, 20, 10, 00, 00, tzinfo=timezone.utc)
+    start_time = datetime(1991, 2, 20, 10, 00, 00, tzinfo=UTC)
     query = MultiDict(
         [
             ("start_range", start_time.isoformat()),
@@ -210,7 +210,7 @@ def test_list_company_upcoming_instances_filters(client, project, organization, 
 
 @pytest.mark.integration
 def test_list_project_upcoming_instances_sa_key_auth_ok(client, journey, journey_2, instance, g_project):
-    start_time = datetime(1991, 2, 20, 10, 00, 00, tzinfo=timezone.utc)
+    start_time = datetime(1991, 2, 20, 10, 00, 00, tzinfo=UTC)
     query = MultiDict(
         [
             ("start_range", start_time.isoformat()),
@@ -223,7 +223,7 @@ def test_list_project_upcoming_instances_sa_key_auth_ok(client, journey, journey
 
 @pytest.mark.integration
 def test_list_company_upcoming_instances_sa_key_auth_forbidden(client, journey, journey_2, instance, g_project):
-    start_time = datetime(1991, 2, 20, 10, 00, 00, tzinfo=timezone.utc)
+    start_time = datetime(1991, 2, 20, 10, 00, 00, tzinfo=UTC)
     query = MultiDict(
         [
             ("start_range", start_time.isoformat()),

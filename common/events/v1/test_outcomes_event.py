@@ -18,11 +18,11 @@ __all__ = [
 ]
 
 from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from decimal import Decimal as std_decimal
 from enum import Enum as std_Enum
 from enum import IntEnum as std_IntEnum
-from typing import Any, Optional, Union
+from typing import Any, Union
 from uuid import UUID as std_UUID
 
 from marshmallow import Schema, ValidationError, post_load, validates_schema
@@ -100,7 +100,7 @@ class TestgenItem:
     test_suite: str
     version: int
     test_parameters: list[TestgenItemTestParameters]
-    columns: Optional[list[str]] = None
+    columns: list[str] | None = None
 
 
 class TestgenItemSchema(Schema):
@@ -163,8 +163,8 @@ class TestOutcomeItemIntegrationsSchema(Schema):
 @dataclass
 class TestgenTable:
     include_list: list[str]
-    include_pattern: Optional[str] = None
-    exclude_pattern: Optional[str] = None
+    include_pattern: str | None = None
+    exclude_pattern: str | None = None
 
 
 class TestgenTableSchema(Schema):
@@ -217,9 +217,9 @@ class TestgenTableSchema(Schema):
 class TestgenTableGroupV1:
     group_id: std_UUID
     project_code: str
-    uses_sampling: Optional[bool] = None
-    sample_percentage: Optional[str] = None
-    sample_minimum_count: Optional[int] = None
+    uses_sampling: bool | None = None
+    sample_percentage: str | None = None
+    sample_minimum_count: int | None = None
 
 
 class TestgenTableGroupV1Schema(Schema):
@@ -263,8 +263,8 @@ class TestgenDataset:
     database_name: str
     connection_name: str
     tables: TestgenTable
-    schema: Optional[str] = None
-    table_group_configuration: Optional[TestgenTableGroupV1] = None
+    schema: str | None = None
+    table_group_configuration: TestgenTableGroupV1 | None = None
 
 
 class TestgenDatasetSchema(Schema):
@@ -346,19 +346,19 @@ class TestOutcomeItem:
     name: str
     status: str
     description: str = ""
-    start_time: Optional[datetime] = None
-    end_time: Optional[datetime] = None
-    metadata: Optional[dict[str, Any]] = None
-    metric_value: Optional[Decimal] = None
-    metric_name: Optional[str] = None
-    metric_description: Optional[str] = None
-    min_threshold: Optional[Decimal] = None
-    max_threshold: Optional[Decimal] = None
-    integrations: Optional[TestOutcomeItemIntegrations] = None
-    dimensions: Optional[list[str]] = None
-    result: Optional[str] = None
-    type: Optional[str] = None
-    key: Optional[str] = None
+    start_time: datetime | None = None
+    end_time: datetime | None = None
+    metadata: dict[str, Any] | None = None
+    metric_value: Decimal | None = None
+    metric_name: str | None = None
+    metric_description: str | None = None
+    min_threshold: Decimal | None = None
+    max_threshold: Decimal | None = None
+    integrations: TestOutcomeItemIntegrations | None = None
+    dimensions: list[str] | None = None
+    result: str | None = None
+    type: str | None = None
+    key: str | None = None
 
 
 # region Schemas
@@ -373,8 +373,7 @@ class TestOutcomeItemSchema(Schema):
         enum=TestStatuses,
         metadata={
             "description": (
-                "Required. The test status to be applied. Can set the status for both tests in runs and "
-                "tests in tasks."
+                "Required. The test status to be applied. Can set the status for both tests in runs and tests in tasks."
             )
         },
     )
@@ -384,13 +383,13 @@ class TestOutcomeItemSchema(Schema):
     )
     start_time = AwareDateTime(
         format="iso",
-        default_timezone=timezone.utc,
+        default_timezone=UTC,
         allow_none=True,
         metadata={"description": "An ISO timestamp of when the test execution started."},
     )
     end_time = AwareDateTime(
         format="iso",
-        default_timezone=timezone.utc,
+        default_timezone=UTC,
         allow_none=True,
         metadata={"description": "An ISO timestamp of when the test execution ended."},
     )
@@ -530,7 +529,7 @@ class TestOutcomesEvent(Event):
     """Represents the single result of a test."""
 
     test_outcomes: list[TestOutcomeItem]
-    component_integrations: Optional[TestGenTestOutcomeIntegrationComponent] = None
+    component_integrations: TestGenTestOutcomeIntegrationComponent | None = None
 
     __schema__ = TestOutcomesSchema
     __api_schema__ = TestOutcomesApiSchema

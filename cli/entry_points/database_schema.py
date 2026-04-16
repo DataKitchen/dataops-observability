@@ -1,6 +1,6 @@
 import re
 from argparse import ArgumentParser
-from typing import Any, Optional
+from typing import Any
 from re import Pattern
 from collections.abc import Iterable
 
@@ -19,7 +19,7 @@ class MysqlPrintDatabase(MySQLDatabase):
     def __init__(self) -> None:
         super().__init__("")
 
-    def execute_sql(self, sql: str, params: Optional[Iterable[Any]] = None, commit: Optional[bool] = None) -> None:
+    def execute_sql(self, sql: str, params: Iterable[Any] | None = None, commit: bool | None = None) -> None:
         if params:
             raise Exception(f"Params are not expected to be needed to run DDL SQL, but found {params}")
         if match := self._create_table_re.match(sql):

@@ -4,7 +4,7 @@ import sys
 from argparse import ArgumentParser
 from logging.config import dictConfig
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 from collections.abc import Callable
 
 from log_color import ColorFormatter, ColorStripper
@@ -80,7 +80,7 @@ class DatabaseScriptBase(ScriptBase):
         LOG.info("#g<\u2714> Established #c<%s> connection to #c<%s>", DB.obj.__class__.__name__, DB.obj.database)
 
 
-def logging_init(*, level: str, logfile: Optional[str] = None) -> None:
+def logging_init(*, level: str, logfile: str | None = None) -> None:
     """Given the log level and an optional logging file location, configure all logging."""
     # Don't bother with a file handler if we're not logging to a file
     handlers = ["console", "filehandler"] if logfile else ["console"]

@@ -19,7 +19,7 @@ __all__ = [
     "test_outcomes_testgen_event_v2",
 ]
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, UTC
 from decimal import Decimal
 from uuid import UUID
 
@@ -84,7 +84,7 @@ BATCH_PIPELINE_STATUS_EVENT_ID: UUID = UUID("10f1eb1a-c63b-47d3-9239-e44d7bb5d07
 TEST_OUTCOMES_EVENT_ID: UUID = UUID("83af84bc-318e-4dda-9d40-6c7c8bacd992")
 """ID for EventV2 LOG event."""
 
-EVENT_TIMESTAMP: datetime = datetime(2023, 5, 10, 1, 1, 1, tzinfo=timezone.utc)
+EVENT_TIMESTAMP: datetime = datetime(2023, 5, 10, 1, 1, 1, tzinfo=UTC)
 """Default timestamp for events."""
 
 CREATED_TIMESTAMP: datetime = EVENT_TIMESTAMP + timedelta(minutes=3, seconds=1)
@@ -191,7 +191,7 @@ def run_alert() -> RunAlert:
 
 @pytest.fixture
 def test_outcome_item(metadata_model) -> TestOutcomeItem:
-    timestamp = datetime.now(timezone.utc)
+    timestamp = datetime.now(UTC)
     return TestOutcomeItem(
         name="My_test_name",
         status=TestStatus.PASSED,

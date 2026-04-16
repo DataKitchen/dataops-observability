@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 
 import pytest
 
@@ -33,7 +33,7 @@ class EntityClass:
 
     @property
     def timestamp_dt(self) -> datetime:
-        return datetime(1983, 10, 20, 10, 10, 10, tzinfo=timezone.utc)
+        return datetime(1983, 10, 20, 10, 10, 10, tzinfo=UTC)
 
 
 @pytest.fixture(scope="session")

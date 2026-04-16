@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import Any, Generic, Optional, TypeVar, cast
+from typing import Any, TypeVar, cast
 from collections.abc import Callable
 
 PropertyType = TypeVar("PropertyType")
 
 
-class cached_property(Generic[PropertyType]):
+class cached_property[PropertyType]:
     """
     A `property` decorator that caches the value on the instance.
 
@@ -47,7 +47,7 @@ class cached_property(Generic[PropertyType]):
 
     """
 
-    _name: Optional[str] = None
+    _name: str | None = None
 
     def __init__(self, f: Callable[[Any], PropertyType]) -> None:
         self.func = f
@@ -59,7 +59,7 @@ class cached_property(Generic[PropertyType]):
         elif name != self._name:
             raise TypeError(f"Cannot assign the same instance to two names ({self._name} and {name}).")
 
-    def __get__(self, inst: object, cls: Optional[Any] = None) -> PropertyType:
+    def __get__(self, inst: object, cls: Any | None = None) -> PropertyType:
         """
         Retrieve the value from instance, stashing the result in inst.__dict__
 

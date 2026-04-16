@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from typing import Optional
 from uuid import uuid4
 
@@ -47,7 +47,7 @@ def local_test_db(test_db):
 
 
 def _add_runs(
-    pipeline, instance, number_of_runs: int, current_time: datetime, *, expected_start_time: Optional[datetime] = None
+    pipeline, instance, number_of_runs: int, current_time: datetime, *, expected_start_time: datetime | None = None
 ):
     instance_set = InstanceSet.get_or_create([instance.id])
     for key in range(1, number_of_runs + 1):
@@ -158,19 +158,19 @@ def test_get_runs_with_rules_coalesce_sort(pipeline, instance, patched_instance_
     err_level = AlertLevel["ERROR"].value
     late_type = RunAlertType["LATE_END"].value
 
-    r1_expected_start = datetime(2023, 5, 25, 7, 44, 1, tzinfo=timezone.utc)
+    r1_expected_start = datetime(2023, 5, 25, 7, 44, 1, tzinfo=UTC)
     r1 = Run.create(
         key="coalesce-run-1",
         pipeline=pipeline,
         instance_set=instance_set,
         expected_start_time=r1_expected_start,
-        start_time=datetime(2023, 5, 25, 7, 44, 6, tzinfo=timezone.utc),
-        end_time=datetime(2023, 5, 25, 7, 45, 6, tzinfo=timezone.utc),
+        start_time=datetime(2023, 5, 25, 7, 44, 6, tzinfo=UTC),
+        end_time=datetime(2023, 5, 25, 7, 45, 6, tzinfo=UTC),
         status=RunStatus.COMPLETED.name,
     )
     RunAlert.create(name="CA1", description="CD1", level=err_level, type=late_type, run=r1)
 
-    r2_expected_start = datetime(2023, 5, 25, 7, 45, 10, tzinfo=timezone.utc)
+    r2_expected_start = datetime(2023, 5, 25, 7, 45, 10, tzinfo=UTC)
     r2 = Run.create(
         pipeline=pipeline,
         instance_set=instance_set,
@@ -181,14 +181,14 @@ def test_get_runs_with_rules_coalesce_sort(pipeline, instance, patched_instance_
     )
     RunAlert.create(name="CA2", description="CD2", level=err_level, type=late_type, run=r2)
 
-    r3_expected_start = datetime(2023, 5, 25, 7, 46, 1, tzinfo=timezone.utc)
+    r3_expected_start = datetime(2023, 5, 25, 7, 46, 1, tzinfo=UTC)
     r3 = Run.create(
         key="coalesce-run-3",
         pipeline=pipeline,
         instance_set=instance_set,
         expected_start_time=r3_expected_start,
-        start_time=datetime(2023, 5, 25, 7, 46, 22, tzinfo=timezone.utc),
-        end_time=datetime(2023, 5, 25, 7, 49, 12, tzinfo=timezone.utc),
+        start_time=datetime(2023, 5, 25, 7, 46, 22, tzinfo=UTC),
+        end_time=datetime(2023, 5, 25, 7, 49, 12, tzinfo=UTC),
         status=RunStatus.COMPLETED_WITH_WARNINGS.name,
     )
     RunAlert.create(name="CA3", description="CD3", level=err_level, type=late_type, run=r3)
