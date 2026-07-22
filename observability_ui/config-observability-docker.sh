@@ -17,3 +17,18 @@ cat <<EOT > /observability_ui/shell/assets/module-federation.manifest.json
   }
 }
 EOT
+
+# Generate the nginx listener config (included by nginx.conf)
+if [ -n "$SSL_CERT_FILE" ] && [ -n "$SSL_KEY_FILE" ] && [ -f "$SSL_CERT_FILE" ] && [ -f "$SSL_KEY_FILE" ]; then
+  cat <<EOT > /etc/nginx/conf.d/listen.conf
+listen       8082 ssl;
+listen  [::]:8082 ssl;
+ssl_certificate     $SSL_CERT_FILE;
+ssl_certificate_key $SSL_KEY_FILE;
+EOT
+else
+  cat <<EOT > /etc/nginx/conf.d/listen.conf
+listen       8082;
+listen  [::]:8082;
+EOT
+fi
