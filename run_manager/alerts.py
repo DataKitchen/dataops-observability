@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 from collections.abc import Iterable
 from uuid import UUID
 
@@ -82,8 +81,8 @@ def create_run_alert(alert_type: RunAlertType, run: Run, pipeline: Pipeline) -> 
 def create_instance_alert(
     alert_type: InstanceAlertType,
     instance: Instance,
-    component: Optional[Component] = None,
-    alert_components: Optional[Iterable[UUID]] = None,
+    component: Component | None = None,
+    alert_components: Iterable[UUID] | None = None,
 ) -> InstanceAlertEvent:
     alert_level = INSTANCE_ALERT_LEVELS[alert_type]
     alert_description = INSTANCE_ALERT_DESCRIPTIONS[alert_type].format(

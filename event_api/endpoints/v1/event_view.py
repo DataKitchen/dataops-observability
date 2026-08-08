@@ -1,7 +1,6 @@
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from http import HTTPStatus
-from typing import Optional
 
 from flask import Response, current_app, g, make_response, request
 from marshmallow import ValidationError
@@ -34,14 +33,14 @@ class EventView(BaseView):
     event_type: type[Event]
     """The class (not instance) that is used to deserialize the incoming request body"""
 
-    def make_error(self, msg: str, e: Exception, error_code: Optional[int] = None) -> Response:
+    def make_error(self, msg: str, e: Exception, error_code: int | None = None) -> Response:
         """TODO: This should be turned into an ErrorHandler at the app level."""
         return make_response(
             {
                 "error": msg,
                 # TODO: Should this be exposed to the user?
                 "details": str(e),
-                "timestamp": datetime.now(tz=timezone.utc),
+                "timestamp": datetime.now(tz=UTC),
             },
             error_code if error_code else 500,
         )

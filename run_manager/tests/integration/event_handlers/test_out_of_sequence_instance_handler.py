@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 
 import pytest
 
@@ -47,8 +47,8 @@ class JourneyContext:
                     project=project,
                     instance_set=self.instance_set.id,
                     status=RunStatus.COMPLETED.name,
-                    start_time=datetime.now(tz=timezone.utc),
-                    end_time=datetime.now(tz=timezone.utc),
+                    start_time=datetime.now(tz=UTC),
+                    end_time=datetime.now(tz=UTC),
                 )
             )
             JourneyDagEdge.create(

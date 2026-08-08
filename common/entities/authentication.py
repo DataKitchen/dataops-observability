@@ -1,6 +1,6 @@
 __all__ = ["ApiKey", "Service", "ServiceAccountKey"]
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from enum import Enum
 from uuid import uuid4
 
@@ -24,7 +24,7 @@ class ApiKey(Model):
     user = ForeignKeyField(User, backref="api_keys", on_delete="CASCADE", null=False, index=True)
 
     def is_expired(self) -> bool:
-        if datetime.now(timezone.utc) > self.expiry:
+        if datetime.now(UTC) > self.expiry:
             return True
         else:
             return False
@@ -59,7 +59,7 @@ class ServiceAccountKey(Model):
         # If no expiration date is set, the key's duration is unlimited
         if not self.expiry:
             return False
-        if datetime.now(timezone.utc) > self.expiry:
+        if datetime.now(UTC) > self.expiry:
             return True
         else:
             return False

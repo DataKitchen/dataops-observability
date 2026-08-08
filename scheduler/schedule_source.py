@@ -3,7 +3,7 @@ __all__ = ["ScheduleSource", "RunTimeExecutor"]
 import logging
 from collections import defaultdict
 from datetime import datetime
-from typing import Any, Optional, Protocol, Generic, TypeVar
+from typing import Any, Protocol, TypeVar
 from collections.abc import Callable
 
 from apscheduler.executors.pool import ThreadPoolExecutor
@@ -41,7 +41,7 @@ class Schedule(Protocol):
 ST = TypeVar("ST", bound=Schedule)
 
 
-class ScheduleSource(Generic[ST]):
+class ScheduleSource[ST: Schedule]:
     """Concentrates all features and configurations around a specific source of schedules."""
 
     source_name: str
@@ -65,7 +65,7 @@ class ScheduleSource(Generic[ST]):
     def executor_name(self) -> str:
         return self.source_name
 
-    def add_job(self, func: Callable, job_id: str, trigger: BaseTrigger, kwargs: Optional[dict[str, Any]]) -> Job:
+    def add_job(self, func: Callable, job_id: str, trigger: BaseTrigger, kwargs: dict[str, Any] | None) -> Job:
         return self.scheduler.add_job(
             func,
             id=job_id,

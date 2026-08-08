@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 from unittest.mock import Mock, patch
 
 import pytest
@@ -19,7 +19,7 @@ def session():
 
 @pytest.fixture
 def test_outcome_item_data():
-    timestamp = datetime.now(timezone.utc).isoformat()
+    timestamp = datetime.now(UTC).isoformat()
     return {
         "name": "My_test_name",
         "status": TestStatuses.PASSED.name,

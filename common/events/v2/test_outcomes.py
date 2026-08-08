@@ -13,10 +13,10 @@ __all__ = [
 
 from dataclasses import dataclass
 from dataclasses import fields as dc_fields
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from decimal import Decimal as std_Decimal
 from enum import Enum as std_Enum
-from typing import Any, Optional
+from typing import Any
 
 from marshmallow import Schema, ValidationError, post_load, validates_schema
 from marshmallow.fields import AwareDateTime, Decimal, Dict, Enum, List, Nested, Str
@@ -56,23 +56,23 @@ class TestOutcomeItem:
     status: TestStatus
     description: str
     metadata: dict[str, Any]
-    start_time: Optional[datetime]
-    end_time: Optional[datetime]
-    metric_value: Optional[std_Decimal]
-    metric_name: Optional[str]
-    metric_description: Optional[str]
-    metric_min_threshold: Optional[std_Decimal]
-    metric_max_threshold: Optional[std_Decimal]
-    integrations: Optional[TestOutcomeItemIntegrations]
-    dimensions: Optional[list[str]]
-    result: Optional[str]
-    type: Optional[str]
-    key: Optional[str]
+    start_time: datetime | None
+    end_time: datetime | None
+    metric_value: std_Decimal | None
+    metric_name: str | None
+    metric_description: str | None
+    metric_min_threshold: std_Decimal | None
+    metric_max_threshold: std_Decimal | None
+    integrations: TestOutcomeItemIntegrations | None
+    dimensions: list[str] | None
+    result: str | None
+    type: str | None
+    key: str | None
 
 
 @dataclass
 class TestGenIntegrations:
-    integrations: Optional[TestGenTestOutcomeIntegrations]
+    integrations: TestGenTestOutcomeIntegrations | None
 
 
 @dataclass
@@ -93,10 +93,10 @@ class TestGenStreamData(StreamData, TestGenIntegrations): ...
 
 @dataclass
 class TestGenComponentData:
-    batch_pipeline: Optional[TestGenBatchPipelineData]
-    stream: Optional[TestGenStreamData]
-    dataset: Optional[TestGenDatasetData]
-    server: Optional[TestGenServerData]
+    batch_pipeline: TestGenBatchPipelineData | None
+    stream: TestGenStreamData | None
+    dataset: TestGenDatasetData | None
+    server: TestGenServerData | None
 
 
 @dataclass
@@ -125,8 +125,7 @@ class TestOutcomeItemSchema(Schema):
         enum=TestStatus,
         metadata={
             "description": (
-                "Required. The test status to be applied. Can set the status for both tests in runs and "
-                "tests in tasks."
+                "Required. The test status to be applied. Can set the status for both tests in runs and tests in tasks."
             )
         },
     )
@@ -144,13 +143,13 @@ class TestOutcomeItemSchema(Schema):
     )
     start_time = AwareDateTime(
         format="iso",
-        default_timezone=timezone.utc,
+        default_timezone=UTC,
         load_default=None,
         metadata={"description": "An ISO timestamp of when the test execution started."},
     )
     end_time = AwareDateTime(
         format="iso",
-        default_timezone=timezone.utc,
+        default_timezone=UTC,
         load_default=None,
         metadata={"description": "An ISO timestamp of when the test execution ended."},
     )

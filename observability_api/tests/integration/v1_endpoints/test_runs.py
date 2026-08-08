@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from http import HTTPStatus
 from itertools import chain
 from typing import Optional
@@ -57,7 +57,7 @@ def uuid_value():
 
 @pytest.fixture
 def run_status_event(runs, pipeline, project, uuid_value):
-    ts = str(datetime.now(timezone.utc))
+    ts = str(datetime.now(UTC))
     yield RunStatusEvent(
         **RunStatusSchema().load(
             {
@@ -181,7 +181,7 @@ class RunData:
     alerts: list[RunAlert] = field(default_factory=list)
 
 
-def create_run_data(number: int, proj: Optional[Project] = None, set_tool=False) -> RunData:
+def create_run_data(number: int, proj: Project | None = None, set_tool=False) -> RunData:
     c = Company.create(name=f"TestCompany{number}")
     org = Organization.create(name=f"Internal Org{number}", company=c)
     if proj:
@@ -235,8 +235,8 @@ def test_list_runs_with_filters_param_results(client, g_user_2_admin, pipeline, 
         [("run_key", key) for key in ("1", "2")]
         + [("pipeline_key", key) for key in ("Test_Pipeline1", "Test_Pipeline2")]
         + [
-            ("start_range_begin", (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()),
-            ("start_range_end", datetime.now(timezone.utc).isoformat()),
+            ("start_range_begin", (datetime.now(UTC) - timedelta(hours=1)).isoformat()),
+            ("start_range_end", datetime.now(UTC).isoformat()),
         ]
     )
     query_string = MultiDict(args)
@@ -526,8 +526,8 @@ def test_list_batch_pipeline_runs_with_filters_param_results(client, g_user_2_ad
     _ = create_run_data(3, proj=rd_two.project)
 
     args = [("run_key", key) for key in ("1", "2")] + [
-        ("start_range_begin", (datetime.now(timezone.utc) - timedelta(hours=1)).isoformat()),
-        ("start_range_end", datetime.now(timezone.utc).isoformat()),
+        ("start_range_begin", (datetime.now(UTC) - timedelta(hours=1)).isoformat()),
+        ("start_range_end", datetime.now(UTC).isoformat()),
         ("pipeline_id", pipeline.id),
     ]
     query_string = MultiDict(args)
@@ -539,7 +539,7 @@ def test_list_batch_pipeline_runs_with_filters_param_results(client, g_user_2_ad
         f"/observability/v1/projects/{project.id}/runs",
         query_string=MultiDict(
             [
-                ("start_range_begin", datetime.now(timezone.utc).isoformat()),
+                ("start_range_begin", datetime.now(UTC).isoformat()),
                 ("pipeline_id", pipeline.id),
             ]
         ),
@@ -578,9 +578,9 @@ def test_list_runs_for_instance(client, g_user, instances, runs, project):
     )
     assert response.status_code == HTTPStatus.OK, response.json
     response_body = response.json
-    assert (
-        response_body["total"] == 1 and len(response_body["entities"]) == response_body["total"]
-    ), "should return one run for each instance"
+    assert response_body["total"] == 1 and len(response_body["entities"]) == response_body["total"], (
+        "should return one run for each instance"
+    )
     assert len(response_body["entities"][0]["alerts"]) == 1
     expected_run_ids = [str(r.id) for r in runs]
     assert response_body["entities"][0]["id"] in expected_run_ids, "the returned ID isn't one of the expected runs"
@@ -619,9 +619,9 @@ def test_list_runs_for_instance_with_summaries(client, g_user, instances, runs, 
         (RunTaskStatus.FAILED, 2),
     )
     for status, expected in tasks_statuses:
-        assert any(
-            (status.name, expected) == (task["status"], task["count"]) for task in run["tasks_summary"]
-        ), f"did not find expected {{\"status\": {status.name}, \"count\": {expected}}} in {run['tasks_summary']}"
+        assert any((status.name, expected) == (task["status"], task["count"]) for task in run["tasks_summary"]), (
+            f'did not find expected {{"status": {status.name}, "count": {expected}}} in {run["tasks_summary"]}'
+        )
 
     assert len(run["alerts"]) == 1
     assert run["alerts"][0]["level"] == AlertLevel["ERROR"].value
@@ -721,7 +721,7 @@ def test_get_instance_runs_status_filters(query_string, expected, client, g_user
             key=key,
             pipeline=pipeline,
             instance_set=instance_set,
-            status=f"{RunStatus.COMPLETED.name if int(key) % 2 == 0  else RunStatus.FAILED.name}",
+            status=f"{RunStatus.COMPLETED.name if int(key) % 2 == 0 else RunStatus.FAILED.name}",
         )
     base_query_string = {"instance_id": [instance.id], "status": query_string}
     response = client.get(f"/observability/v1/projects/{project.id}/runs", query_string=base_query_string)

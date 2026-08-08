@@ -14,7 +14,7 @@ __all__ = [
 from dataclasses import asdict, dataclass
 from decimal import Decimal as std_Decimal
 from enum import IntEnum
-from typing import Any, Optional, Union
+from typing import Any, Union
 from uuid import UUID as std_UUID
 
 from marshmallow import Schema, ValidationError, post_load, validates_schema
@@ -60,7 +60,7 @@ class TestgenItem:
     test_suite: str
     version: TestgenIntegrationVersions
     test_parameters: list[TestgenItemTestParameters]
-    columns: Optional[list[str]]
+    columns: list[str] | None
 
 
 @dataclass
@@ -71,17 +71,17 @@ class TestOutcomeItemIntegrations:
 @dataclass
 class TestgenTable:
     include_list: list[str]
-    include_pattern: Optional[str]
-    exclude_pattern: Optional[str]
+    include_pattern: str | None
+    exclude_pattern: str | None
 
 
 @dataclass
 class TestgenTableGroupV1:
     group_id: std_UUID
     project_code: str
-    uses_sampling: Optional[bool]
-    sample_percentage: Optional[str]
-    sample_minimum_count: Optional[int]
+    uses_sampling: bool | None
+    sample_percentage: str | None
+    sample_minimum_count: int | None
 
 
 @dataclass
@@ -90,8 +90,8 @@ class TestgenDataset:
     database_name: str
     connection_name: str
     tables: TestgenTable
-    schema: Optional[str]
-    table_group_configuration: Optional[TestgenTableGroupV1]
+    schema: str | None
+    table_group_configuration: TestgenTableGroupV1 | None
 
 
 @dataclass

@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Optional
+from typing import Any
 
 from apispec import BasePlugin
 
@@ -15,8 +15,8 @@ class SubcomponentPlugin(BasePlugin):
 
     def operation_helper(
         self,
-        path: Optional[str] = None,
-        operations: Optional[dict] = None,
+        path: str | None = None,
+        operations: dict | None = None,
         **kwargs: Any,
     ) -> None:
         description_dict: dict[str, str] = {
@@ -58,7 +58,7 @@ class SubcomponentPlugin(BasePlugin):
         }
         return request_body
 
-    def parameter_helper(self, parameter: Optional[dict] = None, **kwargs: Any) -> dict:
+    def parameter_helper(self, parameter: dict | None = None, **kwargs: Any) -> dict:
         method = kwargs["method"]
         parameter = {"in": "path", "schema": {"type": "string"}, "required": "true", "name": "component_id"}
         if method == "post":
@@ -66,7 +66,7 @@ class SubcomponentPlugin(BasePlugin):
             parameter["description"] = f"The ID of the project that the {self.subcomponent_name} will be created under."
         return parameter
 
-    def response_helper(self, response: Optional[dict] = None, **kwargs: Any) -> dict:
+    def response_helper(self, response: dict | None = None, **kwargs: Any) -> dict:
         method = kwargs["method"]
         response_desc_dict: dict[str, dict[int, str]] = {
             "get": {

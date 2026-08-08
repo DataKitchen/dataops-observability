@@ -2,7 +2,7 @@ __all__ = ["InstanceHandler"]
 import logging
 from collections import defaultdict
 from itertools import chain
-from typing import Any, Optional, cast
+from typing import Any, cast
 from collections.abc import Callable, Mapping
 from uuid import UUID
 
@@ -34,7 +34,7 @@ from run_manager.context import RunManagerContext
 LOG = logging.getLogger(__name__)
 
 
-def _find_existing_instance(journey: Journey, with_run: bool, payload_key: Optional[str]) -> Optional[Instance]:
+def _find_existing_instance(journey: Journey, with_run: bool, payload_key: str | None) -> Instance | None:
     if payload_key is None:
         f: Callable[[Any], bool | Any] = lambda k: k.payload_key is None
     else:
@@ -234,7 +234,7 @@ class InstanceHandler(EventHandlerBase):
         identified_instances: list[InstanceRef] = []
         with_run = event.run_id is not None
         for journey in event.component_journeys:
-            payload_keys: list[Optional[str]] = [None]
+            payload_keys: list[str | None] = [None]
             if any(rule.action is InstanceRuleAction.END_PAYLOAD for rule in journey.instance_rules):
                 payload_keys.extend(event.payload_keys)
             for payload_key in payload_keys:

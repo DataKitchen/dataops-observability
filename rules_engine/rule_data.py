@@ -1,6 +1,5 @@
 __all__ = ["RuleData"]
 
-from typing import Optional
 from uuid import UUID
 
 from peewee import SelectQuery, fn
@@ -21,7 +20,7 @@ class DatabaseData:
     def __init__(self, event: EVENT_TYPE) -> None:
         self.event = event
 
-    def _get_batch_pipeline_id(self) -> Optional[UUID]:
+    def _get_batch_pipeline_id(self) -> UUID | None:
         match self.event:
             case Event():
                 return self.event.pipeline_id

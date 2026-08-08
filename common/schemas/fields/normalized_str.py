@@ -1,6 +1,6 @@
 __all__ = ["NormalizedStr", "strip_upper_underscore"]
 
-from typing import Any, Optional
+from typing import Any
 from collections.abc import Callable, Mapping
 
 from marshmallow.fields import Str
@@ -23,13 +23,13 @@ class NormalizedStr(Str):
         self.normalizer_func = normalizer
         super().__init__(**kwargs)
 
-    def _serialize(self, value: Any, attr: Optional[str], obj: Any, **kwargs: object) -> Optional[str]:
+    def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: object) -> str | None:
         if value is None:
             return None
         str_field = ensure_text_type(value)
         return self.normalizer_func(str_field)
 
-    def _deserialize(self, value: Any, attr: Optional[str], data: Optional[Mapping[str, Any]], **kwargs: object) -> Any:
+    def _deserialize(self, value: Any, attr: str | None, data: Mapping[str, Any] | None, **kwargs: object) -> Any:
         if not isinstance(value, str | bytes):
             raise self.make_error("invalid")
         try:

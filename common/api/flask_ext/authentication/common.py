@@ -1,7 +1,6 @@
 __all__ = ["get_domain", "BaseAuthPlugin", "validate_authentication"]
 import logging
 import re
-from typing import Optional
 from urllib.parse import urlparse
 
 from flask import current_app, g, request
@@ -16,10 +15,10 @@ LOG = logging.getLogger(__name__)
 
 class BaseAuthPlugin(BaseExtension):
     header_name: str = NotImplemented
-    header_prefix: Optional[str] = None
+    header_prefix: str | None = None
 
     @classmethod
-    def get_header_data(cls) -> Optional[str]:
+    def get_header_data(cls) -> str | None:
         auth_data = request.headers.get(cls.header_name, None)
         if auth_data and cls.header_prefix:
             if match := re.match(rf"^{cls.header_prefix}\s+(.*)\s*$", auth_data):

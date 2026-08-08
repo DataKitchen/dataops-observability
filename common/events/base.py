@@ -12,10 +12,9 @@ __all__ = [
 ]
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from enum import Enum as std_Enum
 from functools import partial
-from typing import Optional
 from uuid import UUID
 from uuid import UUID as std_UUID
 from uuid import uuid4
@@ -44,14 +43,14 @@ class ProjectMixin:
 
 @dataclass(kw_only=True)
 class ComponentMixin:
-    component_id: Optional[UUID] = None
-    component_type: Optional[ComponentType] = None
+    component_id: UUID | None = None
+    component_type: ComponentType | None = None
 
 
 @dataclass(kw_only=True)
 class BatchPipelineMixin:
-    batch_pipeline_id: Optional[UUID] = None
-    run_id: Optional[UUID] = None
+    batch_pipeline_id: UUID | None = None
+    run_id: UUID | None = None
 
     @cached_property
     def batch_pipeline(self) -> Pipeline:
@@ -66,13 +65,13 @@ class BatchPipelineMixin:
 
 @dataclass(kw_only=True)
 class RunMixin:
-    run_id: Optional[UUID] = None
+    run_id: UUID | None = None
 
 
 @dataclass(kw_only=True)
 class TaskMixin:
-    task_id: Optional[UUID] = None
-    run_task_id: Optional[UUID] = None
+    task_id: UUID | None = None
+    run_task_id: UUID | None = None
 
     @cached_property
     def task(self) -> Task:
@@ -109,11 +108,11 @@ class JourneysMixin:
 
 @dataclass(kw_only=True)
 class JourneyMixin:
-    journey_id: Optional[UUID] = None
-    instance_id: Optional[UUID] = None
+    journey_id: UUID | None = None
+    instance_id: UUID | None = None
 
 
 @dataclass(kw_only=True)
 class EventBaseMixin:
     event_id: UUID = field(default_factory=uuid4)
-    created_timestamp: datetime = field(default_factory=partial(datetime.now, tz=timezone.utc))
+    created_timestamp: datetime = field(default_factory=partial(datetime.now, tz=UTC))

@@ -4,7 +4,7 @@ __all__ = ["ListRules", "Page", "SortOrder", "DEFAULT_PAGE", "DEFAULT_COUNT", "L
 from dataclasses import dataclass
 from enum import Enum as std_Enum
 from enum import auto
-from typing import Generic, Optional, TypeVar
+from typing import TypeVar
 from collections.abc import Generator
 
 from marshmallow import EXCLUDE, Schema
@@ -36,7 +36,7 @@ class ListSchema(Schema):
 
 
 @dataclass
-class Page(Generic[T]):
+class Page[T]:
     """
     Useful for returning results from the service layer to get paginated results
     but also receive the total objects without pagination.
@@ -83,7 +83,7 @@ class ListRules:
     page: int = DEFAULT_PAGE
     count: int = DEFAULT_COUNT
     sort: SortOrder = SortOrder.ASC
-    search: Optional[str] = None
+    search: str | None = None
 
     @classmethod
     def from_params_without_search(cls, params: MultiDict) -> ListRules:

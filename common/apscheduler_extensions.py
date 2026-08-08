@@ -3,7 +3,6 @@ __all__ = ["DelayedTrigger", "validate_cron_expression", "get_crontab_trigger_ti
 import logging
 import re
 from datetime import datetime, timedelta
-from typing import Optional
 from collections.abc import Generator
 from zoneinfo import ZoneInfo
 
@@ -36,10 +35,10 @@ class DelayedTrigger(BaseTrigger):
         self.trigger = trigger
         self.delay = delay
 
-    def get_next_fire_time(self, previous_fire_time: Optional[datetime], now: datetime) -> Optional[datetime]:
+    def get_next_fire_time(self, previous_fire_time: datetime | None, now: datetime) -> datetime | None:
         if previous_fire_time:
             previous_fire_time -= self.delay
-        next_fire_time: Optional[datetime] = self.trigger.get_next_fire_time(previous_fire_time, now)
+        next_fire_time: datetime | None = self.trigger.get_next_fire_time(previous_fire_time, now)
         return next_fire_time + self.delay if next_fire_time else None
 
     def __str__(self) -> str:
@@ -109,7 +108,7 @@ def fix_weekdays(expression: str) -> str:
 
 
 def get_crontab_trigger_times(
-    crontab: str, timezone: ZoneInfo, start_range: datetime, end_range: Optional[datetime] = None
+    crontab: str, timezone: ZoneInfo, start_range: datetime, end_range: datetime | None = None
 ) -> Generator[datetime, None, None]:
     """
     Generate the crontab trigger times for the given time range.

@@ -1,5 +1,5 @@
-from datetime import datetime, timezone
-from typing import Any, Optional, Union
+from datetime import datetime, UTC
+from typing import Any, Union
 
 from marshmallow import EXCLUDE, Schema, ValidationError, pre_load, validates_schema
 from marshmallow.fields import UUID, AwareDateTime, Boolean, Enum, List, Str
@@ -11,7 +11,7 @@ from common.schemas.validators import not_empty
 
 class FiltersSchema(Schema):
     def validate_time_range(
-        self, range_begin: Optional[datetime], range_end: Optional[datetime], range_begin_name: str
+        self, range_begin: datetime | None, range_end: datetime | None, range_begin_name: str
     ) -> None:
         if range_begin is None or range_end is None:
             return None
@@ -43,7 +43,7 @@ class InstanceFiltersSchema(FiltersSchema):
     start_range_begin = AwareDateTime(
         allow_none=True,
         format="iso",
-        default_timezone=timezone.utc,
+        default_timezone=UTC,
         metadata={
             "description": "Optional. An ISO8601 datetime. If specified, The result will only include instances with a "
             "start_time field equal or past the given datetime. May be specified with start_range_end "
@@ -53,7 +53,7 @@ class InstanceFiltersSchema(FiltersSchema):
     start_range_end = AwareDateTime(
         allow_none=True,
         format="iso",
-        default_timezone=timezone.utc,
+        default_timezone=UTC,
         metadata={
             "description": "Optional. An ISO8601 datetime. If specified, the result will only contain instances with a "
             "start_time field before the given datetime. May be specified with start_range_begin to create "
@@ -63,7 +63,7 @@ class InstanceFiltersSchema(FiltersSchema):
     end_range_begin = AwareDateTime(
         allow_none=True,
         format="iso",
-        default_timezone=timezone.utc,
+        default_timezone=UTC,
         metadata={
             "description": "Optional. An ISO8601 datetime. If specified, The result will only include instances with an "
             "end_time field equal or past the given datetime. May be specified with end_range_end to create a range."
@@ -72,7 +72,7 @@ class InstanceFiltersSchema(FiltersSchema):
     end_range_end = AwareDateTime(
         allow_none=True,
         format="iso",
-        default_timezone=timezone.utc,
+        default_timezone=UTC,
         metadata={
             "description": "Optional. An ISO8601 datetime. If specified, The result will only include instances with an "
             "end_time field before the given datetime. May be specified with end_range_begin to create a range."

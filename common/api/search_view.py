@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any
 
 from flask import Blueprint, Response, request
 from flask.typing import RouteCallable
@@ -12,7 +12,7 @@ SEARCH_ENDPOINT: str = "search"
 
 
 class SearchView(BaseView):
-    args_from_post: Optional[MultiDict] = None
+    args_from_post: MultiDict | None = None
     request_body_schema: type[Schema]
 
     def post(self, *args: Any, **kwargs: Any) -> Response:

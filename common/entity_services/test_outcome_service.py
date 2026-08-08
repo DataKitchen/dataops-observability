@@ -1,6 +1,5 @@
 __all__ = ["TestOutcomeService"]
 
-from typing import Optional
 from uuid import UUID
 
 from peewee import SqliteDatabase
@@ -17,9 +16,9 @@ class TestOutcomeService:
         *,
         event: TestOutcomesEvent,
         component_id: UUID,
-        instance_set_id: Optional[UUID] = None,
-        run_id: Optional[UUID] = None,
-        task_id: Optional[UUID] = None,
+        instance_set_id: UUID | None = None,
+        run_id: UUID | None = None,
+        task_id: UUID | None = None,
     ) -> None:
         test_outcomes = []
         test_outcome_integrations = []
@@ -65,7 +64,7 @@ class TestOutcomeService:
                     )
 
         # Using the recursive lookup avoids having to check for None on optional values up the whole chain
-        testgen_dataset: Optional[TestgenDataset] = getattr_recursive(
+        testgen_dataset: TestgenDataset | None = getattr_recursive(
             event, "component_integrations__integrations__testgen", None
         )
 

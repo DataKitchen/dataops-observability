@@ -5,7 +5,7 @@ __all__ = ["get_rules", "JourneyRule"]
 import logging
 import time
 from functools import lru_cache
-from typing import Any, Optional
+from typing import Any
 from collections.abc import Callable
 from uuid import UUID
 
@@ -33,19 +33,19 @@ class JourneyRule:
     def __init__(
         self,
         r_obj: R,
-        rule_entity: Optional[RuleEntity],
+        rule_entity: RuleEntity | None,
         *triggers: Callable,
-        journey_id: Optional[UUID] = None,
-        component_id: Optional[UUID] = None,
+        journey_id: UUID | None = None,
+        component_id: UUID | None = None,
     ) -> None:
         self.r_obj: R = r_obj
         self.rule_entity = rule_entity
-        self.triggers: tuple[Callable[[EVENT_TYPE, Optional[RuleEntity], Optional[UUID]], ActionResult], ...] = triggers
-        self.journey_id: Optional[UUID] = journey_id
-        self.component_id: Optional[UUID] = component_id
+        self.triggers: tuple[Callable[[EVENT_TYPE, RuleEntity | None, UUID | None], ActionResult], ...] = triggers
+        self.journey_id: UUID | None = journey_id
+        self.component_id: UUID | None = component_id
 
     @staticmethod
-    def _get_component_id(event: EVENT_TYPE) -> Optional[UUID]:
+    def _get_component_id(event: EVENT_TYPE) -> UUID | None:
         """Extract the component id from the given event."""
         match event:
             case Event():
@@ -81,7 +81,7 @@ class JourneyRule:
         return f"{self.__module__}.{self.__class__.__name__}: {self.r_obj}"
 
 
-def _execute_action(event: EVENT_TYPE, rule_entity: RuleEntity, journey_id: Optional[UUID]) -> Any:
+def _execute_action(event: EVENT_TYPE, rule_entity: RuleEntity, journey_id: UUID | None) -> Any:
     action_entity = JourneyService.get_action_by_implementation(rule_entity.journey_id, rule_entity.action)
     action = action_factory(rule_entity.action, rule_entity.action_args, action_entity)
     action.execute(event, rule_entity, journey_id)

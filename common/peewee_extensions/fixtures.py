@@ -4,7 +4,7 @@ from collections import OrderedDict
 from functools import cache
 from graphlib import CycleError, TopologicalSorter
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 from uuid import UUID, uuid4
 
 # TODO: When we move to Python 3.11+ we can switch to importing tomlib and we can remove the tomli requirement from
@@ -57,7 +57,7 @@ def generate_table_map() -> dict[str, Model]:
     return {x._meta.table_name: x for x in model_map.values()}
 
 
-def dump_results(results: ModelSelect, *, requires_id: Optional[UUID] = None) -> str:
+def dump_results(results: ModelSelect, *, requires_id: UUID | None = None) -> str:
     """Given Peewee query results, generate a fixture dump."""
     model_class = results.model
     rows = []
