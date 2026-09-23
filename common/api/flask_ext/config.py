@@ -1,6 +1,5 @@
 __all__ = ["Config"]
 import os
-from typing import Optional
 
 from flask import Flask
 
@@ -16,7 +15,7 @@ class Config:
     then the configuration will load "foo.bar.production"
     """
 
-    def __init__(self, app: Optional[Flask] = None, config_module: str = ""):
+    def __init__(self, app: Flask | None = None, config_module: str = ""):
         if not config_module:
             raise ValueError("You must provide a 'config_module' to the Config extension")
         self.app = app

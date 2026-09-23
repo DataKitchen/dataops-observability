@@ -7,7 +7,7 @@ SCRIPT_NAME=$(basename "$0")
 print_usage() {
   cat <<EOF
 Usage:
-$SCRIPT_NAME 
+$SCRIPT_NAME
 $SCRIPT_NAME [show-configuration]
 $SCRIPT_NAME [kubernetes|docker]
 $SCRIPT_NAME [cleanup] [kubernetes|docker]
@@ -95,7 +95,7 @@ kubernetes_deploy() {
   kubectl delete secret "$TARGET_SERVICE-secret" -n datakitchen 2> /dev/null || true
   echo "#### Deploying DataKitchen's $TARGET_SERVICE Agent ##### "
   deploy_agent_kubernetes "$image"
-  
+
 }
 
 kubernetes_cleanup() {
@@ -159,7 +159,7 @@ show_configuration() {
   EVENT_HUB_NAME: '$EVENT_HUB_NAME'
   AZURE_STORAGE_CONN_STR: '$AZURE_STORAGE_CONN_STR'
   BLOB_CONTAINER_NAME: '$BLOB_CONTAINER_NAME'
-  EXTERNAL_PLUGINS_PATH: '$EXTERNAL_PLUGINS_PATH' 
+  EXTERNAL_PLUGINS_PATH: '$EXTERNAL_PLUGINS_PATH'
   ENABLED_PLUGINS: '$ENABLED_PLUGINS'
   PUBLISH_EVENTS: '$PUBLISH_EVENTS'
   AIRFLOW_PASSWORD: '$AIRFLOW_PASSWORD'

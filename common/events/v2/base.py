@@ -7,8 +7,7 @@ __all__ = [
 
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from typing import Optional
+from datetime import datetime, UTC
 
 from marshmallow import Schema
 from marshmallow.fields import UUID, AwareDateTime, Dict, List, Str, Url
@@ -24,9 +23,9 @@ from ..event_handler import EventHandlerBase
 
 @dataclass
 class BasePayload:
-    event_timestamp: Optional[datetime]
+    event_timestamp: datetime | None
     metadata: dict[str, object]
-    external_url: Optional[str]
+    external_url: str | None
     payload_keys: list[str]
 
 
@@ -38,7 +37,7 @@ class BasePayloadSchema(Schema):
     event_timestamp = AwareDateTime(
         load_default=None,
         format="iso",
-        default_timezone=timezone.utc,
+        default_timezone=UTC,
         metadata={
             "description": (
                 "An ISO8601 timestamp that describes when the event occurred. "

@@ -1,12 +1,12 @@
 __all__ = ["JsonFormatter"]
 
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from json import dumps
 
 from common.json_encoder import JsonExtendedEncoder
 
-UTC = timezone.utc
+UTC = UTC
 
 
 class JsonFormatter(logging.Formatter):

@@ -1,6 +1,6 @@
 import uuid
 from dataclasses import replace
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, UTC
 from unittest.mock import MagicMock
 
 import pytest
@@ -57,7 +57,7 @@ def compare_event_data(unidentified_event, identified_event, pipeline, run, task
 
 @pytest.fixture
 def timestamp_now():
-    return datetime.now(tz=timezone.utc)
+    return datetime.now(tz=UTC)
 
 
 @pytest.fixture
@@ -367,7 +367,7 @@ def pipeline_end_payload_rule(journey, pipeline):
 
 @pytest.fixture
 def timestamp_now():
-    return datetime.now(tz=timezone.utc)
+    return datetime.now(tz=UTC)
 
 
 @pytest.fixture

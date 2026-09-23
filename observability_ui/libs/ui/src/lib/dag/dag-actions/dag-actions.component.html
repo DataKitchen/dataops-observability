@@ -11,11 +11,11 @@
           type="button">
           <mat-icon>zoom_in</mat-icon>
       </button>
-    
+
       <span>
           {{ (zoom || 1) * 100 | number:'1.0-0' }}%
       </span>
-    
+
       <button (click)="zoomOut.emit()"
           [disabled]="zoom && zoom <= minZoom"
           dkTooltip="{{ 'dag.zoom.out' | translate }}"
@@ -23,7 +23,7 @@
           type="button">
           <mat-icon>zoom_out</mat-icon>
       </button>
-    
+
       <button (click)="zoomToFit.emit()"
           dkTooltip="{{ 'dag.zoom.toFit' | translate }}"
           dkTooltipPlacement="left"
@@ -41,7 +41,7 @@
           type="button">
           <mat-icon>align_horizontal_left</mat-icon>
       </button>
-    
+
       <button *ngIf="layout === DagOrientation.Horizontal || layout === null"
           (click)="arrange.emit(DagOrientation.Vertical)"
           dkTooltip="{{ 'dag.arrange.topToBottom' | translate }}"
@@ -62,4 +62,3 @@
         </button>
     </div>
 </div>
-

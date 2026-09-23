@@ -1,7 +1,7 @@
 __all__ = ["EnumStr"]
 
 from enum import Enum, EnumMeta
-from typing import Any, Optional, Union, cast
+from typing import Any, Union, cast
 from collections.abc import Iterable
 
 from marshmallow.utils import ensure_text_type
@@ -30,7 +30,7 @@ class EnumStr(NormalizedStr):
 
         super().__init__(validate=OneOf(allowed_values), **kwargs)  # type: ignore[arg-type]
 
-    def _serialize(self, value: Any, attr: Optional[str], obj: Any, **kwargs: object) -> Optional[str]:
+    def _serialize(self, value: Any, attr: str | None, obj: Any, **kwargs: object) -> str | None:
         if value is None:
             return None
         if isinstance(value, Enum):

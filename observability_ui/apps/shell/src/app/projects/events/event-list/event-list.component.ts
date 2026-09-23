@@ -92,7 +92,7 @@ export class EventListComponent extends CoreComponent implements OnInit, HasSear
         const startDate = beginningOfDay(new Date(date_range_start));
         filters.date_range_start = toTimezoneAwareISOString(startDate);
       }
-  
+
       if (date_range_end) {
         const endDate = endOfDay(new Date(date_range_end));
         filters.date_range_end = toTimezoneAwareISOString(endDate);

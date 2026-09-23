@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 
 import pytest
 
@@ -94,7 +94,7 @@ def test_run_alert_expected_start_time_get(pipeline_run):
     run_alert = RunAlert(run=pipeline_run, name="A", description="A", level=AlertLevel.ERROR, type="invalid")
     assert run_alert.expected_start_time is None
     run_alert.details["expected_start_time"] = 1123922544.0
-    assert datetime(2005, 8, 13, 8, 42, 24, tzinfo=timezone.utc) == run_alert.expected_start_time
+    assert datetime(2005, 8, 13, 8, 42, 24, tzinfo=UTC) == run_alert.expected_start_time
 
 
 @pytest.mark.integration
@@ -117,7 +117,7 @@ def test_run_alert_expected_end_time_get(pipeline_run):
     run_alert = RunAlert(run=pipeline_run, name="A", description="A", level=AlertLevel.ERROR, type="invalid")
     assert run_alert.expected_end_time is None  # No details have been added yet
     run_alert.details["expected_end_time"] = 1123922544.0
-    assert datetime(2005, 8, 13, 8, 42, 24, tzinfo=timezone.utc) == run_alert.expected_end_time
+    assert datetime(2005, 8, 13, 8, 42, 24, tzinfo=UTC) == run_alert.expected_end_time
 
 
 @pytest.mark.integration
@@ -134,8 +134,8 @@ def test_run_alert_expected_times_naive(pipeline_run):
     run_alert.expected_start_time = datetime(2005, 8, 13, 8, 42, 24)
     run_alert.expected_end_time = datetime(2005, 8, 13, 8, 55, 24)
 
-    assert run_alert.expected_start_time == datetime(2005, 8, 13, 8, 42, 24, tzinfo=timezone.utc)
-    assert run_alert.expected_end_time == datetime(2005, 8, 13, 8, 55, 24, tzinfo=timezone.utc)
+    assert run_alert.expected_start_time == datetime(2005, 8, 13, 8, 42, 24, tzinfo=UTC)
+    assert run_alert.expected_end_time == datetime(2005, 8, 13, 8, 55, 24, tzinfo=UTC)
 
 
 @pytest.mark.integration
@@ -153,7 +153,7 @@ def test_instance_alert_expected_start_time_get(instance):
         instance=instance, name="A", description="A", message="A", level=AlertLevel.WARNING, type="invalid"
     )
     instance_alert.details["expected_start_time"] = 1123922544.0
-    assert datetime(2005, 8, 13, 8, 42, 24, tzinfo=timezone.utc) == instance_alert.expected_start_time
+    assert datetime(2005, 8, 13, 8, 42, 24, tzinfo=UTC) == instance_alert.expected_start_time
 
 
 @pytest.mark.integration
@@ -171,7 +171,7 @@ def test_instance_alert_expected_end_time_get(instance):
         instance=instance, name="A", description="A", message="A", level=AlertLevel.WARNING, type="invalid"
     )
     instance_alert.details["expected_end_time"] = 1123922544.0
-    assert datetime(2005, 8, 13, 8, 42, 24, tzinfo=timezone.utc) == instance_alert.expected_end_time
+    assert datetime(2005, 8, 13, 8, 42, 24, tzinfo=UTC) == instance_alert.expected_end_time
 
 
 @pytest.mark.integration
@@ -183,8 +183,8 @@ def test_instance_alert_expected_times_naive(instance):
     instance_alert.expected_start_time = datetime(2005, 8, 13, 8, 42, 24)
     instance_alert.expected_end_time = datetime(2005, 8, 13, 8, 55, 24)
 
-    assert instance_alert.expected_start_time == datetime(2005, 8, 13, 8, 42, 24, tzinfo=timezone.utc)
-    assert instance_alert.expected_end_time == datetime(2005, 8, 13, 8, 55, 24, tzinfo=timezone.utc)
+    assert instance_alert.expected_start_time == datetime(2005, 8, 13, 8, 42, 24, tzinfo=UTC)
+    assert instance_alert.expected_end_time == datetime(2005, 8, 13, 8, 55, 24, tzinfo=UTC)
 
 
 @pytest.mark.integration

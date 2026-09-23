@@ -7,7 +7,7 @@ __all__ = [
 
 from dataclasses import dataclass
 from enum import Enum as std_Enum
-from typing import Any, Optional
+from typing import Any
 
 from marshmallow import post_load
 from marshmallow.fields import Enum, Nested, Str
@@ -28,7 +28,7 @@ class DatasetOperationType(std_Enum):
 class DatasetOperation(BasePayload):
     dataset_component: DatasetData
     operation: DatasetOperationType
-    path: Optional[str]
+    path: str | None
 
 
 class DatasetOperationSchema(BasePayloadSchema):

@@ -1,7 +1,6 @@
 __all__ = ["SendEmailAction"]
 import logging
 from dataclasses import asdict
-from typing import Optional
 from uuid import UUID
 
 from peewee import DoesNotExist
@@ -22,7 +21,7 @@ class SendEmailAction(BaseAction):
     required_arguments = {"recipients", "template"}
     requires_action_template = True
 
-    def _run(self, event: EVENT_TYPE, rule: Rule, journey_id: Optional[UUID]) -> ActionResult:
+    def _run(self, event: EVENT_TYPE, rule: Rule, journey_id: UUID | None) -> ActionResult:
         try:
             context = self._get_data_points(event, rule, journey_id)
         except Exception as e:
@@ -41,7 +40,7 @@ class SendEmailAction(BaseAction):
             return ActionResult(True, response, None)
 
     def _get_data_points(
-        self, event: EVENT_TYPE, rule: Rule, journey_id: Optional[UUID]
+        self, event: EVENT_TYPE, rule: Rule, journey_id: UUID | None
     ) -> dict | AgentStatusChangeDataPoints:
         """
         Get the data points to be used in the email template

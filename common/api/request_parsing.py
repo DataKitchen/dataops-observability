@@ -1,7 +1,7 @@
 __all__ = ["get_bool_param", "no_body_allowed", "str_to_bool", "get_origin_domain"]
 
 from functools import wraps
-from typing import Any, Optional
+from typing import Any
 from collections.abc import Callable, Iterable
 from urllib.parse import urlparse
 
@@ -33,10 +33,10 @@ def str_to_bool(value: str, param_name: str) -> bool:
     elif case_insensitive_value == "false":
         return False
     else:
-        raise ValidationError({param_name: ("Expected 'true' or 'false'. Instead received " f"'{value}'.")})
+        raise ValidationError({param_name: (f"Expected 'true' or 'false'. Instead received '{value}'.")})
 
 
-def no_body_allowed(func: Optional[Callable] = None, /, methods: Iterable[str] = SAFE_HTTP_METHODS) -> Callable:
+def no_body_allowed(func: Callable | None = None, /, methods: Iterable[str] = SAFE_HTTP_METHODS) -> Callable:
     """
     Decorator to be used on MethodView functions if the function does not allow a request body to be passed.
 
@@ -58,7 +58,7 @@ def no_body_allowed(func: Optional[Callable] = None, /, methods: Iterable[str] =
         return decorator
 
 
-def get_origin_domain() -> Optional[str]:
+def get_origin_domain() -> str | None:
     if (source_url := request.headers.get("Origin")) is not None:
         try:
             return urlparse(source_url).netloc or None

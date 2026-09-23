@@ -29,7 +29,7 @@ it for you.
 
 Example install
 ```bash
-python3.12 -m venv venv
+python3.13 -m venv venv
 source venv/bin/activate
 # Install platform and developer extra packages
 pip install --editable '.[dev]'

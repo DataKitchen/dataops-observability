@@ -2,7 +2,7 @@ __all__ = ["ProjectService"]
 
 from functools import reduce
 from operator import or_
-from typing import Any, Optional
+from typing import Any
 
 from peewee import PREFETCH_TYPE, Value, fn, prefetch, DoesNotExist
 
@@ -107,7 +107,7 @@ class ProjectService:
 
     @staticmethod
     def get_runs_with_rules(
-        project_id: Optional[str], pipeline_ids: list[str], rules: ListRules, filters: RunFilters
+        project_id: str | None, pipeline_ids: list[str], rules: ListRules, filters: RunFilters
     ) -> Page[Run]:
         start_dt = fn.COALESCE(Run.start_time, Run.expected_start_time)
         query = Run.select(Run, start_dt.alias("start_dt")).distinct()
@@ -154,7 +154,7 @@ class ProjectService:
 
     @staticmethod
     def get_instances_with_rules(
-        rules: ListRules, filters: Filters, project_ids: list[str], company_id: Optional[str] = None
+        rules: ListRules, filters: Filters, project_ids: list[str], company_id: str | None = None
     ) -> Page[Instance]:
         memberships = [Journey.project.in_(project_ids)] if project_ids else []
         if company_id:
@@ -211,7 +211,7 @@ class ProjectService:
         return Page[Instance](results=results, total=query.count())
 
     @staticmethod
-    def get_journeys_with_rules(project_id: str, rules: ListRules, component_id: Optional[str] = None) -> Page[Journey]:
+    def get_journeys_with_rules(project_id: str, rules: ListRules, component_id: str | None = None) -> Page[Journey]:
         base_query = Journey.project == project_id
         if rules.search is not None:
             base_query &= Journey.name ** f"%{rules.search}%"

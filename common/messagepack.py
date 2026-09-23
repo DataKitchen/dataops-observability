@@ -9,7 +9,7 @@ from importlib import import_module
 from io import BytesIO
 from pathlib import Path, PurePath, PurePosixPath, PureWindowsPath
 from types import MappingProxyType
-from typing import Any, BinaryIO, Optional, TextIO, Union, cast
+from typing import Any, BinaryIO, TextIO, Union, cast
 from collections.abc import Callable
 from uuid import UUID
 
@@ -261,7 +261,7 @@ def decode_ext(code: int, data: bytes) -> object:
             return ExtType(code, data)
 
 
-def dump(value: object, flo: FLO, hook: Optional[Callable] = None) -> None:
+def dump(value: object, flo: FLO, hook: Callable | None = None) -> None:
     """
     Serialize as msgpack and write the result to a file-like-object.
 
@@ -281,7 +281,7 @@ def dump(value: object, flo: FLO, hook: Optional[Callable] = None) -> None:
     )
 
 
-def dumps(value: object, hook: Optional[Callable] = None) -> bytes:
+def dumps(value: object, hook: Callable | None = None) -> bytes:
     """
     Serialize object to msgpack and return resulting messagepack bytes.
 
@@ -295,7 +295,7 @@ def dumps(value: object, hook: Optional[Callable] = None) -> bytes:
     return result
 
 
-def load(flo: FLO, object_hook: Optional[Callable] = None) -> Any:
+def load(flo: FLO, object_hook: Callable | None = None) -> Any:
     """
     Deserialize a msgpack file-like-object.
 
@@ -317,7 +317,7 @@ def load(flo: FLO, object_hook: Optional[Callable] = None) -> Any:
     return result
 
 
-def loads(stream: bytes, object_hook: Optional[Callable] = None) -> Any:
+def loads(stream: bytes, object_hook: Callable | None = None) -> Any:
     """
     Deserialize msgpack bytes
 

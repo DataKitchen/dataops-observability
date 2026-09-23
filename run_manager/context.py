@@ -1,6 +1,5 @@
 __all__ = ["RunManagerContext"]
 from dataclasses import dataclass, field
-from typing import Optional
 from uuid import UUID
 
 from common.entities import Component, Instance, InstanceSet, Pipeline, Run, RunTask, Task
@@ -13,21 +12,21 @@ class RunManagerContext:
     A context object to pass a state around when handling events in run manager
     """
 
-    component: Optional[Component] = None
+    component: Component | None = None
     # Keeping pipeline to keep "pre" event v1 code intact, i.e. avoid significant refactoring effort
-    pipeline: Optional[Pipeline] = None
-    run: Optional[Run] = None
-    task: Optional[Task] = None
-    run_task: Optional[RunTask] = None
+    pipeline: Pipeline | None = None
+    run: Run | None = None
+    task: Task | None = None
+    run_task: RunTask | None = None
     instances: list[InstanceRef] = field(default_factory=list)
-    instance_set: Optional[InstanceSet] = None
+    instance_set: InstanceSet | None = None
     ended_instances: list[UUID | Instance] = field(default_factory=list)
     """List of instances that ended in this context"""
     created_run: bool = False
     """Indicates if the run was created during this context"""
     started_run: bool = False
     """Indicates if the run was started during this context"""
-    prev_run_status: Optional[str] = None
+    prev_run_status: str | None = None
     """Previous run status before being processed by the run handler.
        This is to check for unexpected run status changed"""
 

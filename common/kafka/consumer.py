@@ -3,7 +3,7 @@ __all__ = ["KafkaConsumer", "KafkaTransactionalConsumer"]
 import logging
 import signal
 from types import FrameType
-from typing import Any, Optional
+from typing import Any
 from collections.abc import Iterator
 
 from confluent_kafka import Consumer, Message
@@ -49,7 +49,7 @@ class GracefulKiller:
         signal.signal(signal.SIGTERM, GracefulKiller.exit_gracefully)
 
     @staticmethod
-    def exit_gracefully(sig_num: int, frame: Optional[FrameType]) -> Any:
+    def exit_gracefully(sig_num: int, frame: FrameType | None) -> Any:
         LOG.info(f"Signal {sig_num} received, attempting to exit gracefully. Use SIGKILL to terminate immediately.")
         GracefulKiller.should_exit = True
 
@@ -152,9 +152,9 @@ class KafkaConsumer:
         except Exception as e:
             raise ConsumerCommitError from e
 
-    def poll(self) -> Optional[KafkaMessage]:
+    def poll(self) -> KafkaMessage | None:
         try:
-            msg: Optional[Message] = self.consumer.poll(CONSUMER_POLL_PERIOD_SECS)
+            msg: Message | None = self.consumer.poll(CONSUMER_POLL_PERIOD_SECS)
         except DisconnectedConsumerError:
             raise
         except Exception as ex:

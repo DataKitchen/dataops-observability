@@ -1,6 +1,5 @@
 __all__ = ["ACTION_CLASS_MAP", "action_factory"]
 
-from typing import Optional
 
 from common.entities import Action
 
@@ -11,7 +10,7 @@ from common.actions.webhook_action import WebhookAction
 ACTION_CLASS_MAP: dict[str, type[BaseAction]] = {"CALL_WEBHOOK": WebhookAction, "SEND_EMAIL": SendEmailAction}
 
 
-def action_factory(implementation: str, action_args: dict, template: Optional[Action]) -> BaseAction:
+def action_factory(implementation: str, action_args: dict, template: Action | None) -> BaseAction:
     try:
         action_class = ACTION_CLASS_MAP[implementation]
     except KeyError as ke:

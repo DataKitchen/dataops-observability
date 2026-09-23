@@ -1,5 +1,5 @@
 import uuid
-from datetime import timedelta, timezone
+from datetime import timedelta, timezone, UTC
 
 import pytest
 from marshmallow import ValidationError
@@ -127,8 +127,8 @@ def test_event_with_batch_pipeline_component_missing_run_key_error(valid_event_d
 @pytest.mark.parametrize(
     ["timestamp", "tz"],
     [
-        ("2018-07-25T00:00:00Z", timezone.utc),
-        ("2018-07-25T00:00:00", timezone.utc),
+        ("2018-07-25T00:00:00Z", UTC),
+        ("2018-07-25T00:00:00", UTC),
         ("2014-12-22T03:12:58.019077+06:00", timezone(timedelta(hours=6))),
     ],
     ids=["ZuluTime", "Naive", "TZ offset"],

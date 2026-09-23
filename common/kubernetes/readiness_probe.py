@@ -58,7 +58,7 @@ def is_ready() -> bool:
 
 
 @contextmanager
-def readiness_check_wrapper() -> Generator[None, None, None]:
+def readiness_check_wrapper() -> Generator[None]:
     """
     Context Manager that marks the service as ready when the inner code is executed without exceptions. Re-raises
     the exception otherwise.
@@ -97,7 +97,7 @@ def get_args_handler(timeout: int) -> Callable:
     readiness and exits.
     """
 
-    def handler(parser: ArgumentParser) -> Generator[None, Namespace, None]:
+    def handler(parser: ArgumentParser) -> Generator[None, Namespace]:
         parser.add_argument("--check-ready", help="Check the main process readiness and exit", action="store_true")
         args = yield
         if args.check_ready:

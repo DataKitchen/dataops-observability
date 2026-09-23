@@ -2,7 +2,6 @@ __all__ = ["ComponentService"]
 
 from datetime import datetime
 from itertools import cycle
-from typing import Optional
 from collections.abc import Generator
 
 from peewee import Select
@@ -31,8 +30,8 @@ class ComponentService:
 
     @classmethod
     def get_or_create_active_instances(
-        cls, component: Component, start_time: Optional[datetime] = None
-    ) -> Generator[tuple[bool, Instance], None, None]:
+        cls, component: Component, start_time: datetime | None = None
+    ) -> Generator[tuple[bool, Instance]]:
         """
         Retrieves active Instances for a given component. Create active Instances when a Journey does not have one.
 

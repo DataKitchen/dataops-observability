@@ -2,7 +2,6 @@ __all__ = ["InstanceService"]
 
 from collections import Counter, defaultdict
 from datetime import datetime
-from typing import Optional
 from collections.abc import Iterable
 from uuid import UUID
 
@@ -163,11 +162,11 @@ class InstanceService:
     def get_instance_run_counts(
         instance: UUID | Instance,
         *,
-        include_run_statuses: Optional[Iterable[str]] = None,
-        exclude_run_statuses: Optional[Iterable[str]] = None,
-        journey: Optional[UUID] = None,
-        pipelines: Optional[Iterable[UUID]] = None,
-        end_before: Optional[datetime] = None,
+        include_run_statuses: Iterable[str] | None = None,
+        exclude_run_statuses: Iterable[str] | None = None,
+        journey: UUID | None = None,
+        pipelines: Iterable[UUID] | None = None,
+        end_before: datetime | None = None,
     ) -> dict[UUID, int]:
         """
         Return a dict of pipelines with the corresponding run count per pipeline.

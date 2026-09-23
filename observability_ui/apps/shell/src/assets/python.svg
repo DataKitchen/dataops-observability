@@ -120,10 +120,10 @@
   <style
      id="style12">
 		tspan { white-space:pre }
-		.shp0 { fill: #ff4d00 } 
-		.shp1 { fill: #ff7d00 } 
-		.shp2 { fill: #001aff } 
-		.shp3 { fill: #e23400 } 
+		.shp0 { fill: #ff4d00 }
+		.shp1 { fill: #ff7d00 }
+		.shp2 { fill: #001aff }
+		.shp3 { fill: #e23400 }
 	</style>
   <g
      transform="matrix(0.2227699,0,0,0.2227699,2.6182982,1.6268776e-7)"
